@@ -11,11 +11,24 @@ export default defineNuxtConfig({
     },
   },
 
+  routeRules: {
+    "/": { isr: true, prerender: true },
+  },
+
   modules: ['blanked', '@nuxt/content'],
 
   colorMode: {
     classSuffix: '',
     preference: 'light',
+  },
+
+  content: {
+    highlight: {
+      theme: "github-dark",
+    },
+    markdown: {
+      anchorLinks: false,
+    },
   },
 
   css: ['~/assets/style/main.css'],

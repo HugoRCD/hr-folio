@@ -6,6 +6,8 @@ html, body, #__nuxt {
     height: 100%;
 
     @apply text-zinc-900 dark:text-zinc-100;
+    @apply transition-colors duration-300 ease-in-out bg-light dark:bg-dark;
+    @apply selection:bg-accent selection:text-light dark:selection:bg-light dark:selection:text-dark;
 }
 
 .writing {

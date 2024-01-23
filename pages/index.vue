@@ -25,17 +25,21 @@ const { data } = await useAsyncData("feed", () =>
       But also a fucking genius
     </p>
     <div class="mt-4 flex flex-col gap-2 w-fit">
-      <NuxtLink v-for="post in data" :key="post.title" :to="post._path">
+      <NuxtLink
+        v-for="post in data"
+        :key="post.title"
+        :to="post._path"
+      >
         {{ post.title }}
       </NuxtLink>
     </div>
     <div class="mt-4 flex flex-col gap-2 w-fit">
       <NuxtLink
-          v-for="social in socials"
-          :key="social.name"
-          class="link group cursor-pointer font-newsreader flex items-center gap-1 text-xl"
-          :to="social.link"
-          target="_blank"
+        v-for="social in socials"
+        :key="social.name"
+        class="link group cursor-pointer font-newsreader flex items-center gap-1 text-xl"
+        :to="social.link"
+        target="_blank"
       >
         {{ social.name }}<span class="i-lucide-arrow-up-right font-light hidden group-hover:block" />
       </NuxtLink>
