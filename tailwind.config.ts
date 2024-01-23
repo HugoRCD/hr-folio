@@ -11,6 +11,19 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        dark: "rgb(2,2,2)",
+        light: "rgb(255,246,237)",
+        accent: "rgb(40,60,255)",
+      },
+      textColor: {
+        dark: "rgb(2,2,2)",
+        light: "rgb(255,246,237)",
+        accent: "rgb(40,60,255)",
+      },
+      fontFamily: {
+        newsreader: ["Newsreader", "serif"],
+      }
     },
   },
   plugins: [

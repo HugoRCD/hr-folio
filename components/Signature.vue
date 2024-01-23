@@ -26,28 +26,3 @@
     </g>
   </svg>
 </template>
-
-<style scoped>
-.cls-1 {
-  stroke: #fff;
-  stroke-width: 3px;
-  font-family: Beauty, Beauty,serif;
-  font-size: 346px;
-}
-
-.signature {
-  stroke-dasharray: 2036;
-  stroke-dashoffset: 2036;
-  animation: sign 5s ease-in forwards;
-}
-
-@keyframes sign{
-  from {
-    stroke-dashoffset: 2036;
-    fill: none;
-  }
-  to{
-    stroke-dashoffset: 0;
-  }
-}
-</style>
