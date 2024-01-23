@@ -13,10 +13,14 @@ html, body, #__nuxt {
 .writing {
     @apply prose text-zinc-900 dark:text-zinc-100;
     @apply prose-h1:text-3xl prose-h1:text-zinc-900 dark:prose-h1:text-zinc-100 prose-h1:font-newsreader prose-h1:italic prose-h1:font-[600];
-    @apply prose-h2:text-2xl;
-    @apply prose-h3:text-xl;
-    @apply prose-h4:text-lg;
+    @apply prose-h2:text-2xl prose-h2:text-zinc-900 dark:prose-h2:text-zinc-100;
+    @apply prose-h3:text-xl prose-h3:text-zinc-900 dark:prose-h3:text-zinc-100;
+    @apply prose-h4:text-lg prose-h4:text-zinc-900 dark:prose-h4:text-zinc-100;
+    @apply prose-h5:text-base prose-h5:text-zinc-900 dark:prose-h5:text-zinc-100;
     @apply prose-a:text-accent dark:prose-a:text-accent prose-a:underline;
+    @apply prose-pre:text-zinc-900 dark:prose-pre:text-zinc-100;
+    @apply prose-code:text-zinc-900 dark:prose-code:text-zinc-100;
+    @apply prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100 prose-strong:font-bold;
 }
 
 @font-face {
