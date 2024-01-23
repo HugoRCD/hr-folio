@@ -10,10 +10,11 @@ html, body, #__nuxt {
 
 .writing {
     @apply prose text-zinc-900 dark:text-zinc-100;
-    @apply prose-h1:text-3xl prose-h1:text-zinc-900 dark:prose-h1:text-zinc-100 prose-h1:font-newsreader prose-h1:italic prose-h1:font-bold;
+    @apply prose-h1:text-3xl prose-h1:text-zinc-900 dark:prose-h1:text-zinc-100 prose-h1:font-newsreader prose-h1:italic prose-h1:font-[600];
     @apply prose-h2:text-2xl;
     @apply prose-h3:text-xl;
     @apply prose-h4:text-lg;
+    @apply prose-a:text-accent dark:prose-a:text-accent prose-a:underline;
 }
 
 @font-face {
