@@ -12,9 +12,10 @@
     "lintfix": "eslint . --fix"
   },
   "devDependencies": {
+    "@nuxt/content": "^2.11.0",
     "@nuxt/eslint-config": "^0.2.0",
-    "eslint": "^8.56.0",
     "blanked": "latest",
+    "eslint": "^8.56.0",
     "nuxt": "latest",
     "vue": "^3.4.10",
     "vue-router": "^4.2.5"
