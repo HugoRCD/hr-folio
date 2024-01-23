@@ -13,9 +13,10 @@ const { socials } = useAppConfig();
     </h1>
   </div>
   <p class="text-balance font-light max-w-lg">
-    I like to make things, lots of things and i'm pretty good at it.
+    I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
+    I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
   </p>
-  <p class="blurred w-fit">
+  <p class="blurred">
     But also a fucking genius
   </p>
   <div class="mt-4 flex flex-col gap-2 w-fit">

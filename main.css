@@ -13,7 +13,7 @@ html, body, #__nuxt {
 
 /* Blurred line effect */
 .blurred {
-    @apply blur-[7px] hover:blur-[0px] transition-all duration-300;
+    @apply blur-[7px] hover:blur-[0px] w-fit transition-all duration-300;
 }
 
 .link {
