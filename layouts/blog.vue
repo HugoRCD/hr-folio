@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 justify-center items-center gap-3 p-6 sm:p-12">
+  <div class="flex flex-col justify-center items-center gap-3 p-6 sm:p-12">
     <LetterCard>
       <div class="flex w-full justify-between">
         <NuxtLink

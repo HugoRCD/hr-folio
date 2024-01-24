@@ -31,6 +31,13 @@ export default defineNuxtConfig({
     },
   },
 
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ['/'],
+    },
+  },
+
   css: ['~/assets/style/main.css'],
 
   devtools: { enabled: true }
