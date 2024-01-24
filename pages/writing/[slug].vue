@@ -1,20 +1,12 @@
 <script setup lang="ts">
-/*definePageMeta({
+definePageMeta({
   layout: "blog"
-})*/
+})
 </script>
 
 <template>
-  <div>
-    <NuxtLink
-      to="/"
-      class="cursor-pointer group absolute top-4 left-8 z-50 no-underline"
-    >
-      <span class="font-newsreader italic hover:text-accent">
-        go back
-      </span>
-    </NuxtLink>
-    <ContentDoc class="writing" />
+  <div class="overflow-y-auto">
+    <ContentDoc class="writing overflow-y-auto" />
   </div>
 </template>
 

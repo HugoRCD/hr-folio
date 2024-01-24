@@ -13,12 +13,12 @@ export default {
     extend: {
       colors: {
         dark: "rgb(2,2,2)",
-        light: "rgb(255,246,237)",
+        light: "rgb(248,243,238)",
         accent: "rgb(40,60,255)",
       },
       textColor: {
         dark: "rgb(2,2,2)",
-        light: "rgb(255,246,237)",
+        light: "rgb(248,243,238)",
         accent: "rgb(40,60,255)",
       },
       fontFamily: {
