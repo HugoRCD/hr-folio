@@ -5,10 +5,8 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="overflow-y-auto">
-    <ContentDoc class="writing overflow-y-auto" />
+  <div>
+    <ContentDoc class="writing" />
   </div>
 </template>
 
-<style scoped>
-</style>

@@ -8,7 +8,6 @@ const { data } = await useAsyncData("feed", () =>
 
 <template>
   <div>
-    <div class="absolute size-52 bg-white blur-[200px] rounded-full z-40 -top-56" />
     <div class="flex flex-col">
       <h2 class="text-lg font-newsreader italic">
         Hugo Richard
@@ -29,6 +28,7 @@ const { data } = await useAsyncData("feed", () =>
         v-for="post in data"
         :key="post.title"
         :to="post._path"
+        class="link"
       >
         {{ post.title }}
       </NuxtLink>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full justify-center items-center gap-3 p-6 sm:p-12">
+  <div class="flex flex-col flex-1 justify-center items-center gap-3 p-6 sm:p-12">
     <LetterCard>
       <div class="flex w-full justify-between">
         <NuxtLink
@@ -12,7 +12,7 @@
         </NuxtLink>
         <ThemeSelector />
       </div>
-      <NuxtPage class="flex-1 flex flex-col justify-center" />
+      <NuxtPage class="flex-1 flex flex-col justify-center mt-8" />
       <div class="flex justify-end">
         <Signature class="flex justify-end h-16 sm:h-20 fill-black dark:fill-white" />
       </div>
