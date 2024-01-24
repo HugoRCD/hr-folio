@@ -21,9 +21,9 @@ const { data } = await useAsyncData("feed", () =>
       I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
       I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
     </p>
-    <p class="blurred">
+    <!--    <p class="blurred">
       But also a fucking genius
-    </p>
+    </p>-->
     <div class="mt-4 flex flex-col gap-2 w-fit">
       <NuxtLink
         v-for="post in data"
