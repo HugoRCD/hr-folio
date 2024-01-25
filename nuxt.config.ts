@@ -20,6 +20,8 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
     preference: 'light',
+    fallback: 'light',
+    storageKey: 'hr-folio-color-mode',
   },
 
   content: {
