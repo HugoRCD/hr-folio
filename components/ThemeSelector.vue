@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <div class="flex flex-row transition-all duration-300 gap-2">
+    <div class="flex flex-row gap-2">
       <span
         class="cursor-pointer"
         :class="$colorMode.value !== 'dark' ? 'opacity-60' : 'opacity-100'"
