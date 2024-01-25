@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     "/": { isr: true, prerender: true },
   },
 
-  modules: ['blanked', '@nuxt/content'],
+  modules: ['blanked', '@nuxt/content', '@nuxthq/studio'],
 
   colorMode: {
     classSuffix: '',

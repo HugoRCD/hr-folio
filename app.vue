@@ -11,5 +11,3 @@
     </Body>
   </Html>
 </template>
-<script setup lang="ts">
-</script>
