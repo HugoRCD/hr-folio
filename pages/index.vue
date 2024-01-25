@@ -12,10 +12,10 @@ const { data } = await useAsyncData("feed", () =>
       <h2 class="text-lg font-newsreader italic">
         Hugo Richard
       </h2>
-      <h1 class="text-3xl font-newsreader italic text-accent">
+      <h1 class="text-2xl sm:text-3xl font-newsreader italic text-accent">
         Developer and Designer
       </h1>
-      <p class="text-balance font-light max-w-lg">
+      <p class="text-balance font-light max-w-lg text-sm sm:text-base">
         I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
         I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
       </p>
@@ -46,11 +46,11 @@ const { data } = await useAsyncData("feed", () =>
         <NuxtLink
           v-for="social in socials"
           :key="social.name"
-          class="link group cursor-pointer font-newsreader flex items-center gap-1 text-lg"
+          class="link group flex items-center"
           :to="social.link"
           target="_blank"
         >
-          {{ social.name }}<span class="i-lucide-arrow-up-right font-light hidden group-hover:block" />
+          {{ social.name }}<span class="i-lucide-arrow-up-right text-lg hidden group-hover:block" />
         </NuxtLink>
       </div>
     </div>
