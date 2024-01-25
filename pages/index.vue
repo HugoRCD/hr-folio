@@ -36,6 +36,12 @@ const { data } = await useAsyncData("feed", () =>
         >
           {{ post.title }}
         </NuxtLink>
+        <NuxtLink
+          to="/writing"
+          class="link text-sm"
+        >
+          See more
+        </NuxtLink>
       </div>
     </div>
     <div class="flex flex-col gap-2">
