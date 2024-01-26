@@ -20,16 +20,10 @@ export default {
         dark: "rgb(2,2,2)",
         light: "rgb(248,243,238)",
         accent: "rgb(40,60,255)",
-        muted: {
-          100: "rgb(248,243,238)",
-          200: "rgb(133,134,136)",
-          300: "rgb(138,139,141)",
-          500: "rgb(75, 83, 97)",
-          DEFAULT: "rgb(75, 83, 97)",
-        }
       },
       fontFamily: {
         newsreader: ["Newsreader", "serif"],
+        geist: ["Geist", "sans-serif"],
       }
     },
   },

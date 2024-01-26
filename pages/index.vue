@@ -24,7 +24,7 @@ useHead({
       <h1 class="text-2xl sm:text-3xl font-newsreader italic text-accent">
         Developer and Designer
       </h1>
-      <p class="text-balance font-light max-w-lg text-sm sm:text-base">
+      <p class="text-balance font-extralight max-w-lg text-sm sm:text-base">
         I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
         I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
       </p>
