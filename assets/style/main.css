@@ -20,7 +20,7 @@ html, body, #__nuxt, #__layout {
     @apply prose-a:text-accent dark:prose-a:text-accent prose-a:underline;
     @apply prose-pre:text-sm sm:prose-pre:text-base prose-pre:text-zinc-900 dark:prose-pre:text-zinc-100;
     @apply prose-code:text-zinc-900 dark:prose-code:text-zinc-100;
-    @apply prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100 prose-strong:font-bold;
+    @apply prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-strong:font-[500];
 }
 
 .contrast {
@@ -39,7 +39,7 @@ html, body, #__nuxt, #__layout {
 
 /* Blurred line effect */
 .blurred {
-    @apply blur-[3px] hover:blur-[0px] w-fit transition-all duration-300;
+    @apply blur-[3px] hover:blur-[0px] focus-within:blur-none focus:blur-none transition-all duration-300;
 }
 
 .link {
