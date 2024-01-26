@@ -4,6 +4,12 @@ export default defineNuxtConfig({
     head: {
       viewport: "width=device-width, initial-scale=1",
       charset: "utf-8",
+      meta: [
+        {
+          name: "author",
+          content: "Hugo Richard",
+        },
+      ],
     },
   },
 
@@ -11,7 +17,7 @@ export default defineNuxtConfig({
     "/": { isr: true, prerender: true },
   },
 
-  modules: ['blanked', '@nuxt/content', '@nuxthq/studio'],
+  modules: ['blanked', '@nuxt/content', '@nuxthq/studio', "@nuxt/image"],
 
   colorMode: {
     classSuffix: '',

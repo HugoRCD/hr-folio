@@ -18,8 +18,14 @@ useHead({
       data-animate
       style="--stagger: 1"
     >
-      <h2 class="text-lg font-newsreader italic">
+      <h2 class="group w-fit text-lg font-newsreader italic">
         Hugo Richard
+        <NuxtImg
+          src="/hugo.webp"
+          alt="Hugo Richard"
+          class="absolute left-0 transform sm:-translate-y-56 -translate-y-36
+           size-24 sm:size-36 object-cover rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+        />
       </h2>
       <h1 class="text-2xl sm:text-3xl font-newsreader italic text-accent">
         Developer and Designer
@@ -49,6 +55,7 @@ useHead({
         <NuxtLink
           to="/writing"
           class="link text-sm"
+          aria-label="See more, go to writing page"
         >
           See more
         </NuxtLink>
