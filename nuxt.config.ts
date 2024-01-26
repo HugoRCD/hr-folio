@@ -5,10 +5,6 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
       charset: "utf-8",
     },
-    pageTransition: {
-      name: "fade",
-      mode: "out-in",
-    },
   },
 
   routeRules: {
