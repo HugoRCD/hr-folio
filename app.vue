@@ -3,7 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/nuxt";
 const { appName } = useAppConfig();
 
 useHead({
-  titleTemplate: `%s | ${appName}`,
+  titleTemplate: `%s - ${appName}`,
   link: [
     {
       rel: "icon",
