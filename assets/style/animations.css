@@ -28,8 +28,7 @@
 
 [data-animate] {
     --stagger: 0;
-    --delay: 180ms;
-
+    --delay: 80ms;
     --start: 0ms;
 }
 

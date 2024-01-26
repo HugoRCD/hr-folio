@@ -1,5 +1,5 @@
 export default defineAppConfig({
-    appName: "HR Folio",
+    appName: "Hugo Richard - Developer & Designer",
     appDescription: "Hugo Richard Portfolio",
     footerName: "HugoRCD",
     email: "contact@hrcd.fr",

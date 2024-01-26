@@ -1,14 +1,23 @@
 <script setup lang="ts">
-const { socials } = useAppConfig();
+const { socials, appName } = useAppConfig();
 
 const { data } = await useAsyncData("feed", () =>
     queryContent("/writing").sort({ date: -1 }).find()
 );
+
+useHead({
+  title: "",
+  titleTemplate: appName
+});
 </script>
 
 <template>
   <div class="flex flex-col gap-8">
-    <div class="flex flex-col">
+    <div
+      class="flex flex-col"
+      data-animate
+      style="--stagger: 1"
+    >
       <h2 class="text-lg font-newsreader italic">
         Hugo Richard
       </h2>
@@ -20,10 +29,11 @@ const { data } = await useAsyncData("feed", () =>
         I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
       </p>
     </div>
-    <!--    <p class="blurred">
-      But also a fucking genius
-    </p>-->
-    <div class="flex flex-col gap-2">
+    <div
+      class="flex flex-col gap-2"
+      data-animate
+      style="--stagger: 2"
+    >
       <h2 class="italic font-newsreader text-xl">
         Writing
       </h2>
@@ -44,7 +54,11 @@ const { data } = await useAsyncData("feed", () =>
         </NuxtLink>
       </div>
     </div>
-    <div class="flex flex-col gap-2">
+    <div
+      class="flex flex-col gap-2"
+      data-animate
+      style="--stagger: 3"
+    >
       <h2 class="italic font-newsreader text-xl">
         Socials
       </h2>
