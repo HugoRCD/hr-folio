@@ -12,14 +12,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        dark: "rgb(2,2,2)",
-        light: "rgb(248,243,238)",
-        accent: "rgb(40,60,255)",
+        dark: "var(--dark-color)",
+        light: "var(--light-color)",
+        accent: "var(--accent-color)",
       },
       textColor: {
-        dark: "rgb(2,2,2)",
-        light: "rgb(248,243,238)",
-        accent: "rgb(40,60,255)",
+        dark: "var(--dark-color)",
+        light: "var(--light-color)",
+        accent: "var(--accent-color)",
+        muted: "var(--muted-color)",
       },
       fontFamily: {
         newsreader: ["Newsreader", "serif"],
