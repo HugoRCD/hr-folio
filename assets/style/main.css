@@ -8,6 +8,17 @@ html, body, #__nuxt, #__layout {
     @apply text-zinc-900 dark:text-zinc-100 font-geist;
     @apply transition-colors duration-300 ease-in-out bg-light dark:bg-dark;
     @apply selection:bg-accent selection:text-light;
+
+    --accent-color: rgb(40,60,255);
+    scrollbar-width: thin;
+}
+
+html.light {
+    scrollbar-color: var(--accent-color) transparent;
+}
+
+html.dark {
+    scrollbar-color: var(--accent-color) #1f2937;
 }
 
 .writing {
@@ -43,5 +54,5 @@ html, body, #__nuxt, #__layout {
 }
 
 .link {
-    @apply italic hover:text-accent dark:hover:text-accent hover:underline;
+    @apply italic font-extralight hover:text-accent dark:hover:text-accent hover:underline;
 }

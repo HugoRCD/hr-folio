@@ -18,19 +18,18 @@ useHead({
       data-animate
       style="--stagger: 1"
     >
-      <h2 class="group w-fit text-lg font-newsreader italic">
+      <NuxtImg
+        src="/hugo.webp"
+        alt="Hugo Richard"
+        class="size-20 object-cover rounded-full mb-2"
+      />
+      <h2 class="w-fit text-lg font-newsreader italic">
         Hugo Richard
-        <NuxtImg
-          src="/hugo.webp"
-          alt="Hugo Richard"
-          class="absolute left-0 transform sm:-translate-y-56 -translate-y-36
-           size-24 sm:size-36 object-cover rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
-        />
       </h2>
       <h1 class="text-2xl sm:text-3xl font-newsreader italic text-accent">
         Developer and Designer
       </h1>
-      <p class="text-balance font-extralight max-w-lg text-sm sm:text-base">
+      <p class="text-pretty font-extralight max-w-[600px] text-sm sm:text-base">
         I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
         I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
       </p>
@@ -48,13 +47,13 @@ useHead({
           v-for="post in data"
           :key="post.title"
           :to="post._path"
-          class="link"
+          class="link font-extralight"
         >
           {{ post.title }}
         </NuxtLink>
         <NuxtLink
           to="/writing"
-          class="link text-sm"
+          class="link text-sm font-[400]"
           aria-label="See more, go to writing page"
         >
           See more
