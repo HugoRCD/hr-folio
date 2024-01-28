@@ -120,7 +120,7 @@ const { data, pending, error, refresh } = useFetch("your_url", {
 });
 
 function loadData() {
-  refresh();
+  await refresh();
 }
 </script>
 
