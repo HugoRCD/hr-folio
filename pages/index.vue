@@ -68,7 +68,7 @@ useHead({
       <h2 class="italic font-newsreader text-xl">
         Socials
       </h2>
-      <div class="flex flex-col gap-2 w-fit">
+      <div class="grid grid-cols-3 gap-2 w-fit">
         <NuxtLink
           v-for="social in socials"
           :key="social.name"
@@ -76,7 +76,7 @@ useHead({
           :to="social.link"
           target="_blank"
         >
-          {{ social.name }}<span class="i-lucide-arrow-up-right text-lg hidden group-hover:block" />
+          {{ social.name }}<span class="i-lucide-arrow-up-right text-lg opacity-0 group-hover:opacity-100" />
         </NuxtLink>
       </div>
     </div>
