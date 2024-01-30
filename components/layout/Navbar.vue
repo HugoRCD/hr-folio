@@ -6,7 +6,7 @@
     <NuxtLink
       v-if="$route.path !== '/'"
       to="/"
-      class="cursor-pointer group"
+      class="group cursor-pointer"
     >
       <span class="font-newsreader italic hover:text-accent hover:underline">
         go back

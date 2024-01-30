@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col min-h-screen justify-center items-center p-4 sm:p-12">
+  <div class="flex min-h-screen flex-col items-center justify-center p-4 sm:p-12">
     <LayoutLetterCard>
       <LayoutNavbar />
-      <NuxtPage class="flex-1 flex flex-col justify-center mt-4" />
+      <NuxtPage class="mt-4 flex flex-1 flex-col justify-center" />
       <LayoutFooter />
     </LayoutLetterCard>
   </div>

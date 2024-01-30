@@ -18,6 +18,8 @@
     "@nuxthq/studio": "^1.0.10",
     "@vercel/analytics": "^1.1.2",
     "@vercel/speed-insights": "^1.0.8",
+    "eslint-plugin-tailwindcss": "^3.14.1",
+    "vue-eslint-parser": "^9.4.2",
     "blanked": "latest",
     "eslint": "^8.56.0",
     "nuxt": "latest",

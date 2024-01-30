@@ -21,15 +21,15 @@ useHead({
       <NuxtImg
         src="/hugo.webp"
         alt="Hugo Richard"
-        class="size-20 object-cover rounded-full mb-2"
+        class="mb-2 size-20 rounded-full object-cover"
       />
-      <h2 class="w-fit text-lg font-newsreader italic">
+      <h2 class="w-fit font-newsreader text-lg italic">
         Hugo Richard
       </h2>
-      <h1 class="text-2xl sm:text-3xl font-newsreader italic text-accent">
+      <h1 class="font-newsreader text-2xl italic text-accent sm:text-3xl">
         Developer and Designer
       </h1>
-      <p class="text-pretty font-extralight max-w-[600px] text-sm sm:text-base">
+      <p class="max-w-[600px] text-pretty text-sm font-extralight sm:text-base">
         I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
         I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
       </p>
@@ -39,10 +39,10 @@ useHead({
       data-animate
       style="--stagger: 2"
     >
-      <h2 class="italic font-newsreader text-xl">
+      <h2 class="font-newsreader text-xl italic">
         Writing
       </h2>
-      <div class="flex flex-col gap-2 w-fit">
+      <div class="flex w-fit flex-col gap-2">
         <NuxtLink
           v-for="post in data"
           :key="post.title"
@@ -65,10 +65,10 @@ useHead({
       data-animate
       style="--stagger: 3"
     >
-      <h2 class="italic font-newsreader text-xl">
+      <h2 class="font-newsreader text-xl italic">
         Socials
       </h2>
-      <div class="grid grid-cols-3 gap-2 w-fit">
+      <div class="grid w-fit grid-cols-3 gap-2">
         <NuxtLink
           v-for="social in socials"
           :key="social.name"

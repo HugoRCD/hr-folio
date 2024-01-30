@@ -10,10 +10,10 @@ useHead({
 
 <template>
   <div class="flex flex-col gap-2">
-    <h2 class="italic font-newsreader text-xl">
+    <h2 class="font-newsreader text-xl italic">
       Writing
     </h2>
-    <div class="flex flex-col gap-2 w-fit">
+    <div class="flex w-fit flex-col gap-2">
       <NuxtLink
         v-for="(post, index) in data"
         :key="post.title"
