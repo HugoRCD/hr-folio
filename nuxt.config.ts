@@ -19,6 +19,12 @@ export default defineNuxtConfig({
 
   modules: ['blanked', '@nuxt/content', '@nuxthq/studio', "@nuxt/image"],
 
+  runtimeConfig: {
+    public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+    }
+  },
+
   colorMode: {
     classSuffix: '',
     preference: 'light',

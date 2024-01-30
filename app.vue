@@ -46,7 +46,14 @@ useHead({
       <NuxtLayout class="bg-light dark:bg-dark">
         <NuxtPage />
       </NuxtLayout>
-      <Toasts />
+      <Toasts
+        position="top-center"
+        :toast-options="{
+          style: {
+            backgroundColor: 'var(--background-color)',
+          }
+        }"
+      />
     </Body>
   </Html>
 </template>
