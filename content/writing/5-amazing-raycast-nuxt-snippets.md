@@ -1,6 +1,11 @@
 ---
 title: "5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects"
 date: "22/01/2024"
+path: /writing/5-amazing-raycast-nuxt-snippets
+ogImage:
+  component: BlogPost
+  props:
+    title: 5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects
 ---
 
 # 5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects

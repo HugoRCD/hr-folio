@@ -1,6 +1,11 @@
 ---
 title: "You are not an impostor"
 date: "11/01/2024"
+path: /writing/not-an-impostor
+ogImage:
+  component: BlogPost
+  props:
+    title: You are not an impostor
 ---
 
 # Your story is worth telling

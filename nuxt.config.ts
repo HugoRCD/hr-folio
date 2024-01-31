@@ -20,6 +20,12 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
   },
 
+  ogImage: {
+    componentOptions: {
+      global: true,
+    }
+  },
+
   routeRules: {
     "/": { isr: true, prerender: true },
   },
@@ -68,6 +74,7 @@ export default defineNuxtConfig({
   image: {
     screens: {
       avatar: 80,
+      small: 160,
     },
   },
 })
