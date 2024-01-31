@@ -13,11 +13,18 @@ export default defineNuxtConfig({
     },
   },
 
+  site: {
+    url: 'https://hrcd.fr',
+    name: 'Hugo Richard',
+    description: 'Hugo Richard\'s personal website',
+    defaultLocale: 'en',
+  },
+
   routeRules: {
     "/": { isr: true, prerender: true },
   },
 
-  modules: ['blanked', '@nuxt/content', '@nuxthq/studio', "@nuxt/image"],
+  modules: ['blanked', '@nuxt/content', '@nuxthq/studio', "@nuxt/image", "@nuxtjs/seo"],
 
   runtimeConfig: {
     public: {
@@ -44,11 +51,23 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ['/'],
+      routes: ['/', '/sitemap.xml'],
     },
+  },
+
+  sitemap: {
+    sources: [
+      '/api/__sitemap__/urls'
+    ]
   },
 
   css: ['~/assets/style/main.css'],
 
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+
+  image: {
+    screens: {
+      avatar: 80,
+    },
+  },
 })
