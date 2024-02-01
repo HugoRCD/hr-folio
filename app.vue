@@ -43,9 +43,13 @@ useHead({
       <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
         <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[7%]" />
       </div>
-      <NuxtLayout class="bg-light dark:bg-dark">
-        <NuxtPage />
-      </NuxtLayout>
+      <main class="flex min-h-screen flex-col items-center justify-center bg-light p-4 dark:bg-dark sm:p-12">
+        <LayoutLetterCard>
+          <LayoutNavbar />
+          <NuxtPage class="mt-4 flex flex-1 flex-col justify-center" />
+          <LayoutFooter />
+        </LayoutLetterCard>
+      </main>
       <Toasts
         position="top-center"
         :toast-options="{

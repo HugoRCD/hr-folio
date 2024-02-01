@@ -20,12 +20,6 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
   },
 
-  ogImage: {
-    componentOptions: {
-      global: true,
-    }
-  },
-
   routeRules: {
     "/": { isr: true, prerender: true },
   },
@@ -46,6 +40,7 @@ export default defineNuxtConfig({
   },
 
   content: {
+    documentDriven: true,
     highlight: {
       theme: "github-dark",
     },

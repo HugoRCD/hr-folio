@@ -10,7 +10,7 @@ useHead({
   titleTemplate: appName
 });
 
-defineOgImage();
+defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home image" });
 </script>
 
 <template>
