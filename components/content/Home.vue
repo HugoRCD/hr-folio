@@ -1,14 +1,11 @@
 <script setup lang="ts">
-const { socials, appName } = useAppConfig();
+const { socials } = useAppConfig();
 
 const { data } = await useAsyncData("feed", () =>
     queryContent("/writing").sort({ date: -1 }).find()
 );
 
-useHead({
-  title: "",
-  titleTemplate: appName
-});
+defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home image" });
 </script>
 
 <template>
@@ -23,6 +20,7 @@ useHead({
         alt="Hugo Richard"
         width="80"
         height="80"
+        sizes="160"
         class="mb-2 size-20 rounded-full object-cover"
       />
       <h2 class="w-fit font-newsreader text-lg italic">

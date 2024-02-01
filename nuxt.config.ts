@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   site: {
     url: 'https://hrcd.fr',
     name: 'Hugo Richard',
-    description: 'Hugo Richard\'s personal website',
+    description: 'Hugo Richard, french developer and designer based in Nice.',
     defaultLocale: 'en',
   },
 
@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   },
 
   content: {
+    documentDriven: true,
     highlight: {
       theme: "github-dark",
     },
@@ -68,6 +69,7 @@ export default defineNuxtConfig({
   image: {
     screens: {
       avatar: 80,
+      small: 160,
     },
   },
 })

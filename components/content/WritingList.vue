@@ -2,10 +2,6 @@
 const { data } = await useAsyncData("feed", () =>
     queryContent("/writing").sort({ date: -1 }).find()
 );
-
-useHead({
-  title: "Writing",
-});
 </script>
 
 <template>
