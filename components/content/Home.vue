@@ -1,14 +1,9 @@
 <script setup lang="ts">
-const { socials, appName } = useAppConfig();
+const { socials } = useAppConfig();
 
 const { data } = await useAsyncData("feed", () =>
     queryContent("/writing").sort({ date: -1 }).find()
 );
-
-useHead({
-  title: "",
-  titleTemplate: appName
-});
 
 defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home image" });
 </script>
