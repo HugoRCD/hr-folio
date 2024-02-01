@@ -16,6 +16,7 @@ const { data } = await useAsyncData("feed", () =>
         :to="post._path"
         class="link"
         data-animate
+        :aria-label="`Read ${post.title}`"
         :style="{ '--stagger': index }"
       >
         {{ post.title }}

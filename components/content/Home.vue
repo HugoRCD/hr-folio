@@ -48,13 +48,14 @@ defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home
           :key="post.title"
           :to="post._path"
           class="link font-extralight"
+          :aria-label="`Read ${post.title}`"
         >
           {{ post.title }}
         </NuxtLink>
         <NuxtLink
           to="/writing"
           class="link text-sm font-[400]"
-          aria-label="See more, go to writing page"
+          aria-label="See more, go to all articles, writing, etc ..."
         >
           See more
         </NuxtLink>
@@ -73,6 +74,7 @@ defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home
           v-for="social in socials"
           :key="social.name"
           class="link group flex items-center"
+          :aria-label="`Go to ${social.name} profile`"
           :to="social.link"
           target="_blank"
         >
