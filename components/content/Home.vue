@@ -39,10 +39,10 @@ defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home
       data-animate
       style="--stagger: 2"
     >
-      <h2 class="font-newsreader text-xl italic">
+      <h2 class="font-newsreader text-xl font-medium italic">
         Writing
       </h2>
-      <div class="flex w-fit flex-col gap-2">
+      <div class="flex w-fit flex-col gap-3">
         <NuxtLink
           v-for="post in data"
           :key="post.title"
@@ -54,9 +54,10 @@ defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home
         </NuxtLink>
         <NuxtLink
           to="/writing"
-          class="link text-sm font-[400]"
+          class="link mt-2 font-[400]"
           aria-label="See more, go to all articles, writing, etc ..."
         >
+          <span class="sr-only">More writing</span>
           See more
         </NuxtLink>
       </div>
@@ -66,7 +67,7 @@ defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home
       data-animate
       style="--stagger: 3"
     >
-      <h2 class="font-newsreader text-xl italic">
+      <h2 class="font-newsreader text-xl font-medium italic">
         Socials
       </h2>
       <div class="grid w-fit grid-cols-3 gap-2">
