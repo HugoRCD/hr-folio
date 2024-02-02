@@ -55,7 +55,7 @@
     animation: none;
 }
 
-
+/* Dark/Light reveal effect */
 ::view-transition-group(root) {
     animation-duration: 0.6s;
 }

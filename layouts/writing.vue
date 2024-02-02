@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SpeedInsights } from "@vercel/speed-insights/nuxt";
+const { og, link } = useAppConfig();
 const { name } = useSiteConfig();
 
 useHead({
@@ -7,34 +8,7 @@ useHead({
   htmlAttrs: {
     lang: "en",
   },
-  link: [
-    {
-      rel: "icon",
-      type: "image/x-icon",
-      href: "/favicon.ico",
-    },
-    {
-      rel: "apple-touch-icon",
-      sizes: "180x180",
-      href: "/apple-touch-icon.png",
-    },
-    {
-      rel: "icon",
-      type: "image/png",
-      sizes: "32x32",
-      href: "/favicon-32x32.png",
-    },
-    {
-      rel: "icon",
-      type: "image/png",
-      sizes: "16x16",
-      href: "/favicon-16x16.png",
-    },
-    {
-      rel: "manifest",
-      href: "/site.webmanifest",
-    },
-  ],
+  link
 })
 </script>
 
@@ -48,7 +22,7 @@ useHead({
     <main class="flex min-h-screen flex-col items-center justify-center bg-light p-4 dark:bg-dark sm:p-12">
       <LayoutLetterCard>
         <LayoutNavbar />
-        <ContentDoc class="writing" />
+        <ContentDoc class="writing mt-6" />
         <LayoutFooter />
       </LayoutLetterCard>
     </main>
