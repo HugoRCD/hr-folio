@@ -31,7 +31,7 @@ useHead({
       close-button
       :toast-options="{
         style: {
-          backgroundColor: 'var(--background-color)',
+          backgroundColor: 'var(--primary-color)'
         }
       }"
     />
