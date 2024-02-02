@@ -12,16 +12,7 @@ type Work = {
   name: string;
   logo: string;
   image: string;
-  description: {
-    short: {
-      en: string;
-      fr: string;
-    };
-    long?: {
-      en: string;
-      fr: string;
-    };
-  };
+  description: string;
   link: string | "soon";
   tags: string[];
   release: string;
