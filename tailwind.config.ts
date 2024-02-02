@@ -12,14 +12,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        dark: "rgb(2,2,2)",
-        light: "rgb(255,255,255)",
-        accent: "rgb(40,60,255)",
+        primary: "var(--primary-color)",
+        accent: "var(--accent-color)",
       },
       textColor: {
-        dark: "rgb(2,2,2)",
-        light: "rgb(255,255,255)",
-        accent: "rgb(40,60,255)",
+        primary: "var(--text-primary)",
+        secondary: "var(--text-secondary)",
+        tertiary: "var(--text-tertiary)",
+        accent: "var(--accent-color)",
+      },
+      borderColor: {
+        main: "var(--border-color)",
       },
       fontFamily: {
         newsreader: ["Newsreader", "serif"],

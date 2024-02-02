@@ -1,23 +1,27 @@
 <template>
   <ClientOnly>
-    <div
-      class="flex flex-row gap-2"
-    >
-      <span
-        class="cursor-pointer"
-        :class="$colorMode.value !== 'dark' ? 'opacity-60' : 'opacity-100'"
+    <div class="flex flex-row gap-2 text-secondary">
+      <div
+        class="flex cursor-pointer items-center gap-2"
         @click="startViewTransition('dark')"
       >
-        Dark
-      </span>
-      /
-      <span
-        class="cursor-pointer"
-        :class="$colorMode.value !== 'light' ? 'opacity-60' : 'opacity-100'"
+        <div
+          class="size-3 border-2 border-black dark:border-white"
+          :class="{ 'bg-black dark:bg-white': $colorMode.value === 'dark' }"
+        />
+        <span>Dark</span>
+      </div>
+      <span>|</span>
+      <div
+        class="flex cursor-pointer items-center gap-2"
         @click="startViewTransition('light')"
       >
-        Light
-      </span>
+        <div
+          class="size-3 border-2 border-black dark:border-white"
+          :class="{ 'bg-black dark:bg-white': $colorMode.value === 'light' }"
+        />
+        <span>Light</span>
+      </div>
     </div>
     <template #fallback>
       <div class="h-6" />

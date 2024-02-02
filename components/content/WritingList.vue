@@ -17,36 +17,27 @@ props.mode === "home" ? data.value!.slice(0, 3) : data;
 </script>
 
 <template>
-  <div
-    class="flex flex-col gap-2"
-    data-animate
-    style="--stagger: 2"
-  >
-    <h2 class="font-newsreader text-xl italic">
-      Writing
-    </h2>
-    <div class="flex w-fit flex-col gap-3">
-      <NuxtLink
-        v-for="(post, index) in data"
-        :key="post.title"
-        :to="post._path"
-        class="link"
-        data-animate
-        :aria-label="`Read ${post.title}`"
-        :style="{ '--stagger': index }"
-      >
-        {{ post.title }}
-      </NuxtLink>
-      <NuxtLink
-        v-if="mode === 'home'"
-        to="/writing"
-        class="link mt-2 font-[400]"
-        aria-label="See more, go to all articles, writing, etc ..."
-      >
-        <span class="sr-only">More writing</span>
-        See more
-      </NuxtLink>
-    </div>
+  <div class="flex w-fit flex-col gap-3">
+    <NuxtLink
+      v-for="(post, index) in data"
+      :key="post.title"
+      :to="post._path"
+      class="link"
+      data-animate
+      :aria-label="`Read ${post.title}`"
+      :style="{ '--stagger': index }"
+    >
+      {{ post.title }}
+    </NuxtLink>
+    <NuxtLink
+      v-if="mode === 'home'"
+      to="/writing"
+      class="link mt-2 font-[400]"
+      aria-label="See more, go to all articles, writing, etc ..."
+    >
+      <span class="sr-only">More writing</span>
+      See more
+    </NuxtLink>
   </div>
 </template>
 

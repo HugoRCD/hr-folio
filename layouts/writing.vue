@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { SpeedInsights } from "@vercel/speed-insights/nuxt";
-const { og, link } = useAppConfig();
-const { name } = useSiteConfig();
+const { link } = useAppConfig();
 
 useHead({
   titleTemplate: "",
