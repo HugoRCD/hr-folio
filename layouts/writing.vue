@@ -4,7 +4,7 @@ const { og, link } = useAppConfig();
 const { name } = useSiteConfig();
 
 useHead({
-  titleTemplate: `%s | ${name}`,
+  titleTemplate: "",
   htmlAttrs: {
     lang: "en",
   },
@@ -23,6 +23,7 @@ useHead({
       <LayoutLetterCard>
         <LayoutNavbar />
         <ContentDoc class="writing mt-6" />
+        <CopyLink />
         <LayoutFooter />
       </LayoutLetterCard>
     </main>

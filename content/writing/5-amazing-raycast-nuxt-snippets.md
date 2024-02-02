@@ -7,6 +7,8 @@ head:
   meta:
     - name: "og:image"
       content: "/writing/5-raycast-snippets.jpg"
+    - name: "twitter:image"
+      content: "/writing/5-raycast-snippets.jpg"
 layout: writing
 ---
 

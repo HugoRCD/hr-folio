@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { SpeedInsights } from "@vercel/speed-insights/nuxt";
-const { og, link } = useAppConfig();
+const { link } = useAppConfig();
 const { name, description } = useSiteConfig();
 
 useSeoMeta({
   title: name,
   twitterTitle: name,
   twitterDescription: description,
-  twitterImage: og.image,
   twitterCard: 'summary_large_image'
 })
 

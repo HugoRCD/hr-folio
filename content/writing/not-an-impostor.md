@@ -7,6 +7,8 @@ head:
   meta:
     - name: "og:image"
       content: "/writing/trap-of-perfection.jpg"
+    - name: "twitter:image"
+      content: "/writing/trap-of-perfection.jpg"
 layout: writing
 ---
 
