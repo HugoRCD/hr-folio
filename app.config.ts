@@ -1,7 +1,10 @@
 export default defineAppConfig({
-    appName: "Hugo Richard, Developer & Designer",
-    appDescription: "Hugo Richard Portfolio",
-    footerName: "HugoRCD",
+    description: "Hugo Richard, french developer and designer based in Nice.",
+    og: {
+        site_name: "Hugo Richard",
+        type: "website",
+        image: "https://hrcd.fr/social-preview.jpg",
+    },
     email: "contact@hrcd.fr",
     phone: "(+33) 6 21 56 22 18",
     socials: [

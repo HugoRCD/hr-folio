@@ -3,14 +3,17 @@ title: "You are not an impostor"
 description: "Your story is worth telling, and you are not alone in this journey. Here's how to overcome the trap of perfection and embrace your authenticity."
 date: "11/01/2024"
 image: /writing/trap-of-perfection.jpg
-head.image: /writing/trap-of-perfection.jpg
+head:
+  meta:
+    - name: "og:image"
+      content: "/writing/trap-of-perfection.jpg"
 layout: writing
 ---
 
 # Your story is worth telling
 
-In the theater of content creation, there are many who, backstage, whisper a phrase tinged with doubt: *
-*_"I'm not legitimate, others are so much better"_**. This sound of insecurity, often played over and over in the minds
+In the theater of content creation, there are many who, backstage, whisper a phrase tinged with doubt: 
+**_"I'm not legitimate, others are so much better"_**. This sound of insecurity, often played over and over in the minds
 of emerging creators, is the first act of a much larger work: the conquest of one's own legitimacy.
 
 Imagine yourself standing at the edge of the stage, dazzled by the spotlight of self-judgment. Every creator goes

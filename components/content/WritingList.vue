@@ -25,7 +25,7 @@ props.mode === "home" ? data.value!.slice(0, 3) : data;
     <h2 class="font-newsreader text-xl italic">
       Writing
     </h2>
-    <div class="flex w-fit flex-col gap-2">
+    <div class="flex w-fit flex-col gap-3">
       <NuxtLink
         v-for="(post, index) in data"
         :key="post.title"

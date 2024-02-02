@@ -15,7 +15,7 @@ export default defineNuxtConfig({
 
   site: {
     url: 'https://hrcd.fr',
-    name: 'Hugo Richard',
+    name: 'Hugo Richard - Developer & Designer',
     description: 'Hugo Richard, french developer and designer based in Nice.',
     defaultLocale: 'en',
     indexable: true,
