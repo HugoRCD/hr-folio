@@ -25,7 +25,6 @@ html.light {
 html.dark {
     scrollbar-color: var(--accent-color) #1f2937;
     --background-color: rgb(2,2,2);
-
 }
 
 .writing {
