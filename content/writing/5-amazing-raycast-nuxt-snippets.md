@@ -3,7 +3,10 @@ title: "5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects"
 description: "Discover 5 powerful Raycast snippets that can transform your Nuxt and Vue development workflow, saving time and enhancing productivity."
 date: "22/01/2024"
 image: /writing/5-raycast-snippets.jpg
-head.image: /writing/5-raycast-snippets.jpg
+head:
+  meta:
+    - name: "og:image"
+      content: "/writing/5-raycast-snippets.jpg"
 layout: writing
 ---
 
@@ -38,20 +41,19 @@ in your project.
 **Usage Example:** Use `!comp` to quickly create new Vue components, ensuring consistency and saving time on setup.
 
 ```vue
-
 <script setup lang="ts">
-  import type { PropType } from "vue";
+import type { PropType } from "vue";
 
-  const props = defineProps({
-    item: {type: String, required: true}
-  });
+const props = defineProps({
+  item: {
+    type: String, 
+    required: true}
+});
 </script>
 
 <template>
-   
   <div>
-        <h1>{{ item }}</h1>
-     
+    <h1>{{ item }}</h1>
   </div>
 </template>
 
@@ -89,44 +91,25 @@ and cleanly. the { clipboard } while be replaced by your actual clipboard.
 ```ts
 import { defineStore } from 'pinia';
 
-type
-{
-  clipboard
-}
-Store = {
+type {clipboard}Store = {
   count: number;
 }
 
-export const use
-{
-  clipboard
-}
-Store = defineStore('{clipboard}', {
-  state: (): { clipboard }Store
-=>
-({
+export const use{clipboard}Store = defineStore('{clipboard}', {
+  state: (): {clipboard}Store => ({
   count: 0,
 }),
-  getters
-:
-{
-  getCount()
-:
-  number
-  {
+  getters: {
+  getCount(): number {
     return this.count;
   }
-}
-,
+},
 actions: {
-  increment()
-  {
+  increment() {
     this.count++;
-  }
-,
+  },
 }
-})
-;
+});
 ```
 
 ### Composable Function Template: `!cps`
@@ -138,22 +121,12 @@ creating these functions, aiding in maintaining a clean and modular codebase.
 code reusability and maintainability.
 
 ```ts
-export function use {
-  clipboard
-}
-
-()
-{
+export function use{clipboard}() {
   const {clipboard} = ref(null);
 
   // Composable logic
 
-  return {
-  {
-    clipboard
-  }
-}
-  ;
+  return { {clipboard} };
 }
 ```
 
@@ -166,7 +139,6 @@ requests, handling loading states, and managing errors, all within a component.
 structure for data fetching and state management.
 
 ```vue
-
 <script setup lang="ts">
   const {data, pending, error, refresh} = useFetch("your_url", {
     immediate: false,

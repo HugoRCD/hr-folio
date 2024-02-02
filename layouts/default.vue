@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { SpeedInsights } from "@vercel/speed-insights/nuxt";
 const { og, link } = useAppConfig();
-const { name } = useSiteConfig();
+const { name, description } = useSiteConfig();
+
+useSeoMeta({
+  title: name,
+  twitterTitle: name,
+  twitterDescription: description,
+  twitterImage: og.image,
+  twitterCard: 'summary_large_image'
+})
 
 useHead({
-  titleTemplate: `%s | ${name}`,
+  titleTemplate: name,
   htmlAttrs: {
     lang: "en",
   },
@@ -22,7 +30,7 @@ useHead({
     <main class="flex min-h-screen flex-col items-center justify-center bg-light p-4 dark:bg-dark sm:p-12">
       <LayoutLetterCard>
         <LayoutNavbar />
-        <ContentDoc class="writing mt-6" />
+        <ContentDoc class="mt-4 flex flex-1 flex-col justify-center gap-8" />
         <LayoutFooter />
       </LayoutLetterCard>
     </main>
