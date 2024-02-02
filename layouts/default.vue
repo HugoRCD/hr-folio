@@ -36,7 +36,7 @@ useHead({
 </script>
 
 <template>
-  <Html lang="en">
+  <div>
     <Body class="relative">
       <SpeedInsights />
       <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-light dark:blur-[200px] sm:size-72" />
@@ -46,7 +46,7 @@ useHead({
       <main class="flex min-h-screen flex-col items-center justify-center bg-light p-4 dark:bg-dark sm:p-12">
         <LayoutLetterCard>
           <LayoutNavbar />
-          <NuxtPage class="mt-4 flex flex-1 flex-col justify-center" />
+          <slot class="mt-4 flex flex-1 flex-col justify-center gap-8" />
           <LayoutFooter />
         </LayoutLetterCard>
       </main>
@@ -59,5 +59,6 @@ useHead({
         }"
       />
     </Body>
-  </Html>
+  </div>
 </template>
+

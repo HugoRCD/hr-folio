@@ -17,7 +17,11 @@ props.mode === "home" ? data.value!.slice(0, 3) : data;
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div
+    class="flex flex-col gap-2"
+    data-animate
+    style="--stagger: 2"
+  >
     <h2 class="font-newsreader text-xl italic">
       Writing
     </h2>

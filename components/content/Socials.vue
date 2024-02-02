@@ -5,6 +5,8 @@ const { socials } = useAppConfig();
 <template>
   <div
     class="flex flex-col gap-2"
+    data-animate
+    style="--stagger: 3"
   >
     <h2 class="font-newsreader text-xl font-medium italic">
       Socials
