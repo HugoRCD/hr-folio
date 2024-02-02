@@ -1,13 +1,3 @@
-<script setup lang="ts">
-const { socials } = useAppConfig();
-
-const { data } = await useAsyncData("feed", () =>
-    queryContent("/writing").sort({ date: -1 }).find()
-);
-
-defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home image" });
-</script>
-
 <template>
   <div class="flex flex-col gap-8">
     <div
@@ -34,55 +24,15 @@ defineOgImage({ url: '/social-preview.jpg', width: 1200, height: 630, alt: "Home
         I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
       </p>
     </div>
-    <div
-      class="flex flex-col gap-2"
+    <WritingList
+      mode="home"
       data-animate
       style="--stagger: 2"
-    >
-      <h2 class="font-newsreader text-xl font-medium italic">
-        Writing
-      </h2>
-      <div class="flex w-fit flex-col gap-3">
-        <NuxtLink
-          v-for="post in data"
-          :key="post.title"
-          :to="post._path"
-          class="link font-extralight"
-          :aria-label="`Read ${post.title}`"
-        >
-          {{ post.title }}
-        </NuxtLink>
-        <NuxtLink
-          to="/writing"
-          class="link mt-2 font-[400]"
-          aria-label="See more, go to all articles, writing, etc ..."
-        >
-          <span class="sr-only">More writing</span>
-          See more
-        </NuxtLink>
-      </div>
-    </div>
-    <div
-      class="flex flex-col gap-2"
+    />
+    <Socials
       data-animate
       style="--stagger: 3"
-    >
-      <h2 class="font-newsreader text-xl font-medium italic">
-        Socials
-      </h2>
-      <div class="grid w-fit grid-cols-3 gap-2">
-        <NuxtLink
-          v-for="social in socials"
-          :key="social.name"
-          class="link group flex items-center"
-          :aria-label="`Go to ${social.name} profile`"
-          :to="social.link"
-          target="_blank"
-        >
-          {{ social.name }}<span class="i-lucide-arrow-up-right text-lg opacity-0 group-hover:opacity-100" />
-        </NuxtLink>
-      </div>
-    </div>
+    />
   </div>
 </template>
 
