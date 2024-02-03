@@ -19,7 +19,16 @@ html, body, #__nuxt, #__layout {
     }
 
     p {
-        @apply font-geist text-secondary text-sm font-extralight sm:text-base;
+        @apply font-geist text-tertiary text-sm font-extralight sm:text-base;
+    }
+
+    strong {
+        @apply font-geist text-primary font-medium;
+    }
+
+    /* if strong and link (a) are used together, set italic and underline on hover */
+    strong a {
+        @apply hover:text-accent hover:underline;
     }
 }
 

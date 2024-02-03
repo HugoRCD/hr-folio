@@ -37,7 +37,7 @@ const works: Work[] = [
     description: "High-end furniture and decoration brand",
     link: "https://sekoia.studio/",
     release: "soon",
-    featured: true,
+    featured: false,
     tags: [],
   },
   {
@@ -66,7 +66,7 @@ const works: Work[] = [
 <template>
   <div class="flex w-fit flex-col gap-3">
     <NuxtLink
-      v-for="(work, index) in works"
+      v-for="(work, index) in works.filter((project) => mode === 'home' ? project.featured : true)"
       :key="work.name"
       :to="work.link"
       class="link"
