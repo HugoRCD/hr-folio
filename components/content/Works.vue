@@ -17,7 +17,6 @@ type Work = {
   tags: string[];
   release: string;
   featured: boolean;
-  color: string;
 };
 
 const works: Work[] = [
@@ -30,7 +29,6 @@ const works: Work[] = [
     release: "soon",
     featured: true,
     tags: ["Vue", "Nuxt"],
-    color: "#FFFFFF",
   },
   {
     name: "Sekoïa",
@@ -41,7 +39,6 @@ const works: Work[] = [
     release: "soon",
     featured: true,
     tags: [],
-    color: "#3f3f3f",
   },
   {
     name: "Helpr",
@@ -52,7 +49,6 @@ const works: Work[] = [
     release: "2023",
     featured: true,
     tags: ["Nuxt"],
-    color: "#FFFFFF",
   },
   {
     name: "Maison Hochard",
@@ -63,7 +59,6 @@ const works: Work[] = [
     release: "2022",
     featured: true,
     tags: ["Design", "Graphic Design"],
-    color: "#000",
   },
 ];
 </script>
@@ -84,11 +79,11 @@ const works: Work[] = [
     <NuxtLink
       v-if="mode === 'home'"
       to="/works"
-      class="link mt-2 font-[400]"
+      class="link mt-2 font-newsreader font-medium"
       aria-label="See more, go to all my works, projects"
     >
       <span class="sr-only">More projects</span>
-      See more projects
+      More
     </NuxtLink>
   </div>
 </template>

@@ -32,11 +32,11 @@ props.mode === "home" ? data.value!.slice(0, 3) : data;
     <NuxtLink
       v-if="mode === 'home'"
       to="/writing"
-      class="link mt-2 font-[400]"
+      class="link mt-2 font-newsreader font-medium"
       aria-label="See more, go to all articles, writing, etc ..."
     >
       <span class="sr-only">More writing</span>
-      See more
+      More
     </NuxtLink>
   </div>
 </template>
