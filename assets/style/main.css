@@ -8,7 +8,7 @@ html, body, #__nuxt, #__layout {
 
     @apply text-primary;
     @apply transition-colors duration-300 ease-in-out bg-primary;
-    @apply selection:bg-accent selection:text-primary;
+    @apply selection:bg-accent selection:text-inverted;
 
     h2 {
         @apply font-newsreader text-2xl sm:text-3xl italic text-secondary;
@@ -30,6 +30,7 @@ html.light {
     --text-primary: rgb(2,2,2);
     --text-secondary: rgb(61, 61, 61);
     --text-tertiary: rgb(96, 96, 96);
+    --text-inverted: rgb(255,255,255);
 
     --border-color: rgba(0,0,0,0.1);
 
@@ -43,6 +44,7 @@ html.dark {
     --text-primary: rgb(248,243,238);
     --text-secondary: rgb(200,200,200);
     --text-tertiary: rgb(150,150,150);
+    --text-inverted: rgb(255,255,255);
 
     --border-color: rgba(255,255,255,0.1);
 

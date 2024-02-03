@@ -19,6 +19,7 @@ export default {
         primary: "var(--text-primary)",
         secondary: "var(--text-secondary)",
         tertiary: "var(--text-tertiary)",
+        inverted: "var(--text-inverted)",
         accent: "var(--accent-color)",
       },
       borderColor: {

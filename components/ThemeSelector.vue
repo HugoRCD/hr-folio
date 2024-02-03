@@ -50,7 +50,7 @@ function startViewTransition(theme) {
 <style>
 /* Dark/Light reveal effect */
 ::view-transition-group(root) {
-  animation-duration: 0.6s;
+  animation-duration: 1.5s;
 }
 ::view-transition-new(root),
 ::view-transition-old(root) {
