@@ -19,7 +19,7 @@ defineProps({
   >
     <div class="relative w-fit">
       <h2>
-        {{ title }}
+        {{ title }}<span class="text-accent">.</span>
       </h2>
       <div class="absolute -bottom-0.5 -right-5 font-newsreader text-5xl italic opacity-[9%] sm:text-6xl">
         {{ number }}

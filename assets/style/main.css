@@ -89,7 +89,7 @@ html.dark {
 
 /* Blurred line effect */
 .blurred {
-    @apply blur-[3px] hover:blur-[0px] focus-within:blur-none focus:blur-none transition-all duration-300;
+    @apply blur-sm hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
 }
 
 .link {
