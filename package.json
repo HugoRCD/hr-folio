@@ -23,6 +23,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-tailwindcss": "^3.14.1",
     "nuxt": "latest",
+    "resend": "^3.1.0",
     "vue": "^3.4.10",
     "vue-eslint-parser": "^9.4.2",
     "vue-router": "^4.2.5"

@@ -31,7 +31,10 @@ export default defineNuxtConfig({
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
       meetingLink: process.env.NUXT_PUBLIC_MEETING_LINK,
-    }
+    },
+    private: {
+      resendApiKey: process.env.NUXT_PRIVATE_RESEND_API_KEY,
+    },
   },
 
   colorMode: {
