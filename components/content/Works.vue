@@ -63,7 +63,7 @@ const works: Work[] = [
       <div class="absolute right-0 top-0 font-newsreader text-5xl italic opacity-[9%] sm:text-3xl">
         {{ work.release }}
       </div>
-      <h3 class="text-3xl font-medium italic group-hover:underline">
+      <h3 class="text-3xl font-medium italic decoration-accent group-hover:underline">
         {{ work.name }}<span class="text-accent">.</span>
       </h3>
       <p>

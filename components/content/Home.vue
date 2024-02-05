@@ -19,8 +19,7 @@
       Developer and Designer
     </h1>
     <p class="max-w-[600px] text-pretty">
-      I like to make things, lots of things and i'm pretty good at it. I believe in a more simple and meaningful web.
-      I'm on a mission to make the web a better place, giving meaning and soul to the content we create online.
+      <slot />
     </p>
   </div>
 </template>
