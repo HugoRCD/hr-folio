@@ -96,5 +96,5 @@ html.dark {
 }
 
 .input {
-    @apply bg-primary border-b-2 border-main p-2 focus:outline-none resize-none caret-accent;
+    @apply bg-primary border-b-2 border-main px-2 py-1 focus:outline-none resize-none caret-accent;
 }

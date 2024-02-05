@@ -2,7 +2,10 @@
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div
+    class="flex flex-col"
+    data-animate
+  >
     <NuxtImg
       src="/hugo.webp"
       alt="Hugo Richard"
