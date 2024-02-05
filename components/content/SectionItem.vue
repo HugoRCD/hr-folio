@@ -8,6 +8,10 @@ defineProps({
     type: Number,
     required: true
   },
+  size: {
+    type: String,
+    default: "max-w-[600px]"
+  }
 });
 </script>
 
@@ -25,7 +29,10 @@ defineProps({
         {{ number }}
       </div>
     </div>
-    <div>
+    <div
+      :class="size"
+      class="text-pretty"
+    >
       <slot />
     </div>
   </div>

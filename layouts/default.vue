@@ -29,7 +29,7 @@ useHead({
     <main class="bg-light dark:bg-dark flex min-h-screen flex-col items-center justify-center p-3 sm:p-12">
       <LayoutLetterCard>
         <LayoutNavbar />
-        <ContentDoc class="my-6 flex flex-1 flex-col justify-around gap-12 sm:gap-8" />
+        <ContentDoc class="my-6 flex flex-1 flex-col justify-around gap-12 sm:gap-12" />
         <LayoutFooter />
       </LayoutLetterCard>
     </main>
