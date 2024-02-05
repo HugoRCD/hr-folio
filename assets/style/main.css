@@ -23,7 +23,7 @@ html, body, #__nuxt, #__layout {
     }
 
     strong {
-        @apply font-geist text-primary font-medium;
+        @apply font-geist text-primary font-normal;
     }
 
     strong a {

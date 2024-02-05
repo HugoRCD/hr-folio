@@ -33,7 +33,10 @@ defineProps({
       :class="size"
       class="text-pretty"
     >
-      <slot />
+      <ContentSlot
+        :use="$slots.default"
+        unwrap="p"
+      />
     </div>
   </div>
 </template>
