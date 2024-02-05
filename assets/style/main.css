@@ -26,7 +26,6 @@ html, body, #__nuxt, #__layout {
         @apply font-geist text-primary font-medium;
     }
 
-    /* if strong and link (a) are used together, set italic and underline on hover */
     strong a {
         @apply hover:text-accent hover:underline;
     }
