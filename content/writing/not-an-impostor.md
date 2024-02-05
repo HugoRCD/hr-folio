@@ -42,5 +42,3 @@ In the end, every curtain raised, every light turned on, is a step closer to acc
 imposture dissipates not when you compare yourself to others, but when you recognize the unique beauty of your own
 performance. In this room, success is measured not just by the applause at the end, but by the courage to get up on
 stage and say: **"Here's my story, listen to it"**.
-
-[This is a just test sorry :)]{.blurred}
