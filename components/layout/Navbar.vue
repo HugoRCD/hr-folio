@@ -10,7 +10,7 @@
       class="group cursor-pointer"
     >
       <span class="font-newsreader italic hover:text-accent hover:underline">
-        go back
+        go back<span class="text-accent">.</span>
       </span>
     </NuxtLink>
     <ThemeSelector />

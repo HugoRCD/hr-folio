@@ -21,7 +21,11 @@ useHead({
     <main class="bg-light dark:bg-dark flex min-h-screen flex-col items-center justify-center p-4 sm:p-12">
       <LayoutLetterCard>
         <LayoutNavbar />
-        <ContentDoc class="writing mt-6" />
+        <ContentDoc class="writing mt-6">
+          <template #not-found>
+            <DocumentDrivenNotFound />
+          </template>
+        </ContentDoc>
         <CopyLink />
         <LayoutFooter />
       </LayoutLetterCard>
