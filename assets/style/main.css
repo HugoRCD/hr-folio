@@ -10,24 +10,26 @@ html, body, #__nuxt, #__layout {
     @apply transition-colors duration-300 ease-in-out bg-primary;
     @apply selection:bg-accent selection:text-inverted;
 
-    h2 {
-        @apply font-newsreader text-2xl sm:text-3xl italic text-secondary;
-    }
+    .content {
+        h2 {
+            @apply font-newsreader text-2xl sm:text-3xl italic text-secondary;
+        }
 
-    h3 {
-        @apply font-newsreader text-xl italic text-secondary;
-    }
+        h3 {
+            @apply font-newsreader text-xl italic text-secondary;
+        }
 
-    p {
-        @apply font-geist text-tertiary text-sm font-extralight sm:text-base;
-    }
+        p {
+            @apply font-geist text-tertiary text-sm font-extralight sm:text-base;
+        }
 
-    strong {
-        @apply font-geist text-primary font-normal;
-    }
+        strong {
+            @apply font-geist text-primary font-normal;
+        }
 
-    strong a {
-        @apply hover:text-accent hover:underline;
+        strong a {
+            @apply hover:text-accent hover:underline;
+        }
     }
 }
 
