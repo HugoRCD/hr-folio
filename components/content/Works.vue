@@ -9,44 +9,12 @@ type Work = {
   release: string;
 };
 
-const works: Work[] = [
-  {
-    name: "Mockline",
-    logo: "SvgoMockline",
-    image: "/projects/mockline.webp",
-    description: "A components library to breathe new life and meaning into the web",
-    link: "https://mockline.dev/",
-    release: "Soon",
-    tags: ["Vue", "Nuxt"],
-  },
-  {
-    name: "Sekoïa",
-    logo: "SvgoSekoia",
-    image: "/projects/sekoia.webp",
-    description: "High-end furniture and decoration brand",
-    link: "https://sekoia.studio/",
-    release: "Soon",
-    tags: [],
-  },
-  {
-    name: "Helpr",
-    logo: "SvgoHelpr",
-    image: "/projects/helpr.webp",
-    description: "Automation tools connecting various applications to create powerful workflows",
-    link: "https://helpr.tech/",
-    release: "2023",
-    tags: ["Nuxt"],
-  },
-  {
-    name: "Maison Hochard",
-    logo: "SvgoMaisonHochard",
-    image: "/projects/maison-hochard.webp",
-    description: "Graphic design and visual communication agency",
-    link: "https://mh.hrcd.fr/",
-    release: "2022",
-    tags: ["Design", "Graphic Design"],
-  },
-];
+const { data: works } = await useAsyncData("works", () =>
+    queryContent("works")
+        .where({ _type: "json" })
+        .sort({ date: -1 })
+        .find()
+);
 </script>
 
 <template>
