@@ -17,6 +17,8 @@ useHead({
   },
   link
 })
+
+const { lessThan } = useBreakpoints();
 </script>
 
 <template>
@@ -38,7 +40,7 @@ useHead({
       </LayoutLetterCard>
     </main>
     <Toasts
-      position="top-center"
+      :position="lessThan('sm') ? 'bottom-center' : 'top-center'"
       close-button
       :toast-options="{
         style: {
