@@ -11,6 +11,10 @@ const { status, error, refresh } = useFetch("/api/send", {
 })
 
 async function submit() {
+  if (!email.value || !message.value) {
+    toast.error("Please fill in all required fields.");
+    return;
+  }
   await refresh();
   if (!error.value) {
     email.value = "";
