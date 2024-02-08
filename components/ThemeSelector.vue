@@ -39,6 +39,10 @@ const switchTheme = () => {
 
 function startViewTransition(theme) {
   if (theme === colorMode.value) return;
+  if (!document.startViewTransition) {
+    switchTheme();
+    return;
+  }
   if (window.innerWidth < 768) {
     switchTheme();
     return;
