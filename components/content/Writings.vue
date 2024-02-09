@@ -29,7 +29,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 });
 
 <template>
   <div
-    class="mt-6 flex flex-col gap-7"
+    class="mt-6 flex flex-col gap-8"
   >
     <NuxtLink
       v-for="(post, index) in data"
@@ -40,7 +40,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 });
       :aria-label="`Read ${post.title}`"
       :style="{ '--stagger': index }"
     >
-      <div class="font-newsreader text-lg italic opacity-[9%]">
+      <div class="font-newsreader text-lg italic opacity-[15%]">
         {{ post.date }}
       </div>
       <h3 class="text-3xl font-medium italic decoration-accent group-hover:underline">

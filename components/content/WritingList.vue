@@ -14,14 +14,12 @@ if (!data.value || !error.value) createError({ statusCode: 404 });
       v-for="(post, index) in data"
       :key="post.title"
       :to="post._path"
-      class="link"
+      class="link text-lg"
       data-animate
       :aria-label="`Read ${post.title}`"
       :style="{ '--stagger': index }"
     >
-      {{ post.title }}<span
-        class="i-lucide-arrow-up-right"
-      />
+      {{ post.title }}
     </NuxtLink>
     <NuxtLink
       to="/writing"
