@@ -15,8 +15,6 @@ const { data: works } = await useAsyncData("works", () =>
         .sort({ date: -1 })
         .find()
 );
-
-const { x, y } = useMouse();
 </script>
 
 <template>
@@ -30,12 +28,6 @@ const { x, y } = useMouse();
       :aria-label="`Open ${work.name}`"
       :style="{ '--stagger': index }"
     >
-      <img
-        :src="work.image"
-        :alt="work.name"
-        class="absolute rounded-sm"
-        :style="{ transform: `translate(${x}px, ${y}px)` }"
-      >
       <div class="absolute right-0 top-0 font-newsreader text-5xl italic opacity-[9%] sm:text-3xl">
         {{ work.release }}
       </div>

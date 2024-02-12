@@ -10,7 +10,7 @@ useHead({
   link
 })
 
-const { lessThan } = useBreakpoints();
+const { lessThan } = useWindowInfos();
 </script>
 
 <template>
