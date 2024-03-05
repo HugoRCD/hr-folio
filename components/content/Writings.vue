@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const email = ref("");
 
-const { status, error, refresh } = useFetch("/api/subscribe", {
+const { status, error: subscribeError, refresh } = useFetch("/api/subscribe", {
   method: "POST",
   body: { email },
   watch: false,
