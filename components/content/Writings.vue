@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
-
 const email = ref("");
 
-const { status, error: subscribeError, refresh } = useFetch("/api/subscribe", {
+const { status, error, refresh } = useFetch("/api/subscribe", {
   method: "POST",
   body: { email },
   watch: false,
