@@ -1,14 +1,14 @@
 ---
-title: "5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects"
-description: "Discover 5 powerful Raycast snippets that can transform your Nuxt and Vue development workflow, saving time and enhancing productivity."
-date: "22/01/2024"
+title: 5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects
+description: Discover 5 powerful Raycast snippets that can transform your Nuxt and Vue development workflow, saving time and enhancing productivity.
+date: 22/01/2024
 image: /writing/5-raycast-snippets.jpg
 head:
   meta:
-    - name: "og:image"
-      content: "/writing/5-raycast-snippets.jpg"
-    - name: "twitter:image"
-      content: "/writing/5-raycast-snippets.jpg"
+    - name: og:image
+      content: /writing/5-raycast-snippets.jpg
+    - name: twitter:image
+      content: /writing/5-raycast-snippets.jpg
 layout: writing
 ---
 
@@ -18,7 +18,7 @@ In the realm of web development, where efficiency is as valuable as expertise, t
 workflow are indispensable. Among these, Raycast snippets emerge as a powerful ally, especially for those working with
 Nuxt and Vue frameworks. But what exactly are these snippets, and how can they transform your development experience?
 
-## What Are Raycast Snippets?
+## What Are Raycast Snippets ?
 
 Raycast snippets are small, reusable pieces of text or code that can be quickly inserted into your work. Think of them
 as shortcuts for frequently used content - whether it's code, canned email responses, or even emojis. They are designed
