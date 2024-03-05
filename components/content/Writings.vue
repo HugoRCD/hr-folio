@@ -21,7 +21,7 @@ async function submit() {
 }
 
 const { data, error } = await useAsyncData("feed", () =>
-    queryContent("/writing/").sort({ date: -1 }).find()
+    queryContent("/writing/").find()
 );
 
 if (!data.value || !error.value) createError({ statusCode: 404 });
