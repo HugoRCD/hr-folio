@@ -18,9 +18,11 @@ useHead({
   link,
   script: [
     {
-      src: "https://eu.umami.is/script.js",
+      src: "https://static.cloudflareinsights.com/beacon.min.js",
       defer: true,
-      "data-website-id": "27befe02-27e1-49c0-83a3-760bbffc2b60",
+      "data-cf-beacon": { 
+        "token": "b5bc0af35f3844d19a30a2f550e2301a"
+      }
     },
   ],
 })
