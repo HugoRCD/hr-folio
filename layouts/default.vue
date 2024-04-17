@@ -18,7 +18,7 @@ useHead({
   link,
   script: [
     {
-      src: 'https://plausible-analytics-production-3a91.up.railway.app/js/script.js',
+      src: 'https://plausible.hrcd.fr/js/script.js',
       defer: true,
       'data-domain': 'hrcd.fr'
     },
