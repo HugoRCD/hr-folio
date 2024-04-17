@@ -18,11 +18,9 @@ useHead({
   link,
   script: [
     {
-      src: 'https://static.cloudflareinsights.com/beacon.min.js',
+      src: 'https://plausible-analytics-production-3a91.up.railway.app/js/script.js',
       defer: true,
-      'data-cf-beacon': { 
-        'token': 'b5bc0af35f3844d19a30a2f550e2301a'
-      }
+      'data-domain': 'hrcd.fr'
     },
   ],
 })
