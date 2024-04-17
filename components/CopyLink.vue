@@ -1,15 +1,15 @@
 <script setup lang="ts">
-const runtimeConfig = useRuntimeConfig();
-const siteUrl = runtimeConfig.public.siteUrl;
+const runtimeConfig = useRuntimeConfig()
+const siteUrl = runtimeConfig.public.siteUrl
 
-async function copyArticleLinkToClipboard() {
-  const input = document.createElement("input");
-  input.setAttribute("value", siteUrl + useRoute().path);
-  document.body.appendChild(input);
-  input.select();
-  document.execCommand("copy");
-  document.body.removeChild(input);
-  toast.success("Article link copied to clipboard !");
+function copyArticleLinkToClipboard() {
+  const input = document.createElement('input')
+  input.setAttribute('value', siteUrl + useRoute().path)
+  document.body.appendChild(input)
+  input.select()
+  document.execCommand('copy')
+  document.body.removeChild(input)
+  toast.success('Article link copied to clipboard !')
 }
 </script>
 

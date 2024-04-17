@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { SpeedInsights } from "@vercel/speed-insights/nuxt";
-const { link } = useAppConfig();
+import { SpeedInsights } from '@vercel/speed-insights/nuxt'
+const { link } = useAppConfig()
 
 useHead({
-  titleTemplate: "",
+  titleTemplate: '',
   htmlAttrs: {
-    lang: "en",
+    lang: 'en',
   },
   link,
   script: [
     {
-      src: "https://static.cloudflareinsights.com/beacon.min.js",
+      src: 'https://static.cloudflareinsights.com/beacon.min.js',
       defer: true,
-      "data-cf-beacon": { 
-        "token": "b5bc0af35f3844d19a30a2f550e2301a"
+      'data-cf-beacon': { 
+        'token': 'b5bc0af35f3844d19a30a2f550e2301a'
       }
     },
   ],
 })
 
-const { lessThan } = useWindowInfos();
+const { lessThan } = useWindowInfos()
 </script>
 
 <template>

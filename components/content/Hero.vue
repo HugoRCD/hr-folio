@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const runtimeConfig = useRuntimeConfig();
-const meetingLink = runtimeConfig.public.meetingLink;
+const runtimeConfig = useRuntimeConfig()
+const meetingLink = runtimeConfig.public.meetingLink
 
-const openModal = ref(false);
+const openModal = ref(false)
 </script>
 
 <template>

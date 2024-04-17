@@ -1,10 +1,10 @@
 <script setup lang="ts">
-const email = ref("");
-const message = ref("");
-const name = ref("");
+const email = ref('')
+const message = ref('')
+const name = ref('')
 
-const { status, error, refresh } = useFetch("/api/send", {
-  method: "POST",
+const { status, error, refresh } = useFetch('/api/send', {
+  method: 'POST',
   body: { email, message, name },
   watch: false,
   immediate: false
@@ -12,32 +12,32 @@ const { status, error, refresh } = useFetch("/api/send", {
 
 async function submit() {
   if (!email.value || !message.value) {
-    toast.error("Please fill in all required fields.");
-    return;
+    toast.error('Please fill in all required fields.')
+    return
   }
-  await refresh();
+  await refresh()
   if (!error.value) {
-    email.value = "";
-    message.value = "";
-    name.value = "";
-    toast.success("Your message has been sent!");
+    email.value = ''
+    message.value = ''
+    name.value = ''
+    toast.success('Your message has been sent!')
   } else {
-    toast.error("An error occurred while sending your message.");
+    toast.error('An error occurred while sending your message.')
   }
 }
 
 onMounted(() => {
-  document.querySelectorAll('[data-autoresize]').forEach(function (element: HTMLTextAreaElement) {
-    element.style.boxSizing = 'border-box';
-    const offset = element.offsetHeight - element.clientHeight;
-    element.addEventListener('input', function (event) {
-      if (!event.target) return;
-      event.target.style.height = 'auto';
-      event.target.style.height = event.target.scrollHeight + offset + 'px';
-    });
-    element.removeAttribute('data-autoresize');
-  });
-});
+  document.querySelectorAll('[data-autoresize]').forEach((element: HTMLTextAreaElement) => {
+    element.style.boxSizing = 'border-box'
+    const offset = element.offsetHeight - element.clientHeight
+    element.addEventListener('input', (event) => {
+      if (!event.target) return
+      event.target.style.height = 'auto'
+      event.target.style.height = event.target.scrollHeight + offset + 'px'
+    })
+    element.removeAttribute('data-autoresize')
+  })
+})
 </script>
 
 <template>

@@ -2,12 +2,12 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      viewport: "width=device-width, initial-scale=1",
-      charset: "utf-8",
+      viewport: 'width=device-width, initial-scale=1',
+      charset: 'utf-8',
       meta: [
         {
-          name: "author",
-          content: "Hugo Richard",
+          name: 'author',
+          content: 'Hugo Richard',
         },
       ],
     },
@@ -22,10 +22,10 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    "/": { isr: true, prerender: true },
+    '/': { isr: true, prerender: true },
   },
 
-  modules: ['blanked', '@nuxt/content', '@nuxthq/studio', "@nuxt/image", "@nuxtjs/seo"],
+  modules: ['blanked', '@nuxt/content', '@nuxthq/studio', '@nuxt/image', '@nuxtjs/seo'],
 
   runtimeConfig: {
     public: {
@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   content: {
     documentDriven: true,
     highlight: {
-      theme: "github-dark",
+      theme: 'github-dark',
     },
     markdown: {
       anchorLinks: false,
@@ -62,9 +62,7 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    sources: [
-      '/api/__sitemap__/urls'
-    ]
+    sources: ['/api/__sitemap__/urls']
   },
 
   css: ['~/assets/style/main.css'],
