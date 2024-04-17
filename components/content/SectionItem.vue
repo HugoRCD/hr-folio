@@ -10,9 +10,9 @@ defineProps({
   },
   size: {
     type: String,
-    default: "max-w-[600px]"
+    default: 'max-w-[600px]'
   }
-});
+})
 </script>
 
 <template>

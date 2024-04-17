@@ -1,28 +1,28 @@
 <script setup lang="ts">
-const email = ref("");
+const email = ref('')
 
-const { status, error: subscribeError, refresh } = useFetch("/api/subscribe", {
-  method: "POST",
+const { status, error: subscribeError, refresh } = useFetch('/api/subscribe', {
+  method: 'POST',
   body: { email },
   watch: false,
   immediate: false
 })
 
 async function submit() {
-  await refresh();
+  await refresh()
   if (!error.value) {
-    email.value = "";
-    toast.success("Your message has been sent!");
+    email.value = ''
+    toast.success('Your message has been sent!')
   } else {
-    toast.error("An error occurred while sending your message.");
+    toast.error('An error occurred while sending your message.')
   }
 }
 
-const { data, error } = await useAsyncData("feed", () =>
-    queryContent("/writing/").find()
-);
+const { data, error } = await useAsyncData('feed', () =>
+  queryContent('/writing/').find()
+)
 
-if (!data.value || !error.value) createError({ statusCode: 404 });
+if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>

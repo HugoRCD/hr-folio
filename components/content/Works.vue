@@ -4,17 +4,17 @@ type Work = {
   logo: string;
   image: string;
   description: string;
-  link: string | "Soon";
+  link: string | 'Soon';
   tags: string[];
   release: string;
 };
 
-const { data: works } = await useAsyncData("works", () =>
-    queryContent("works")
-        .where({ _type: "json" })
-        .sort({ date: -1 })
-        .find()
-);
+const { data: works } = await useAsyncData('works', () =>
+  queryContent('works')
+    .where({ _type: 'json' })
+    .sort({ date: -1 })
+    .find()
+)
 </script>
 
 <template>

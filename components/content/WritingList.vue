@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const { data, error } = await useAsyncData("feed", () =>
-    queryContent("/writing/").find()
-);
+const { data, error } = await useAsyncData('feed', () =>
+  queryContent('/writing/').find()
+)
 
-if (!data.value || !error.value) createError({ statusCode: 404 });
+if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>

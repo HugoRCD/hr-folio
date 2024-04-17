@@ -1,9 +1,9 @@
-import { Resend } from "resend";
+import { Resend } from 'resend'
 
-const resend = new Resend(process.env.NUXT_PRIVATE_RESEND_API_KEY);
+const resend = new Resend(process.env.NUXT_PRIVATE_RESEND_API_KEY)
 
 // find your audience id here: https://resend.com/audiences
-const nuxtLogAudienceId = "555dc1c1-1008-4182-be98-605be9d1ebf6";
+const nuxtLogAudienceId = '555dc1c1-1008-4182-be98-605be9d1ebf6'
 
 type sendMailDto = {
   email: string;
@@ -14,9 +14,9 @@ type sendMailDto = {
 export async function sendSubscribeEmail(email: string) {
   try {
     await resend.emails.send({
-      from: "HugoRCD <contact@hrcd.fr>",
+      from: 'HugoRCD <contact@hrcd.fr>',
       to: [email],
-      subject: "Welcome to HugoRCD newsletter!",
+      subject: 'Welcome to HugoRCD newsletter!',
       html: `
             <h1>Welcome to HugoRCD newsletter!</h1>
             <p>
@@ -29,34 +29,34 @@ export async function sendSubscribeEmail(email: string) {
                 See you soon!
             </p>
       `,
-    });
+    })
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
 }
 
 export async function sendContactEmail({ email, message, name }: sendMailDto) {
   try {
     await resend.emails.send({
-      from: "HugoRCD <contact@hrcd.fr>",
-      to: ["hrichard206@gmail.com"],
-      subject: "New message from hrcd.fr",
+      from: 'HugoRCD <contact@hrcd.fr>',
+      to: ['hrichard206@gmail.com'],
+      subject: 'New message from hrcd.fr',
       html: `
             <h3>New message from hrcd.fr</h3>
             <p>
-                You've just received a new message from ${ name.length ? name : "a visitor" } with this email: <strong>${ email }</strong>.
+                You've just received a new message from ${ name.length ? name : 'a visitor' } with this email: <strong>${ email }</strong>.
             </p>
             <p>
                 <strong>Message:</strong>
                 <p>${ message }</p>
             </p>
       `,
-    });
+    })
   } catch (error) {
     throw createError({
       statusCode: 500,
-      statusMessage: "Internal Server Error",
-    });
+      statusMessage: 'Internal Server Error',
+    })
   }
 }
 
