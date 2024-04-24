@@ -24,8 +24,8 @@
     "eslint-plugin-tailwindcss": "^3.15.1",
     "nuxt": "latest",
     "resend": "^3.2.0",
-    "vue": "^3.4.23",
+    "vue": "^3.4.24",
     "vue-eslint-parser": "^9.4.2",
-    "vue-router": "^4.3.1"
+    "vue-router": "^4.3.2"
   }
 }
