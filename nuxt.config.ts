@@ -52,6 +52,16 @@ export default defineNuxtConfig({
     markdown: {
       anchorLinks: false,
     },
+    sources: {
+      github: {
+        prefix: '/notes',
+        driver: 'github',
+        repo: 'HugoRCD/notes',
+        branch: 'main',
+        dir: 'src',
+        token: process.env.NUXT_PRIVATE_GITHUB_TOKEN,
+      },
+    }
   },
 
   nitro: {
