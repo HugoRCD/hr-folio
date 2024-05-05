@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     },
     private: {
       resendApiKey: process.env.NUXT_PRIVATE_RESEND_API_KEY,
+      notesPassword: process.env.NUXT_PRIVATE_NOTES_PASSWORD,
     },
   },
 
