@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const { path } = useRoute()
-const password = ref('')
+const password = useState('password')
 const loading = ref(false)
-const isAuthorized = ref(false)
+const isAuthorized = useState('authorized')
 
 const { data: notes, error } = await useAsyncData(path, () =>
   queryContent(path).find()
@@ -46,7 +46,7 @@ async function verifyPassword() {
       <input v-model="password" type="password" placeholder="Password" class="resize-none border-b-2 border-main bg-primary px-2 py-1 caret-accent focus:outline-none">
       <button class="flex items-center justify-center gap-2 bg-accent px-2 text-white" type="submit">
         <span v-if="status === 'pending'" class="i-lucide-loader size-4 animate-spin" />
-        Submit
+        Verify
       </button>
     </form>
     <div v-if="isAuthorized" class="mt-6 flex flex-col gap-8">
