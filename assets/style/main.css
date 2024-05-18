@@ -97,6 +97,10 @@ html.dark {
     @apply italic font-extralight hover:text-accent dark:hover:text-accent hover:underline;
 }
 
+.no-link {
+    @apply text-tertiary no-underline cursor-default font-normal;
+}
+
 .input {
     @apply bg-primary border-b-2 border-main px-2 py-1 focus:outline-none resize-none caret-accent;
 }
