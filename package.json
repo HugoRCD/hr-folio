@@ -15,7 +15,7 @@
     "@hrcd/eslint-config": "^1.1.3",
     "@nuxt/content": "^2.12.1",
     "@nuxt/image": "latest",
-    "@nuxthq/studio": "^1.0.15",
+    "@nuxthq/studio": "^1.1.0",
     "@nuxtjs/seo": "^2.0.0-rc.10",
     "@vercel/speed-insights": "^1.0.10",
     "blanked": "^0.0.24",
