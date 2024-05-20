@@ -98,7 +98,7 @@ html.dark {
 }
 
 .no-link {
-    @apply text-tertiary no-underline cursor-default font-normal;
+    @apply text-tertiary no-underline cursor-default font-normal dark:text-tertiary dark:no-underline;
 }
 
 .input {
