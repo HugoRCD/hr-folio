@@ -21,8 +21,13 @@ export default defineNuxtConfig({
     indexable: true,
   },
 
+  robots: {
+    disallow: ['/notes'],
+  },
+
   routeRules: {
     '/': { isr: true, prerender: true },
+    '/notes/**': { robots: false },
   },
 
   modules: ['blanked', '@nuxt/content', '@nuxthq/studio', '@nuxt/image', '@nuxtjs/seo'],
@@ -73,7 +78,8 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    sources: ['/api/__sitemap__/urls']
+    sources: ['/api/__sitemap__/urls'],
+    exclude: ['/notes/**'],
   },
 
   css: ['~/assets/style/main.css'],
