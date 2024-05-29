@@ -30,7 +30,14 @@ export default defineNuxtConfig({
     '/notes/**': { robots: false },
   },
 
-  modules: ['blanked', '@nuxt/content', '@nuxthq/studio', '@nuxt/image', '@nuxtjs/seo'],
+  modules: [
+    'blanked',
+    '@nuxt/content',
+    '@nuxthq/studio',
+    '@nuxt/image',
+    '@nuxtjs/seo',
+    '@nuxt/fonts'
+  ],
 
   runtimeConfig: {
     public: {
