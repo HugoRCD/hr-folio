@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 
+const { page } = useContent()
+
+useContentHead(page)
+
 const { link } = useAppConfig()
 const { name, description } = useSiteConfig()
 
 useSeoMeta({
   title: name,
+  description: description,
   twitterTitle: name,
   twitterDescription: description,
   twitterCard: 'summary_large_image'
@@ -58,4 +63,3 @@ const { lessThan } = useWindowInfos()
     />
   </div>
 </template>
-

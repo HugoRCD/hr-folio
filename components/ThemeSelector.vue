@@ -6,7 +6,7 @@ const switchTheme = () => {
   colorMode.preference = colorMode.value
 }
 
-function startViewTransition(theme) {
+function startViewTransition(theme: string) {
   if (theme === colorMode.value) return
   if (!document.startViewTransition) {
     switchTheme()

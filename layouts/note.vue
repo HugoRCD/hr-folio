@@ -50,4 +50,3 @@ const { lessThan } = useWindowInfos()
     />
   </div>
 </template>
-
