@@ -22,13 +22,6 @@ useHead({
     lang: 'en',
   },
   link,
-  script: [
-    {
-      src: 'https://plausible.hrcd.fr/js/script.js',
-      defer: true,
-      'data-domain': 'hrcd.fr'
-    },
-  ],
 })
 
 const { lessThan } = useWindowInfos()

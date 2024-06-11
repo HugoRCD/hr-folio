@@ -10,6 +10,13 @@ export default defineNuxtConfig({
           content: 'Hugo Richard',
         },
       ],
+      script: [
+        {
+          'src': 'https://analytics.hrcd.fr/script.js',
+          'defer': true,
+          'data-website-id': '94617757-2c3d-4d62-9340-4c13968c66db',
+        },
+      ],
     },
   },
 
