@@ -12,7 +12,7 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          'src': 'https://analytics.hrcd.fr/script.js',
+          'src': 'https://analytics.hrcd.fr/js/script.js',
           'defer': true,
           'data-domain': 'hrcd.fr',
         },
