@@ -2,8 +2,7 @@ import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import { serverQueryContent } from '#content/server'
 import { asSitemapUrl, defineSitemapEventHandler } from '#imports'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
+// @ts-expect-error - We don't need to define the event type
 export default defineSitemapEventHandler(async (e) => {
   const contentList = await serverQueryContent(e).find() as ParsedContent[]
   if (!contentList) return []

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { SpeedInsights } from '@vercel/speed-insights/nuxt'
-
 const { link } = useAppConfig()
 
 useHead({
@@ -16,7 +14,6 @@ const { lessThan } = useWindowInfos()
 
 <template>
   <div class="relative">
-    <SpeedInsights />
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
@@ -32,6 +29,7 @@ const { lessThan } = useWindowInfos()
         <CopyLink />
         <LayoutFooter />
       </LayoutLetterCard>
+      <OssInfo />
     </main>
     <Toasts
       :position="lessThan('sm') ? 'bottom-center' : 'top-center'"

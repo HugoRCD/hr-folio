@@ -19,7 +19,6 @@
     "@nuxt/image": "latest",
     "@nuxthq/studio": "^2.0.0",
     "@nuxtjs/seo": "^2.0.0-rc.10",
-    "@vercel/speed-insights": "^1.0.12",
     "blanked": "^0.0.24",
     "eslint": "^9.4.0",
     "nuxt": "latest",
