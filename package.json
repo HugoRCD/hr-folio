@@ -13,18 +13,18 @@
     "lintfix": "eslint . --fix"
   },
   "devDependencies": {
-    "@hrcd/eslint-config": "^1.1.4",
+    "@hrcd/eslint-config": "^1.1.5",
     "@nuxt/content": "^2.12.1",
     "@nuxt/fonts": "^0.7.0",
     "@nuxt/image": "latest",
     "@nuxthq/studio": "^1.1.2",
     "@nuxtjs/seo": "^2.0.0-rc.10",
-    "@vercel/speed-insights": "^1.0.11",
+    "@vercel/speed-insights": "^1.0.12",
     "blanked": "^0.0.24",
     "eslint": "^9.4.0",
     "nuxt": "latest",
-    "resend": "^3.2.0",
-    "vue": "^3.4.27",
-    "vue-router": "^4.3.2"
+    "resend": "^3.3.0",
+    "vue": "^3.4.28",
+    "vue-router": "^4.3.3"
   }
 }
