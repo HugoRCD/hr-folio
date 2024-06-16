@@ -21,7 +21,7 @@
     "@nuxtjs/seo": "^2.0.0-rc.10",
     "blanked": "^0.0.24",
     "eslint": "^9.4.0",
-    "nuxt": "latest",
+    "nuxt": "^3.12.1",
     "resend": "^3.3.0",
     "vue": "^3.4.28",
     "vue-router": "^4.3.3"
