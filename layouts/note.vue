@@ -8,8 +8,6 @@ useHead({
   },
   link,
 })
-
-const { lessThan } = useWindowInfos()
 </script>
 
 <template>
@@ -29,8 +27,7 @@ const { lessThan } = useWindowInfos()
         <LayoutFooter />
       </LayoutLetterCard>
     </main>
-    <Toasts
-      :position="lessThan('sm') ? 'bottom-center' : 'top-center'"
+    <MToasts
       close-button
       :toast-options="{
         style: {
