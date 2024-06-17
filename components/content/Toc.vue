@@ -5,7 +5,11 @@ const loading = ref(false)
 const isAuthorized = useState('authorized')
 
 const { data: notes, error } = await useAsyncData(path, () =>
-  queryContent(path).find()
+  queryContent(path)
+    .where({
+      _path: { $regex: '^/notes/' }
+    })
+    .find()
 )
 
 if (!notes.value || !error.value) createError({ statusCode: 404 })
