@@ -5,24 +5,34 @@ useContentHead(page)
 
 const { link } = useAppConfig()
 const { name, description } = useSiteConfig()
+const route = useRoute()
 
 useSeoMeta({
-  title: name,
-  description: description,
+  title: page.title,
+  description: page.description,
   twitterTitle: name,
   twitterDescription: description,
   twitterCard: 'summary_large_image'
 })
 
 useHead({
-  titleTemplate: name,
+  titleTemplate: (title) => {
+    if (route.path === '/') return title || name
+    if (route.path.includes('/writing/') || route.path.includes('/notes/')) return title
+    return `${title} | ${name}`
+  },
   htmlAttrs: {
     lang: 'en',
   },
   link,
 })
 
-const { lessThan } = useWindowInfos()
+const mainClass = computed(() => {
+  if (route.path.includes('/writing/') || route.path.includes('/notes/')) {
+    return 'writing enter-content mb-4 mt-8'
+  }
+  return 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
+})
 </script>
 
 <template>
@@ -34,17 +44,18 @@ const { lessThan } = useWindowInfos()
     <main class="bg-light dark:bg-dark flex min-h-screen flex-col items-center justify-center p-3 sm:p-12">
       <LayoutLetterCard>
         <LayoutNavbar />
-        <ContentDoc class="content mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12">
+        <ContentDoc :class="mainClass">
           <template #not-found>
             <DocumentDrivenNotFound />
           </template>
         </ContentDoc>
+        <CopyLink v-if="route.path.includes('/writing')" />
         <LayoutFooter />
       </LayoutLetterCard>
       <OssInfo />
     </main>
-    <Toasts
-      :position="lessThan('sm') ? 'bottom-center' : 'top-center'"
+    <MToasts
+      position="top-center"
       close-button
       :toast-options="{
         style: {
