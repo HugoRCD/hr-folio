@@ -12,7 +12,7 @@ const route = useRoute()
       <LayoutLetterCard>
         <LayoutNavbar />
         <slot />
-        <CopyLink v-if="route.path.includes('/writing')" />
+        <CopyLink v-if="route.path.includes('/writing/')" />
         <LayoutFooter />
       </LayoutLetterCard>
       <OssInfo />
