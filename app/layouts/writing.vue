@@ -4,8 +4,6 @@ const { page } = useContent()
 useContentHead(page)
 
 const { link } = useAppConfig()
-const { name } = useSiteConfig()
-const route = useRoute()
 
 useSeoMeta({
   title: page.title,
@@ -17,10 +15,8 @@ useSeoMeta({
 
 useHead({
   title: page.title,
-  titleTemplate(title) {
-    if (route.path === '/')
-      return title || name
-    return `${title} | ${name}`
+  titleTemplate() {
+    return page.title
   },
   link,
 })
@@ -28,7 +24,7 @@ useHead({
 
 <template>
   <LayoutWrapper>
-    <ContentDoc class="content mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12">
+    <ContentDoc class="writing enter-content mb-4 mt-8">
       <template #not-found>
         <DocumentDrivenNotFound />
       </template>
