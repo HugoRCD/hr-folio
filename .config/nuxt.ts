@@ -45,12 +45,17 @@ export default defineNuxtConfig({
 
   modules: [
     '@mockline/utils',
+    '@nuxtjs/plausible',
     '@nuxt/content',
     '@nuxthq/studio',
     '@nuxt/image',
     '@nuxtjs/seo',
-    '@nuxt/fonts'
   ],
+
+  plausible: {
+    apiHost: 'https://analytics.hrcd.fr',
+    ignoredHostnames: ['localhost'],
+  },
 
   runtimeConfig: {
     public: {

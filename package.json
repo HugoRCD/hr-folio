@@ -19,6 +19,7 @@
     "@nuxt/content": "^2.12.1",
     "@nuxt/image": "latest",
     "@nuxthq/studio": "^2.0.0",
+    "@nuxtjs/plausible": "^1.0.0",
     "@nuxtjs/seo": "^2.0.0-rc.10",
     "automd": "^0.3.7",
     "eslint": "^9.5.0",
