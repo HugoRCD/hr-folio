@@ -4,14 +4,14 @@ const { page } = useContent()
 useContentHead(page)
 
 const { link } = useAppConfig()
-const { name, description } = useSiteConfig()
+const { name } = useSiteConfig()
 const route = useRoute()
 
 useSeoMeta({
   title: page.title,
   description: page.description,
-  twitterTitle: name,
-  twitterDescription: description,
+  twitterTitle: page.title,
+  twitterDescription: page.description,
   twitterCard: 'summary_large_image'
 })
 

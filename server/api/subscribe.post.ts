@@ -1,5 +1,5 @@
 import { H3Event } from 'h3'
-import { addContactToList, sendSubscribeEmail } from '~/server/service/resendService'
+import { addContactToList, sendSubscribeEmail } from '~~/server/service/resendService'
 
 export default defineEventHandler(async (event: H3Event) => {
   const body = await readBody(event)
