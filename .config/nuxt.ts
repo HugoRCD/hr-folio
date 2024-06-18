@@ -16,6 +16,13 @@ export default defineNuxtConfig({
           content: 'Hugo Richard',
         },
       ],
+      script: [
+        {
+          'src': 'https://analytics.hrcd.fr/js/script.js',
+          'defer': true,
+          'data-domain': 'hrcd.fr',
+        },
+      ],
     },
   },
 
@@ -38,17 +45,11 @@ export default defineNuxtConfig({
 
   modules: [
     '@mockline/utils',
-    '@nuxtjs/plausible',
     '@nuxt/content',
     '@nuxthq/studio',
     '@nuxt/image',
     '@nuxtjs/seo',
   ],
-
-  plausible: {
-    domain: 'hrcd.fr',
-    apiHost: 'https://analytics.hrcd.fr',
-  },
 
   runtimeConfig: {
     public: {
