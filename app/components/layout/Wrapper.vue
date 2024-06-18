@@ -1,38 +1,5 @@
 <script setup lang="ts">
-const { page } = useContent()
-
-useContentHead(page)
-
-const { link } = useAppConfig()
-const { name, description } = useSiteConfig()
 const route = useRoute()
-
-useSeoMeta({
-  title: page.title,
-  description: page.description,
-  twitterTitle: name,
-  twitterDescription: description,
-  twitterCard: 'summary_large_image'
-})
-
-useHead({
-  titleTemplate: (title) => {
-    if (route.path === '/') return title || name
-    if (route.path.includes('/writing/') || route.path.includes('/notes/')) return title
-    return `${title} | ${name}`
-  },
-  htmlAttrs: {
-    lang: 'en',
-  },
-  link,
-})
-
-const mainClass = computed(() => {
-  if (route.path.includes('/writing/') || route.path.includes('/notes/')) {
-    return 'writing enter-content mb-4 mt-8'
-  }
-  return 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
-})
 </script>
 
 <template>
@@ -44,11 +11,7 @@ const mainClass = computed(() => {
     <main class="bg-light dark:bg-dark flex min-h-screen flex-col items-center justify-center p-3 sm:p-12">
       <LayoutLetterCard>
         <LayoutNavbar />
-        <ContentDoc :class="mainClass">
-          <template #not-found>
-            <DocumentDrivenNotFound />
-          </template>
-        </ContentDoc>
+        <slot />
         <CopyLink v-if="route.path.includes('/writing')" />
         <LayoutFooter />
       </LayoutLetterCard>
@@ -65,3 +28,7 @@ const mainClass = computed(() => {
     />
   </div>
 </template>
+
+<style scoped>
+
+</style>
