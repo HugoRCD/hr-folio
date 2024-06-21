@@ -5,7 +5,7 @@ const resend = new Resend(process.env.NUXT_PRIVATE_RESEND_API_KEY)
 // find your audience id here: https://resend.com/audiences
 const nuxtLogAudienceId = '555dc1c1-1008-4182-be98-605be9d1ebf6'
 
-type sendMailDto = {
+type SendMailDto = {
   email: string;
   message: string;
   name: string;
@@ -35,7 +35,7 @@ export async function sendSubscribeEmail(email: string) {
   }
 }
 
-export async function sendContactEmail({ email, message, name }: sendMailDto) {
+export async function sendContactEmail({ email, message, name }: SendMailDto) {
   try {
     await resend.emails.send({
       from: 'HugoRCD <contact@hrcd.fr>',

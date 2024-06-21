@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig()
-const siteUrl = runtimeConfig.public.siteUrl
+const { siteUrl } = runtimeConfig.public
 
 function copyArticleLinkToClipboard() {
   const input = document.createElement('input')

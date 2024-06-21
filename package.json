@@ -1,7 +1,6 @@
 {
   "name": "hr-folio",
   "private": true,
-  "type": "module",
   "scripts": {
     "automd": "automd",
     "build": "nuxt build",
@@ -14,7 +13,7 @@
     "lintfix": "eslint . --fix"
   },
   "devDependencies": {
-    "@hrcd/eslint-config": "^1.1.5",
+    "@hrcd/eslint-config": "^2.0.0",
     "@mockline/utils": "^1.0.1",
     "@nuxt/content": "^2.12.1",
     "@nuxt/image": "latest",
