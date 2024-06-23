@@ -15,15 +15,15 @@
   "devDependencies": {
     "@hrcd/eslint-config": "^2.0.0",
     "@mockline/utils": "^1.0.1",
-    "@nuxt/content": "^2.12.1",
+    "@nuxt/content": "^2.13.0",
     "@nuxt/image": "latest",
-    "@nuxthq/studio": "^2.0.0",
+    "@nuxthq/studio": "^2.0.1",
     "@nuxtjs/seo": "^2.0.0-rc.10",
     "automd": "^0.3.7",
     "eslint": "^9.5.0",
     "nuxt": "^3.12.2",
     "resend": "^3.3.0",
-    "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue": "^3.4.30",
+    "vue-router": "^4.4.0"
   }
 }
