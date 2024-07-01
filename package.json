@@ -1,6 +1,7 @@
 {
   "name": "hr-folio",
   "private": true,
+  "type": "module",
   "scripts": {
     "automd": "automd",
     "build": "nuxt build",

@@ -81,11 +81,6 @@ html.dark {
     @apply text-gray-900 dark:text-gray-100 font-[500];
 }
 
-@font-face {
-    font-family: "Geist", sans-serif;
-    src: url("../../public/fonts/GeistVariableVF.ttf");
-}
-
 /* Blurred line effect */
 .blurred {
     @apply blur-sm hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
