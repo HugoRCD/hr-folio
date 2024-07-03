@@ -12,6 +12,7 @@ const { link } = useAppConfig()
 const { name } = useSiteConfig()
 
 useSeoMeta({
+  ogSiteName: 'Hugo Richard',
   title: page.value.title,
   description: page.value.description,
   twitterTitle: page.value.title,

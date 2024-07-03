@@ -1,6 +1,3 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <div class="flex flex-1 flex-col items-center justify-center">
     <h1 class="text-center font-newsreader text-7xl italic">
@@ -17,7 +14,3 @@
     </p>
   </div>
 </template>
-
-<style scoped>
-
-</style>
