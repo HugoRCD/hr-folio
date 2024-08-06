@@ -21,10 +21,10 @@
     "@nuxthq/studio": "^2.0.3",
     "@nuxtjs/seo": "^2.0.0-rc.16",
     "automd": "^0.3.8",
-    "eslint": "^9.7.0",
+    "eslint": "^9.8.0",
     "nuxt": "^3.12.4",
-    "resend": "^3.4.0",
-    "vue": "^3.4.33",
-    "vue-router": "^4.4.0"
+    "resend": "^3.5.0",
+    "vue": "^3.4.36",
+    "vue-router": "^4.4.3"
   }
 }
