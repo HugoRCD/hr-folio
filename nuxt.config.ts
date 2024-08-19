@@ -101,7 +101,6 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/style/main.css'],
-
   devtools: { enabled: true },
 
   image: {
@@ -110,4 +109,6 @@ export default defineNuxtConfig({
       small: 160,
     },
   },
+
+  compatibilityDate: '2024-08-19',
 })
