@@ -21,7 +21,7 @@
     "@nuxthq/studio": "^2.1.1",
     "@nuxtjs/seo": "^2.0.0-rc.21",
     "automd": "^0.3.8",
-    "eslint": "^9.11.0",
+    "eslint": "^9.11.1",
     "nuxt": "^3.13.2",
     "resend": "^4.0.0",
     "vue": "^3.5.8",
