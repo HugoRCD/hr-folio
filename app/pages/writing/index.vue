@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useScriptPlausibleAnalytics({
+  domain: 'hrcd.fr',
+  scriptInput: {
+    src: 'https://analytics.hrcd.fr/js/script.js',
+  }
+})
+
 const email = ref('')
 
 const { status, error: subscribeError, refresh } = useFetch('/api/subscribe', {
@@ -44,9 +51,6 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
         </div>
         <h3 class="text-3xl font-medium italic decoration-accent group-hover:underline">
           {{ post.title }}
-          <span
-            class="i-lucide-arrow-up-right text-lg"
-          />
         </h3>
         <p
           class="!text-sm"

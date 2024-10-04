@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useScriptPlausibleAnalytics({
+  domain: 'hrcd.fr',
+  scriptInput: {
+    src: 'https://analytics.hrcd.fr/js/script.js',
+  }
+})
+
 const route = useRoute()
 const { data: page } = await useAsyncData(`${route.path}`, () => queryContent(route.path).findOne())
 
@@ -13,6 +20,7 @@ const { name } = useSiteConfig()
 
 useSeoMeta({
   ogSiteName: 'Hugo Richard',
+  author: 'Hugo Richard',
   title: page.value.title,
   description: page.value.description,
   twitterTitle: page.value.title,

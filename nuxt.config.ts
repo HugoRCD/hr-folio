@@ -10,19 +10,6 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'en',
       },
-      meta: [
-        {
-          name: 'author',
-          content: 'Hugo Richard',
-        },
-      ],
-      script: [
-        {
-          'src': 'https://analytics.hrcd.fr/js/script.js',
-          'defer': true,
-          'data-domain': 'hrcd.fr',
-        },
-      ],
     },
   },
 
@@ -49,6 +36,7 @@ export default defineNuxtConfig({
     '@nuxthq/studio',
     '@nuxt/image',
     '@nuxtjs/seo',
+    '@nuxt/scripts',
   ],
 
   runtimeConfig: {
