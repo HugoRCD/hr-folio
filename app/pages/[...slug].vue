@@ -1,5 +1,13 @@
 <script setup lang="ts">
+useScriptPlausibleAnalytics({
+  domain: 'hrcd.fr',
+  scriptInput: {
+    src: 'https://analytics.hrcd.fr/js/script.js',
+  }
+})
+
 const route = useRoute()
+
 const { data: page } = await useAsyncData(`${route.path}`, () => queryContent(route.path).findOne())
 
 if (!page.value) {
@@ -38,7 +46,7 @@ const contentClass = 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-
 </script>
 
 <template>
-  <div>
+  <Html lang="en">
     <ContentRenderer v-if="page?.body" :value="page" :class="route.path.includes('/writing/') ? writingClass : contentClass" />
-  </div>
+  </Html>
 </template>
