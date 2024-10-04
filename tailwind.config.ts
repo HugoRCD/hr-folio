@@ -6,7 +6,6 @@ export default {
     './components/**/*.{js,vue,ts}',
     './layouts/**/*.vue',
     './pages/**/*.vue',
-    './nuxt.config.{js,ts}',
     './app.vue',
   ],
   theme: {
@@ -31,5 +30,4 @@ export default {
       }
     },
   },
-  plugins: [],
 } satisfies Config

@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare",
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
-    "lintfix": "eslint . --fix"
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@hrcd/eslint-config": "^2.0.5",
