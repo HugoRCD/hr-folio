@@ -19,20 +19,14 @@
 }
 
 @layer base {
-  body {
+  :root {
     @apply text-font-primary bg-primary;
     @apply selection:bg-accent selection:text-inverted;
-  }
-
-  :root {
-    color-scheme: light;
 
     scrollbar-color: var(--color-accent) transparent;
   }
 
   .dark {
-    color-scheme: dark;
-
     --color-primary: rgb(2, 2, 2);
     --color-accent: rgb(7, 78, 255);
     --color-secondary: rgb(200, 200, 200);
