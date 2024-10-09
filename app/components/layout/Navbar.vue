@@ -1,10 +1,14 @@
+<script setup lang="ts">
+const route = useRoute()
+</script>
+
 <template>
   <div
-    class="flex w-full justify-end"
-    :class="{'justify-between': $route.path !== '/'}"
+    class="flex w-full"
+    :class="route.path !== '/' ? 'justify-between' : 'justify-end'"
   >
     <NuxtLink
-      v-if="$route.path !== '/'"
+      v-if="route.path !== '/'"
       to="/"
       aria-label="Go back to home page"
       class="group cursor-pointer"
