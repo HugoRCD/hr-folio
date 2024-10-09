@@ -43,7 +43,7 @@
 
     --color-main: rgba(255, 255, 255, 0.1);
 
-    scrollbar-color: var(--color-accent) #1f2937;
+    scrollbar-color: var(--color-accent) transparent;
   }
 
   .content {
@@ -69,16 +69,16 @@
   }
 
   .writing {
-    @apply prose antialiased font-geist text-gray-700/90 dark:text-gray-400/80 leading-relaxed;
-    @apply prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:text-zinc-900 dark:prose-h1:text-zinc-100 prose-h1:font-newsreader prose-h1:italic prose-h1:font-[600];
-    @apply prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:text-zinc-900 dark:prose-h2:text-zinc-100 prose-h2:font-[550];
-    @apply prose-h3:text-lg sm:prose-h3:text-xl prose-h3:text-zinc-900 dark:prose-h3:text-zinc-100 prose-h3:font-[500];
-    @apply prose-h4:text-base sm:prose-h4:text-lg prose-h4:text-zinc-900 dark:prose-h4:text-zinc-100 prose-h4:font-[500];
-    @apply prose-h5:text-sm sm:prose-h5:text-base prose-h5:text-zinc-900 dark:prose-h5:text-zinc-100 prose-h5:font-[500];
+    @apply prose antialiased font-geist text-secondary/70 leading-relaxed;
+    @apply prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:text-font-primary prose-h1:font-newsreader prose-h1:italic prose-h1:font-[600];
+    @apply prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:text-font-primary prose-h2:font-[550];
+    @apply prose-h3:text-lg sm:prose-h3:text-xl prose-h3:text-font-primary prose-h3:font-[500];
+    @apply prose-h4:text-base sm:prose-h4:text-lg prose-h4:text-font-primary prose-h4:font-[500];
+    @apply prose-h5:text-sm sm:prose-h5:text-base prose-h5:text-font-primary prose-h5:font-[500];
     @apply prose-a:text-accent dark:prose-a:text-accent prose-a:underline;
-    @apply prose-pre:text-sm sm:prose-pre:text-base prose-pre:text-zinc-900 dark:prose-pre:text-zinc-100;
-    @apply prose-code:text-zinc-900 dark:prose-code:text-zinc-100;
-    @apply prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-strong:font-[500];
+    @apply prose-pre:text-sm sm:prose-pre:text-base prose-pre:text-font-primary;
+    @apply prose-code:text-font-primary;
+    @apply prose-strong:text-font-primary prose-strong:font-[500];
   }
 
   .contrast {
@@ -99,6 +99,6 @@
   }
 
   .input {
-    @apply bg-primary border-b-2 border-main px-2 py-1 focus:outline-none resize-none caret-accent;
+    @apply bg-primary border-t-0 border-r-0 border-l-0 border-b-2 border-main px-2 py-1 focus:outline-none resize-none caret-accent;
   }
 }
