@@ -41,7 +41,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
       <div class="font-newsreader text-lg italic opacity-[15%]">
         {{ post.date }}
       </div>
-      <h3 class="text-3xl font-medium italic decoration-accent group-hover:underline">
+      <h3 class="text-xl italic decoration-accent group-hover:underline">
         {{ post.title }}
         <span
           class="i-lucide-arrow-up-right text-lg"

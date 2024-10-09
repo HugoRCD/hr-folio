@@ -12,7 +12,7 @@ const route = useRoute()
       <LayoutLetterCard>
         <LayoutNavbar />
         <slot />
-        <CopyLink v-if="route.path.includes('/writing/')" />
+        <CopyLink v-if="route.path.includes('/writing/') && route.name !== 'writing'" />
         <LayoutFooter />
       </LayoutLetterCard>
       <OssInfo />
@@ -22,13 +22,9 @@ const route = useRoute()
       close-button
       :toast-options="{
         style: {
-          backgroundColor: 'var(--primary-color)'
+          backgroundColor: 'var(--color-primary)'
         }
       }"
     />
   </div>
 </template>
-
-<style scoped>
-
-</style>

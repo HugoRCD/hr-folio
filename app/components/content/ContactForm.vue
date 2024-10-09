@@ -69,7 +69,7 @@ onMounted(() => {
     />
     <button
       type="submit"
-      class="bg-accent p-2 text-white"
+      class="bg-accent p-2 text-white cursor-pointer"
     >
       <span class="flex items-center justify-center gap-2">
         Send

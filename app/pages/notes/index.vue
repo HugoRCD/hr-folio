@@ -48,8 +48,8 @@ async function verifyPassword() {
         In order to see all my hidden notes, you will need first to enter the password.
       </span>
       <form v-if="!isAuthorized" class="flex gap-4" @submit.prevent="verifyPassword">
-        <input v-model="password" type="password" placeholder="Password" class="resize-none border-b-2 border-main bg-primary px-2 py-1 caret-accent focus:outline-none">
-        <button class="flex items-center justify-center gap-2 bg-accent px-2 text-white" type="submit">
+        <input v-model="password" type="password" placeholder="Password" class="input">
+        <button class="flex items-center cursor-pointer justify-center gap-2 bg-accent px-2 text-white" type="submit">
           <span v-if="status === 'pending'" class="i-lucide-loader size-4 animate-spin" />
           Verify
         </button>
@@ -64,7 +64,7 @@ async function verifyPassword() {
           :aria-label="`Read ${post.title}`"
           :style="{ '--stagger': index }"
         >
-          <h3 class="text-3xl font-medium italic decoration-accent group-hover:underline">
+          <h3 class="text-2xl italic decoration-accent group-hover:underline">
             {{ post.title }}
           </h3>
         </NuxtLink>
