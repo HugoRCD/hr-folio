@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@hrcd/eslint-config": "^2.0.5",
-    "@mockline/utils": "^1.5.0",
+    "@mockline/utils": "^1.5.1",
     "@nuxt/content": "^2.13.2",
     "@nuxt/image": "latest",
     "@nuxt/scripts": "^0.9.4",

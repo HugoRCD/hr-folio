@@ -17,7 +17,7 @@ const openModal = ref(false)
       width="80"
       height="80"
       sizes="160"
-      class="mb-2 size-20 cursor-pointer rounded-full object-cover"
+      class="mb-2 size-20 rounded-full object-cover"
       @click="openModal = true"
     />
     <h3>

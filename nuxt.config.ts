@@ -96,11 +96,5 @@ export default defineNuxtConfig({
     },
   },
 
-  fonts: {
-    experimental: {
-      processCSSVariables: true,
-    },
-  },
-
   compatibilityDate: '2024-08-19',
 })

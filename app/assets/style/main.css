@@ -1,7 +1,5 @@
-@import "tailwindcss";
+@import "@mockline/utils";
 @import "animations.css";
-
-@plugin "@tailwindcss/typography";
 
 @theme {
   --font-family-newsreader: "Newsreader", serif;
