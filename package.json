@@ -16,16 +16,16 @@
   "devDependencies": {
     "@hrcd/eslint-config": "^2.1.1",
     "@mockline/utils": "^1.5.1",
-    "@nuxt/content": "^2.13.2",
+    "@nuxt/content": "^2.13.4",
     "@nuxt/image": "latest",
-    "@nuxt/scripts": "^0.9.4",
+    "@nuxt/scripts": "^0.9.5",
     "@nuxthq/studio": "^2.1.1",
     "@nuxtjs/seo": "^2.0.0-rc.23",
     "automd": "^0.3.12",
     "eslint": "^9.12.0",
     "nuxt": "^3.13.2",
     "resend": "^4.0.0",
-    "vue": "^3.5.11",
+    "vue": "^3.5.12",
     "vue-router": "^4.4.5"
   }
 }
