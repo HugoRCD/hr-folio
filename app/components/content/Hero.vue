@@ -24,7 +24,7 @@ const openModal = ref(false)
       Hugo Richard
     </h3>
     <h1 class="font-newsreader text-2xl font-medium italic text-accent sm:text-3xl">
-      Developer and Designer
+      Frontend Architect and Designer
     </h1>
     <p class="max-w-[600px] text-pretty">
       <ContentSlot
