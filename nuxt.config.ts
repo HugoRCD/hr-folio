@@ -74,7 +74,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: process.env.NITRO_PRESET || 'bun',
+    preset: process.env.NITRO_PRESET || 'node-server',
     prerender: {
       crawlLinks: true,
       routes: ['/', '/works', '/about', '/writing', '/sitemap.xml'],

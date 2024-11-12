@@ -3,18 +3,20 @@ const email = ref('')
 const message = ref('')
 const name = ref('')
 
-const { status, error, refresh } = useFetch('/api/send', {
+const { error, refresh } = useFetch('/api/send', {
   method: 'POST',
   body: { email, message, name },
   watch: false,
   immediate: false
 })
 
+const loading = ref(false)
 async function submit() {
   if (!email.value || !message.value) {
     toast.error('Please fill in all required fields.')
     return
   }
+  loading.value = true
   await refresh()
   if (!error.value) {
     email.value = ''
@@ -24,6 +26,7 @@ async function submit() {
   } else {
     toast.error('An error occurred while sending your message.')
   }
+  loading.value = false
 }
 
 onMounted(() => {
@@ -73,10 +76,7 @@ onMounted(() => {
     >
       <span class="flex items-center justify-center gap-2">
         Send
-        <i
-          v-if="status === 'pending'"
-          class="i-lucide-loader size-4 animate-spin text-inverted"
-        />
+        <MIcon v-if="loading" name="lucide:loader" class="text-inverted animate-spin" />
       </span>
     </button>
   </form>
