@@ -59,3 +59,4 @@ jobs:
           build-args: |
             TURBO_TEAM=${{ vars.TURBO_TEAM }}
             TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
