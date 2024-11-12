@@ -1,0 +1,33 @@
+services:
+  hr_folio:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: hr_folio
+    restart: always
+    environment:
+      - NUXT_PUBLIC_SITE_URL=${NUXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      - NUXT_PRIVATE_RESEND_API_KEY=${NUXT_PRIVATE_RESEND_API_KEY}
+      - NUXT_PRIVATE_NOTES_PASSWORD=${NUXT_PRIVATE_NOTES_PASSWORD}
+      - NUXT_PRIVATE_GITHUB_TOKEN=${NUXT_PRIVATE_GITHUB_TOKEN}
+      - NUXT_PUBLIC_MEETING_LINK=${NUXT_PUBLIC_MEETING_LINK}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/api/hello" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
