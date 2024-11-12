@@ -47,7 +47,7 @@ const contentClass = 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-
 
 <template>
   <Html lang="en">
-    <MApp>
+    <MApp class="bg-transparent">
       <ContentRenderer v-if="page?.body" :value="page" :class="route.path.includes('/writing/') ? writingClass : contentClass" />
     </MApp>
   </Html>

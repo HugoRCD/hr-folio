@@ -28,13 +28,16 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    '@mockline/utils',
-    '@nuxt/content',
+    'mockline',
     '@nuxthq/studio',
     '@nuxt/image',
     '@nuxtjs/seo',
     '@nuxt/scripts',
   ],
+
+  mockline: {
+    content: true
+  },
 
   runtimeConfig: {
     public: {
@@ -55,9 +58,6 @@ export default defineNuxtConfig({
   },
 
   content: {
-    highlight: {
-      theme: 'github-dark',
-    },
     markdown: {
       anchorLinks: false,
     },

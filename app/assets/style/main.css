@@ -1,9 +1,11 @@
-@import "@mockline/utils";
-@import "animations.css";
+@import "tailwindcss";
+@import "mockline";
+
+@import "./animations.css";
 
 @theme {
-  --font-family-newsreader: "Newsreader", serif;
-  --font-family-geist: "Geist", sans-serif;
+  --font-newsreader: "Newsreader", serif;
+  --font-geist: "Geist", sans-serif;
 
   --color-primary: rgb(248, 243, 238);
   --color-accent: rgb(40, 83, 255);
