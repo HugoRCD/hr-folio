@@ -19,12 +19,12 @@
     "@nuxt/image": "latest",
     "@nuxt/scripts": "^0.9.5",
     "@nuxthq/studio": "^2.2.1",
-    "@nuxtjs/seo": "^2.0.0-rc.23",
+    "@nuxtjs/seo": "^2.0.2",
     "automd": "^0.3.12",
     "eslint": "^9.15.0",
     "nuxt": "^3.14.1592",
     "resend": "^4.0.1",
     "vue": "^3.5.13",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.5.0"
   }
 }
