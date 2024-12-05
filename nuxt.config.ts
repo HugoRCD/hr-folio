@@ -29,6 +29,7 @@ export default defineNuxtConfig({
 
   modules: [
     'mockline',
+    '@nuxt/content',
     '@nuxthq/studio',
     '@nuxt/image',
     '@nuxtjs/seo',
@@ -41,12 +42,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
-      meetingLink: process.env.NUXT_PUBLIC_MEETING_LINK,
+      siteUrl: '',
+      meetingLink: '',
     },
     private: {
-      resendApiKey: process.env.NUXT_PRIVATE_RESEND_API_KEY,
-      notesPassword: process.env.NUXT_PRIVATE_NOTES_PASSWORD,
+      resendApiKey: '',
+      notesPassword: '',
     },
   },
 

@@ -24,6 +24,7 @@
     @apply selection:bg-accent selection:text-inverted;
 
     scrollbar-color: var(--color-accent) transparent;
+    scrollbar-width: thin;
   }
 
   .dark {
@@ -81,7 +82,7 @@
 
   /* Blurred line effect */
   .blurred {
-    @apply blur-sm hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
+    @apply blur-xs hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
   }
 
   .link {
