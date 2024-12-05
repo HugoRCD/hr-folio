@@ -38,13 +38,27 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl: '',
       meetingLink: '',
     },
     private: {
       resendApiKey: '',
       notesPassword: '',
     },
+  },
+
+  icon: {
+    class: 'fill-current',
+    customCollections: [
+      {
+        prefix: 'custom',
+        dir: './app/assets/icons'
+      },
+    ],
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true
+    },
+    provider: 'iconify'
   },
 
   colorMode: {
