@@ -78,7 +78,8 @@ export default defineNuxtConfig({
         default: 'github-light',
         dark: 'github-dark',
         light: 'github-light',
-      }
+      },
+      preload: ['diff', 'ts', 'js', 'css', 'bash', 'json'],
     },
     sources: {
       github: {

@@ -52,7 +52,7 @@ onClickOutside(target, event => {
   <div
     class="fixed z-50 scale-[0.9] sm:scale-[0.6] transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right"
     :class="[
-      !isMobile && 'hover:scale-100'
+      !isMobile && 'hover:scale-120'
     ]"
   >
     <div
@@ -66,7 +66,7 @@ onClickOutside(target, event => {
       @mouseleave="handleInteraction('leave')"
       @click="isMobile && handleInteraction('click')"
     >
-      <nav class="overflow-y-auto">
+      <nav class="overflow-y-auto cursor-pointer">
         <div>
           <TocLinks
             :links

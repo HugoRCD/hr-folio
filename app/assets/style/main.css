@@ -71,9 +71,15 @@
     @apply prose-h4:text-base sm:prose-h4:text-lg prose-h4:text-font-primary prose-h4:font-[500];
     @apply prose-h5:text-sm sm:prose-h5:text-base prose-h5:text-font-primary prose-h5:font-[500];
     @apply prose-a:text-accent dark:prose-a:text-accent prose-a:underline;
-    @apply prose-pre:text-sm sm:prose-pre:text-base prose-pre:text-font-primary;
-    @apply prose-code:text-font-primary;
     @apply prose-strong:text-font-primary prose-strong:font-[500];
+  }
+
+  .writing :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    @apply bg-primary;
+  }
+
+  .writing :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    @apply text-font-primary;
   }
 
   .contrast {
