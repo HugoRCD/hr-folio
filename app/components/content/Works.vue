@@ -41,6 +41,4 @@ const { data: works } = await useAsyncData('works', () =>
   </div>
 </template>
 
-<style scoped>
 
-</style>

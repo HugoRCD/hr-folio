@@ -36,10 +36,6 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
   ],
 
-  mockline: {
-    content: true
-  },
-
   runtimeConfig: {
     public: {
       siteUrl: '',
@@ -61,6 +57,13 @@ export default defineNuxtConfig({
   content: {
     markdown: {
       anchorLinks: false,
+    },
+    highlight: {
+      theme: {
+        default: 'github-light',
+        dark: 'github-dark',
+        light: 'github-light',
+      }
     },
     sources: {
       github: {

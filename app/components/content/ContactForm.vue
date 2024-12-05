@@ -82,6 +82,4 @@ onMounted(() => {
   </form>
 </template>
 
-<style scoped>
 
-</style>

@@ -10,14 +10,15 @@ const route = useRoute()
 
 const { data: page } = await useAsyncData(`${route.path}`, () => queryContent(route.path).findOne())
 
-if (!page.value) {
+if (!page.value)
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
-}
 
 useContentHead(page.value)
 
 const { link } = useAppConfig()
 const { name } = useSiteConfig()
+
+const isWriting = computed(() => route.path.includes('/writing/'))
 
 useSeoMeta({
   ogSiteName: 'Hugo Richard',
@@ -34,7 +35,7 @@ useHead({
   titleTemplate(title) {
     if (route.path === '/')
       return title || name
-    if (route.path.includes('/writing/'))
+    if (isWriting.value)
       return title
     return `${title} | ${name}`
   },
@@ -47,8 +48,13 @@ const contentClass = 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-
 
 <template>
   <Html lang="en">
-    <MApp class="bg-transparent">
-      <ContentRenderer v-if="page?.body" :value="page" :class="route.path.includes('/writing/') ? writingClass : contentClass" />
+    <MApp class="relative bg-transparent">
+      <div v-if="isWriting" class="max-sm:hidden fixed z-50 scale-50 hover:scale-100 transition-transform duration-200 ease-in-out right-4 top-1/2 -translate-y-1/2 origin-right">
+        <div class="bg-primary p-4 shadow-md w-fit rounded-md mx-auto border border-secondary/20">
+          <Toc :links="page?.body?.toc?.links!" />
+        </div>
+      </div>
+      <ContentRenderer v-if="page?.body" :value="page" :class="isWriting ? writingClass : contentClass" />
     </MApp>
   </Html>
 </template>

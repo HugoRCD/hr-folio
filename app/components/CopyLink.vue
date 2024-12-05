@@ -1,15 +1,11 @@
 <script setup lang="ts">
-const runtimeConfig = useRuntimeConfig()
-const { siteUrl } = runtimeConfig.public
+const route = useRoute()
 
 function copyArticleLinkToClipboard() {
-  const input = document.createElement('input')
-  input.setAttribute('value', siteUrl + useRoute().path)
-  document.body.appendChild(input)
-  input.select()
-  document.execCommand('copy')
-  document.body.removeChild(input)
-  toast.success('Article link copied to clipboard !')
+  useClipboard({
+    toCopy: `${window.location.origin}${route.path}`,
+    callback: () => toast.success('Article link copied to clipboard !')
+  })
 }
 </script>
 
@@ -23,7 +19,3 @@ function copyArticleLinkToClipboard() {
     </span>
   </div>
 </template>
-
-<style scoped>
-
-</style>

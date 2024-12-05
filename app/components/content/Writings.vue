@@ -88,6 +88,4 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
   </div>
 </template>
 
-<style scoped>
 
-</style>

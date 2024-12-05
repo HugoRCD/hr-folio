@@ -22,7 +22,9 @@ const route = useRoute()
       close-button
       :toast-options="{
         style: {
-          backgroundColor: 'var(--color-primary)'
+          backgroundColor: 'var(--color-primary)',
+          borderColor: 'var(--color-main)',
+          color: 'var(--color-font-primary)',
         }
       }"
     />
