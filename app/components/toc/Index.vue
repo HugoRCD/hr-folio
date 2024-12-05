@@ -50,7 +50,7 @@ onClickOutside(target, event => {
 
 <template>
   <div
-    class="fixed z-50 scale-[0.8] sm:scale-[0.6] transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right"
+    class="fixed z-50 scale-[0.9] sm:scale-[0.6] transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right"
     :class="[
       !isMobile && 'hover:scale-100'
     ]"
@@ -59,7 +59,8 @@ onClickOutside(target, event => {
       ref="target"
       class="rounded-md mx-auto transition-all duration-300 ease-in-out"
       :class="[
-        isOpen ? 'bg-primary shadow-md border border-secondary/20 p-4' : 'p-0 border-transparent'
+        isOpen ? 'bg-primary/80 backdrop-blur-lg shadow-md border border-secondary/20 p-4' : 'p-0 border-transparent',
+        isMobile && !isOpen ? 'bg-primary/80 backdrop-blur-lg shadow-md border border-secondary/20 p-2 py-4 scale-50 origin-right' : ''
       ]"
       @mouseenter="handleInteraction('enter')"
       @mouseleave="handleInteraction('leave')"
