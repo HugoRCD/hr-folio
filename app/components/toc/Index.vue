@@ -6,6 +6,16 @@ const { links = [] } = defineProps<{
 }>()
 
 const isHover = ref(false)
+
+const { activeHeadings, updateHeadings } = useScrollspy()
+const nuxtApp = useNuxtApp()
+
+nuxtApp.hooks.hookOnce('page:finish', () => {
+  updateHeadings([
+    ...document.querySelectorAll('h2'),
+    ...document.querySelectorAll('h3')
+  ])
+})
 </script>
 
 <template>
@@ -20,7 +30,7 @@ const isHover = ref(false)
     >
       <nav class="overflow-y-auto">
         <div>
-          <TocLinks :links :is-hover />
+          <TocLinks :links :is-hover :active-headings />
         </div>
       </nav>
     </div>

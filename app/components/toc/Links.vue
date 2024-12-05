@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import type { TocLink } from '@nuxt/content'
-import { useScrollspy, useNuxtApp, useRouter } from '#imports'
 
-const { activeHeadings, updateHeadings } = useScrollspy()
-
-const { links = [] } = defineProps<{
+const { links = [], isHover } = defineProps<{
   links: TocLink[]
   active?: string
   isHover: boolean
+  activeHeadings: string[]
 }>()
 
-const nuxtApp = useNuxtApp()
 const router = useRouter()
-
-nuxtApp.hooks.hookOnce('page:finish', () => {
-  updateHeadings([
-    ...document.querySelectorAll('h2'),
-    ...document.querySelectorAll('h3')
-  ])
-})
 
 const scrollToHeading = (id: string): void => {
   const encodedId = encodeURIComponent(id)
@@ -54,7 +44,7 @@ const scrollToHeading = (id: string): void => {
             {{ link.text }}
           </a>
 
-          <Links v-if="link.children" :links="link.children" :is-hover />
+          <Links v-if="link.children" :links="link.children" :is-hover :active-headings />
         </li>
       </ul>
       <div v-else-if="links?.length" class="space-y-4">
@@ -74,7 +64,7 @@ const scrollToHeading = (id: string): void => {
             @click="scrollToHeading(link.id)"
           />
 
-          <Links v-if="link.children" :links="link.children" :is-hover />
+          <Links v-if="link.children" :links="link.children" :is-hover :active-headings />
         </div>
       </div>
     </Transition>
