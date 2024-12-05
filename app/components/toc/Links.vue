@@ -4,15 +4,11 @@ import { useScrollspy, useNuxtApp, useRouter } from '#imports'
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
-type ContentTocProps = {
-  title?: string
+const { links = [] } = defineProps<{
   links: TocLink[]
   active?: string
   isHover: boolean
-}
-
-
-const { title = 'Table of Contents', links = [] } = defineProps<ContentTocProps>()
+}>()
 
 const nuxtApp = useNuxtApp()
 const router = useRouter()
@@ -24,12 +20,9 @@ nuxtApp.hooks.hookOnce('page:finish', () => {
   ])
 })
 
-const emit = defineEmits(['move'])
-
 const scrollToHeading = (id: string): void => {
   const encodedId = encodeURIComponent(id)
   router.push(`#${encodedId}`)
-  emit('move', id)
 }
 </script>
 

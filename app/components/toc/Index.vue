@@ -9,7 +9,7 @@ const isHover = ref(false)
 </script>
 
 <template>
-  <div class="max-sm:hidden fixed z-50 scale-[0.6] hover:scale-100 transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right">
+  <div class="fixed z-50 scale-[0.6] hover:scale-100 transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right">
     <div
       class="rounded-md mx-auto transition-all duration-300 ease-in-out"
       :class="[
