@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import type { TocLink } from '@nuxt/content'
 
-const { links = [], isHover } = defineProps<{
+const { links = [], isHover, isMobile } = defineProps<{
   links: TocLink[]
   active?: string
   isHover: boolean
   activeHeadings: string[]
+  isMobile: boolean
 }>()
 
 const router = useRouter()
 
 const scrollToHeading = (id: string): void => {
-  const encodedId = encodeURIComponent(id)
-  router.push(`#${encodedId}`)
+  if (!isMobile || (isMobile && isHover)) {
+    const encodedId = encodeURIComponent(id)
+    router.push(`#${encodedId}`)
+  }
 }
 </script>
 
@@ -44,7 +47,13 @@ const scrollToHeading = (id: string): void => {
             {{ link.text }}
           </a>
 
-          <Links v-if="link.children" :links="link.children" :is-hover :active-headings />
+          <Links
+            v-if="link.children"
+            :links="link.children"
+            :is-hover
+            :active-headings
+            :is-mobile
+          />
         </li>
       </ul>
       <div v-else-if="links?.length" class="space-y-4">
@@ -54,20 +63,25 @@ const scrollToHeading = (id: string): void => {
           class="flex flex-col items-end gap-1"
         >
           <div
-            class="h-[4px] rounded-full transition-all duration-500 ease-in-out cursor-pointer"
+            class="h-[4px] rounded-full transition-all duration-500 ease-in-out"
             :class="[
               activeHeadings.includes(link.id)
                 ? 'w-12 bg-accent'
                 : 'w-8 bg-secondary/20',
-              link.depth === 3 ? 'w-6' : ''
+              link.depth === 3 ? 'w-6' : '',
+              isMobile ? 'cursor-default' : 'cursor-pointer'
             ]"
-            @click="scrollToHeading(link.id)"
           />
 
-          <Links v-if="link.children" :links="link.children" :is-hover :active-headings />
+          <Links
+            v-if="link.children"
+            :links="link.children"
+            :is-hover
+            :active-headings
+            :is-mobile
+          />
         </div>
       </div>
     </Transition>
   </div>
 </template>
-

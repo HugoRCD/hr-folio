@@ -5,10 +5,35 @@ const { links = [] } = defineProps<{
   links: TocLink[]
 }>()
 
-const isHover = ref(false)
+const isOpen = ref(false)
+const isMobile = ref(false)
+const target = ref(null)
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 const nuxtApp = useNuxtApp()
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 640
+}
+
+const handleInteraction = (event: 'enter' | 'leave' | 'click') => {
+  if (isMobile.value) {
+    if (event === 'click') {
+      isOpen.value = !isOpen.value
+    }
+  } else {
+    isOpen.value = event === 'enter'
+  }
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
 
 nuxtApp.hooks.hookOnce('page:finish', () => {
   updateHeadings([
@@ -16,21 +41,38 @@ nuxtApp.hooks.hookOnce('page:finish', () => {
     ...document.querySelectorAll('h3')
   ])
 })
+
+
+onClickOutside(target, event => {
+  if (isOpen.value) isOpen.value = false
+})
 </script>
 
 <template>
-  <div class="fixed z-50 scale-[0.6] hover:scale-100 transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right">
+  <div
+    class="fixed z-50 scale-[0.8] sm:scale-[0.6] transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right"
+    :class="[
+      !isMobile && 'hover:scale-100'
+    ]"
+  >
     <div
+      ref="target"
       class="rounded-md mx-auto transition-all duration-300 ease-in-out"
       :class="[
-        isHover ? 'bg-primary shadow-md border border-secondary/20 p-4' : 'p-0 border-transparent'
+        isOpen ? 'bg-primary shadow-md border border-secondary/20 p-4' : 'p-0 border-transparent'
       ]"
-      @mouseenter="isHover = true"
-      @mouseleave="isHover = false"
+      @mouseenter="handleInteraction('enter')"
+      @mouseleave="handleInteraction('leave')"
+      @click="isMobile && handleInteraction('click')"
     >
       <nav class="overflow-y-auto">
         <div>
-          <TocLinks :links :is-hover :active-headings />
+          <TocLinks
+            :links
+            :is-hover="isOpen"
+            :active-headings
+            :is-mobile
+          />
         </div>
       </nav>
     </div>
