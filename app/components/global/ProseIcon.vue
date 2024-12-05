@@ -1,10 +1,19 @@
 <script setup lang="ts">
-const props = defineProps<{
+const { size = '12px', align } = defineProps<{
   name: string
   class?: any
+  size?: string
+  align?: boolean
 }>()
 </script>
 
 <template>
-  <MIcon :name size="12px" class="text-font-primary" :class="props.class" />
+  <MIcon :name :size class="text-font-primary" :class="[align ? 'icon' : '']" />
 </template>
+
+<style scoped>
+.icon {
+  display: inline-block;
+  vertical-align: sub;
+}
+</style>
