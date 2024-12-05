@@ -44,7 +44,7 @@ const scrollToHeading = (id: string): void => {
         {{ link.text }}
       </a>
 
-      <TocLinks v-if="link.children" :links="link.children" />
+      <Links v-if="link.children" :links="link.children" />
     </li>
   </ul>
 </template>

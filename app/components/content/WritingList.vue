@@ -1,15 +1,13 @@
 <script setup lang="ts">
 const { data, error } = await useAsyncData('feed', () =>
-  queryContent('/writing/').find()
+  queryContent('/writing/').limit(4).find()
 )
 
 if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>
-  <div
-    class="flex flex-col gap-3"
-  >
+  <div class="flex flex-col gap-3">
     <NuxtLink
       v-for="(post, index) in data"
       :key="post.title"
