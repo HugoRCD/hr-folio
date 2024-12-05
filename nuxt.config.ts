@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxtjs/seo',
     '@nuxt/scripts',
+    '@vueuse/nuxt',
   ],
 
   runtimeConfig: {

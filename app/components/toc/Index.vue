@@ -1,21 +1,78 @@
 <script setup lang="ts">
 import type { TocLink } from '@nuxt/content'
 
-const { title = 'Table of Contents', links = [] } = defineProps<{
-  title?: string
+const { links = [] } = defineProps<{
   links: TocLink[]
 }>()
+
+const isOpen = ref(false)
+const isMobile = ref(false)
+const target = ref(null)
+
+const { activeHeadings, updateHeadings } = useScrollspy()
+const nuxtApp = useNuxtApp()
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 640
+}
+
+const handleInteraction = (event: 'enter' | 'leave' | 'click') => {
+  if (isMobile.value) {
+    if (event === 'click') {
+      isOpen.value = !isOpen.value
+    }
+  } else {
+    isOpen.value = event === 'enter'
+  }
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+
+nuxtApp.hooks.hookOnce('page:finish', () => {
+  updateHeadings([
+    ...document.querySelectorAll('h2'),
+    ...document.querySelectorAll('h3')
+  ])
+})
+
+
+onClickOutside(target, event => {
+  if (isOpen.value) isOpen.value = false
+})
 </script>
 
 <template>
-  <div class="max-sm:hidden fixed z-50 scale-[0.3] hover:scale-100 transition-transform duration-200 ease-in-out right-4 top-1/2 -translate-y-1/2 origin-right">
-    <div class="bg-primary p-4 shadow-md w-fit rounded-md mx-auto border border-secondary/20">
+  <div
+    class="fixed z-50 scale-[0.8] sm:scale-[0.6] transition-all duration-300 ease-in-out right-2 top-1/2 -translate-y-1/2 origin-right"
+    :class="[
+      !isMobile && 'hover:scale-100'
+    ]"
+  >
+    <div
+      ref="target"
+      class="rounded-md mx-auto transition-all duration-300 ease-in-out"
+      :class="[
+        isOpen ? 'bg-primary shadow-md border border-secondary/20 p-4' : 'p-0 border-transparent'
+      ]"
+      @mouseenter="handleInteraction('enter')"
+      @mouseleave="handleInteraction('leave')"
+      @click="isMobile && handleInteraction('click')"
+    >
       <nav class="overflow-y-auto">
         <div>
-          <button v-if="links?.length" tabindex="-1" class="group flex w-full items-center gap-1.5 lg:cursor-text lg:select-text">
-            <span class="truncate text-sm/6 font-newsreader italic font-light font-semibold">{{ title }}</span>
-          </button>
-          <TocLinks :links />
+          <TocLinks
+            :links
+            :is-hover="isOpen"
+            :active-headings
+            :is-mobile
+          />
         </div>
       </nav>
     </div>
