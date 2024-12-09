@@ -73,14 +73,6 @@ export default defineNuxtConfig({
     markdown: {
       anchorLinks: false,
     },
-    highlight: {
-      theme: {
-        default: 'github-light',
-        dark: 'github-dark',
-        light: 'github-light',
-      },
-      preload: ['diff', 'ts', 'js', 'css', 'bash', 'json'],
-    },
     sources: {
       github: {
         prefix: '/notes',

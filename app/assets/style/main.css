@@ -6,6 +6,7 @@
 @theme {
   --font-newsreader: "Newsreader", serif;
   --font-geist: "Geist", sans-serif;
+  --font-mono: "Geist Mono", sans-serif;
 
   --color-primary: rgb(248, 243, 238);
   --color-accent: rgb(40, 83, 255);
@@ -25,6 +26,11 @@
 
     scrollbar-color: var(--color-accent) transparent;
     scrollbar-width: thin;
+  }
+
+  body {
+    @apply antialiased font-geist text-secondary;
+    @apply bg-primary text-font-primary;
   }
 
   .dark {
@@ -63,7 +69,7 @@
     }
   }
 
-  .writing {
+  /*.writing {
     @apply prose antialiased font-geist text-secondary/70 leading-relaxed;
     @apply prose-h1:text-2xl sm:prose-h1:text-3xl prose-h1:text-font-primary prose-h1:font-newsreader prose-h1:italic prose-h1:font-[600];
     @apply prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:text-font-primary prose-h2:font-[550];
@@ -72,9 +78,9 @@
     @apply prose-h5:text-sm sm:prose-h5:text-base prose-h5:text-font-primary prose-h5:font-[500];
     @apply prose-a:text-accent dark:prose-a:text-accent prose-a:underline;
     @apply prose-strong:text-font-primary prose-strong:font-[500];
-  }
+  }*/
 
-  .writing :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  /*.writing :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
     @apply bg-primary;
   }
 
@@ -88,7 +94,7 @@
 
   .writing :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::after {
     content: "";
-  }
+  }*/
 
   .contrast {
     @apply text-gray-900 dark:text-gray-100 font-[500];
@@ -100,7 +106,7 @@
   }
 
   .link {
-    @apply italic font-extralight hover:text-accent dark:hover:text-accent hover:underline;
+    @apply italic font-extralight hover:text-accent dark:hover:text-accent;
   }
 
   .no-link {
