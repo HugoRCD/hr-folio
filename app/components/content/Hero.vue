@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig()
 const { meetingLink } = runtimeConfig.public
-
-const openModal = ref(false)
 </script>
 
 <template>
@@ -11,15 +9,6 @@ const openModal = ref(false)
     data-animate
     style="--stagger: 1"
   >
-    <NuxtImg
-      src="/hugo.webp"
-      alt="Hugo Richard"
-      width="80"
-      height="80"
-      sizes="160"
-      class="mb-2 size-20 rounded-full object-cover"
-      @click="openModal = true"
-    />
     <h3>
       Hugo Richard
     </h3>

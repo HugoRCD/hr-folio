@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="flex size-full max-w-7xl flex-1 flex-col justify-between gap-3 rounded-sm sm:border-2 border-main p-4 sm:p-6">
+  <div class="flex size-full max-w-7xl flex-1 flex-col justify-between gap-3 sm:border-2 border-main p-4 sm:p-6">
     <slot />
   </div>
 </template>
