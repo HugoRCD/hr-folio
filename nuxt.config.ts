@@ -3,13 +3,6 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
-  app: {
-    head: {
-      viewport: 'width=device-width, initial-scale=1',
-      charset: 'utf-8',
-    },
-  },
-
   site: {
     url: 'https://hrcd.fr',
     name: 'Hugo Richard - Developer & Designer',
@@ -95,7 +88,6 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      crawlLinks: true,
       routes: ['/', '/works', '/about', '/writing', '/sitemap.xml'],
     },
   },
@@ -108,13 +100,6 @@ export default defineNuxtConfig({
   css: ['~/assets/style/main.css'],
 
   devtools: { enabled: true },
-
-  image: {
-    screens: {
-      avatar: 80,
-      small: 160,
-    },
-  },
 
   compatibilityDate: '2024-08-19',
 })
