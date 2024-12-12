@@ -39,6 +39,16 @@ useHead({
       return title
     return `${title} | ${name}`
   },
+  meta: [
+    {
+      name: 'viewport',
+      content: 'width=device-width, initial-scale=1.0'
+    },
+    {
+      name: 'charset',
+      content: 'utf-8'
+    }
+  ],
   link,
 })
 
@@ -49,8 +59,8 @@ const contentClass = 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-
 <template>
   <Html lang="en">
     <MApp class="relative bg-transparent">
-      <!--      <Toc v-if="isWriting" :links="page?.body?.toc?.links!" />-->
-      <MContentFloatingToc v-if="isWriting" :links="page?.body?.toc?.links!" />
+      <Toc v-if="isWriting" :links="page?.body?.toc?.links!" />
+      <!--      <MContentFloatingToc v-if="isWriting" :links="page?.body?.toc?.links!" />-->
       <ContentRenderer v-if="page?.body" :value="page" :class="isWriting ? writingClass : contentClass" />
     </MApp>
   </Html>

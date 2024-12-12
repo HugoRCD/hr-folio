@@ -3,13 +3,6 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
-  app: {
-    head: {
-      viewport: 'width=device-width, initial-scale=1',
-      charset: 'utf-8',
-    },
-  },
-
   site: {
     url: 'https://hrcd.fr',
     name: 'Hugo Richard - Developer & Designer',
@@ -36,6 +29,10 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@vueuse/nuxt',
   ],
+
+  mockline: {
+    mdc: false
+  },
 
   runtimeConfig: {
     public: {
