@@ -27,10 +27,7 @@ const openModal = ref(false)
       Frontend Architect and Designer
     </h1>
     <p class="max-w-[600px] text-pretty">
-      <ContentSlot
-        :use="$slots.default"
-        unwrap="p"
-      />
+      <slot mdc-unwrap="p" />
     </p>
     <div class="mt-2 flex gap-8">
       <NuxtLink

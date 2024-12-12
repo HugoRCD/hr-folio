@@ -1,7 +1,5 @@
 <script setup lang="ts">
-const { data, error } = await useAsyncData('feed', () =>
-  queryContent('/writing/').limit(4).find()
-)
+const { data, error } = await useAsyncData('feed', () => queryCollection('writing').limit(4).all())
 
 if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>

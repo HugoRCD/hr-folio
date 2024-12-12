@@ -25,9 +25,7 @@ async function submit() {
   }
 }
 
-const { data, error } = await useAsyncData('feed', () =>
-  queryContent('/writing/').find()
-)
+const { data, error } = await useAsyncData('feed', () => queryCollection('writing').all())
 
 if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>

@@ -29,13 +29,8 @@ defineProps({
         {{ number }}
       </div>
     </div>
-    <div
-      :class="size"
-      class="text-pretty"
-    >
-      <ContentSlot
-        :use="$slots.default"
-      />
+    <div :class="size" class="text-pretty">
+      <slot mdc-unwrap="p" />
     </div>
   </div>
 </template>

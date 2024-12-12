@@ -8,15 +8,12 @@ useScriptPlausibleAnalytics({
 
 const route = useRoute()
 
-const { data: page } = await useAsyncData(`${route.path}`, () => queryContent(route.path).findOne())
-
+const { data: page } = await useAsyncData(route.path, () => queryCollection('content').path(route.path).first())
 if (!page.value)
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 
-useContentHead(page.value)
-
 const { link } = useAppConfig()
-const { name } = useSiteConfig()
+const name = 'Hugo Richard - Developer & Designer'
 
 const isWriting = computed(() => route.path.includes('/writing/'))
 
