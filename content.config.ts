@@ -15,11 +15,17 @@ export const collections = {
   }),
   writing: defineCollection({
     type: 'page',
-    source: 'writing/*.md'
+    source: '2.writing/*.md',
+    schema: z.object({
+      title: z.string().nonempty(),
+      description: z.string().nonempty(),
+      date: z.string().nonempty(),
+      image: z.string().url(),
+    })
   }),
   works: defineCollection({
     type: 'data',
-    source: 'works/*.json',
+    source: '1.works/*.json',
     schema: z.object({
       name: z.string().nonempty(),
       logo: z.string().nonempty(),

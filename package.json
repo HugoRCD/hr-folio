@@ -22,7 +22,7 @@
     "@vueuse/nuxt": "12.0.0",
     "automd": "0.3.12",
     "eslint": "9.16.0",
-    "mockline": "0.11.0",
+    "mockline": "0.12.0",
     "nuxt": "3.14.1592",
     "resend": "4.0.1",
     "vue": "3.5.13",

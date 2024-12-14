@@ -9,7 +9,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
     <NuxtLink
       v-for="(post, index) in data"
       :key="post.title"
-      :to="post._path"
+      :to="post.path"
       class="link text-lg"
       data-animate
       :aria-label="`Read ${post.title}`"

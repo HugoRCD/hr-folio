@@ -9,13 +9,8 @@ type Work = {
   release: string;
 };
 
-/*const { data: works } = await useAsyncData('works', () =>
-  queryContent('works')
-    .where({ _type: 'json' })
-    .sort({ date: -1 })
-    .find()
-)*/
-const { data: works, error } = await useAsyncData('works', () => queryCollection('works').all())
+const { data: works, error } = await useAsyncData('works', () => queryCollection('works').order('date', 'DESC').all())
+if (!works.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>

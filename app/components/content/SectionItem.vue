@@ -30,7 +30,7 @@ defineProps({
       </div>
     </div>
     <div :class="size" class="text-pretty">
-      <slot mdc-unwrap="p" />
+      <slot />
     </div>
   </div>
 </template>

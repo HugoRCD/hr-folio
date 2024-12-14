@@ -8,7 +8,7 @@ useScriptPlausibleAnalytics({
 
 const email = ref('')
 
-const { status, error: subscribeError, refresh } = useFetch('/api/subscribe', {
+const { status, refresh } = useFetch('/api/subscribe', {
   method: 'POST',
   body: { email },
   watch: false,
@@ -25,7 +25,7 @@ async function submit() {
   }
 }
 
-const { data, error } = await useAsyncData('feed', () => queryCollection('writing').all())
+const { data, error } = await useAsyncData('writings', () => queryCollection('writing').all())
 
 if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>
@@ -38,7 +38,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
       <NuxtLink
         v-for="(post, index) in data"
         :key="post.title"
-        :to="post._path"
+        :to="post.path"
         class="group relative max-w-prose"
         data-animate
         :aria-label="`Read ${post.title}`"
