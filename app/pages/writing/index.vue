@@ -31,10 +31,8 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>
-  <SectionItem class="content mb-4 mt-8 flex flex-1 flex-col justify-center gap-8 sm:gap-12" title="Writing" :number="1">
-    <div
-      class="mt-6 flex flex-col gap-8"
-    >
+  <SectionItem class="mb-4 mt-8 flex flex-1 flex-col justify-center gap-8 sm:gap-12" title="Writing" :number="1">
+    <div class="mt-6 flex font-normal flex-col gap-8">
       <NuxtLink
         v-for="(post, index) in data"
         :key="post.title"
@@ -47,7 +45,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
         <div class="font-newsreader text-lg italic opacity-[15%]">
           {{ post.date }}
         </div>
-        <h3 class="text-2xl italic decoration-accent group-hover:underline">
+        <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
           {{ post.title }}
         </h3>
         <p

@@ -10,7 +10,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
       v-for="(post, index) in data"
       :key="post.title"
       :to="post.path"
-      class="link text-lg"
+      class="link text-secondary text-lg decoration-accent hover:underline"
       data-animate
       :aria-label="`Read ${post.title}`"
       :style="{ '--stagger': index }"

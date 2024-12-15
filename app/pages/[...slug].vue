@@ -49,8 +49,8 @@ useHead({
   link,
 })
 
-const writingClass = 'writing mb-4 mt-8'
-const contentClass = 'content mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
+const writingClass = 'mb-4 mt-8'
+const contentClass = 'mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
 </script>
 
 <template>

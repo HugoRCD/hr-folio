@@ -26,7 +26,7 @@ const openModal = ref(false)
     <h1 class="font-newsreader text-2xl font-medium italic text-accent sm:text-3xl">
       Frontend Architect and Designer
     </h1>
-    <p class="max-w-[600px] text-pretty">
+    <p class="max-w-[600px] text-pretty text-tertiary text-sm font-extralight sm:text-base">
       <slot mdc-unwrap="p" />
     </p>
     <div class="mt-2 flex gap-8">
@@ -34,7 +34,7 @@ const openModal = ref(false)
         to="contact"
         class="flex cursor-pointer items-center font-newsreader text-lg italic hover:text-accent hover:underline"
       >
-        Send me a message<span class="i-lucide-arrow-up-right mb-1" />
+        Send me a message
       </NuxtLink>
       <NuxtLink
         :to="meetingLink"
