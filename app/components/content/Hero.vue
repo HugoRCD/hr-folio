@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig()
 const { meetingLink } = runtimeConfig.public
-
-const openModal = ref(false)
 </script>
 
 <template>
@@ -18,26 +16,22 @@ const openModal = ref(false)
       height="80"
       sizes="160"
       class="mb-2 size-20 rounded-full object-cover"
-      @click="openModal = true"
     />
-    <h3>
+    <h3 class="font-newsreader text-xl italic text-secondary">
       Hugo Richard
     </h3>
     <h1 class="font-newsreader text-2xl font-medium italic text-accent sm:text-3xl">
       Frontend Architect and Designer
     </h1>
-    <p class="max-w-[600px] text-pretty">
-      <ContentSlot
-        :use="$slots.default"
-        unwrap="p"
-      />
+    <p class="max-w-[600px] text-pretty text-tertiary text-sm font-extralight sm:text-base">
+      <slot mdc-unwrap="p" />
     </p>
     <div class="mt-2 flex gap-8">
       <NuxtLink
         to="contact"
         class="flex cursor-pointer items-center font-newsreader text-lg italic hover:text-accent hover:underline"
       >
-        Send me a message<span class="i-lucide-arrow-up-right mb-1" />
+        Send me a message
       </NuxtLink>
       <NuxtLink
         :to="meetingLink"

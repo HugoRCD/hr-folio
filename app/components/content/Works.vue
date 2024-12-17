@@ -9,16 +9,12 @@ type Work = {
   release: string;
 };
 
-const { data: works } = await useAsyncData('works', () =>
-  queryContent('works')
-    .where({ _type: 'json' })
-    .sort({ date: -1 })
-    .find()
-)
+const { data: works, error } = await useAsyncData('works', () => queryCollection('works').order('date', 'DESC').all())
+if (!works.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>
-  <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
+  <div class="mt-10 grid grid-cols-1 font-normal gap-8 sm:grid-cols-2">
     <NuxtLink
       v-for="(work, index) in works"
       :key="work.name"
@@ -31,10 +27,10 @@ const { data: works } = await useAsyncData('works', () =>
       <div class="absolute right-0 top-0 font-newsreader text-5xl italic opacity-[9%] sm:text-3xl">
         {{ work.release }}
       </div>
-      <h3 class="text-2xl italic decoration-accent group-hover:underline">
+      <h3 class="font-newsreader italic text-secondary text-2xl italic decoration-accent group-hover:underline">
         {{ work.name }}<span class="text-accent">.</span>
       </h3>
-      <p>
+      <p class="text-tertiary text-sm font-extralight sm:text-base">
         {{ work.description }}
       </p>
     </NuxtLink>

@@ -1,16 +1,11 @@
 <script setup lang="ts">
-const { path } = useRoute()
 const password = useState('password')
 const loading = ref(false)
 const isAuthorized = useState('authorized')
 
-const { data: notes, error } = await useAsyncData(path, () =>
-  queryContent(path)
-    .where({
-      _path: { $regex: '^/notes/' }
-    })
-    .find()
-)
+const { data: notes, error, execute } = await useAsyncData('notes', () => queryCollection('notes').all(), {
+  immediate: false
+})
 
 if (!notes.value || !error.value) createError({ statusCode: 404 })
 
@@ -27,6 +22,9 @@ async function verifyPassword() {
     await refresh()
     if (data.value?.status === 200) {
       isAuthorized.value = true
+      await execute()
+      console.log('notes', notes.value)
+      console.log('error', error.value)
       toast.success('Welcome to my hidden notes!')
     } else {
       toast.error('Invalid password')
@@ -40,10 +38,8 @@ async function verifyPassword() {
 </script>
 
 <template>
-  <SectionItem class="content mb-4 mt-8 flex flex-1 flex-col justify-center gap-8 sm:gap-12" title="Notes" :number="1">
-    <div
-      class="mt-6 flex flex-col gap-8"
-    >
+  <SectionItem class="mb-4 mt-8 flex flex-1 flex-col justify-center gap-8 sm:gap-12" title="Notes" :number="1">
+    <div class="mt-6 flex flex-col gap-8">
       <span v-if="!isAuthorized" class="font-newsreader text-lg italic opacity-40">
         In order to see all my hidden notes, you will need first to enter the password.
       </span>
@@ -54,11 +50,11 @@ async function verifyPassword() {
           Verify
         </button>
       </form>
-      <div v-if="isAuthorized" class="mt-6 flex flex-col gap-8">
+      <div v-if="true" class="mt-6 flex flex-col gap-8">
         <NuxtLink
           v-for="(post, index) in notes"
           :key="post.title"
-          :to="post._path"
+          :to="post.path"
           class="group relative max-w-prose"
           data-animate
           :aria-label="`Read ${post.title}`"
