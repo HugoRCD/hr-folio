@@ -37,16 +37,6 @@ export default defineNuxtConfig({
     },
   },
 
-  mdc: {
-    highlight: {
-      theme: {
-        dark: 'github-dark',
-        default: 'github-dark',
-        light: 'github-dark',
-      }
-    },
-  },
-
   nitro: {
     preset: process.env.NITRO_PRESET || 'bun',
     prerender: {

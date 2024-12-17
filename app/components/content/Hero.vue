@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig()
 const { meetingLink } = runtimeConfig.public
-
-const openModal = ref(false)
 </script>
 
 <template>
@@ -18,9 +16,8 @@ const openModal = ref(false)
       height="80"
       sizes="160"
       class="mb-2 size-20 rounded-full object-cover"
-      @click="openModal = true"
     />
-    <h3>
+    <h3 class="font-newsreader text-xl italic text-secondary">
       Hugo Richard
     </h3>
     <h1 class="font-newsreader text-2xl font-medium italic text-accent sm:text-3xl">

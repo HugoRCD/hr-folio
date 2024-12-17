@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "mockline";
+@import "@mockline/themes";
 
 @import "./animations.css";
 
@@ -9,7 +9,7 @@
   --font-mono: "Geist Mono", sans-serif;
 
   --color-primary: rgb(248, 243, 238);
-  --color-accent: rgb(40, 83, 255);
+  --color-accent: var(--color-accent);
   --color-secondary: rgb(61, 61, 61);
   --color-tertiary: rgb(96, 96, 96);
   --color-inverted: rgb(255, 255, 255);
@@ -19,14 +19,17 @@
   --color-main: rgba(0, 0, 0, 0.1);
 }
 
+:root {
+  scrollbar-color: var(--color-main) transparent;
+  scrollbar-width: thin;
+  --color-accent: rgb(40, 83, 255) !important;
+}
+
 @layer base {
   :root {
     @apply text-font-primary bg-primary;
     @apply selection:bg-accent selection:text-inverted;
 
-    scrollbar-color: var(--color-accent) transparent;
-    scrollbar-width: thin;
-    --ui-primary: var(--color-accent) !important;
   }
 
   body {
@@ -36,8 +39,7 @@
 
   .dark {
     --color-primary: rgb(2, 2, 2);
-    --color-accent: rgb(8, 73, 236);
-    --ui-primary: var(--color-accent) !important;
+    --color-accent: rgb(8, 73, 236) !important;
     --color-secondary: rgb(200, 200, 200);
     --color-tertiary: rgb(150, 150, 150);
     --color-inverted: rgb(255, 255, 255);

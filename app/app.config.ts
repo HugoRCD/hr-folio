@@ -38,6 +38,7 @@ export default defineAppConfig({
     },
   ],
   mockline: {
+    darkCode: false,
     components: {
       proseH1: 'text-2xl sm:text-3xl text-font-primary font-newsreader italic font-[600]',
       proseH2: 'text-xl sm:text-2xl text-font-primary font-[550]',
