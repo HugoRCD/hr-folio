@@ -10,6 +10,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "start": "node .output/server/index.mjs",
+    "local:studio": "npx nuxt dev --tunnel",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

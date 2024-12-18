@@ -29,7 +29,8 @@ export default defineNuxtConfig({
 
   content: {
     studio: {
-      enabled: true
+      enabled: true,
+      dev: true
     }
   },
 
