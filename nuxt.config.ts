@@ -27,6 +27,12 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
   ],
 
+  content: {
+    studio: {
+      enabled: true
+    }
+  },
+
   runtimeConfig: {
     public: {
       meetingLink: '',
