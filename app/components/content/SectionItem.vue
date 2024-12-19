@@ -1,18 +1,11 @@
 <script setup lang="ts">
-defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  number: {
-    type: Number,
-    required: true
-  },
-  size: {
-    type: String,
-    default: 'max-w-[600px]'
-  }
-})
+type SectionItemProps = {
+  title: string
+  number: number
+  size?: string
+}
+
+const { size = 'max-w-[600px]' } = defineProps<SectionItemProps>()
 </script>
 
 <template>
