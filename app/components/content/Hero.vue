@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig()
 const { meetingLink } = runtimeConfig.public
+const { profile } = useAppConfig()
 </script>
 
 <template>
@@ -10,7 +11,7 @@ const { meetingLink } = runtimeConfig.public
     style="--stagger: 1"
   >
     <NuxtImg
-      src="/hugo.webp"
+      :src="profile.picture"
       alt="Hugo Richard"
       width="80"
       height="80"
@@ -18,10 +19,10 @@ const { meetingLink } = runtimeConfig.public
       class="mb-2 size-20 rounded-full object-cover"
     />
     <h3 class="font-newsreader text-xl italic text-secondary">
-      Hugo Richard
+      {{ profile.name }}
     </h3>
     <h1 class="font-newsreader text-2xl font-medium italic text-accent sm:text-3xl">
-      Frontend Architect and Designer
+      {{ profile.job }}
     </h1>
     <p class="max-w-[600px] text-pretty text-tertiary text-sm font-extralight sm:text-base">
       <slot mdc-unwrap="p" />

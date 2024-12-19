@@ -1,14 +1,25 @@
 export default defineAppConfig({
-  description: 'Hugo Richard, french developer and designer based in Nice.',
-  email: 'contact@hrcd.fr',
-  phone: '(+33) 6 21 56 22 18',
-  socials: [
-    { name: 'github', link: 'https://github.com/HugoRCD' },
-    { name: 'twitter', link: 'https://twitter.com/HugoRCD__' },
-    { name: 'linkedin', link: 'https://www.linkedin.com/in/hugo-richard-0801' },
-    { name: 'instagram', link: 'https://www.instagram.com/hugo.rcd_' },
-    { name: 'spotify', link: 'https://open.spotify.com/user/yuvl0zpp3bpx4hne1ag7huten?si=df7ee2777c0c4fc4' }
-  ],
+  profile: {
+    name: 'Hugo Richard',
+    job: 'Frontend Architect and Designer',
+    email: 'contact@hrcd.fr',
+    phone: '(+33) 6 21 56 22 18',
+    picture: 'https://avatars.githubusercontent.com/u/71938701?v=4'
+  },
+  seo: {
+    title: 'Hugo Richard',
+    description: 'Hugo Richard, french developer and designer based in Nice.',
+    url: 'https://hrcd.fr',
+    image: 'https://hrcd.fr/og.png',
+    lang: 'en'
+  },
+  socials: {
+    github: 'https://git.new/hugorcd',
+    twitter: 'https://dub.sh/hrcd-x',
+    linkedin: 'https://dub.sh/hrcd-linkedin',
+    instagram: 'https://dub.sh/hrcd-insta',
+    spotify: 'https://spti.fi/HugoRCD'
+  },
   link: [
     {
       rel: 'icon',
