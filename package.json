@@ -9,11 +9,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "start": "node .output/server/index.mjs",
     "local:studio": "npx nuxt dev --tunnel",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "packageManager": "pnpm@9.14.2",
   "dependencies": {
     "@nuxt/content": "3.0.0-alpha.8",
     "@nuxt/image": "1.8.1",

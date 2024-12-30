@@ -1,11 +1,9 @@
 # Stage 1: Build Stage
-FROM oven/bun:latest AS build
+FROM node:20-alpine AS build
 
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python-is-python3 \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache python3 make g++ \
+    && corepack enable \
+    && corepack prepare pnpm@latest --activate
 
 ARG TURBO_TEAM
 ARG TURBO_TOKEN
@@ -16,16 +14,14 @@ ENV TURBO_TOKEN=$TURBO_TOKEN
 WORKDIR /app
 
 COPY package.json ./
-COPY bun.lockb ./
 
 COPY . .
 
-RUN bun install --production
-
-RUN bun run build
+RUN pnpm install --frozen-lockfile --prod
+RUN pnpm run build
 
 # Stage 2: Final Stage
-FROM oven/bun:latest AS final
+FROM node:20-alpine AS final
 
 WORKDIR /app
 
@@ -33,4 +29,4 @@ COPY --from=build /app/.output .output
 
 EXPOSE 3000
 
-CMD ["bun", "run", ".output/server/index.mjs"]
+CMD ["node", ".output/server/index.mjs"]
