@@ -6,11 +6,11 @@ services:
     container_name: hr_folio
     restart: always
     environment:
-      - NUXT_PUBLIC_SITE_URL=${NUXT_PUBLIC_SITE_URL:-http://localhost:3000}
       - NUXT_PRIVATE_RESEND_API_KEY=${NUXT_PRIVATE_RESEND_API_KEY}
       - NUXT_PRIVATE_NOTES_PASSWORD=${NUXT_PRIVATE_NOTES_PASSWORD}
       - NUXT_PRIVATE_GITHUB_TOKEN=${NUXT_PRIVATE_GITHUB_TOKEN}
       - NUXT_PUBLIC_MEETING_LINK=${NUXT_PUBLIC_MEETING_LINK}
+      - POSTGRES_URL=${POSTGRES_URL}
     ports:
       - "3000:3000"
     healthcheck:

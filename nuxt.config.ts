@@ -28,6 +28,11 @@ export default defineNuxtConfig({
   ],
 
   content: {
+    database: {
+      type: 'postgres',
+      // @ts-expect-error - This is a valid config
+      url: process.env.POSTGRES_URL,
+    },
     studio: {
       enabled: true,
       dev: true
