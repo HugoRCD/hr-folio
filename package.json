@@ -14,18 +14,20 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "devDependencies": {
-    "@hrcd/eslint-config": "edge",
-    "@nuxt/content": "^3.0.0-alpha.8",
+  "dependencies": {
+    "@nuxt/content": "3.0.0-alpha.8",
     "@nuxt/image": "1.8.1",
     "@nuxt/scripts": "0.9.5",
     "@vueuse/nuxt": "12.0.0",
-    "automd": "0.3.12",
-    "eslint": "9.17.0",
     "mockline": "0.14.0",
     "nuxt": "3.14.1592",
     "resend": "4.0.1",
     "vue": "3.5.13",
     "vue-router": "4.5.0"
+  },
+  "devDependencies": {
+    "@hrcd/eslint-config": "edge",
+    "automd": "0.3.12",
+    "eslint": "9.17.0"
   }
 }
