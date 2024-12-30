@@ -3,7 +3,12 @@ import { defineCollection, z } from '@nuxt/content'
 export const collections = {
   content: defineCollection({
     type: 'page',
-    source: '**/*.md'
+    source: '**/*.md',
+    schema: z.object({
+      title: z.string().nonempty(),
+      description: z.string().nonempty(),
+      image: z.string().url(),
+    })
   }),
   notes: defineCollection({
     type: 'page',

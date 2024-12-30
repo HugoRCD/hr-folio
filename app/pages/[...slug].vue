@@ -28,6 +28,8 @@ useSeoMeta({
   description: page.value.description,
   twitterTitle: page.value.title,
   twitterDescription: page.value.description,
+  ogImage: page.value.image,
+  twitterImage: page.value.image,
   twitterCard: 'summary_large_image'
 })
 
