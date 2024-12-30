@@ -9,11 +9,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "start": "node .output/server/index.mjs",
     "local:studio": "npx nuxt dev --tunnel",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "packageManager": "pnpm@9.14.2",
   "dependencies": {
     "@nuxt/content": "3.0.0-alpha.8",
     "@nuxt/image": "1.8.1",
@@ -21,6 +21,7 @@
     "@vueuse/nuxt": "12.0.0",
     "mockline": "0.14.0",
     "nuxt": "3.14.1592",
+    "pg": "^8.13.1",
     "resend": "4.0.1",
     "vue": "3.5.13",
     "vue-router": "4.5.0"
