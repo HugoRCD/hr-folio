@@ -25,7 +25,7 @@ async function submit() {
   }
 }
 
-const { data, error } = await useAsyncData('writings', () => queryCollection('writing').all())
+const { data, error } = await useAsyncData('writings', () => queryCollection('writing').order('date', 'DESC').all())
 
 if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>

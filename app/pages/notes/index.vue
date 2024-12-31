@@ -16,6 +16,13 @@ const { data, refresh } = useFetch('/api/verify', {
   immediate: false
 })
 
+defineOgImageComponent('WritingPost', {
+  title: 'Notes',
+  description: 'Some thoughts are meant to be discovered, not shown.',
+}, {
+  fonts: ['Geist:400', 'Geist:600'],
+})
+
 async function verifyPassword() {
   loading.value = true
   try {
