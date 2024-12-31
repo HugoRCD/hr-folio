@@ -9,7 +9,7 @@ const { data: notes, error, execute } = await useAsyncData('notes', () => queryC
 
 if (!notes.value || !error.value) createError({ statusCode: 404 })
 
-const { data, refresh, status } = useFetch('/api/verify', {
+const { data, refresh } = useFetch('/api/verify', {
   method: 'POST',
   body: { password },
   watch: false,
@@ -20,9 +20,10 @@ async function verifyPassword() {
   loading.value = true
   try {
     await refresh()
+
     if (data.value?.status === 200) {
-      isAuthorized.value = true
       await execute()
+      isAuthorized.value = true
       console.log('notes', notes.value)
       console.log('error', error.value)
       toast.success('Welcome to my hidden notes!')
@@ -38,17 +39,14 @@ async function verifyPassword() {
 </script>
 
 <template>
-  <SectionItem class="mb-4 mt-8 flex flex-1 flex-col justify-center gap-8 sm:gap-12" title="Notes" :number="1">
-    <div class="mt-6 flex flex-col gap-8">
-      <span v-if="!isAuthorized" class="font-newsreader text-lg italic opacity-40">
+  <SectionItem class="mb-4 flex flex-1 flex-col justify-center gap-8 sm:gap-12" title="Notes" :number="1">
+    <div class="flex flex-col gap-8">
+      <span v-if="!isAuthorized" class="font-newsreader text-lg italic">
         In order to see all my hidden notes, you will need first to enter the password.
       </span>
       <form v-if="!isAuthorized" class="flex gap-4" @submit.prevent="verifyPassword">
         <input v-model="password" type="password" placeholder="Password" class="input">
-        <button class="flex items-center cursor-pointer justify-center gap-2 bg-accent px-2 text-white" type="submit">
-          <span v-if="status === 'pending'" class="i-lucide-loader size-4 animate-spin" />
-          Verify
-        </button>
+        <MButton class="flex items-center cursor-pointer justify-center gap-2 bg-accent hover:bg-accent/90 px-2 text-white" type="submit" rounded="none" label="Verify" :loading />
       </form>
       <div v-if="true" class="mt-6 flex flex-col gap-8">
         <NuxtLink
