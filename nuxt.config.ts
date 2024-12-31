@@ -3,6 +3,10 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
+  experimental: {
+    viewTransition: true,
+  },
+
   site: {
     url: 'https://hrcd.fr',
     defaultLocale: 'en',
@@ -14,7 +18,7 @@ export default defineNuxtConfig({
   },*/
 
   routeRules: {
-    '/': { isr: true, prerender: true },
+    '/': { isr: true },
   },
 
   modules: [
@@ -65,6 +69,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       routes: ['/', '/works', '/about', '/writing'],
+      ignore: ['/notes', '/notes/**'],
     },
   },
 

@@ -21,16 +21,16 @@ You can see it live at [hrcd.fr](https://hrcd.fr/).
 
 ## Features
 
-- Fully integrated with [Nuxt Content](https://content.nuxt.com/) and using the content driven mode.
-- Working contact form with [Resend](https://resend.com/)
+- Fully integrated with [Nuxt Content v3](https://content.nuxt.com/)
 - Article & Project Content Type using [Nuxt Content](https://content.nuxt.com/)
-- Open Graph Image support with [Nuxt OG Image](https://nuxtseo.com/og-image/getting-started/installation)
+- Hidden notes section for private notes
+- Working contact form with [Resend](https://resend.com/)
+- Auto-Generated Open Graph Image with [Nuxt OG Image](https://nuxtseo.com/og-image/getting-started/installation)
 - [Nuxt Robots](https://sitemap.nuxt.com/) for auto-generate robots.txt
 - [ESLint](https://eslint.org/) using my personal configuration
 - Full typescript support
 - Optimized images with [Nuxt Image](https://image.nuxt.com/)
-- [Vue Composition Collection (Vueuse)](https://vueuse.org/)
-- Fully responsive on all modern browsers
+- Fully responsive on all browsers
 - Easy to customize
 - Auto generated sitemap
 

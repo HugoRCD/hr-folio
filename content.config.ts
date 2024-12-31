@@ -3,19 +3,23 @@ import { defineCollection, z } from '@nuxt/content'
 export const collections = {
   content: defineCollection({
     type: 'page',
-    source: '**/*.md',
+    source: [
+      {
+        include: '**/*.md',
+        prefix: '/'
+      },
+      {
+        repository: 'https://github.com/HugoRCD/notes/tree/main',
+        include: '*.md',
+        prefix: '/notes',
+        authToken: process.env.NUXT_PRIVATE_GITHUB_TOKEN,
+      }
+    ],
     schema: z.object({
       title: z.string().nonempty(),
       description: z.string().nonempty(),
+      date: z.string().nonempty(),
     })
-  }),
-  notes: defineCollection({
-    type: 'page',
-    source: {
-      repository: 'HugoRCD/notes',
-      authToken: process.env.NUXT_PRIVATE_GITHUB_TOKEN,
-      include: 'src/*.md',
-    }
   }),
   writing: defineCollection({
     type: 'page',

@@ -1,13 +1,21 @@
 <script setup lang="ts">
+
 const colorMode = useColorMode()
+const reduceMotion = useCookie<boolean>('reduceMotion', {
+  watch: true,
+})
 
 const switchTheme = () => {
   colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'
   colorMode.preference = colorMode.value
 }
 
-function startViewTransition(theme: string) {
+const startViewTransition = (theme) => {
   if (theme === colorMode.value) return
+  if (reduceMotion.value) {
+    switchTheme()
+    return
+  }
   if (!document.startViewTransition) {
     switchTheme()
     return
@@ -16,7 +24,16 @@ function startViewTransition(theme: string) {
     switchTheme()
     return
   }
-  document.startViewTransition(switchTheme)
+
+  document.documentElement.classList.add('theme-transitioning')
+
+  const transition = document.startViewTransition(() => {
+    switchTheme()
+  })
+
+  transition.finished.then(() => {
+    document.documentElement.classList.remove('theme-transitioning')
+  })
 }
 </script>
 
@@ -52,24 +69,25 @@ function startViewTransition(theme: string) {
 </template>
 
 <style>
-/* Dark/Light reveal effect */
-::view-transition-group(root) {
+.theme-transitioning::view-transition-group(root) {
   animation-duration: 1.5s;
 }
-::view-transition-new(root),
-::view-transition-old(root) {
+
+.theme-transitioning::view-transition-new(root),
+.theme-transitioning::view-transition-old(root) {
   mix-blend-mode: normal;
 }
 
-::view-transition-new(root) {
+.theme-transitioning::view-transition-new(root) {
   animation-name: reveal-light;
 }
 
-::view-transition-old(root),
-.dark::view-transition-old(root) {
+.theme-transitioning::view-transition-old(root),
+.dark.theme-transitioning::view-transition-old(root) {
   animation: none;
 }
-.dark::view-transition-new(root) {
+
+.dark.theme-transitioning::view-transition-new(root) {
   animation-name: reveal-dark;
 }
 
@@ -90,5 +108,4 @@ function startViewTransition(theme: string) {
     clip-path: polygon(130% 0, -30% 0, -15% 100%, 110% 115%);
   }
 }
-
 </style>
