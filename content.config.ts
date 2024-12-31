@@ -12,10 +12,16 @@ export const collections = {
   notes: defineCollection({
     type: 'page',
     source: {
-      repository: 'HugoRCD/notes',
+      repository: 'https://github.com/HugoRCD/notes',
+      include: '*.md',
+      prefix: '/notes',
       authToken: process.env.NUXT_PRIVATE_GITHUB_TOKEN,
-      include: 'src/*.md',
-    }
+    },
+    schema: z.object({
+      title: z.string().nonempty(),
+      description: z.string().nonempty(),
+      date: z.string().nonempty(),
+    })
   }),
   writing: defineCollection({
     type: 'page',

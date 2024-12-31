@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const password = useState('password')
 const loading = ref(false)
-const isAuthorized = useState('authorized')
+const isAuthorized = useState<boolean>('authorized')
 
-const { data: notes, error, execute } = await useAsyncData('notes', () => queryCollection('notes').all(), {
-  immediate: false
+const { data: notes, error, execute } = await useAsyncData('notes', () => queryCollection('notes').order('date', 'DESC').all(), {
+  immediate: isAuthorized.value
 })
 
 if (!notes.value || !error.value) createError({ statusCode: 404 })
@@ -24,8 +24,6 @@ async function verifyPassword() {
     if (data.value?.status === 200) {
       await execute()
       isAuthorized.value = true
-      console.log('notes', notes.value)
-      console.log('error', error.value)
       toast.success('Welcome to my hidden notes!')
     } else {
       toast.error('Invalid password')
@@ -48,19 +46,27 @@ async function verifyPassword() {
         <input v-model="password" type="password" placeholder="Password" class="input">
         <MButton class="flex items-center cursor-pointer justify-center gap-2 bg-accent hover:bg-accent/90 px-2 text-white" type="submit" rounded="none" label="Verify" :loading />
       </form>
-      <div v-if="true" class="mt-6 flex flex-col gap-8">
+      <div v-if="isAuthorized" class="mt-6 flex flex-col gap-8">
         <NuxtLink
           v-for="(post, index) in notes"
           :key="post.title"
-          :to="post.path"
+          :to="`${post.path}`"
           class="group relative max-w-prose"
           data-animate
           :aria-label="`Read ${post.title}`"
           :style="{ '--stagger': index }"
         >
-          <h3 class="text-2xl italic decoration-accent group-hover:underline">
+          <div class="font-newsreader text-lg italic opacity-75">
+            {{ post.date }}
+          </div>
+          <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
             {{ post.title }}
           </h3>
+          <p
+            class="!text-sm"
+          >
+            {{ post.description }}
+          </p>
         </NuxtLink>
       </div>
     </div>
