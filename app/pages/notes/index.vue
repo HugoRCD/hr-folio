@@ -78,7 +78,7 @@ async function verifyPassword() {
         <NuxtLink
           v-for="(post, index) in notes"
           :key="post.title"
-          :to="`${post.path}`"
+          :to="post.path"
           class="group relative max-w-prose"
           data-animate
           :aria-label="`Read ${post.title}`"

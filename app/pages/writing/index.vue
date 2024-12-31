@@ -6,6 +6,30 @@ useScriptPlausibleAnalytics({
   }
 })
 
+useSeoMeta({
+  ogSiteName: 'Hugo Richard',
+  ogType: 'article',
+  description: 'Some writings about all the things I\'ve learned in my coding journey, and some other things.',
+})
+
+useHead({
+  title: 'Writing',
+  titleTemplate: 'Writing | Hugo Richard',
+  meta: [
+    { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
+    { name: 'charset', content: 'utf-8' },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'color-scheme', content: 'light dark' }
+  ],
+})
+
+defineOgImageComponent('WritingPost', {
+  title: 'Writing',
+  description: 'Some writings about all the things I\'ve learned in my coding journey, and some other things.',
+}, {
+  fonts: ['Geist:400', 'Geist:600'],
+})
+
 const email = ref('')
 
 const { status, refresh } = useFetch('/api/subscribe', {
@@ -72,18 +96,13 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
             class="input w-64"
             required
           >
-          <button
+          <MButton
             type="submit"
-            class="w-fit bg-accent px-2 py-1 text-white sm:py-0"
-          >
-            <span class="flex items-center justify-center gap-2">
-              <span>Subscribe</span>
-              <i
-                v-if="status === 'pending'"
-                class="i-lucide-loader size-4 animate-spin text-inverted"
-              />
-            </span>
-          </button>
+            class="w-fit bg-accent hover:bg-accent/90 px-2 py-1 text-white sm:py-0"
+            :loading="status === 'pending'"
+            label="Subscribe"
+            rounded="none"
+          />
         </form>
       </div>
     </div>
