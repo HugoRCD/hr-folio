@@ -8,6 +8,7 @@ export const collections = {
       title: z.string().nonempty(),
       description: z.string().nonempty(),
       image: z.string().url(),
+      icon: z.string(),
     })
   }),
   notes: defineCollection({
@@ -26,6 +27,7 @@ export const collections = {
       description: z.string().nonempty(),
       date: z.string().nonempty(),
       image: z.string().url(),
+      icon: z.string(),
     })
   }),
   works: defineCollection({

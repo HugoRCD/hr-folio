@@ -8,9 +8,8 @@ export default defineAppConfig({
   },
   seo: {
     title: 'Hugo Richard',
-    description: 'Hugo Richard, french developer and designer based in Nice.',
+    description: 'Frontend Architect, Designer & OSS Contributor based in Nice.',
     url: 'https://hrcd.fr',
-    image: 'https://hrcd.fr/og.png',
     lang: 'en'
   },
   socials: {

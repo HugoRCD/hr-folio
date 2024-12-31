@@ -70,13 +70,6 @@ export default defineNuxtSchema({
           icon: 'lucide:link',
           default: 'https://mywebsite.com'
         }),
-        image: field({
-          type: 'string',
-          title: 'Image',
-          description: 'The image that will be displayed in the preview of your website (when you share it on social networks).',
-          icon: 'lucide:image',
-          default: 'https://mywebsite.com/image.jpg'
-        }),
         lang: field({
           type: 'string',
           title: 'Language',

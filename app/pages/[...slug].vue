@@ -15,21 +15,32 @@ if (!page.value)
 const { link, seo, socials, profile } = useAppConfig()
 
 const mdcVars = ref({
+  ...seo,
   ...profile,
   ...socials
 })
 
 const isWriting = computed(() => route.path.includes('/writing/'))
 
+defineOgImageComponent(isWriting.value ? 'WritingPost' : 'Main', {
+  title: isWriting.value ? page.value.title : seo.title,
+  description: isWriting.value ? page.value.description : seo.description,
+  icon: page.value.icon,
+  avatar: profile.picture
+}, {
+  fonts: [
+    'Geist:400',
+    'Geist:600',
+  ],
+})
+
 useSeoMeta({
   ogSiteName: 'Hugo Richard',
   author: profile.name,
-  title: page.value.title,
-  description: page.value.description,
-  twitterTitle: page.value.title,
-  twitterDescription: page.value.description,
-  ogImage: page.value.image,
-  twitterImage: page.value.image,
+  title: isWriting.value ? page.value.title : seo.title,
+  description: isWriting.value ? page.value.description : seo.description,
+  twitterTitle: isWriting.value ? page.value.title : seo.title,
+  twitterDescription: isWriting.value ? page.value.description : seo.description,
   twitterCard: 'summary_large_image'
 })
 
