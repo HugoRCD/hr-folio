@@ -2,15 +2,12 @@
 defineProps<{
   title?: string
   description?: string
-  icon?: string
 }>()
 </script>
 
 <template>
   <div class="size-full flex p-8 bg-[#F2ECE8] dark:bg-neutral-900">
     <div class="relative flex flex-col justify-center size-full border-2 border-neutral-300 dark:border-neutral-700 p-8 rounded-lg">
-      <MIcon v-if="icon" :name="icon" mode="svg" class="size-14" />
-
       <div class="flex flex-col gap-3">
         <span class="text-5xl text-neutral-900 dark:text-neutral-50" style="font-family: 'Geist', sans-serif; font-weight: 600;">
           {{ title }}
