@@ -3,13 +3,11 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
-  /*site: {
+  site: {
     url: 'https://hrcd.fr',
-    name: 'Hugo Richard - Developer & Designer',
-    description: 'Hugo Richard, french developer and designer based in Nice.',
     defaultLocale: 'en',
     indexable: true,
-  },*/
+  },
 
   /*robots: {
     disallow: ['/notes'],
@@ -25,7 +23,26 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/scripts',
     '@vueuse/nuxt',
+    '@nuxtjs/seo'
   ],
+
+  colorMode: {
+    preference: 'light',
+    fallback: 'light',
+  },
+
+  sitemap: {
+    enabled: false
+  },
+  robots: {
+    enabled: false
+  },
+  schemaOrg: {
+    enabled: false
+  },
+  linkChecker: {
+    enabled: false
+  },
 
   content: {
     studio: {
@@ -49,6 +66,10 @@ export default defineNuxtConfig({
       crawlLinks: true,
       routes: ['/', '/works', '/about', '/writing'],
     },
+  },
+
+  ogImage: {
+    zeroRuntime: true
   },
 
   css: ['~/assets/style/main.css'],
