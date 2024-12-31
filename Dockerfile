@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 RUN apk add --no-cache python3 make g++ \
     && corepack enable \
@@ -23,7 +23,7 @@ RUN pnpm install --frozen-lockfile --prod
 RUN pnpm run build
 
 # Stage 2: Final Stage
-FROM node:20-alpine AS final
+FROM node:22-alpine AS final
 
 WORKDIR /app
 

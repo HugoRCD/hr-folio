@@ -9,7 +9,7 @@ export const collections = {
         prefix: '/'
       },
       {
-        repository: 'https://github.com/HugoRCD/notes',
+        repository: 'https://github.com/HugoRCD/notes/tree/main',
         include: '*.md',
         prefix: '/notes',
         authToken: process.env.NUXT_PRIVATE_GITHUB_TOKEN,
