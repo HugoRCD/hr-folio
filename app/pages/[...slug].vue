@@ -14,7 +14,7 @@ if (!page.value) throw createError({ statusCode: 404, statusMessage: 'Page not f
 
 const { link, seo, socials, profile } = useAppConfig()
 const mdcVars = ref({ ...seo, ...profile, ...socials })
-const isWriting = computed(() => route.path.includes('/writing/'))
+const isWriting = computed(() => route.path.includes('/writing/') || route.path.includes('/notes/'))
 
 const getPageSEO = () => ({
   title: isWriting.value ? page.value?.title : page.value?.title || seo.title,

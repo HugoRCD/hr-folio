@@ -42,7 +42,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
         :aria-label="`Read ${post.title}`"
         :style="{ '--stagger': index }"
       >
-        <div class="font-newsreader text-lg italic opacity-[15%]">
+        <div class="font-newsreader text-lg italic opacity-35">
           {{ post.date }}
         </div>
         <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
