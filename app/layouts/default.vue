@@ -21,7 +21,7 @@ const router = useRouter()
         </div>
         <slot />
         <CopyLink v-if="route.path.includes('/writing/') && route.name !== 'writing'" />
-        <div class="flex justify-center sm:justify-end">
+        <div class="flex justify-center sm:justify-end" :class="route.path !== '/' ? 'cursor-pointer' : 'cursor-default'" @click="router.push('/')">
           <Signature class="mt-4 flex h-16 fill-black dark:fill-white sm:mt-0 sm:h-20" />
         </div>
       </div>

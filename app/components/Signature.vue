@@ -4,7 +4,7 @@
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 659.48 318.28"
   >
-    <g id="Dimensions">
+    <g>
       <g>
         <path
           class="cls-1"
