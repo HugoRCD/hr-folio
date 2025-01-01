@@ -24,28 +24,10 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>
-  <div class="mt-6 flex font-normal flex-col gap-8">
-    <NuxtLink
-      v-for="(post, index) in data"
-      :key="post.title"
-      :to="post.path"
-      class="group relative max-w-prose"
-      data-animate
-      :aria-label="`Read ${post.title}`"
-      :style="{ '--stagger': index }"
-    >
-      <div class="font-newsreader text-lg italic opacity-35">
-        {{ post.date }}
-      </div>
-      <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
-        {{ post.title }}
-      </h3>
-      <p class="text-sm">
-        {{ post.description }}
-      </p>
-    </NuxtLink>
+  <div class="flex font-normal flex-col gap-8">
+    <List v-if="data" :data />
     <div class="mt-10 flex flex-col gap-1">
-      <p class="mb-1 !text-sm">
+      <p class="mb-1 text-sm">
         Subscribe to get notified about new articles
       </p>
       <form class="flex flex-col gap-4 sm:flex-row" @submit.prevent="submit" @keydown.enter.prevent="submit">
