@@ -1,21 +1,15 @@
 # Stage 1: Build Stage
-FROM node:22-alpine AS build
+FROM node:20-alpine AS build
 
-RUN apk add --no-cache python3 make g++ \
-    && corepack enable \
-    && corepack prepare pnpm@latest --activate
+RUN apk add --no-cache python3 make g++
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-ARG TURBO_TEAM
-ARG TURBO_TOKEN
 ARG NUXT_PRIVATE_GITHUB_TOKEN
-
-ENV TURBO_TEAM=$TURBO_TEAM
-ENV TURBO_TOKEN=$TURBO_TOKEN
 ENV NUXT_PRIVATE_GITHUB_TOKEN=$NUXT_PRIVATE_GITHUB_TOKEN
 
 WORKDIR /app
 
-COPY package.json ./
+COPY pnpm-lock.yaml package.json ./
 
 COPY . .
 
@@ -23,7 +17,7 @@ RUN pnpm install --frozen-lockfile --prod
 RUN pnpm run build
 
 # Stage 2: Final Stage
-FROM node:22-alpine AS final
+FROM node:20-alpine AS final
 
 WORKDIR /app
 

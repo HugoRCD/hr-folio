@@ -33,6 +33,8 @@ You can see it live at [hrcd.fr](https://hrcd.fr/).
 - Fully responsive on all browsers
 - Easy to customize
 - Auto generated sitemap
+- Super easy self-hosted setup
+- One-click deploy with Vercel or Coolify
 
 ## Quick Setup
 
@@ -133,11 +135,11 @@ To start contributing, you can follow these steps:
 
 <!-- automd:contributors license=Apache author=HugoRCD github="hugorcd/hr-folio" -->
 
-Published under the [APACHE](https://github.com/HugoRCD/hr-folio/blob/main/LICENSE) license.
-Made by [@HugoRCD](https://github.com/HugoRCD) and [community](https://github.com/HugoRCD/hr-folio/graphs/contributors) 💛
+Published under the [APACHE](https://github.com/hugorcd/hr-folio/blob/main/LICENSE) license.
+Made by [@HugoRCD](https://github.com/HugoRCD) and [community](https://github.com/hugorcd/hr-folio/graphs/contributors) 💛
 <br><br>
-<a href="https://github.com/HugoRCD/hr-folio/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=HugoRCD/hr-folio" />
+<a href="https://github.com/hugorcd/hr-folio/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=hugorcd/hr-folio" />
 </a>
 
 <!-- /automd -->
@@ -146,6 +148,6 @@ Made by [@HugoRCD](https://github.com/HugoRCD) and [community](https://github.co
 
 ---
 
-_🤖 auto updated with [automd](https://automd.unjs.io) (last updated: Tue Jun 18 2024)_
+_🤖 auto updated with [automd](https://automd.unjs.io) (last updated: Wed Jan 01 2025)_
 
 <!-- /automd -->
