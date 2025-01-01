@@ -54,7 +54,7 @@ export default defineAppConfig({
       proseH2: 'text-xl sm:text-2xl text-font-primary font-[550]',
       proseH3: 'text-lg sm:text-xl text-font-primary font-[500]',
       proseH4: 'text-base sm:text-lg text-font-primary font-[400]',
-      proseP: 'text-secondary/70',
+      proseP: 'text-secondary/70 mt-0',
       proseLi: 'text-secondary/70',
     }
   }
