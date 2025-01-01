@@ -19,15 +19,11 @@ const contentClasses = {
 
 <template>
   <Html :lang="seo.lang">
-    <FolioMeta :page="page!" :is-writing>
-      <MApp class="relative bg-transparent">
-        <Toc v-if="isWriting" :links="page?.body?.toc?.links!" />
-        <ContentRenderer
-          v-if="page"
-          :value="page"
-          :class="isWriting ? contentClasses.writing : contentClasses.default"
-          :data="mdcVars"
-        />
+    <FolioMeta v-if="page" :page :is-writing>
+      <MApp transparent>
+        <Toc v-if="isWriting" :links="page.body.toc?.links!" />
+        <ContentRenderer :value="page" :class="isWriting ? contentClasses.writing : contentClasses.default" :data="mdcVars" />
+        <MToasts position="top-center" close-button />
       </MApp>
     </FolioMeta>
   </Html>
