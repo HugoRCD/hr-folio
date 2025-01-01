@@ -41,10 +41,10 @@ const sortedPosts = computed(() => {
       <div class="font-newsreader text-lg italic opacity-50">
         {{ post.date }}
       </div>
-      <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
+      <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline text-font-primary/80">
         {{ post.title }}
       </h3>
-      <p class="text-sm">
+      <p class="text-sm text-secondary/50">
         {{ post.description }}
       </p>
     </NuxtLink>
