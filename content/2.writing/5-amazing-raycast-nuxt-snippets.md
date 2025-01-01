@@ -41,8 +41,6 @@ const props = defineProps({
     <h1>{{ item }}</h1>
   </div>
 </template>
-
-
 ```
 
 ## API Handler Template: `!api`

@@ -4,6 +4,6 @@ description: Some writings about all the things I've learned in my coding journe
 ---
 
 ::section-item{:number='1' size="w-full" title="Writing"}
-:::writing
-:::
+  :::writing
+  :::
 ::
