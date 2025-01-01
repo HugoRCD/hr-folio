@@ -50,11 +50,11 @@ export default defineAppConfig({
   mockline: {
     darkCode: false,
     components: {
-      proseH1: 'text-2xl sm:text-3xl text-font-primary font-newsreader italic font-[600]',
-      proseH2: 'text-xl sm:text-2xl text-font-primary font-[550]',
-      proseH3: 'text-lg sm:text-xl text-font-primary font-[500]',
-      proseH4: 'text-base sm:text-lg text-font-primary font-[400]',
-      proseP: 'text-secondary/70',
+      proseH1: 'text-2xl sm:text-3xl text-font-primary font-newsreader italic font-[500]',
+      proseH2: 'text-xl sm:text-2xl text-font-primary font-[450]',
+      proseH3: 'text-lg sm:text-xl text-font-primary font-[400]',
+      proseH4: 'text-base sm:text-lg text-font-primary font-[350]',
+      proseP: 'text-secondary/70 mt-0',
       proseLi: 'text-secondary/70',
     }
   }

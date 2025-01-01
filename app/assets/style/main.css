@@ -87,7 +87,7 @@
   }
 
   .link {
-    @apply italic font-extralight hover:text-accent dark:hover:text-accent;
+    @apply italic hover:text-accent decoration-accent;
   }
 
   .no-link {

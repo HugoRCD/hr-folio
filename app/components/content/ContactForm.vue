@@ -70,16 +70,12 @@ onMounted(() => {
       class="input"
       required
     />
-    <button
+    <MButton
       type="submit"
-      class="bg-accent p-2 text-white cursor-pointer"
-    >
-      <span class="flex items-center justify-center gap-2">
-        Send
-        <MIcon v-if="loading" name="lucide:loader" class="text-inverted animate-spin" />
-      </span>
-    </button>
+      class="bg-accent hover:bg-accent/90 p-2 text-white cursor-pointer"
+      :loading
+      label="Send"
+      rounded="none"
+    />
   </form>
 </template>
-
-
