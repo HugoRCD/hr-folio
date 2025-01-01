@@ -1,14 +1,4 @@
 <script setup lang="ts">
-type Work = {
-  name: string;
-  logo: string;
-  image: string;
-  description: string;
-  link: string | 'Soon';
-  tags: string[];
-  release: string;
-};
-
 const { data: works, error } = await useAsyncData('works', () => queryCollection('works').order('date', 'DESC').all())
 if (!works.value || !error.value) createError({ statusCode: 404 })
 </script>
@@ -24,7 +14,7 @@ if (!works.value || !error.value) createError({ statusCode: 404 })
       :aria-label="`Open ${work.name}`"
       :style="{ '--stagger': index }"
     >
-      <div class="absolute right-0 top-0 font-newsreader text-5xl italic opacity-[9%] sm:text-3xl">
+      <div class="absolute right-0 top-0 font-newsreader text-5xl italic opacity-15 sm:text-3xl">
         {{ work.release }}
       </div>
       <h3 class="font-newsreader italic text-secondary text-2xl italic decoration-accent group-hover:underline">

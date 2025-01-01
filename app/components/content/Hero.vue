@@ -5,11 +5,7 @@ const { profile } = useAppConfig()
 </script>
 
 <template>
-  <div
-    class="flex flex-col"
-    data-animate
-    style="--stagger: 1"
-  >
+  <div class="flex flex-col" data-animate style="--stagger: 1">
     <NuxtImg
       :src="profile.picture"
       alt="Hugo Richard"
@@ -28,17 +24,11 @@ const { profile } = useAppConfig()
       <slot mdc-unwrap="p" />
     </p>
     <div class="mt-2 flex gap-8">
-      <NuxtLink
-        to="contact"
-        class="flex cursor-pointer items-center font-newsreader text-lg italic hover:text-accent hover:underline"
-      >
+      <NuxtLink to="/contact" class="link font-newsreader text-lg text-secondary hover:underline">
         Send me a message
       </NuxtLink>
-      <NuxtLink
-        :to="meetingLink"
-        class="flex cursor-pointer items-center font-newsreader text-lg italic hover:text-accent hover:underline"
-      >
-        Make a call<span class="i-lucide-arrow-up-right mb-1" />
+      <NuxtLink :to="meetingLink" class="link font-newsreader text-lg text-secondary hover:underline">
+        Make a call
       </NuxtLink>
     </div>
   </div>
