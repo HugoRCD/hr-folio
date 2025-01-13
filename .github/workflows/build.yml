@@ -11,6 +11,8 @@ permissions:
 jobs:
   autofix:
     runs-on: ubuntu-latest
+    env:
+      NUXT_PRIVATE_GITHUB_TOKEN: ${{ secrets.NUXT_PRIVATE_GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

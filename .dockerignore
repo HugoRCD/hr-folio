@@ -11,6 +11,7 @@
 **/.output
 
 # Dev files
+.data
 .env*
 .editorconfig
 
