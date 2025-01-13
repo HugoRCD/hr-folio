@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - NUXT_PRIVATE_GITHUB_TOKEN=${NUXT_PRIVATE_GITHUB_TOKEN}
     container_name: hr_folio
     restart: always
     environment:
