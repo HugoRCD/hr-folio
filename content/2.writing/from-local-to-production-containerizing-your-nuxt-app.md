@@ -105,7 +105,7 @@ export default defineEventHandler(() => {
 
 Here's a sophisticated GitHub Action that builds and pushes images when you create a tag or trigger it manually:
 
-```yaml
+```yaml [.github/workflows/build-and-push.yml]
 name: Build and Push Portfolio Docker Image
 
 on:
