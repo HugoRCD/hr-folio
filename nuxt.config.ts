@@ -49,6 +49,13 @@ export default defineNuxtConfig({
   },
 
   content: {
+    build: {
+      markdown: {
+        highlight: {
+          langs: ['ts', 'js', 'json', 'vue', 'dockerfile', 'docker', 'yaml', 'css']
+        }
+      },
+    },
     studio: {
       enabled: true,
       dev: true
