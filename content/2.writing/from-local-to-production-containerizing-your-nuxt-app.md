@@ -1,14 +1,18 @@
 ---
 title: "From Local to Production: Deploy the Latest Nuxt Stack with Docker"
-description: "Learn how to properly containerize and deploy a Nuxt application using the latest versions of Nuxt UI and Content. Set up Docker with best practices, automate builds with GitHub Actions, and deploy your application anywhere." 
+description: Learn how to properly containerize and deploy a Nuxt application
+  using the latest versions of Nuxt UI and Content. Set up Docker with best
+  practices, automate builds with GitHub Actions, and deploy your application
+  anywhere.
 date: 15/01/2025
 ---
 
-# From Local to Production: Deploy the Latest Nuxt Stack with Docker :prose-icon{name="simple-icons:nuxtdotjs" size="30px" align}
+# From Local to Production: Deploy the Latest Nuxt Stack with Docker :prose-icon{align name="simple-icons:nuxtdotjs" size="30px"}
 
 The modern Nuxt stack is evolving rapidly, bringing exciting new features and improvements. In this guide, we'll explore how to properly containerize and deploy a Nuxt application using the latest versions of Nuxt UI and Content. You'll learn how to set up Docker with best practices, automate builds with GitHub Actions, and deploy your application anywhere - whether it's Coolify, your own server, or any other platform.
 
 As of January 2025, we're working with some cutting-edge versions:
+
 - Nuxt UI v3.0.0-alpha.11 - A powerful component library revolutionizing UI development
 - Nuxt Content v3.0.0-alpha.8 - Content management reimagined
 - Nuxt v3.15.1 - The rock-solid foundation
@@ -24,7 +28,7 @@ Before we start with Docker, ensure your Nuxt project is properly configured. He
   "name": "nuxt-app",
   "private": true,
   "dependencies": {
-    "@nuxt/content": "3.0.0-alpha.8",
+    "@nuxt/content": "3.0.0",
     "@nuxt/ui": "^3.0.0-alpha.11",
     "@nuxt/image": "1.9.0",
     "nuxt": "^3.15.1"
@@ -32,7 +36,7 @@ Before we start with Docker, ensure your Nuxt project is properly configured. He
 }
 ```
 
-## The Dockerfile Explained :prose-icon{name="simple-icons:docker" size="30px" align}
+## The Dockerfile Explained :prose-icon{align name="simple-icons:docker" size="30px"}
 
 Our `Dockerfile` uses a multi-stage build process to create an optimized production image. Let's break down each section:
 
@@ -57,7 +61,8 @@ CMD ["node", ".output/server/index.mjs"]
 ```
 
 💡 Pro Tips:
-- Using `alpine` reduces the base image size by ~300MB
+
+- Using `alpine` reduces the base image size by \~300MB
 - `corepack enable` manages pnpm versions consistently across environments
 - The multi-stage build can reduce final image size by up to 90%
 - `--frozen-lockfile` ensures dependency versions match exactly
@@ -88,6 +93,7 @@ services:
 ```
 
 💡 Key Features:
+
 - restart: always ensures your app recovers from crashes
 - The healthcheck endpoint verifies your application is truly running
 - Resource limits prevent container memory leaks
@@ -101,7 +107,7 @@ export default defineEventHandler(() => {
 })
 ```
 
-## Automated Builds with GitHub Actions :prose-icon{name="simple-icons:github" size="30px" align}
+## Automated Builds with GitHub Actions :prose-icon{align name="simple-icons:github" size="30px"}
 
 Here's a sophisticated GitHub Action that builds and pushes images when you create a tag or trigger it manually:
 
@@ -166,6 +172,7 @@ jobs:
 ```
 
 💡 Workflow Features:
+
 - It triggers on git tags (v1.0.0, v2.0.0, etc.)
 - Supports manual triggers with custom version tags
 - Uses GitHub's cache to speed up builds
@@ -173,11 +180,12 @@ jobs:
 - Use the repository's name as the image name (update `IMAGE_NAME` if needed)
 
 To use this setup:
+
 1. Publish a new release with a version tag (v1.0.0, v2.0.0, etc.) in your GitHub repository or push a new tag: `git tag v1.0.0 && git push --tags`
-2. Or manually trigger the workflow from GitHub's Actions tab
-Your images will be available at ghcr.io/yourusername/your-repo:v1.0.0
+2. Or manually trigger the workflow from GitHub's Actions tab Your images will be available at ghcr.io/yourusername/your-repo\:v1.0.0
 
 💡 Production Tips:
+
 - Always use specific version tags in production
 - Set up monitoring for the health check endpoint
 - Configure proper logging
@@ -198,6 +206,6 @@ With your Docker image automatically published to GitHub Registry, deploying wit
 
 You can find a complete working example in the [Canvas repository](https://github.com/HugoRCD/canvas), one of my open-source projects. And an even more complex one in the [Shelve's repository](https://git.new/shelve). Shelve is a complex but understandable project monorepo.
 
-See it in action here: [https://canvas.hrcd.fr](https://canvas.hrcd.fr)
+See it in action here: <https://canvas.hrcd.fr>
 
 Remember that while Nuxt UI and Content are in alpha, they're actively developed and regularly updated. Keep an eye on the official releases for production use, and always test thoroughly before upgrading.
