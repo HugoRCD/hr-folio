@@ -13,9 +13,9 @@ export default defineNuxtConfig({
     indexable: true,
   },
 
-  /*robots: {
+  robots: {
     disallow: ['/notes'],
-  },*/
+  },
 
   routeRules: {
     '/': { isr: true },
@@ -23,11 +23,11 @@ export default defineNuxtConfig({
 
   modules: [
     'mockline',
+    '@nuxtjs/seo',
     '@nuxt/content',
     '@nuxt/image',
     '@nuxt/scripts',
-    '@vueuse/nuxt',
-    '@nuxtjs/seo'
+    '@vueuse/nuxt'
   ],
 
   colorMode: {
@@ -36,16 +36,7 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    enabled: false
-  },
-  robots: {
-    enabled: false
-  },
-  schemaOrg: {
-    enabled: false
-  },
-  linkChecker: {
-    enabled: false
+    exclude: ['/notes'],
   },
 
   content: {
@@ -56,10 +47,10 @@ export default defineNuxtConfig({
         }
       },
     },
-    studio: {
-      enabled: true,
-      dev: true
-    }
+    preview: {
+      api: 'https://api.nuxt.studio',
+      dev: true,
+    },
   },
 
   runtimeConfig: {
@@ -75,7 +66,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/works', '/about', '/writing'],
+      routes: ['/', 'sitemap', '/works', '/about', '/writing'],
       ignore: ['/notes', '/notes/**'],
     },
   },
