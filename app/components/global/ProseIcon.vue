@@ -8,7 +8,7 @@ const { size = '12px', align } = defineProps<{
 </script>
 
 <template>
-  <MIcon :name :size class="text-font-primary" :class="[align ? 'icon' : '']" />
+  <Icon :name :size class="text-font-primary" :class="[align ? 'icon' : '']" />
 </template>
 
 <style scoped>

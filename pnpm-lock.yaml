@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@iconify-json/simple-icons':
+        specifier: ^1.2.22
+        version: 1.2.22
+      '@iconify-json/vscode-icons':
+        specifier: ^1.2.11
+        version: 1.2.11
       '@nuxt/content':
         specifier: 3.0.1
         version: 3.0.1(@libsql/client@0.14.0)(magicast@0.3.5)(pg@8.13.1)(rollup@4.31.0)
@@ -635,8 +641,14 @@ packages:
   '@iconify-json/ri@1.2.5':
     resolution: {integrity: sha512-kWGimOXMZrlYusjBKKXYOWcKhbOHusFsmrmRGmjS7rH0BpML5A9/fy8KHZqFOwZfC4M6amObQYbh8BqO5cMC3w==}
 
+  '@iconify-json/simple-icons@1.2.22':
+    resolution: {integrity: sha512-0UzThRMwHuOJfgpp+tyV/y2uEBLjFVrxC4igv9iWjSEQEBK4tNjWZNTRCBCYyv/FwWVYyKAsA8tZQ8vUYzvFnw==}
+
   '@iconify-json/tabler@1.2.14':
     resolution: {integrity: sha512-X5Li79KW5KilHIaNVFKMuPr0WOA4B/Y/EqkrrZiEihs3Wcq/eIDMDDqGBkmei/8naYyfpkj0LWH7osr+vJYFEA==}
+
+  '@iconify-json/vscode-icons@1.2.11':
+    resolution: {integrity: sha512-V0ldtWPUKe7ZB3CV/TjgDW1Gbz74AxjGPS2NBWDTSn/y25gTwFycI1YcrluDhuVSoQpDEIYmm3JQJkhtSefh7A==}
 
   '@iconify/collections@1.0.509':
     resolution: {integrity: sha512-gokFSXhdQg/z60xb2dfEGG7kpbDk+vt7ewdMOTMFnCDFo08Z3uUFCF6M1/m7QQUP9EjSMF6bK9MRQUfW3j+fQA==}
@@ -6489,7 +6501,15 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
+  '@iconify-json/simple-icons@1.2.22':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/tabler@1.2.14':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/vscode-icons@1.2.11':
     dependencies:
       '@iconify/types': 2.0.0
 
