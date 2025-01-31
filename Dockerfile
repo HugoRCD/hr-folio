@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM node:22.13.0-alpine AS build
+FROM node:22.13.1-alpine AS build
 
 ARG NUXT_PRIVATE_GITHUB_TOKEN
 ENV NUXT_PRIVATE_GITHUB_TOKEN=$NUXT_PRIVATE_GITHUB_TOKEN
@@ -19,7 +19,7 @@ RUN pnpm install --frozen-lockfile --prod
 RUN pnpm run build
 
 # Stage 2: Final Stage
-FROM node:22.13.0-alpine AS final
+FROM node:22.13.1-alpine AS final
 
 WORKDIR /app
 
