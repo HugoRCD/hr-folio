@@ -13,8 +13,8 @@ The modern Nuxt stack is evolving rapidly, bringing exciting new features and im
 
 As of January 2025, we're working with some cutting-edge versions:
 
-- Nuxt UI v3.0.0-alpha.11 - A powerful component library revolutionizing UI development
-- Nuxt Content v3.0.0-alpha.8 - Content management reimagined
+- Nuxt UI v3.0.0-alpha.12 - A powerful component library revolutionizing UI development
+- Nuxt Content v3.0.0- Content management reimagined
 - Nuxt v3.15.1 - The rock-solid foundation
 
 While these alpha versions are still evolving, they're stable enough for production use and offer significant improvements over their predecessors. Let's dive into containerizing this stack properly.
@@ -28,9 +28,9 @@ Before we start with Docker, ensure your Nuxt project is properly configured. He
   "name": "nuxt-app",
   "private": true,
   "dependencies": {
-    "@nuxt/content": "3.0.0",
-    "@nuxt/ui": "^3.0.0-alpha.11",
-    "@nuxt/image": "1.9.0",
+    "@nuxt/content": "^3.0.0",
+    "@nuxt/ui": "^3.0.0-alpha.12",
+    "@nuxt/image": "^1.9.0",
     "nuxt": "^3.15.1"
   }
 }
