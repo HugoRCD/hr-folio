@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.2.1",
   "dependencies": {
     "@iconify-json/simple-icons": "^1.2.22",
     "@iconify-json/vscode-icons": "^1.2.11",
