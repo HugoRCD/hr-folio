@@ -1,6 +1,7 @@
 {
   "name": "Shelve",
-  "logo": "SvgoShelve",
+  "logo": "custom:shelve",
+  "category": "personal",
   "image": "/projects/shelve.webp",
   "description": "Easily kick off and oversee team projects with just a few clicks!",
   "link": "https://shelve.cloud/",

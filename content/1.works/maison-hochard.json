@@ -1,6 +1,7 @@
 {
   "name": "Maison Hochard",
-  "logo": "SvgoMaisonHochard",
+  "logo": "custom:maison-hochard",
+  "category": "personal",
   "image": "/projects/maison-hochard.webp",
   "description": "Luxury graphic design and web development communication agency",
   "link": "https://mh.hrcd.fr/",

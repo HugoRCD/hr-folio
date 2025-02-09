@@ -1,5 +1,15 @@
 <script setup lang="ts">
-const { data: works, error } = await useAsyncData('works', () => queryCollection('works').order('date', 'DESC').all())
+const props = defineProps<{
+  category?: string
+}>()
+
+const { data: works, error } = await useAsyncData('works', () =>
+  queryCollection('works')
+    .where('category', '=', props.category)
+    .order('date', 'DESC')
+    .all()
+)
+
 if (!works.value || !error.value) createError({ statusCode: 404 })
 </script>
 
@@ -17,7 +27,7 @@ if (!works.value || !error.value) createError({ statusCode: 404 })
       <div class="absolute right-0 top-0 font-newsreader text-5xl italic opacity-15 sm:text-3xl">
         {{ work.release }}
       </div>
-      <h3 class="font-newsreader italic text-secondary text-2xl italic decoration-accent group-hover:underline">
+      <h3 class="font-newsreader italic text-secondary text-2xl decoration-accent group-hover:underline">
         {{ work.name }}<span class="text-accent">.</span>
       </h3>
       <p class="text-tertiary text-sm font-extralight sm:text-base">
