@@ -30,7 +30,7 @@
     "vue-router": "4.5.0"
   },
   "devDependencies": {
-    "@hrcd/eslint-config": "edge",
+    "@hrcd/eslint-config": "^2.2.1",
     "automd": "0.3.12",
     "eslint": "9.19.0"
   }
