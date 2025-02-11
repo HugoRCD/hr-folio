@@ -17,9 +17,7 @@ const { profile } = useAppConfig()
     <h3 class="font-newsreader text-xl italic text-secondary">
       {{ profile.name }}
     </h3>
-    <h1 class="font-newsreader text-2xl font-medium italic text-accent sm:text-3xl">
-      {{ profile.job }}
-    </h1>
+    <MDC :value="profile.job!" class="font-newsreader text-2xl font-medium italic sm:text-3xl mt-1" />
     <p class="max-w-[600px] text-pretty text-tertiary text-sm font-extralight sm:text-base">
       <slot mdc-unwrap="p" />
     </p>

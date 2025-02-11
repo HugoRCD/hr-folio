@@ -1,9 +1,10 @@
 {
   "name": "Mockline",
-  "logo": "SvgoMockline",
+  "logo": "custom:mockline",
+  "category": "personal",
   "image": "/projects/mockline.webp",
-  "description": "A components library to breathe new life and meaning into the web",
+  "description": "The most customizable opinionated UI library for Nuxt and Vue",
   "link": "https://mockline.dev/",
   "release": "Soon",
-  "date": "2025"
+  "date": "Soon"
 }

@@ -4,7 +4,7 @@ description: Learn how to properly containerize and deploy a Nuxt application
   using the latest versions of Nuxt UI and Content. Set up Docker with best
   practices, automate builds with GitHub Actions, and deploy your application
   anywhere.
-date: 15/01/2025
+date: 2025-01-15
 ---
 
 # From Local to Production: Deploy the Latest Nuxt Stack with Docker :prose-icon{align name="simple-icons:nuxtdotjs" size="30px"}

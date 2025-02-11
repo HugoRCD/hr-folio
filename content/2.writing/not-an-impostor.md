@@ -2,7 +2,7 @@
 title: You are not an impostor
 description: Your story is worth telling, and you are not alone in this journey.
   Here's how to overcome the trap of perfection and embrace your authenticity.
-date: 11/01/2024
+date: 2024-01-11
 ---
 
 # Your story is worth telling

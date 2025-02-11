@@ -1,9 +1,8 @@
 {
   "name": "Currencia",
-  "logo": "SvgoCurrencia",
-  "image": "/projects/currencia.webp",
+  "category": "personal",
   "description": "Simple yet beautiful crypto tracker template",
   "link": "https://currencia.hrcd.fr/",
   "release": "2023",
-  "date": "2023"
+  "date": "2023-11-20"
 }

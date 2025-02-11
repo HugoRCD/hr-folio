@@ -1,9 +1,8 @@
 {
   "name": "Maison Hochard",
-  "logo": "SvgoMaisonHochard",
-  "image": "/projects/maison-hochard.webp",
+  "category": "personal",
   "description": "Luxury graphic design and web development communication agency",
   "link": "https://mh.hrcd.fr/",
   "release": "2022",
-  "date": "2022"
+  "date": "2022-11-20"
 }

@@ -35,19 +35,16 @@ export const collections = {
       })
     })
   ),
-  works: defineCollection(
-    asSeoCollection({
-      type: 'data',
-      source: '1.works/*.json',
-      schema: z.object({
-        name: z.string().nonempty(),
-        logo: z.string().nonempty(),
-        description: z.string().nonempty(),
-        image: z.string().url(),
-        link: z.string().url(),
-        release: z.string().nonempty(),
-        date: z.string().nonempty(),
-      })
+  works: defineCollection({
+    type: 'data',
+    source: '1.works/*.json',
+    schema: z.object({
+      name: z.string().nonempty(),
+      description: z.string().nonempty(),
+      category: z.string().nonempty(),
+      link: z.string().url(),
+      release: z.string().optional(),
+      date: z.string().nonempty(),
     })
-  )
+  }),
 }

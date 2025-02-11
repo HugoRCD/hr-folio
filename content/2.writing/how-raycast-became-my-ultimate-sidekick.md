@@ -3,7 +3,7 @@ title: How Raycast Became My Ultimate Sidekick
 description: Let me take you on a journey through the magical land of Raycast –
   an app that has completely revolutionized my workflow and made me wonder how I
   ever survived without it.
-date: 05/03/2024
+date: 2024-03-05
 ---
 
 # How Raycast Became My Ultimate Sidekick ?
@@ -12,7 +12,7 @@ Hey there, productivity enthusiasts! Let me take you on a journey through the ma
 
 ## Snippets Magic:
 
-Tired of typing the same thing over and over again? Say no more! With Raycast's snippet feature! Whether it's your lengthy email signature, those never-ending Unix commands, or the perfect code snippet you use in every component, Raycast has got your back. For all those developers who have made the right career move and are on Nuxt, I've also written an article on the subject :prose-a[5 raycast snippets for Nuxt]{href="https://hrcd.fr/writing/5-amazing-raycast-nuxt-snippets"} .
+Tired of typing the same thing over and over again? Say no more! With Raycast's snippet feature! Whether it's your lengthy email signature, those never-ending Unix commands, or the perfect code snippet you use in every component, Raycast has got your back. For all those developers who have made the right career move and are on Nuxt, I've also written an article on the subject :prose-a[5 raycast snippets for Nuxt]{href="/writing/5-amazing-raycast-nuxt-snippets"} .
 
 ## Quicklinks, Warp Speed Navigation:
 

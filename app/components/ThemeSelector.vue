@@ -10,7 +10,7 @@ const switchTheme = () => {
   colorMode.preference = colorMode.value
 }
 
-const startViewTransition = (theme) => {
+const startViewTransition = (theme: string) => {
   if (theme === colorMode.value) return
   if (reduceMotion.value) {
     switchTheme()

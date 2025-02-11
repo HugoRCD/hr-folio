@@ -50,6 +50,6 @@ async function verifyPassword() {
       <input v-model="password" type="password" placeholder="Password" class="input">
       <MButton class="flex items-center cursor-pointer justify-center gap-2 bg-accent hover:bg-accent/90 px-2 text-white" type="submit" rounded="none" label="Verify" :loading />
     </form>
-    <List v-if="isAuthorized && notes" :data="notes" />
+    <List v-if="isAuthorized && notes" :posts="notes" />
   </div>
 </template>
