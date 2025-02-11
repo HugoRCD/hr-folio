@@ -13,13 +13,13 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@10.2.1",
+  "packageManager": "pnpm@10.3.0",
   "dependencies": {
-    "@iconify-json/simple-icons": "^1.2.23",
-    "@iconify-json/vscode-icons": "^1.2.11",
-    "@nuxt/content": "3.1.0",
+    "@iconify-json/simple-icons": "^1.2.24",
+    "@iconify-json/vscode-icons": "^1.2.13",
+    "@nuxt/content": "3.1.1",
     "@nuxt/image": "1.9.0",
-    "@nuxt/scripts": "0.10.0",
+    "@nuxt/scripts": "0.10.1",
     "@nuxtjs/seo": "2.1.1",
     "@shelve/cli": "3.1.1",
     "@vueuse/nuxt": "12.5.0",
@@ -32,6 +32,6 @@
   "devDependencies": {
     "@hrcd/eslint-config": "^2.2.1",
     "automd": "0.3.12",
-    "eslint": "9.19.0"
+    "eslint": "9.20.1"
   }
 }
