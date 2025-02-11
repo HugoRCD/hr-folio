@@ -1,7 +1,10 @@
 export default defineAppConfig({
+  global: {
+    meetingLink: 'https://cal.com/hugorcd/15min',
+  },
   profile: {
     name: 'Hugo Richard',
-    job: 'Frontend Architect and Designer',
+    job: '[Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)]{.text-accent}',
     email: 'contact@hrcd.fr',
     phone: '(+33) 6 21 56 22 18',
     picture: 'https://avatars.githubusercontent.com/u/71938701?v=4'

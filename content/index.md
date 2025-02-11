@@ -3,7 +3,7 @@ They say the devil is in the details. I say that's where the magic happens. Want
 ::
 
 ::section-item{:number='1' title="Works"}
-Currently building two tools I'm proud of: :icon{name="custom:shelve"} [***Shelve***](https://shelve.cloud){.link}, simplifying how teams share and manage environment variables, and :icon{name="custom:mockline"} [***Mockline***](https://mockline.dev){.link}, a component library that makes beautiful development effortless. Explore my work: [***/works***](/works){.link}
+Working on [**Nuxt UI**](https://ui3.nuxt.dev/getting-started) and [**UI Pro**](https://ui3.nuxt.dev/getting-started), while building :icon{name="custom:shelve"} [***Shelve***](https://shelve.cloud){.link}, an all-in-one workspace for modern development collaboration. Deeply engaged in the Nuxt ecosystem, creating the next generation of developer tools. Explore my work: [***/works***](/works){.link}
 ::
 
 ::section-item{:number='2' title="Writing"}
