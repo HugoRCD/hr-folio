@@ -3,7 +3,7 @@ title: How Raycast Became My Ultimate Sidekick
 description: Let me take you on a journey through the magical land of Raycast –
   an app that has completely revolutionized my workflow and made me wonder how I
   ever survived without it.
-date: 05/03/2024
+date: 2024-03-05
 ---
 
 # How Raycast Became My Ultimate Sidekick ?

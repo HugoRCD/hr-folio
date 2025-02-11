@@ -18,14 +18,14 @@ async function submit() {
   }
 }
 
-const { data, error } = await useAsyncData('writings', () => queryCollection('writing').order('date', 'DESC').all())
+const { data: posts, error } = await useAsyncData('writings', () => queryCollection('writing').order('date', 'DESC').all())
 
-if (!data.value || !error.value) createError({ statusCode: 404 })
+if (!posts.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>
   <div class="flex font-normal flex-col gap-8">
-    <List v-if="data" :data />
+    <List v-if="posts" :posts />
     <div class="mt-10 flex flex-col gap-1">
       <p class="mb-1 text-sm">
         Subscribe to get notified about new articles
