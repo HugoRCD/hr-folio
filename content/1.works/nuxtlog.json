@@ -1,8 +1,6 @@
 {
   "name": "Nuxtlog",
-  "logo": "custom:nuxtlog",
   "category": "personal",
-  "image": "/projects/nuxtlog.webp",
   "description": "A changelog, newsletter and blog template made for Nuxt",
   "link": "https://nuxtlog.hrcd.fr/",
   "release": "2024",

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-const props = defineProps<{
+const { category } = defineProps<{
   category?: string
 }>()
 
-const { data: works, error } = await useAsyncData('works', () =>
-  queryCollection('works')
-    .where('category', '=', props.category)
+const { data: works, error } = await useAsyncData(`works-${category}`, () => {
+  return queryCollection('works')
+    .where('category', '=', category)
     .order('date', 'DESC')
     .all()
-)
+})
 
 if (!works.value || !error.value) createError({ statusCode: 404 })
 </script>
@@ -19,6 +19,7 @@ if (!works.value || !error.value) createError({ statusCode: 404 })
       v-for="(work, index) in works"
       :key="work.name"
       :to="work.link"
+      target="_blank"
       class="group relative"
       data-animate
       :aria-label="`Open ${work.name}`"

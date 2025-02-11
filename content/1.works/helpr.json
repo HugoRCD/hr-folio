@@ -1,8 +1,6 @@
 {
   "name": "Helpr",
-  "logo": "custom:helpr",
   "category": "personal",
-  "image": "/projects/helpr.webp",
   "description": "Automation tools connecting various applications to create powerful workflows",
   "link": "https://helpr.hrcd.fr/",
   "release": "2023",
