@@ -22,9 +22,9 @@ const getPageSEO = () => ({
 })
 
 const getTitleTemplate = (title: string | undefined) => {
-  if (route.path === '/') return title || `${seo.title} | ${profile.job}`
+  if (route.path === '/') return title || `${seo.title} | Frontend Engineer at NuxtLabs`
   if (isWriting) return title
-  return `${title} | ${seo.title} - ${profile.job}`
+  return `${title} | ${seo.title} - Frontend Engineer at NuxtLabs`
 }
 
 const pageSEO = getPageSEO()
