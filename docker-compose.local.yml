@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         - NUXT_PRIVATE_GITHUB_TOKEN=${NUXT_PRIVATE_GITHUB_TOKEN}
+        - NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE}
     container_name: hr_folio
     restart: always
     environment:

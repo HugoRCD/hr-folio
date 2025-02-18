@@ -10,11 +10,6 @@
 
   --color-primary: var(--ui-bg);
   --color-accent: var(--ui-primary);
-  --color-secondary: var(--color-secondary);
-  --color-tertiary: var(--color-tertiary);
-  --color-inverted: var(--color-inverted);
-  --color-bg-primary: var(--color-bg-primary);
-  --color-bg-level-1: var(--color-bg-level-1);
 }
 
 :root {
@@ -24,31 +19,17 @@
   --ui-primary: rgb(40, 83, 255) !important;
 
   --ui-bg: rgb(248, 243, 238);
-
-  --color-secondary: rgb(61, 61, 61);
-  --color-tertiary: rgb(96, 96, 96);
-  --color-inverted: rgb(255, 255, 255);
-}
-
-.light {
-  --color-bg-level-1: var(--color-primary);
-  --color-border-primary: transparent;
-  --color-border-secondary: transparent;
 }
 
 .dark {
   --ui-primary: rgb(8, 73, 236) !important;
 
   --ui-bg: rgb(2, 2, 2);
-
-  --color-secondary: rgb(200, 200, 200);
-  --color-tertiary: rgb(150, 150, 150);
-  --color-inverted: rgb(255, 255, 255);
 }
 
 @layer base {
   :root {
-    @apply selection:bg-accent selection:text-inverted;
+    @apply selection:bg-accent selection:text-(--ui-text-highlighted);
   }
 
   /* Blurred line effect */
@@ -61,10 +42,6 @@
   }
 
   .no-link {
-    @apply text-tertiary! no-underline! border-none cursor-default font-normal dark:no-underline!;
-  }
-
-  .input {
-    @apply bg-primary border-t-0 border-r-0 border-l-0 border-b-2 border-(--ui-border) px-2 py-1 focus:outline-none resize-none caret-accent;
+    @apply no-underline! border-none cursor-default font-normal dark:no-underline!;
   }
 }

@@ -53,6 +53,12 @@ export default defineAppConfig({
   ui: {
     colors: {
       neutral: 'neutral'
+    },
+    icons: {
+      loading: 'lucide:loader',
+    },
+    input: {
+      base: 'bg-primary rounded-none border-t-0 border-r-0 border-l-0 border-b border-(--ui-border) px-2 py-1 focus:outline-none resize-none caret-accent'
     }
   },
   uiPro: {
@@ -73,10 +79,13 @@ export default defineAppConfig({
       },
       icon: {
         base: 'text-(--ui-text-highlighted)'
+      },
+      p: {
+        base: 'text-(--ui-text-muted)'
+      },
+      li: {
+        base: 'text-(--ui-text-muted)'
       }
     },
-  },
-  icons: {
-    loading: 'lucide:loader',
   },
 })

@@ -1,8 +1,10 @@
 ::hero
 #title
 Hugo Richard
+
 #job
 # Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)
+
 #default
 They say the devil is in the details. I say that's where the magic happens. Want to know what drives me? [**Read more about me**](/about){.link}.
 ::

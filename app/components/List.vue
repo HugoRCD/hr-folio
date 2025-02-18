@@ -23,7 +23,7 @@ defineProps<{
       <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
         {{ post.title }}
       </h3>
-      <p class="text-sm text-secondary/50">
+      <p class="text-sm text-(--ui-text-muted)">
         {{ post.description }}
       </p>
     </NuxtLink>
