@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    'mockline',
+    '@nuxt/ui-pro',
     '@nuxtjs/seo',
     '@nuxt/content',
     '@nuxt/image',
@@ -54,9 +54,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    public: {
-      meetingLink: '',
-    },
     private: {
       resendApiKey: '',
       notesPassword: '',
@@ -73,6 +70,15 @@ export default defineNuxtConfig({
 
   ogImage: {
     zeroRuntime: true
+  },
+
+  imports: {
+    presets: [
+      {
+        from: 'vue-sonner',
+        imports: ['toast'],
+      },
+    ],
   },
 
   css: ['~/assets/style/main.css'],

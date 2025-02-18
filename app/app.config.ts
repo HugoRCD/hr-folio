@@ -4,7 +4,7 @@ export default defineAppConfig({
   },
   profile: {
     name: 'Hugo Richard',
-    job: '[Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)]{.text-accent}',
+    job: '[Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)]{.text-primary}',
     email: 'contact@hrcd.fr',
     phone: '(+33) 6 21 56 22 18',
     picture: 'https://avatars.githubusercontent.com/u/71938701?v=4'
