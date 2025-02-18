@@ -26,6 +26,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   } catch (_) {
     toast.error('An error occurred while sending your message.')
   }
+  state.email = undefined
 }
 
 const { data: posts, error } = await useAsyncData('writings', () => queryCollection('writing').order('date', 'DESC').all())
@@ -46,7 +47,6 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
           <UInput
             v-model="state.email"
             type="email"
-            variant="none"
             placeholder="Email*"
             class="input w-64"
           />

@@ -17,10 +17,10 @@ defineProps<{
       :style="{ '--stagger': index }"
       :aria-label="`Read ${post.title}`"
     >
-      <div class="font-newsreader text-lg italic opacity-50">
+      <div class="font-serif text-lg italic opacity-50">
         {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}
       </div>
-      <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
+      <h3 class="text-2xl font-serif font-medium italic decoration-accent group-hover:underline">
         {{ post.title }}
       </h3>
       <p class="text-sm text-(--ui-text-muted)">

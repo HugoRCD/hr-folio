@@ -58,7 +58,10 @@ export default defineAppConfig({
       loading: 'lucide:loader',
     },
     input: {
-      base: 'bg-primary rounded-none border-t-0 border-r-0 border-l-0 border-b border-(--ui-border) px-2 py-1 focus:outline-none resize-none caret-accent'
+      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
+    },
+    textarea: {
+      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
     }
   },
   uiPro: {
@@ -69,7 +72,7 @@ export default defineAppConfig({
     },
     prose: {
       h1: {
-        base: 'text-2xl sm:text-3xl font-newsreader italic font-[500]'
+        base: 'text-2xl sm:text-3xl font-serif italic font-[500]'
       },
       hr: {
         base: 'my-2'

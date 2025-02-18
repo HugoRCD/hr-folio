@@ -1,6 +1,17 @@
 <script setup lang="ts">
-const password = ref('')
-const loading = ref(false)
+import * as z from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
+
+const schema = z.object({
+  password: z.string().min(2, 'Too short')
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  password: undefined
+})
+
 const isAuthorized = useState<boolean>('authorized', () => false)
 
 const { data: notes, error, execute } = await useAsyncData('notes', () =>
@@ -11,45 +22,37 @@ const { data: notes, error, execute } = await useAsyncData('notes', () =>
 })
 if (!notes.value || !error.value) createError({ statusCode: 404 })
 
-const { data, refresh } = useFetch('/api/verify', {
-  method: 'POST',
-  body: {
-    password
-  },
-  watch: false,
-  immediate: false
-})
-
-async function verifyPassword() {
-  loading.value = true
+async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
-    await refresh()
+    await $fetch('/api/verify', {
+      method: 'POST',
+      body: {
+        password: event.data.password
+      },
+    })
+    await execute()
 
-    if (data.value?.status === 200) {
-      await execute()
-      isAuthorized.value = true
-      toast.success('Welcome to my hidden notes!')
-    } else {
-      toast.error('Invalid password')
-      password.value = ''
-    }
+    isAuthorized.value = true
+    toast.success('Welcome to my hidden notes!')
   } catch (error) {
     toast.error('Invalid password')
   }
-  loading.value = false
+  state.password = undefined
 }
 </script>
 
 <template>
   <div class="flex flex-col gap-8">
-    <span v-if="!isAuthorized" class="font-newsreader text-lg font-light italic">
+    <span v-if="!isAuthorized" class="font-serif text-lg font-light italic text-(--ui-text-muted)">
       You've stumbled upon my private notes section. If you know me, you might figure out the password.
       If not, well... these thoughts are probably not meant for you anyway. But hey, feel free to try.
     </span>
-    <form v-if="!isAuthorized" class="flex gap-4" @submit.prevent="verifyPassword">
-      <input v-model="password" type="password" placeholder="Password" class="input">
-      <MButton class="flex items-center cursor-pointer justify-center gap-2 bg-accent hover:bg-accent/90 px-2 text-white" type="submit" rounded="none" label="Verify" :loading />
-    </form>
+    <UForm v-if="!isAuthorized" :schema :state class="flex items-start gap-4" @submit.prevent="onSubmit">
+      <UFormField name="password">
+        <UInput v-model="state.password" autocomplete="false" type="password" placeholder="Password" />
+      </UFormField>
+      <UButton class="rounded-none text-white" type="submit" label="Verify" loading-auto />
+    </UForm>
     <List v-if="isAuthorized && notes" :posts="notes" />
   </div>
 </template>

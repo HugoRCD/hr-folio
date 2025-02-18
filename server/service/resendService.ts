@@ -44,7 +44,7 @@ export async function sendContactEmail({ email, message, name }: SendMailDto) {
       html: `
             <h3>New message from hrcd.fr</h3>
             <p>
-                You've just received a new message from ${ name.length ? name : 'a visitor' } with this email: <strong>${ email }</strong>.
+                You've just received a new message from ${ name && name.length ? name : 'a visitor' } with this email: <strong>${ email }</strong>.
             </p>
             <p>
                 <strong>Message:</strong>
@@ -53,6 +53,7 @@ export async function sendContactEmail({ email, message, name }: SendMailDto) {
       `,
     })
   } catch (error) {
+    console.error(error)
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal Server Error',

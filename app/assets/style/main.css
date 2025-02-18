@@ -4,7 +4,7 @@
 @import "./animations.css";
 
 @theme {
-  --font-newsreader: "Newsreader", serif;
+  --font-serif: "Newsreader", serif;
   --font-sans: "Geist", sans-serif;
   --font-mono: "Geist Mono", sans-serif;
 
@@ -17,13 +17,11 @@
   scrollbar-width: thin;
 
   --ui-primary: rgb(40, 83, 255) !important;
-
   --ui-bg: rgb(248, 243, 238);
 }
 
 .dark {
   --ui-primary: rgb(8, 73, 236) !important;
-
   --ui-bg: rgb(2, 2, 2);
 }
 
@@ -42,6 +40,6 @@
   }
 
   .no-link {
-    @apply no-underline! border-none cursor-default font-normal dark:no-underline!;
+    @apply no-underline! *:text-(--ui-text-muted)! border-none cursor-default font-normal dark:no-underline!;
   }
 }

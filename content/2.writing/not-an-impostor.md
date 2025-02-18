@@ -13,7 +13,7 @@ Imagine yourself standing at the edge of the stage, dazzled by the spotlight of 
 
 This is where the magic happens. Instead of seeing the stage as a place for competition, turn it into a space for learning. Let other people's successes inspire you, **their mistakes teach you**. This is not imitation, but a creative harmony where you can find your own rhythm, your own melody.
 
-**Your authenticity** ! is your most precious instrument. Play it with **confidence**. Every :prose-a[note]{.no-link href="/notes"} of your experience, your perspective, resonates in a unique way with your audience. Authenticity is a creator's true opus, far more captivating than the exhausting quest for perfection.
+**Your authenticity** ! is your most precious instrument. Play it with **confidence**. Every [note](/notes){.no-link} of your experience, your perspective, resonates in a unique way with your audience. Authenticity is a creator's true opus, far more captivating than the exhausting quest for perfection.
 
 Remember, **every creation is a rehearsal for the next**. There's no grand finale where everything has to be perfect. It's a continuous concert, where each performance is better than the last.
 

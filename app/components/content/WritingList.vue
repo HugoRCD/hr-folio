@@ -23,7 +23,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
     </NuxtLink>
     <NuxtLink
       to="/writing"
-      class="mt-2 link font-newsreader text-lg hover:underline"
+      class="mt-2 link font-serif text-lg hover:underline"
       aria-label="See more, go to all articles, writing, etc ..."
     >
       <span class="sr-only">More writing</span>
