@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NUXT_PRIVATE_GITHUB_TOKEN: ${{ secrets.NUXT_PRIVATE_GITHUB_TOKEN }}
+      NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
