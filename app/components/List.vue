@@ -20,7 +20,7 @@ defineProps<{
       <div class="font-newsreader text-lg italic opacity-50">
         {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}
       </div>
-      <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline text-font-primary/80">
+      <h3 class="text-2xl font-newsreader font-medium italic decoration-accent group-hover:underline">
         {{ post.title }}
       </h3>
       <p class="text-sm text-secondary/50">

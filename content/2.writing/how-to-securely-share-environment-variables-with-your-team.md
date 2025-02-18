@@ -50,7 +50,7 @@ Poor environment variable management leads to:
 - Document all required variables
 - Track configuration changes systematically
 
-## :prose-icon{name="custom:shelve" size="18px"} Introducing Shelve: Modern Environment Management Done Right
+## Introducing Shelve: Modern Environment Management Done Right
 
 Shelve is an open-source solution that transforms how teams handle environment variables. Here's what makes it special:
 
@@ -124,14 +124,6 @@ Stop risking your application's security with inadequate environment variable ma
 
 Ready to secure your environment variables?
 
-::prose-a{href="https://git.new/variables"}
-Get Started with Shelve on GitHub
-::
+[Get Started with Shelve on GitHub](https://git.new/variables)
 
-:br
-
-:br
-
-::prose-a{href="https://shelve.cloud"}
-Try Shelve
-::
+[Try Shelve](https://shelve.cloud)

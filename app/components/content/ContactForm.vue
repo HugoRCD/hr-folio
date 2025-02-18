@@ -70,12 +70,12 @@ onMounted(() => {
       class="input"
       required
     />
-    <MButton
+    <UButton
       type="submit"
-      class="bg-accent hover:bg-accent/90 p-2 text-white cursor-pointer"
+      class="rounded-none p-2 text-white"
       :loading
+      block
       label="Send"
-      rounded="none"
     />
   </form>
 </template>

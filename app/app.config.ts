@@ -4,7 +4,7 @@ export default defineAppConfig({
   },
   profile: {
     name: 'Hugo Richard',
-    job: '[Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)]{.text-primary}',
+    job: '# [Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)]{.text-accent}',
     email: 'contact@hrcd.fr',
     phone: '(+33) 6 21 56 22 18',
     picture: 'https://avatars.githubusercontent.com/u/71938701?v=4'
@@ -50,15 +50,33 @@ export default defineAppConfig({
       href: '/site.webmanifest',
     },
   ],
-  mockline: {
-    darkCode: false,
-    components: {
-      proseH1: 'text-2xl sm:text-3xl text-font-primary font-newsreader italic font-[500]',
-      proseH2: 'text-xl sm:text-2xl text-font-primary font-[450]',
-      proseH3: 'text-lg sm:text-xl text-font-primary font-[400]',
-      proseH4: 'text-base sm:text-lg text-font-primary font-[350]',
-      proseP: 'text-secondary/70 mt-0',
-      proseLi: 'text-secondary/70',
+  ui: {
+    colors: {
+      neutral: 'neutral'
     }
-  }
+  },
+  uiPro: {
+    codeIcon: {
+      'shelve.json': 'custom:shelve',
+      'docker-compose.yml': 'simple-icons:docker',
+      'Dockerfile': 'simple-icons:docker'
+    },
+    prose: {
+      h1: {
+        base: 'text-2xl sm:text-3xl font-newsreader italic font-[500]'
+      },
+      hr: {
+        base: 'my-2'
+      },
+      strong: {
+        base: 'text-(--ui-text-highlighted) font-[450]'
+      },
+      icon: {
+        base: 'text-(--ui-text-highlighted)'
+      }
+    },
+  },
+  icons: {
+    loading: 'lucide:loader',
+  },
 })

@@ -14,7 +14,7 @@ if (!works.value || !error.value) createError({ statusCode: 404 })
 </script>
 
 <template>
-  <div class="mt-10 grid grid-cols-1 font-normal gap-8 sm:grid-cols-2">
+  <div class="mt-4 grid grid-cols-1 font-normal gap-8 sm:grid-cols-2">
     <NuxtLink
       v-for="(work, index) in works"
       :key="work.name"

@@ -10,7 +10,7 @@ const router = useRouter()
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
     </div>
     <main class="flex min-h-screen flex-col items-center justify-center p-3 sm:p-12">
-      <div class="flex size-full max-w-7xl flex-1 flex-col justify-between gap-3 border-1 sm:border-2 border-main p-4 sm:p-6">
+      <div class="flex size-full max-w-7xl flex-1 flex-col justify-between gap-3 border-1 sm:border-2 border-(--ui-border) p-4 sm:p-6">
         <div class="flex w-full" :class="route.path !== '/' ? 'justify-between' : 'justify-end'">
           <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
             <span class="font-newsreader italic hover:text-accent hover:underline">

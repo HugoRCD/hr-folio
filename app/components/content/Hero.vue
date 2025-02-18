@@ -14,10 +14,12 @@ const { profile } = useAppConfig()
       sizes="160"
       class="mb-2 size-20 rounded-full object-cover"
     />
-    <h3 class="font-newsreader text-xl italic text-secondary">
-      {{ profile.name }}
+    <h3 class="font-newsreader text-xl italic">
+      <slot name="title" mdc-unwrap="p" />
     </h3>
-    <MDC :value="profile.job!" class="font-newsreader text-2xl font-medium italic sm:text-3xl mt-1" />
+    <div class="*:mb-4 *:text-(--ui-primary)">
+      <slot name="job" mdc-unwrap="p" />
+    </div>
     <p class="max-w-[600px] text-pretty text-tertiary text-sm font-extralight sm:text-base">
       <slot mdc-unwrap="p" />
     </p>

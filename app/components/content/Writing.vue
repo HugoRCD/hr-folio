@@ -38,12 +38,11 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
           class="input w-64"
           required
         >
-        <MButton
+        <UButton
           type="submit"
-          class="w-fit bg-accent hover:bg-accent/90 px-2 py-1 text-white sm:py-0"
+          class="w-fit bg-accent rounded-none hover:bg-accent/90 px-2 py-1 text-white sm:py-0"
           :loading="status === 'pending'"
           label="Subscribe"
-          rounded="none"
         />
       </form>
     </div>
