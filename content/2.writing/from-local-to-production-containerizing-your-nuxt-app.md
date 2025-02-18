@@ -7,7 +7,7 @@ description: Learn how to properly containerize and deploy a Nuxt application
 date: 2025-01-15
 ---
 
-# From Local to Production: Deploy the Latest Nuxt Stack with Docker :prose-icon{align name="simple-icons:nuxtdotjs" size="30px"}
+# From Local to Production: Deploy the Latest Nuxt Stack with Docker
 
 The modern Nuxt stack is evolving rapidly, bringing exciting new features and improvements. In this guide, we'll explore how to properly containerize and deploy a Nuxt application using the latest versions of Nuxt UI and Content. You'll learn how to set up Docker with best practices, automate builds with GitHub Actions, and deploy your application anywhere - whether it's Coolify, your own server, or any other platform.
 
@@ -36,7 +36,7 @@ Before we start with Docker, ensure your Nuxt project is properly configured. He
 }
 ```
 
-## The Dockerfile Explained :prose-icon{align name="simple-icons:docker" size="30px"}
+## The Dockerfile Explained
 
 Our `Dockerfile` uses a multi-stage build process to create an optimized production image. Let's break down each section:
 
@@ -107,7 +107,7 @@ export default defineEventHandler(() => {
 })
 ```
 
-## Automated Builds with GitHub Actions :prose-icon{align name="simple-icons:github" size="30px"}
+## Automated Builds with GitHub Actions
 
 Here's a sophisticated GitHub Action that builds and pushes images when you create a tag or trigger it manually:
 

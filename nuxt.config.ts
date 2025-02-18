@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    'mockline',
+    '@nuxt/ui-pro',
     '@nuxtjs/seo',
     '@nuxt/content',
     '@nuxt/image',
@@ -43,7 +43,12 @@ export default defineNuxtConfig({
     build: {
       markdown: {
         highlight: {
-          langs: ['ts', 'js', 'json', 'vue', 'dockerfile', 'docker', 'yaml', 'css']
+          langs: ['ts', 'js', 'json', 'vue', 'dockerfile', 'docker', 'yaml', 'css'],
+          theme: {
+            light: 'github-light',
+            dark: 'github-dark',
+            default: 'github-dark'
+          }
         }
       },
     },
@@ -54,9 +59,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    public: {
-      meetingLink: '',
-    },
     private: {
       resendApiKey: '',
       notesPassword: '',
@@ -73,6 +75,15 @@ export default defineNuxtConfig({
 
   ogImage: {
     zeroRuntime: true
+  },
+
+  imports: {
+    presets: [
+      {
+        from: 'vue-sonner',
+        imports: ['toast'],
+      },
+    ],
   },
 
   css: ['~/assets/style/main.css'],

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Toaster } from 'vue-sonner'
+
 const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () =>
@@ -20,11 +22,11 @@ const contentClasses = {
 <template>
   <Html :lang="seo.lang">
     <FolioMeta v-if="page" :page :is-writing>
-      <MApp transparent>
+      <UApp>
         <Toc v-if="isWriting" :links="page.body.toc?.links!" />
         <ContentRenderer :value="page" :class="isWriting ? contentClasses.writing : contentClasses.default" :data="mdcVars" />
-        <MToasts position="top-center" close-button />
-      </MApp>
+        <Toaster position="top-center" close-button />
+      </UApp>
     </FolioMeta>
   </Html>
 </template>

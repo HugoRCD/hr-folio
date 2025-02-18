@@ -1,9 +1,5 @@
 <script setup lang="ts">
-
 const colorMode = useColorMode()
-const reduceMotion = useCookie<boolean>('reduceMotion', {
-  watch: true,
-})
 
 const switchTheme = () => {
   colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'
@@ -12,10 +8,6 @@ const switchTheme = () => {
 
 const startViewTransition = (theme: string) => {
   if (theme === colorMode.value) return
-  if (reduceMotion.value) {
-    switchTheme()
-    return
-  }
   if (!document.startViewTransition) {
     switchTheme()
     return
@@ -39,7 +31,7 @@ const startViewTransition = (theme: string) => {
 
 <template>
   <ClientOnly>
-    <div class="flex flex-row gap-2 text-secondary">
+    <div class="flex flex-row gap-2">
       <div
         class="flex cursor-pointer items-center gap-2"
         @click="startViewTransition('dark')"

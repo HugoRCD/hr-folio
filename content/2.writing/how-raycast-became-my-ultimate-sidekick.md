@@ -96,6 +96,4 @@ And to help you make the most of Raycast AI and take your experience to the next
 
 The article is all set! Let's celebrate your new workflow. If you already have Raycast, click here to wrap things up on a positive note!
 
-::prose-a{href="raycast://extensions/raycast/raycast/confetti"}
-Make it pop ! 🎉
-::
+[**Make it pop ! 🎉**](raycast://extensions/raycast/raycast/confetti){.link}

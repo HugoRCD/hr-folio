@@ -1,21 +1,32 @@
 <script setup lang="ts">
-const email = ref('')
+import * as z from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
 
-const { status, refresh } = useFetch('/api/subscribe', {
-  method: 'POST',
-  body: { email },
-  watch: false,
-  immediate: false
+const schema = z.object({
+  email: z.string().email('Invalid email'),
 })
 
-async function submit() {
-  await refresh()
-  if (!error.value) {
-    email.value = ''
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  email: undefined,
+})
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  try {
+    await $fetch('/api/subscribe', {
+      method: 'POST',
+      body: {
+        email: event.data.email
+      }
+    })
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
     toast.success('Your message has been sent!')
-  } else {
+  } catch (_) {
     toast.error('An error occurred while sending your message.')
   }
+  state.email = undefined
 }
 
 const { data: posts, error } = await useAsyncData('writings', () => queryCollection('writing').order('date', 'DESC').all())
@@ -27,25 +38,29 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
   <div class="flex font-normal flex-col gap-8">
     <List v-if="posts" :posts />
     <div class="mt-10 flex flex-col gap-1">
-      <p class="mb-1 text-sm">
-        Subscribe to get notified about new articles
-      </p>
-      <form class="flex flex-col gap-4 sm:flex-row" @submit.prevent="submit" @keydown.enter.prevent="submit">
-        <input
-          v-model="email"
-          type="email"
-          placeholder="Email*"
-          class="input w-64"
+      <UForm :state :schema class="flex flex-col gap-4 sm:flex-row" @submit.prevent="onSubmit" @keydown.enter.prevent="onSubmit">
+        <UFormField
+          name="email"
           required
+          description="Subscribe to get notified about new articles"
+          class="flex flex-col gap-2"
         >
-        <MButton
-          type="submit"
-          class="w-fit bg-accent hover:bg-accent/90 px-2 py-1 text-white sm:py-0"
-          :loading="status === 'pending'"
-          label="Subscribe"
-          rounded="none"
-        />
-      </form>
+          <UButtonGroup>
+            <UInput
+              v-model="state.email"
+              type="email"
+              placeholder="Email*"
+              class="w-64"
+            />
+            <UButton
+              type="submit"
+              class="rounded-none text-white"
+              loading-auto
+              label="Subscribe"
+            />
+          </UButtonGroup>
+        </UFormField>
+      </UForm>
     </div>
   </div>
 </template>
