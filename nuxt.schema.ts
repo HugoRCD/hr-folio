@@ -28,13 +28,6 @@ export default defineNuxtSchema({
           icon: 'lucide:user',
           default: 'Hugo Richard'
         }),
-        job: field({
-          type: 'string',
-          title: 'Job',
-          description: 'Your job.',
-          icon: 'lucide:briefcase',
-          default: 'Front-end developer'
-        }),
         email: field({
           type: 'string',
           title: 'Email',

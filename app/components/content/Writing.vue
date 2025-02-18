@@ -14,12 +14,12 @@ const state = reactive<Partial<Schema>>({
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
-    /*await $fetch('/api/subscribe', {
+    await $fetch('/api/subscribe', {
       method: 'POST',
       body: {
         email: event.data.email
       }
-    })*/
+    })
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     toast.success('Your message has been sent!')
@@ -43,19 +43,22 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
           name="email"
           required
           description="Subscribe to get notified about new articles"
+          class="flex flex-col gap-2"
         >
-          <UInput
-            v-model="state.email"
-            type="email"
-            placeholder="Email*"
-            class="input w-64"
-          />
-          <UButton
-            type="submit"
-            class="ml-4 rounded-none text-white"
-            loading-auto
-            label="Subscribe"
-          />
+          <UButtonGroup>
+            <UInput
+              v-model="state.email"
+              type="email"
+              placeholder="Email*"
+              class="w-64"
+            />
+            <UButton
+              type="submit"
+              class="rounded-none text-white"
+              loading-auto
+              label="Subscribe"
+            />
+          </UButtonGroup>
         </UFormField>
       </UForm>
     </div>

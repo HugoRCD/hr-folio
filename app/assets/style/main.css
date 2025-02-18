@@ -30,7 +30,6 @@
     @apply selection:bg-accent selection:text-(--ui-text-highlighted);
   }
 
-  /* Blurred line effect */
   .blurred {
     @apply blur-xs hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
   }
@@ -40,6 +39,6 @@
   }
 
   .no-link {
-    @apply no-underline! *:text-(--ui-text-muted)! border-none cursor-default font-normal dark:no-underline!;
+    @apply text-(--ui-text-muted)! border-none cursor-default font-normal;
   }
 }
