@@ -1,5 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/HugoRCD/shelve/main/packages/types/schema.json",
   "project": "hr-folio",
+  "defaultEnv": "development",
   "slug": "hugo"
 }
