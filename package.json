@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@10.5.0",
+  "packageManager": "pnpm@10.5.2",
   "dependencies": {
     "@iconify-json/simple-icons": "^1.2.26",
     "@iconify-json/vscode-icons": "^1.2.16",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@hrcd/eslint-config": "^2.2.1",
-    "automd": "0.3.12",
+    "automd": "0.4.0",
     "eslint": "9.21.0"
   },
   "pnpm": {
