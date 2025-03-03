@@ -7,7 +7,7 @@ date: 2024-01-11
 
 # Your story is worth telling
 
-In the theater of content creation, there are many who, backstage, whisper a phrase tinged with doubt: &#x5F;**"I'm not legitimate, others are so much better"**_. This sound of insecurity, often played over and over in the minds of emerging creators, is the first act of a much larger work: the conquest of one's own legitimacy.
+In the theater of content creation, there are many who, backstage, whisper a phrase tinged with doubt: _**"I'm not legitimate, others are so much better"**_. This sound of insecurity, often played over and over in the minds of emerging creators, is the first act of a much larger work: the conquest of one's own legitimacy.
 
 Imagine yourself standing at the edge of the stage, dazzled by the spotlight of self-judgment. Every creator goes through this. But instead of sinking into the shadows of self-deprecation, take a moment to listen to the whispers of the audience: the other creators. What you hear is not a cacophony of criticism, but a chorus of experiences and lessons.
 
@@ -19,4 +19,4 @@ Remember, **every creation is a rehearsal for the next**. There's no grand final
 
 And in this showroom, you're not alone. Backstage, you'll find plenty of mentors, peers and admirers. They're there to encourage you, to guide you, to applaud your successes and support you in your doubts. This community is your chorus of support, turning fearful solos into courageous duets.
 
-In the end, every curtain raised, every light turned on, is a step closer to accepting your own talent. The feeling of imposture dissipates not when you compare yourself to others, but when you recognize the unique beauty of your own performance. In this room, success is measured not just by the applause at the end, but by the courage to get up on stage and say: &#x2A;*"Here's my story, listen to it"**.
+In the end, every curtain raised, every light turned on, is a step closer to accepting your own talent. The feeling of imposture dissipates not when you compare yourself to others, but when you recognize the unique beauty of your own performance. In this room, success is measured not just by the applause at the end, but by the courage to get up on stage and say: _**"Here's my story, listen to it"**_.
