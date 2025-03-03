@@ -3,7 +3,7 @@
 Hugo Richard
 
 #job
-# Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com)
+# Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com){.border-0 .text-accent}
 
 #default
 They say the devil is in the details. I say that's where the magic happens. Want to know what drives me? [**Read more about me**](/about){.link}.

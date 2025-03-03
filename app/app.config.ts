@@ -88,6 +88,9 @@ export default defineAppConfig({
       },
       li: {
         base: 'text-(--ui-text-muted)'
+      },
+      a: {
+        base: 'italic border-b border-(--color-accent) text-(--ui-text-highlighted) font-medium'
       }
     },
   },

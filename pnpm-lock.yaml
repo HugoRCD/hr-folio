@@ -24,7 +24,7 @@ importers:
         specifier: 0.10.5
         version: 0.10.5(@types/google.maps@3.58.1)(@types/vimeo__player@2.18.3)(@types/youtube@0.1.0)(@unhead/vue@1.11.20(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(@libsql/client@0.14.0)(better-sqlite3@11.8.1))(ioredis@5.4.2)(magicast@0.3.5)(typescript@5.7.3)
       '@nuxt/ui-pro':
-        specifier: 3.0.0-beta.2
+        specifier: ^3.0.0-beta.2
         version: 3.0.0-beta.2(@babel/parser@7.26.5)(change-case@5.4.4)(db0@0.2.4(@libsql/client@0.14.0)(better-sqlite3@11.8.1))(embla-carousel@8.5.2)(encoding@0.1.13)(ioredis@5.4.2)(magicast@0.3.5)(typescript@5.7.3)(vite@6.0.11(@types/node@22.10.7)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
       '@nuxtjs/seo':
         specifier: 2.2.0

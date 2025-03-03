@@ -24,10 +24,10 @@ const { profile } = useAppConfig()
       <slot mdc-unwrap="p" />
     </p>
     <div class="mt-2 flex gap-8">
-      <NuxtLink to="/contact" class="link font-serif text-lg hover:underline">
+      <NuxtLink to="/contact" class="italic font-serif text-lg hover:underline decoration-accent">
         Send me a message
       </NuxtLink>
-      <NuxtLink :to="meetingLink" class="link font-serif text-lg hover:underline">
+      <NuxtLink :to="meetingLink" class="italic font-serif text-lg hover:underline decoration-accent cursor-pointer">
         Make a call
       </NuxtLink>
     </div>
