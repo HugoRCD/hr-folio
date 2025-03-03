@@ -34,10 +34,6 @@
     @apply blur-xs hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
   }
 
-  .link {
-    @apply italic hover:text-accent decoration-accent;
-  }
-
   .no-link {
     @apply text-(--ui-text-muted)! border-none cursor-default font-normal;
   }
