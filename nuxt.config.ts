@@ -1,3 +1,5 @@
+import { Writing } from './.nuxt/components.d'
+
 export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4
@@ -27,8 +29,41 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/image',
     '@nuxt/scripts',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    'nuxt-llms'
   ],
+
+  llms: {
+    domain: 'https://hrcd.fr',
+    title: 'Hugo Richard Portfolio',
+    description: 'Fronted Engineer at Nuxtlabs',
+    full: {
+      title: 'Hugo Richard Portfolio Full Content',
+      description: 'Complete Content of Hugo Richard Portfolio',
+    },
+    sections: [
+      {
+        title: 'About',
+        contentCollection: 'content',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/about%' }]
+      },
+      {
+        title: 'Works',
+        contentCollection: 'content',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/works%' }]
+      },
+      {
+        title: 'Writings',
+        contentCollection: 'writing',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/writing%' }]
+      },
+      {
+        title: 'Home',
+        contentCollection: 'content',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/index%' }]
+      },
+    ],
+  },
 
   colorMode: {
     preference: 'light',
