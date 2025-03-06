@@ -17,6 +17,25 @@ const contentClasses = {
   writing: 'enter-content mb-4 mt-8',
   default: 'mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
 }
+
+const { data, refresh } = useFetch('/llms.txt', {
+  immediate: false
+})
+
+async function copyLLMs() {
+  await refresh()
+  navigator.clipboard.writeText(data.value!)
+}
+
+defineShortcuts({
+  meta_shift_m: () => {
+    toast.promise(copyLLMs(), {
+      loading: 'Loading LLMs...',
+      success: 'LLMs loaded!',
+      error: 'Failed to load LLMs'
+    })
+  }
+})
 </script>
 
 <template>

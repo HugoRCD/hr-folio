@@ -1,3 +1,5 @@
+import { Writing } from './.nuxt/components.d'
+
 export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4
@@ -27,8 +29,46 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/image',
     '@nuxt/scripts',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    'nuxt-llms'
   ],
+
+  llms: {
+    domain: 'https://hrcd.fr',
+    title: 'Hugo Richard Portfolio',
+    description: 'Frontend Engineer at Nuxtlabs, specializing in Vue.js and Nuxt ecosystem',
+    full: {
+      title: 'Hugo Richard Portfolio - Complete Content',
+      description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Frontend Engineer at Nuxtlabs.',
+    },
+    sections: [
+      {
+        title: 'Home',
+        description: 'Overview of Hugo Richard\'s professional profile and featured projects.',
+        contentCollection: 'content',
+        contentFilters: [{ field: 'path', operator: '=', value: '/' }]
+      },
+      {
+        title: 'About',
+        description: 'Detailed information about Hugo Richard\'s professional background, skills, and experience.',
+        contentCollection: 'content',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/about%' }]
+      },
+      {
+        title: 'Writings',
+        description: 'Technical articles, tutorials, and insights about frontend development, Vue.js, and the Nuxt ecosystem.',
+        contentCollection: 'writing',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/writing%' }]
+      },
+      {
+        title: 'Works',
+        description: 'Showcase of notable projects and contributions to the web development community.',
+        contentCollection: 'content',
+        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/works%' }]
+      }
+    ],
+    notes: ['Hugo Richard is a Frontend Engineer at Nuxtlabs, contributing to the Nuxt.js ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
+  },
 
   colorMode: {
     preference: 'light',
