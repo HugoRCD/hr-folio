@@ -3,6 +3,8 @@
 
 @import "./animations.css";
 
+@source "../../../content";
+
 @theme static {
   --font-serif: "Newsreader", serif;
   --font-sans: "Geist", sans-serif;
