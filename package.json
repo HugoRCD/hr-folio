@@ -19,6 +19,8 @@
     "@iconify-json/vscode-icons": "^1.2.16",
     "@nuxt/content": "3.3.0",
     "@nuxt/image": "1.9.0",
+    "@unhead/vue": "^2.0.0-rc.13",
+    "nuxt-og-image": "^5.0.3",
     "@nuxt/scripts": "0.11.2",
     "@nuxt/ui-pro": "^3.0.0",
     "@nuxtjs/seo": "2.2.0",
