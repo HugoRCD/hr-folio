@@ -24,7 +24,7 @@ const { data, refresh } = useFetch('/llms.txt', {
 
 async function copyLLMs() {
   await refresh()
-  navigator.clipboard.writeText(data.value!)
+  await navigator.clipboard.writeText(data.value!)
 }
 
 defineShortcuts({
