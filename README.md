@@ -145,6 +145,8 @@ To start contributing, you can follow these steps:
 
 <!-- /automd -->
 
+## Contributors
+
 <!-- automd:contributors license=Apache author=HugoRCD github="hugorcd/hr-folio" -->
 
 Published under the [APACHE](https://github.com/hugorcd/hr-folio/blob/main/LICENSE) license.
