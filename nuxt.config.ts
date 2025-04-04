@@ -1,5 +1,3 @@
-import { Writing } from './.nuxt/components.d'
-
 export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4
