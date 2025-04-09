@@ -54,7 +54,7 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
             />
             <UButton
               type="submit"
-              class="rounded-none text-white"
+              class="text-white"
               loading-auto
               label="Subscribe"
             />

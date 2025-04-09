@@ -57,13 +57,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         autoresize
         placeholder="Message"
         :rows="4"
-        class="w-full rounded-none"
+        class="w-full"
       />
     </UFormField>
     <UButton
       type="submit"
       label="Send"
-      class="rounded-none text-white"
+      class="text-white"
       loading-auto
       block
     />
