@@ -33,7 +33,9 @@ export default defineNuxtConfig({
   ],
 
   hub: {
-    cache: true
+    cache: true,
+    ai: true,
+    blob: true,
   },
 
   llms: {
