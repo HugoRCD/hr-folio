@@ -12,7 +12,8 @@
     "postinstall": "nuxt prepare",
     "local:studio": "npx nuxt dev --tunnel",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "deploy": "nuxthub deploy"
   },
   "packageManager": "pnpm@10.8.0",
   "dependencies": {

@@ -1,8 +1,13 @@
+import { z } from 'zod'
+
 export default eventHandler(async (event) => {
-  const { limit, cursor } = await getQuery(event)
+  const { limit, cursor } = await getValidatedQuery(event, z.object({
+    limit: z.string().optional(),
+    cursor: z.string().optional()
+  }).parse)
 
   return hubBlob().list({
-    limit: limit ? Number.parseInt(limit) : 10,
+    limit: limit ? +limit : 10,
     cursor: cursor ? cursor : undefined
   })
 })

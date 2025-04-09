@@ -15,7 +15,6 @@ async function loadMore() {
       cursor: cursor.value
     }
   })
-  console.log(res)
   blobs.value.push(...res.blobs)
   hasMore.value = res.hasMore
   cursor.value = res.cursor
@@ -30,7 +29,8 @@ loadMore()
       v-for="blob in blobs"
       :key="blob.pathname"
       :src="`/images/${blob.pathname}`"
-      format="webp"
+      :alt="blob.pathname"
+      class="w-28"
     />
     <UButton label="Load more" @click="loadMore" />
   </div>
