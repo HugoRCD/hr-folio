@@ -28,8 +28,13 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/scripts',
     '@vueuse/nuxt',
-    'nuxt-llms'
+    'nuxt-llms',
+    '@nuxthub/core'
   ],
+
+  hub: {
+    cache: true
+  },
 
   llms: {
     domain: 'https://hrcd.fr',
@@ -91,8 +96,7 @@ export default defineNuxtConfig({
       },
     },
     preview: {
-      api: 'https://api.nuxt.studio',
-      dev: true,
+      api: 'https://api.nuxt.studio'
     },
   },
 
