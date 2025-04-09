@@ -13,9 +13,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@10.7.1",
+  "packageManager": "pnpm@10.8.0",
   "dependencies": {
-    "@iconify-json/simple-icons": "^1.2.30",
+    "@iconify-json/simple-icons": "^1.2.31",
     "@iconify-json/vscode-icons": "^1.2.18",
     "@nuxt/content": "3.4.0",
     "@nuxt/image": "^1.10.0",
@@ -23,7 +23,7 @@
     "@nuxt/ui-pro": "^3.0.2",
     "@nuxtjs/seo": "^3.0.2",
     "@shelve/cli": "^4.1.6",
-    "@vueuse/nuxt": "13.0.0",
+    "@vueuse/nuxt": "13.1.0",
     "nuxt": "^3.16.2",
     "nuxt-llms": "^0.1.2",
     "resend": "4.2.0",
