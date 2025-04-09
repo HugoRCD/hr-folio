@@ -32,6 +32,10 @@ jobs:
 
       - name: Build application
         run: pnpm build
+        env:
+          NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
+          NUXT_PRIVATE_NOTES_PASSWORD: :${{ secrets.NUXT_PRIVATE_NOTES_PASSWORD }}
+          NUXT_PRIVATE_GITHUB_TOKEN: ${{ secrets.NUXT_PRIVATE_GITHUB_TOKEN }}
 
       - name: Deploy to NuxtHub
         uses: nuxt-hub/action@v1
