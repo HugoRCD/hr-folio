@@ -6,12 +6,14 @@
     "automd": "automd",
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:remote": "nuxt dev --remote",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "local:studio": "npx nuxt dev --tunnel",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "deploy": "nuxthub deploy"
   },
   "packageManager": "pnpm@10.8.0",
   "dependencies": {

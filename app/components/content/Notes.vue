@@ -51,7 +51,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       <UFormField name="password">
         <UInput v-model="state.password" autocomplete="false" type="password" placeholder="Password" />
       </UFormField>
-      <UButton class="rounded-none text-white" type="submit" label="Verify" loading-auto />
+      <UButton class="text-white" type="submit" label="Verify" loading-auto />
     </UForm>
     <List v-if="isAuthorized && notes" :posts="notes" />
   </div>

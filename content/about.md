@@ -17,7 +17,7 @@ workflows. My expertise in :icon{align name="simple-icons:vuedotjs" size="18px"}
 showed me that **true innovation isn't about adding more** — it's about **making the complex feel natural**. This
 revelation pushed me to **embrace open-source development**, sharing my work with the community and learning from
 every contribution and interaction. When I'm not crafting code, you'll find me scaling walls at the climbing gym or
-hunting for that perfect photograph. These pursuits might seem unrelated to software development, but they've shaped my
+hunting for that perfect [photograph](/photos). These pursuits might seem unrelated to software development, but they've shaped my
 approach in unexpected ways. Like finding the perfect grip on a climbing route,
 _**sometimes the most elegant solution requires looking at problems from a different angle**_. The tech world often
 races toward complexity. I prefer to **step back and ask "why?" before asking "how?"** It's this mindset that
