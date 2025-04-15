@@ -71,8 +71,8 @@ export default defineAppConfig({
       },
       pre: {
         slots: {
-          header: 'rounded-t-none bg-(--ui-bg-muted)/10',
-          base: 'bg-(--ui-bg-muted)/30 rounded-none',
+          header: 'bg-(--ui-bg-muted)/10',
+          base: 'bg-(--ui-bg-muted)/30',
         }
       },
       code: {
@@ -81,6 +81,15 @@ export default defineAppConfig({
             neutral: 'bg-(--ui-bg-muted)/40 border-(--ui-border)/60',
           }
         },
+      },
+      codeCollapse: {
+        variants: {
+          open: {
+            false: {
+              footer: 'from-(--ui-bg)'
+            }
+          }
+        }
       },
       h1: {
         base: 'text-2xl sm:text-3xl font-serif italic font-[500]'

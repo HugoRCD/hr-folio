@@ -12,6 +12,7 @@
 
   --color-primary: var(--ui-bg);
   --color-accent: var(--ui-primary);
+  --animate-bloom: bloom 2.4s ease infinite;
 }
 
 :root {
@@ -20,6 +21,7 @@
 
   --ui-primary: rgb(40, 83, 255) !important;
   --ui-bg: rgb(248, 243, 238);
+  --ui-radius: 0
 }
 
 .dark {

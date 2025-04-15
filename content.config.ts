@@ -35,6 +35,17 @@ export const collections = {
       })
     })
   ),
+  playground: defineCollection(
+    asSeoCollection({
+      type: 'page',
+      source: '3.playground/*.md',
+      schema: z.object({
+        title: z.string().nonempty(),
+        description: z.string().nonempty(),
+        date: z.string().nonempty(),
+      })
+    })
+  ),
   works: defineCollection({
     type: 'data',
     source: '1.works/*.json',

@@ -1,19 +1,19 @@
-# Playground
+---
+title: Text Bloom Effect
+description: Create a bloom effect on a text to simulate thinking or loading.
+date: 2025-04-16
+---
 
-::tabs
+# Text Bloom Effect
 
-:::tabs-item{label="Preview" icon="i-lucide-eye"}
+This effect creates a bloom animation on text, simulating a "thinking" or "loading" state. The text appears to bloom and fade in, giving a dynamic and engaging visual effect.
 
-:::div{class="p-4 flex items-center justify-center"}
+::code-preview
 :text-bloom
-:::
 
-:::
+#code
 
-:::tabs-item{label="Code" icon="i-lucide-code"}
-
-:::code-collapse
-
+:::code-collapse{class="[&>div>pre]:rounded-t-none [&>div]:my-0"}
 ```vue [TextBloom.vue]
 <script setup lang="ts">
   const props = withDefaults(defineProps<{
@@ -135,9 +135,16 @@
   }
 </style>
 ```
-
 :::
+::
 
-:::
+::note
+You need to add the `@reference` directive to your main CSS where TailwindCSS is imported. This is necessary to ensure that the custom properties and styles are applied correctly.
 
+```vue
+<style>
+/* change this to your path */
+@reference '../../assets/style/main.css';
+</style>
+```
 ::
