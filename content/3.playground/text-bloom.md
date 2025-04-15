@@ -138,13 +138,26 @@ This effect creates a bloom animation on text, simulating a "thinking" or "loadi
 :::
 ::
 
-::note
-You need to add the `@reference` directive to your main CSS where TailwindCSS is imported. This is necessary to ensure that the custom properties and styles are applied correctly.
+## Usage
+
+You can pass the `bloomColor` and `textColor` props to customize the colors of the bloom effect and the text. The default text color is set to `text-(--ui-text-muted)`.
+
+::code-preview
+
+::text-bloom
+---
+textColor: 'text-[#46afc8]'
+bloomColor: '#78d8f3'
+class: 'text-2xl font-bold'
+---
+I am thinking...
+::
+
+#code
 
 ```vue
-<style>
-/* change this to your path */
-@reference '../../assets/style/main.css';
-</style>
+<TextBloom bloomColor="#78d8f3" textColor="text-[#46afc8]" class="text-2xl font-bold">
+  I am thinking...
+</TextBloom>
 ```
 ::
