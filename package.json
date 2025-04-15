@@ -13,9 +13,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.8.1",
   "dependencies": {
-    "@iconify-json/simple-icons": "^1.2.31",
+    "@iconify-json/simple-icons": "^1.2.32",
     "@iconify-json/vscode-icons": "^1.2.19",
     "@nuxt/content": "3.4.0",
     "@nuxt/image": "^1.10.0",
