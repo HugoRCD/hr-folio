@@ -75,6 +75,11 @@ export default defineAppConfig({
           base: 'bg-(--ui-bg-muted)/30',
         }
       },
+      field: {
+        slots: {
+          name: 'text-(--ui-text-highlighted)',
+        }
+      },
       code: {
         variants: {
           color: {

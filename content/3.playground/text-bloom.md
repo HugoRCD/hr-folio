@@ -12,146 +12,165 @@ This effect creates a bloom animation on text, simulating a "thinking" or "loadi
 :text-bloom
 
 #code
-
 :::code-collapse{class="[&>div>pre]:rounded-t-none [&>div]:my-0"}
 ```vue [TextBloom.vue]
 <script setup lang="ts">
-  const props = withDefaults(defineProps<{
-    bloomColor?: string
-    textColor?: string
-    class?: string
-  }>(), {
-    bloomColor: '#fff',
-    textColor: 'text-(--ui-text-muted)',
-    class: 'text-base font-semibold'
-  })
+const props = withDefaults(defineProps<{
+  label?: string
+  textColor?: string
+  bloomColor?: string
+  bloomIntensity?: number
+  class?: string
+}>(), {
+  label: 'Generating summary...',
+  textColor: 'text-(--ui-text-muted)',
+  bloomColor: '#ffffff',
+  bloomIntensity: 1.18,
+  class: 'font-semibold',
+})
 
-  const bloomTextEl = ref(null)
+const textBloomRef = ref<HTMLElement | null>(null)
+const contentHolderRef = ref<HTMLElement | null>(null)
+const animatedTextRef = ref<HTMLElement | null>(null)
 
-  const calculateBloomColors = (baseColor: string) => {
-    if (!baseColor) return null
+const rootStyles = computed(() => ({
+  '--text-color': props.textColor,
+  '--bloom-color': props.bloomColor,
+  '--bloom-intensity': props.bloomIntensity
+}))
 
-    const lighten = (hex: string, amount: number) => {
-      let r = parseInt(hex.slice(1, 3), 16)
-      let g = parseInt(hex.slice(3, 5), 16)
-      let b = parseInt(hex.slice(5, 7), 16)
+const updateAnimation = (): void => {
+  const contentHolder = contentHolderRef.value
+  const animatedText = animatedTextRef.value
 
-      r = Math.min(255, r + Math.floor((255 - r) * amount))
-      g = Math.min(255, g + Math.floor((255 - g) * amount))
-      b = Math.min(255, b + Math.floor((255 - b) * amount))
+  if (contentHolder && animatedText) {
+    const text = contentHolder.textContent?.trim() || props.label || ''
 
-      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
-    }
+    animatedText.innerHTML = ''
 
-    return {
-      base: baseColor,
-      light: lighten(baseColor, 0.60),
-      medium: lighten(baseColor, 0.3),
-      dark: lighten(baseColor, 0.1)
-    }
-  }
-
-  const applyBloomEffect = (el: HTMLElement | null) => {
-    if (!el) return
-
-    const text = el.textContent || ''
-    el.innerHTML = ''
-
-    if (props.bloomColor) {
-      const colors = calculateBloomColors(props.bloomColor)
-      if (colors) {
-        el.style.setProperty('--bloom-color-base', colors.base)
-        el.style.setProperty('--bloom-color-light', colors.light)
-        el.style.setProperty('--bloom-color-medium', colors.medium)
-        el.style.setProperty('--bloom-color-dark', colors.dark)
-      }
-    }
-
-    Array.from(text).forEach((char, i) => {
+    for (let i = 0; i < text.length; i++) {
       const span = document.createElement('span')
-      span.className = 'bloom-char'
-      span.style.setProperty('--i', i.toString())
+      span.className = 'text-bloom-character'
 
-      if (char === ' ') {
+      if (text[i] === ' ') {
         span.innerHTML = '&nbsp;'
       } else {
-        span.textContent = char
+        span.textContent = text[i] || ''
       }
 
-      el.appendChild(span)
-    })
+      span.style.animationDelay = `${i * 0.05}s`
+      animatedText.appendChild(span)
+    }
   }
+}
 
-  onMounted(() => {
-    applyBloomEffect(bloomTextEl.value)
-  })
+watch(() => props.label, () => {
+  nextTick(updateAnimation)
+})
 
-  watch(() => props.bloomColor, () => {
-    applyBloomEffect(bloomTextEl.value)
-  })
+onMounted(updateAnimation)
+onUpdated(updateAnimation)
 </script>
 
 <template>
-  <div ref="bloomTextEl" class="[transform-style:preserve-3d]" :data-color="bloomColor" :class="[props.class, props.textColor]">
-    <slot>Generating summary...</slot>
+  <div ref="textBloomRef" :style="rootStyles" class="text-bloom-container" :class="[props.class, props.textColor]">
+    <div ref="contentHolderRef" class="hidden">
+      <slot>{{ label }}</slot>
+    </div>
+    <div ref="animatedTextRef" />
   </div>
 </template>
 
 <style>
-  @reference '../../assets/style/main.css';
+.text-bloom-container {
+  perspective: 80px;
+  transform-style: preserve-3d;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+}
 
-  .bloom-char {
-    @apply relative inline-block [transform-style:preserve-3d] [transform-origin:100%_50%] [letter-spacing:0.01em];
-    transition: all 0.3s ease;
-    animation: var(--animate-bloom);
-    animation-delay: calc(var(--i, 0) * 0.05s);
-  }
+.text-bloom-character {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  display: inline-block;
+  animation: bloom 2.4s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  letter-spacing: 0.01em;
+  transform-origin: 100% 50%;
+  transform-style: preserve-3d;
+  will-change: transform, color;
+}
 
-  @keyframes bloom {
-    0% {
-      transform: translate3D(0,0,0) scale(1) rotateY(0);
-      color: var(--bloom-color-base);
-      text-shadow: 0 0 0 rgba(var(--bloom-color-base), 0);
-    }
-    12% {
-      transform: translate3D(2px,-1px,2px) scale(1.3) rotateY(6deg);
-      color: var(--bloom-color-light);
-    }
-    15% {
-      text-shadow: 0 0 1px var(--bloom-color-medium);
-    }
-    24% {
-      transform: translate3D(0,0,0) scale(1) rotateY(0);
-      color: var(--bloom-color-dark);
-      opacity: 1;
-    }
-    36% {
-      transform: translate3D(0,0,0) scale(1);
-    }
-    100% {
-      transform: scale(1);
-      opacity: 0.8;
-    }
+@keyframes bloom {
+  0% {
+    transform: translate3D(0,0,0) scale(1) rotateY(0);
+    color: var(--text-color, #46afc8);
+    text-shadow: 0 0 0 rgba(0,0,0,0);
   }
+  12% {
+    transform: translate3D(2px,-1px,2px) scale(var(--bloom-intensity, 1.18)) rotateY(6deg);
+    color: var(--bloom-color, #ffffff);
+  }
+  15% {
+    text-shadow: 0 0 1px var(--bloom-color, #ffffff);
+  }
+  24% {
+    transform: translate3D(0,0,0) scale(1) rotateY(0);
+    color: var(--text-color, #46afc8);
+    opacity: 1;
+  }
+  36% {
+    transform: translate3D(0,0,0) scale(1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
 </style>
 ```
 :::
 ::
 
+## Props
+
+The TextBloom component accepts the following props:
+
+::field-group
+  ::field{name="label" type="string"}
+  Default to `Generating summary...` - The default text to display when no content is provided in the slot. This text will be animated with the bloom effect.
+  ::
+
+  ::field{name="textColor" type="string"}
+  Default to `text-(--ui-text-muted)` - The color of the text in its normal state. You can use any valid CSS color value or Tailwind CSS class.
+  ::
+
+  ::field{name="bloomColor" type="string"}
+  Default to `#ffffff` - The color that the text will bloom to during the animation. This should be a valid hex color code.
+  ::
+
+  ::field{name="bloomIntensity" type="number"}
+  Default to `1.18` - Controls the intensity of the bloom effect. Higher values create a more pronounced bloom effect.
+  ::
+
+  ::field{name="class" type="string"}
+  Default to `font-semibold` - Additional CSS classes to apply to the component. This allows for customizing the appearance beyond the built-in props.
+  ::
+::
+
 ## Usage
 
-You can pass the `bloomColor` and `textColor` props to customize the colors of the bloom effect and the text. The default text color is set to `text-(--ui-text-muted)`.
+You can combine multiple props to customize the appearance of the TextBloom component:
 
-::code-preview
+:::code-preview
 
-::text-bloom
+:::text-bloom
 ---
 textColor: 'text-[#46afc8]'
 bloomColor: '#78d8f3'
 class: 'text-2xl font-bold'
 ---
 I am thinking...
-::
+:::
 
 #code
 
@@ -160,4 +179,4 @@ I am thinking...
   I am thinking...
 </TextBloom>
 ```
-::
+:::
