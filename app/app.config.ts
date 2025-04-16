@@ -66,12 +66,39 @@ export default defineAppConfig({
     }
   },
   uiPro: {
-    codeIcon: {
-      'shelve.json': 'custom:shelve',
-      'docker-compose.yml': 'simple-icons:docker',
-      'Dockerfile': 'simple-icons:docker'
-    },
     prose: {
+      codeIcon: {
+        'shelve.json': 'custom:shelve',
+        'docker-compose.yml': 'simple-icons:docker',
+        'Dockerfile': 'simple-icons:docker'
+      },
+      pre: {
+        slots: {
+          header: 'bg-(--ui-bg-muted)/10',
+          base: 'bg-(--ui-bg-muted)/30',
+        }
+      },
+      field: {
+        slots: {
+          name: 'text-(--ui-text-highlighted)',
+        }
+      },
+      code: {
+        variants: {
+          color: {
+            neutral: 'bg-(--ui-bg-muted)/40 border-(--ui-border)/60',
+          }
+        },
+      },
+      codeCollapse: {
+        variants: {
+          open: {
+            false: {
+              footer: 'from-(--ui-bg)'
+            }
+          }
+        }
+      },
       h1: {
         base: 'text-2xl sm:text-3xl font-serif italic font-[500]'
       },

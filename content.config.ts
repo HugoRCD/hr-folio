@@ -32,6 +32,19 @@ export const collections = {
         title: z.string().nonempty(),
         description: z.string().nonempty(),
         date: z.string().nonempty(),
+        draft: z.boolean().default(false),
+      })
+    })
+  ),
+  playground: defineCollection(
+    asSeoCollection({
+      type: 'page',
+      source: '3.playground/*.md',
+      schema: z.object({
+        title: z.string().nonempty(),
+        description: z.string().nonempty(),
+        date: z.string().nonempty(),
+        draft: z.boolean().default(false),
       })
     })
   ),

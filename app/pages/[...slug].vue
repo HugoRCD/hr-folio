@@ -11,7 +11,7 @@ if (!page.value) throw createError({ statusCode: 404, statusMessage: 'Page not f
 const { seo, socials, profile } = useAppConfig()
 const mdcVars = ref({ ...seo, ...profile, ...socials })
 
-const isWriting = computed(() => route.path.includes('/writing/') || route.path.includes('/notes/'))
+const isWriting = computed(() => route.path.includes('/writing/') || route.path.includes('/notes/') || route.path.includes('/playground/'))
 
 const contentClasses = {
   writing: 'enter-content mb-4 mt-8',
