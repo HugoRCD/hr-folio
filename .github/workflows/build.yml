@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  autofix:
+  build:
     runs-on: ubuntu-latest
     env:
       NUXT_PRIVATE_GITHUB_TOKEN: ${{ secrets.NUXT_PRIVATE_GITHUB_TOKEN }}
@@ -27,7 +27,7 @@ jobs:
           run_install: false
 
       - name: 📦 Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: pnpm install
 
       - name: 🛠️ Build
         run: pnpm run build
