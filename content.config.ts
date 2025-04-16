@@ -32,6 +32,7 @@ export const collections = {
         title: z.string().nonempty(),
         description: z.string().nonempty(),
         date: z.string().nonempty(),
+        draft: z.boolean().default(false),
       })
     })
   ),
@@ -43,6 +44,7 @@ export const collections = {
         title: z.string().nonempty(),
         description: z.string().nonempty(),
         date: z.string().nonempty(),
+        draft: z.boolean().default(false),
       })
     })
   ),
