@@ -13,7 +13,6 @@
 
   --color-primary: var(--ui-bg);
   --color-accent: var(--ui-primary);
-  --animate-bloom: bloom 2.4s ease infinite;
 }
 
 :root {
