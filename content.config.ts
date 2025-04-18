@@ -55,9 +55,13 @@ export const collections = {
       name: z.string().nonempty(),
       description: z.string().nonempty(),
       category: z.string().nonempty(),
-      link: z.string().url(),
       release: z.string().optional(),
       date: z.string().nonempty(),
+      url: z.string(),
+      screenshotUrl: z.string().optional(),
+      screenshotOptions: z.object({
+        delay: z.number()
+      })
     })
   }),
 }
