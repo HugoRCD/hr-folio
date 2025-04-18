@@ -3,3 +3,8 @@
   @apply dark:[background-image:linear-gradient(-45deg,var(--color-neutral-700)_12.50%,transparent_12.50%,transparent_50%,var(--color-neutral-700)_50%,var(--color-neutral-700)_62.50%,transparent_62.50%,transparent_100%)];
   @apply not-dark:[background-image:linear-gradient(-45deg,var(--color-neutral-200)_12.50%,transparent_12.50%,transparent_50%,var(--color-neutral-200)_50%,var(--color-neutral-200)_62.50%,transparent_62.50%,transparent_100%)];
 }
+
+.bg-stripes-custom {
+  @apply w-full [background-size:6px_6px];
+  @apply [background-image:linear-gradient(-45deg,#3b82f6_12.50%,transparent_12.50%,transparent_50%,#3b82f6_50%,#3b82f6_62.50%,transparent_62.50%,transparent_100%)];
+}
