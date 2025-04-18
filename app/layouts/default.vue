@@ -16,7 +16,7 @@ const layoutTransition = {
 </script>
 
 <template>
-  <div class="relative">
+  <UApp :tooltip="{ delayDuration: 0 }" class="relative">
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
@@ -29,16 +29,16 @@ const layoutTransition = {
           :transition="layoutTransition"
           class="flex size-full max-w-7xl flex-1 flex-col justify-between gap-3 border-1 sm:border-2 border-(--ui-border) p-4 sm:p-6"
         >
-          <Motion layout class="flex w-full" :class="route.path !== '/' ? 'justify-between' : 'justify-end'">
+          <div class="flex w-full min-h-3" :class="route.path !== '/' ? 'justify-between' : 'justify-end'">
             <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
               <span class="font-serif italic hover:text-accent hover:underline">
                 go back<span class="text-accent">.</span>
               </span>
             </NuxtLink>
             <ThemeSelector />
-          </Motion>
+          </div>
 
-          <Motion ref="contentRef" layout class="flex flex-1 flex-col justify-between gap-3">
+          <Motion ref="contentRef" layout>
             <slot />
           </Motion>
 
@@ -59,5 +59,5 @@ const layoutTransition = {
         This website is fully open-source, you can find the source code on <NuxtLink to="https://github.com/HugoRCD/hr-folio" class="underline">GitHub</NuxtLink>
       </span>
     </main>
-  </div>
+  </UApp>
 </template>

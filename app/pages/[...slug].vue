@@ -39,13 +39,10 @@ defineShortcuts({
 </script>
 
 <template>
-  <Html :lang="seo.lang">
-    <FolioMeta v-if="page" :page :is-writing>
-      <UApp>
-        <Toc v-if="isWriting" :links="page.body.toc?.links!" />
-        <ContentRenderer :value="page" :class="isWriting ? contentClasses.writing : contentClasses.default" :data="mdcVars" />
-        <Toaster position="top-center" close-button />
-      </UApp>
-    </FolioMeta>
-  </Html>
+  <div v-if="page">
+    <FolioMeta :page :is-writing />
+    <Toc v-if="isWriting" :links="page.body.toc?.links!" />
+    <ContentRenderer :value="page" :class="isWriting ? contentClasses.writing : contentClasses.default" :data="mdcVars" />
+    <Toaster position="top-center" close-button />
+  </div>
 </template>
