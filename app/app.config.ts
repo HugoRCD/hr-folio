@@ -5,7 +5,8 @@ export default defineAppConfig({
   profile: {
     email: 'contact@hrcd.fr',
     phone: '(+33) 6 21 56 22 18',
-    picture: 'https://avatars.githubusercontent.com/u/71938701?v=4'
+    pictureDark: 'https://avatars.githubusercontent.com/u/71938701?v=4',
+    pictureLight: 'https://media.licdn.com/dms/image/v2/D4D03AQG5Hn4JtQG7ng/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1706689509441?e=1750291200&v=beta&t=hJpMXuJ_AXFVrUkNMdYeSR_NGr0J5RiofEDsTRuX_fc'
   },
   seo: {
     title: 'Hugo Richard',

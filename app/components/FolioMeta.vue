@@ -31,7 +31,7 @@ const pageSEO = getPageSEO()
 
 defineOgImageComponent(isWriting ? 'WritingPost' : 'Main', {
   ...pageSEO,
-  avatar: profile.picture
+  avatar: profile.pictureDark
 }, {
   fonts: ['Geist:400', 'Geist:600'],
 })
