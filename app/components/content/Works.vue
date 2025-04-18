@@ -18,7 +18,7 @@ if (!works.value || !error.value) createError({ statusCode: 404 })
     <NuxtLink
       v-for="(work, index) in works"
       :key="work.name"
-      :to="work.link"
+      :to="work.url"
       target="_blank"
       class="group relative"
       data-animate

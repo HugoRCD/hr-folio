@@ -2,7 +2,8 @@
   "name": "@hrcd/eslint-config",
   "category": "personal",
   "description": "My personal ESLint Flat Config, crafted for TS, Vue, and Nuxt development.",
-  "link": "https://github.com/HugoRCD/eslint-config",
+  "url": "https://github.com/HugoRCD/eslint-config",
+  "screenshotUrl": "/assets/works/eslint-config.png",
   "release": "2024",
   "date": "2024-03-23"
 }
