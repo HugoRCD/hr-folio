@@ -148,7 +148,7 @@ function handleMouseLeave() {
             transition: exitTransition
           }
         }"
-        class="overflow-hidden bg-transparent rounded-md shadow-lg sm:w-[320px] sm:h-[180px] md:w-[400px] md:h-[250px] lg:w-[480px] lg:h-[300px]"
+        class="overflow-hidden rounded-md shadow-lg sm:w-[320px] sm:h-[180px] md:w-[400px] md:h-[250px] lg:w-[480px] lg:h-[300px]"
       >
         <img
           :src="workImage"
