@@ -19,8 +19,8 @@ const styleVars = {
 <template>
   <span
     :class="[
-      'inline-block bg-clip-text text-transparent animate-gradient',
       gradient,
+      'inline-block bg-clip-text text-transparent animate-gradient',
       props.class
     ]"
     :style="styleVars"
