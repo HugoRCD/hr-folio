@@ -1,3 +1,7 @@
+---
+image: '/assets/og/index.jpg'
+---
+
 ::hero
 #title
 Hugo Richard
