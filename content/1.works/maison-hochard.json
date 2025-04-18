@@ -4,5 +4,8 @@
   "description": "Luxury graphic design and web development communication agency",
   "url": "https://mh.hrcd.fr/",
   "release": "2022",
-  "date": "2022-11-20"
+  "date": "2022-11-20",
+  "screenshotOptions": {
+    "delay": 5
+  }
 }
