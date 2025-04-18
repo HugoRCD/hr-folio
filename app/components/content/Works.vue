@@ -29,12 +29,12 @@ const position = usePointerPosition()
 
 function usePointerToSkew(axisMotionValue: any) {
   const velocity = useVelocity(axisMotionValue)
-  const maxVelocity = useTransform(velocity, v => clamp(-500, 500, v)) // Réduit la plage de valeurs
+  const maxVelocity = useTransform(velocity, v => clamp(-500, 500, v))
   const smoothVelocity = useSpring(maxVelocity, {
-    damping: 20, // Augmenté pour réduire l'inertie
-    stiffness: 300, // Augmenté pour une réponse plus rapide
+    damping: 20,
+    stiffness: 300,
   })
-  return useTransform(smoothVelocity, [0, 500], [0, -5], { // Réduit l'effet de skew
+  return useTransform(smoothVelocity, [0, 500], [0, -5], {
     clamp: false,
   })
 }
@@ -44,10 +44,23 @@ const skewY = usePointerToSkew(position.y)
 
 const hoveredIndex = ref<number | null>(null)
 const isAnyItemHovered = ref(false)
+const imageLoading = ref(false)
 
 watch(hoveredIndex, (newVal) => {
   if (newVal !== null) {
     isAnyItemHovered.value = true
+    imageLoading.value = true
+
+    if (hoveredWork.value) {
+      const img = new Image()
+      img.src = getWorkImage(hoveredWork.value) || ''
+      img.onload = () => {
+        imageLoading.value = false
+      }
+      img.onerror = () => {
+        imageLoading.value = false
+      }
+    }
   }
 })
 
@@ -148,12 +161,20 @@ function handleMouseLeave() {
             transition: exitTransition
           }
         }"
-        class="overflow-hidden rounded-md shadow-lg sm:w-[320px] sm:h-[180px] md:w-[400px] md:h-[250px] lg:w-[480px] lg:h-[300px]"
+        class="overflow-hidden rounded-md shadow-lg sm:w-[320px] sm:h-[180px] md:w-[400px] md:h-[250px] lg:w-[480px] lg:h-[300px] relative"
       >
+        <div v-if="imageLoading" class="absolute inset-0 bg-(--ui-bg-muted) animate-pulse flex items-center justify-center">
+          <div class="text-(--ui-text-muted)">
+            Loading...
+          </div>
+        </div>
+
         <img
+          v-if="workImage"
           :src="workImage"
           :alt="`Image for ${hoveredWork?.name}`"
           class="block size-full object-cover"
+          @load="imageLoading = false"
         >
       </Motion>
     </Cursor>
