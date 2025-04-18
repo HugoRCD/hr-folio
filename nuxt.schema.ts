@@ -42,13 +42,20 @@ export default defineNuxtSchema({
           icon: 'lucide:phone',
           default: '(+33) 6 21 56 22 18'
         }),
-        picture: field({
+        pictureDark: field({
           type: 'string',
-          title: 'Picture',
-          description: 'Your picture.',
+          title: 'Dark Picture',
+          description: 'Your picture in dark mode.',
           icon: 'lucide:image',
           default: 'https://avatars.githubusercontent.com/u/71938701?v=4'
-        })
+        }),
+        pictureLight: field({
+          type: 'string',
+          title: 'Light Picture',
+          description: 'Your picture in light mode.',
+          icon: 'lucide:image',
+          default: 'https://media.licdn.com/dms/image/v2/D4D03AQG5Hn4JtQG7ng/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1706689509441?e=1750291200&v=beta&t=hJpMXuJ_AXFVrUkNMdYeSR_NGr0J5RiofEDsTRuX_fc'
+        }),
       }
     }),
     seo: group({

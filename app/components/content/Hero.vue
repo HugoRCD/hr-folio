@@ -5,8 +5,10 @@ const { profile, global } = useAppConfig()
 <template>
   <div class="flex flex-col" data-animate style="--stagger: 1">
     <div class="flex items-center gap-2 mb-2">
-      <NuxtImg
-        :src="profile.picture"
+      <UColorModeImage
+        v-if="profile.pictureDark && profile.pictureLight"
+        :dark="profile.pictureDark"
+        :light="profile.pictureLight"
         alt="Hugo Richard"
         width="80"
         height="80"
