@@ -21,6 +21,7 @@ export const collections = {
         title: z.string().nonempty(),
         description: z.string().nonempty(),
         date: z.string().nonempty(),
+        image: z.string().nonempty(),
       })
     })
   ),

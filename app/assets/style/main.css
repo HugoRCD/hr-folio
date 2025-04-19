@@ -42,3 +42,12 @@
     @apply text-(--ui-text-muted)! border-none cursor-default font-normal not-italic!;
   }
 }
+
+* {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+}

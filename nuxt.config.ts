@@ -8,9 +8,20 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: 'https://hrcd.fr',
     defaultLocale: 'en',
     indexable: true,
+  },
+
+  $development: {
+    site: {
+      url: 'http://localhost:3000',
+    }
+  },
+
+  $production: {
+    site: {
+      url: 'https://hrcd.fr',
+    }
   },
 
   robots: {

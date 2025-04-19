@@ -29,12 +29,16 @@ const getTitleTemplate = (title: string | undefined) => {
 
 const pageSEO = getPageSEO()
 
-defineOgImageComponent(isWriting ? 'WritingPost' : 'Main', {
-  ...pageSEO,
-  avatar: profile.pictureDark
-}, {
-  fonts: ['Geist:400', 'Geist:600'],
-})
+if (page.image) {
+  defineOgImage({ url: page.image })
+} else {
+  defineOgImageComponent(isWriting ? 'WritingPost' : 'Main', {
+    ...pageSEO,
+    avatar: profile.pictureDark
+  }, {
+    fonts: ['Geist:400', 'Geist:600'],
+  })
+}
 
 useSeoMeta({
   ogSiteName: seo.title,

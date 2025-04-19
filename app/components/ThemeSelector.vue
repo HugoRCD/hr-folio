@@ -47,8 +47,10 @@ const startViewTransition = (event: MouseEvent) => {
   <ClientOnly>
     <div class="size-3 flex items-center justify-center">
       <UTooltip text="Switch theme">
-        <button
+        <UButton
           class="bg-(--ui-text-highlighted) size-3 rounded-full"
+          size="xs"
+          variant="link"
           :aria-label="`Switch to ${nextTheme} mode`"
           @click="startViewTransition"
         />
