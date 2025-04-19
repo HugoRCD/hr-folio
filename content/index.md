@@ -1,5 +1,5 @@
 ---
-image: '/assets/og/index.jpg'
+image: '/assets/og/index.png'
 ---
 
 ::hero
