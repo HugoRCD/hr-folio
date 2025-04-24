@@ -17,7 +17,7 @@
   "dependencies": {
     "@iconify-json/simple-icons": "^1.2.33",
     "@iconify-json/vscode-icons": "^1.2.19",
-    "@nuxt/content": "3.4.0",
+    "@nuxt/content": "3.5.0",
     "@nuxt/image": "^1.10.0",
     "@nuxt/scripts": "^0.11.6",
     "@nuxt/ui-pro": "^3.0.2",
@@ -40,7 +40,7 @@
     "@hrcd/eslint-config": "^3.0.3",
     "automd": "0.4.0",
     "eslint": "9.25.1",
-    "wrangler": "^4.12.1"
+    "wrangler": "^4.13.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
