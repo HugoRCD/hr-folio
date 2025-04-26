@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<{
   class?: string
 }>(), {
   label: 'Generating summary...',
-  textColor: 'text-(--ui-text-muted)',
+  textColor: 'text-muted',
   bloomColor: '#ffffff',
   bloomIntensity: 1.18,
   class: 'font-semibold',

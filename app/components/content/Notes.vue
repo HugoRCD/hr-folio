@@ -43,7 +43,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 <template>
   <div class="flex flex-col gap-8">
-    <span v-if="!isAuthorized" class="font-serif text-lg font-light italic text-(--ui-text-muted)">
+    <span v-if="!isAuthorized" class="font-serif text-lg font-light italic text-muted">
       You've stumbled upon my private notes section. If you know me, you might figure out the password.
       If not, well... these thoughts are probably not meant for you anyway. But hey, feel free to try.
     </span>

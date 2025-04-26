@@ -57,10 +57,10 @@ export default defineAppConfig({
       loading: 'lucide:loader',
     },
     input: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
+      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
     },
     textarea: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
+      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
     }
   },
   uiPro: {
@@ -72,19 +72,19 @@ export default defineAppConfig({
       },
       pre: {
         slots: {
-          header: 'bg-(--ui-bg-muted)/10',
-          base: 'bg-(--ui-bg-muted)/30',
+          header: 'bg-muted/10',
+          base: 'bg-muted/30',
         }
       },
       field: {
         slots: {
-          name: 'text-(--ui-text-highlighted)',
+          name: 'text-highlighted',
         }
       },
       code: {
         variants: {
           color: {
-            neutral: 'bg-(--ui-bg-muted)/40 border-(--ui-border)/60',
+            neutral: 'bg-muted/40 border-default/60',
           }
         },
       },
@@ -92,7 +92,7 @@ export default defineAppConfig({
         variants: {
           open: {
             false: {
-              footer: 'from-(--ui-bg)'
+              footer: 'from-default'
             }
           }
         }
@@ -104,19 +104,19 @@ export default defineAppConfig({
         base: 'my-2'
       },
       strong: {
-        base: 'text-(--ui-text-highlighted) font-[450]'
+        base: 'text-highlighted font-[450]'
       },
       icon: {
-        base: 'text-(--ui-text-highlighted)'
+        base: 'text-highlighted'
       },
       p: {
-        base: 'text-(--ui-text-muted)'
+        base: 'text-muted'
       },
       li: {
-        base: 'text-(--ui-text-muted)'
+        base: 'text-muted'
       },
       a: {
-        base: 'italic border-b border-(--color-accent) text-(--ui-text-highlighted) font-medium'
+        base: 'italic border-b border-(--color-primary) text-highlighted font-medium'
       }
     },
   },

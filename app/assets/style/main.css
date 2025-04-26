@@ -10,8 +10,6 @@
   --font-serif: "Newsreader", serif;
   --font-sans: "Geist", sans-serif;
   --font-mono: "Geist Mono", sans-serif;
-
-  --color-accent: var(--ui-primary);
 }
 
 :root {
@@ -30,7 +28,7 @@
 
 @layer base {
   :root {
-    @apply selection:bg-accent selection:text-(--ui-text-highlighted);
+    @apply selection:bg-primary selection:text-highlighted;
   }
 
   .blurred {
@@ -38,7 +36,7 @@
   }
 
   .no-link {
-    @apply text-(--ui-text-muted)! border-none cursor-default font-normal not-italic!;
+    @apply text-muted! border-none cursor-default font-normal not-italic!;
   }
 }
 

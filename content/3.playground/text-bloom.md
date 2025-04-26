@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
   class?: string
 }>(), {
   label: 'Generating summary...',
-  textColor: 'text-(--ui-text-muted)',
+  textColor: 'text-muted',
   bloomColor: '#ffffff',
   bloomIntensity: 1.18,
   class: 'font-semibold',
@@ -141,7 +141,7 @@ The TextBloom component accepts the following props:
   ::
 
   ::field{name="textColor" type="string"}
-  Default to `text-(--ui-text-muted)` - The color of the text in its normal state. You can use any valid CSS color value or Tailwind CSS class.
+  Default to `text-muted` - The color of the text in its normal state. You can use any valid CSS color value or Tailwind CSS class.
   ::
 
   ::field{name="bloomColor" type="string"}

@@ -124,8 +124,8 @@ function handleMouseLeave() {
         <div class="absolute right-0 top-0 font-serif text-5xl italic opacity-15 sm:text-3xl">
           {{ work.release }}
         </div>
-        <h3 class="font-serif italic text-2xl decoration-accent group-hover:underline">
-          {{ work.name }}<span class="text-accent">.</span>
+        <h3 class="font-serif italic text-2xl decoration-primary group-hover:underline">
+          {{ work.name }}<span class="text-primary">.</span>
         </h3>
         <p class="text-[--ui-text-muted] font-extralight sm:text-base">
           {{ work.description }}
@@ -163,8 +163,8 @@ function handleMouseLeave() {
         }"
         class="overflow-hidden rounded-md shadow-lg sm:w-[320px] sm:h-[180px] md:w-[400px] md:h-[250px] lg:w-[480px] lg:h-[300px] relative"
       >
-        <div v-if="imageLoading" class="absolute inset-0 bg-(--ui-bg-muted) animate-pulse flex items-center justify-center">
-          <div class="text-(--ui-text-muted)">
+        <div v-if="imageLoading" class="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+          <div class="text-muted">
             Loading...
           </div>
         </div>

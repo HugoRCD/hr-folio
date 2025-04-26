@@ -5,7 +5,7 @@ const { as = 'div' } = defineProps<{
 </script>
 
 <template>
-  <component :is="as" class="relative -mb-px -ml-px border border-(--ui-border)">
+  <component :is="as" class="relative -mb-px -ml-px border border-default">
     <span class="cross absolute -bottom-px -left-px size-px" />
     <span class="cross absolute -bottom-px -right-px size-px" />
     <span class="cross absolute -left-px -top-px size-px" />
@@ -21,7 +21,7 @@ const { as = 'div' } = defineProps<{
 
 .cross {
   @apply before:absolute after:absolute;
-  @apply before:top-[-4px] before:bg-(--ui-bg-inverted) before:content-[''] before:w-[1px] before:h-[9px];
-  @apply after:left-[-4px] after:bg-(--ui-bg-inverted) after:content-[''] after:w-[9px] after:h-[1px];
+  @apply before:top-[-4px] before:bg-inverted before:content-[''] before:w-[1px] before:h-[9px];
+  @apply after:left-[-4px] after:bg-inverted after:content-[''] after:w-[9px] after:h-[1px];
 }
 </style>

@@ -11,7 +11,7 @@
       I think you're lost, let's go back
       <NuxtLink
         to="/"
-        class="font-medium italic text-accent hover:underline"
+        class="font-medium italic text-primary hover:underline"
       >
         home
       </NuxtLink>.

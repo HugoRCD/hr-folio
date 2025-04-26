@@ -20,19 +20,19 @@ const { profile, global } = useAppConfig()
         <h3 class="font-serif text-xl italic">
           <slot name="title" mdc-unwrap="p" />
         </h3>
-        <div class="*:mb-0 *:text-(--ui-primary)">
+        <div class="*:mb-0 *:text-primary">
           <slot name="job" mdc-unwrap="p" />
         </div>
       </div>
     </div>
-    <p class="max-w-[600px] text-pretty text-(--ui-text-muted) text-sm font-extralight sm:text-base">
+    <p class="max-w-[600px] text-pretty text-muted text-sm font-extralight sm:text-base">
       <slot mdc-unwrap="p" />
     </p>
     <div class="mt-2 flex gap-8">
-      <NuxtLink to="/contact" class="italic font-serif text-lg hover:underline decoration-accent">
+      <NuxtLink to="/contact" class="italic font-serif text-lg hover:underline decoration-primary">
         Send me a message
       </NuxtLink>
-      <NuxtLink :to="global.meetingLink" class="italic font-serif text-lg hover:underline decoration-accent cursor-pointer">
+      <NuxtLink :to="global.meetingLink" class="italic font-serif text-lg hover:underline decoration-primary cursor-pointer">
         Make a call
       </NuxtLink>
     </div>

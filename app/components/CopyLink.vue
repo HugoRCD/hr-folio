@@ -15,7 +15,7 @@ async function copyArticleLinkToClipboard() {
 <template>
   <div>
     <span
-      class="mt-4 cursor-pointer select-none text-(--ui-text-muted) hover:text-(--ui-text-highlighted)"
+      class="mt-4 cursor-pointer select-none text-muted hover:text-highlighted"
       @click="copyArticleLinkToClipboard()"
     >
       Copy article link

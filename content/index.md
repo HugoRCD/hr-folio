@@ -7,7 +7,7 @@ image: '/assets/og/index.png'
 Hugo Richard
 
 #job
-# Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com){.border-0 .text-accent .hover:text-accent/80}
+# Frontend Engineer at [Nuxtlabs](https://nuxtlabs.com){.border-0 .text-primary .hover:text-primary/80}
 
 #default
 They say the devil is in the details. I say that's where the magic happens. Want to know what drives me? [**Read more about me**](/about){.link}.

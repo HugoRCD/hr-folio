@@ -14,7 +14,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
       v-for="(post, index) in data"
       :key="post.title"
       :to="post.path"
-      class="italic decoration-accent hover:underline font-extralight"
+      class="italic decoration-primary hover:underline font-extralight"
       data-animate
       :aria-label="`Read ${post.title}`"
       :style="{ '--stagger': index }"
@@ -23,7 +23,7 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
     </NuxtLink>
     <NuxtLink
       to="/writing"
-      class="mt-2 italic font-serif text-lg hover:underline decoration-accent"
+      class="mt-2 italic font-serif text-lg hover:underline decoration-primary"
       aria-label="See more, go to all articles, writing, etc ..."
     >
       <span class="sr-only">More writing</span>

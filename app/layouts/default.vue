@@ -24,12 +24,12 @@ const containerRef = ref(null)
             ease: 'easeInOut',
             duration: 0.2
           }"
-          class="flex size-full max-w-7xl flex-1 flex-col gap-3 border-1 sm:border-2 border-(--ui-border) p-4 sm:p-6"
+          class="flex size-full max-w-7xl flex-1 flex-col gap-3 border-1 sm:border-2 border-default p-4 sm:p-6"
         >
           <div class="flex w-full min-h-3" :class="route.path !== '/' ? 'justify-between' : 'justify-end'">
             <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
-              <span class="font-serif italic hover:text-accent hover:underline">
-                go back<span class="text-accent">.</span>
+              <span class="font-serif italic hover:text-primary hover:underline">
+                go back<span class="text-primary">.</span>
               </span>
             </NuxtLink>
             <ThemeSelector />
@@ -52,7 +52,7 @@ const containerRef = ref(null)
         </Motion>
       </LayoutGroup>
 
-      <span class="mt-2 text-xs text-center text-(--ui-text-muted)">
+      <span class="mt-2 text-xs text-center text-muted">
         This website is fully open-source, you can find the source code on <NuxtLink to="https://github.com/HugoRCD/hr-folio" class="underline">GitHub</NuxtLink>
       </span>
     </main>
