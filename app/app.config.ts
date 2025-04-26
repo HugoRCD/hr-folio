@@ -57,10 +57,10 @@ export default defineAppConfig({
       loading: 'lucide:loader',
     },
     input: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
+      base: 'bg-primary ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
     },
     textarea: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
+      base: 'bg-primary ring-0 px-2 py-1 focus:outline-none resize-none caret-accent'
     }
   },
   uiPro: {
