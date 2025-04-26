@@ -11,7 +11,6 @@
   --font-sans: "Geist", sans-serif;
   --font-mono: "Geist Mono", sans-serif;
 
-  --color-primary: var(--ui-bg);
   --color-accent: var(--ui-primary);
 }
 
