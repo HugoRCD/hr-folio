@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@10.9.0",
+  "packageManager": "pnpm@10.10.0",
   "dependencies": {
     "@iconify-json/simple-icons": "^1.2.33",
     "@iconify-json/vscode-icons": "^1.2.20",
@@ -28,7 +28,7 @@
     "capture-website": "^4.2.0",
     "motion-plus-vue": "^1.0.1",
     "motion-v": "1.0.0",
-    "nuxt": "^3.16.2",
+    "nuxt": "^3.17.1",
     "nuxt-llms": "^0.1.2",
     "resend": "4.4.1",
     "vue": "3.5.13",
