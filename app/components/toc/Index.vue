@@ -42,7 +42,6 @@ nuxtApp.hooks.hookOnce('page:finish', () => {
   ])
 })
 
-
 onClickOutside(target, event => {
   if (isOpen.value) isOpen.value = false
 })

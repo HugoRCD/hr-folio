@@ -24,7 +24,7 @@ const containerRef = ref(null)
             ease: 'easeInOut',
             duration: 0.2
           }"
-          class="flex size-full max-w-7xl flex-1 flex-col gap-3 border-1 sm:border-2 border-default p-4 sm:p-6"
+          class="flex size-full mx-auto max-w-7xl flex-1 flex-col gap-3 border-1 sm:border-2 border-default p-4 sm:p-6"
         >
           <div class="flex w-full min-h-3" :class="route.path !== '/' ? 'justify-between' : 'justify-end'">
             <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
