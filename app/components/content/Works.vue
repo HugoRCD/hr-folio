@@ -163,19 +163,14 @@ function handleMouseLeave() {
         }"
         class="overflow-hidden rounded-md shadow-lg sm:w-[320px] sm:h-[180px] md:w-[400px] md:h-[250px] lg:w-[480px] lg:h-[300px] relative"
       >
-        <div v-if="imageLoading" class="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
-          <div class="text-muted">
-            Loading...
-          </div>
-        </div>
-
-        <img
+        <NuxtImg
           v-if="workImage"
           :src="workImage"
+          format="webp"
+          preload
           :alt="`Image for ${hoveredWork?.name}`"
           class="block size-full object-cover"
-          @load="imageLoading = false"
-        >
+        />
       </Motion>
     </Cursor>
   </div>
