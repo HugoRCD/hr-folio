@@ -167,6 +167,7 @@ function handleMouseLeave() {
           v-if="workImage"
           :src="workImage"
           format="webp"
+          preload
           :alt="`Image for ${hoveredWork?.name}`"
           class="block size-full object-cover"
         />
