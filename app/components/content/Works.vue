@@ -166,6 +166,7 @@ function handleMouseLeave() {
         <NuxtImg
           v-if="workImage"
           :src="workImage"
+          format="webp"
           :alt="`Image for ${hoveredWork?.name}`"
           class="block size-full object-cover"
         />

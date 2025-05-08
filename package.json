@@ -42,10 +42,18 @@
     "eslint": "9.25.1",
     "wrangler": "^4.13.2"
   },
+  "resolutions": {
+    "unimport": "4.1.1"
+  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "better-sqlite3",
       "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "vue-demi"
     ]
   }
 }
