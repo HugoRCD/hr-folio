@@ -36,6 +36,6 @@ Currently, I'm working on:
 Want to create something remarkable together? [Let's talk.](/contact)
 
 #timeline
-TODO
+Soon
 
 ::

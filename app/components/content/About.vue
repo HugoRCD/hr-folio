@@ -1,20 +1,38 @@
 <script setup lang="ts">
 import type { TabsItem } from '@nuxt/ui'
 
+const route = useRoute()
+const router = useRouter()
+
 const items = ref<TabsItem[]>([
   {
     label: 'About me',
+    value: 'about',
     slot: 'about'
   },
   {
     label: 'Timeline',
+    value: 'timeline',
     slot: 'timeline'
   }
 ])
+
+const active = computed({
+  get() {
+    return (route.query.tab as string) || 'about'
+  },
+  set(tab) {
+    router.push({
+      path: '/about',
+      query: { tab },
+    })
+  }
+})
 </script>
 
 <template>
   <UTabs 
+    v-model="active"
     size="md"
     variant="link"
     :items
@@ -27,23 +45,24 @@ const items = ref<TabsItem[]>([
     }"
   >
     <template #trailing="{ item }">
-      <span class="text-primary text-lg -left-2">
-        .
-      </span>
-      <span v-if="item.label === 'About me'" class="absolute -bottom-0.5 -right-5 font-serif text-5xl font-normal italic opacity-[9%] sm:text-6xl">
+      <span v-if="item.label === 'About me'" class="absolute -bottom-0.5 -right-3 font-serif text-5xl font-normal italic opacity-[9%] sm:text-6xl">
         1
       </span>
-      <span v-if="item.label === 'Timeline'" class="absolute -bottom-0.5 -right-5 font-serif text-5xl font-normal italic opacity-[9%] sm:text-6xl">
+      <span v-if="item.label === 'Timeline'" class="absolute -bottom-0.5 -right-3 font-serif text-5xl font-normal italic opacity-[9%] sm:text-6xl">
         2
       </span>
     </template>
 
     <template #about>
-      <slot name="about" />
+      <div data-animate style="--stagger: 2;">
+        <slot name="about" />
+      </div>
     </template>
 
     <template #timeline>
-      <slot name="timeline" />
+      <div data-animate style="--stagger: 2;">
+        <slot name="timeline" />
+      </div>
     </template>
   </UTabs>
 </template>
