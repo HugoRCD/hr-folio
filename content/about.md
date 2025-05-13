@@ -3,8 +3,9 @@ title: About me
 description: I'm a developer, designer, and OSS maintainer based in Nice (France). I'm passionate about coding, design, and everything in between.
 ---
 
-::section-item{:number='1' size="w-full" title="About me"}
+::about
 
+#about
 Some see code as just instructions for machines. I see it as an **art form**.
 
 **Frontend Architect** based in Nice, France, with **7+ years of crafting digital experiences**. My journey started with
@@ -33,4 +34,8 @@ Currently, I'm working on:
 - Sharing knowledge and experiences with the community
 
 Want to create something remarkable together? [Let's talk.](/contact)
+
+#timeline
+TODO
+
 ::
