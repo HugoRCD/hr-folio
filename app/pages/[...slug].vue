@@ -9,7 +9,7 @@ const { data: page } = await useAsyncData(route.path, () =>
 if (!page.value) throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 
 const { seo, socials, profile } = useAppConfig()
-const mdcVars = ref({ ...seo, ...profile, ...socials })
+const mdcVars = ref({ ...seo, ...profile, ...socials, date: page.value?.date })
 
 const isWriting = computed(() => route.path.includes('/writing/') || route.path.includes('/notes/') || route.path.includes('/playground/'))
 
