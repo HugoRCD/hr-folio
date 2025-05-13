@@ -15,6 +15,8 @@
   },
   "packageManager": "pnpm@10.10.0",
   "dependencies": {
+    "@iconify-json/heroicons": "^1.2.2",
+    "@iconify-json/lucide": "^1.2.42",
     "@iconify-json/simple-icons": "^1.2.34",
     "@iconify-json/vscode-icons": "^1.2.20",
     "@nuxt/content": "3.5.1",
