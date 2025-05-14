@@ -36,6 +36,55 @@ Currently, I'm working on:
 Want to create something remarkable together? [Let's talk.](/contact)
 
 #timeline
-Soon
+::timeline
+---
+events:
+  - year: 2022
+    icon: 'i-heroicons-sparkles'
+    title: 'Initial Concept & Research'
+    description: 'Exploring the initial ideas and conducting market research for the new project.'
+    active: true
+  - year: 2022
+    icon: 'i-heroicons-user-group'
+    title: 'Team Formation'
+    description: 'Assembling the core team to kickstart development and design.'
+  - year: 2023
+    icon: 'i-heroicons-cube-transparent'
+    title: 'Prototype Development'
+    description: 'Building the first functional prototype to validate core features.'
+  - year: 2023
+    icon: 'i-heroicons-chat-bubble-left-right'
+    title: 'First User Feedback Session'
+    description: 'Gathering insights and feedback from a small group of beta testers.'
+  - year: 2023
+    icon: 'i-heroicons-wrench-screwdriver'
+    title: 'Major Refactor & UI Polish'
+    description: 'Implementing significant code improvements and refining the user interface based on feedback.'
+  - year: 2024
+    icon: 'i-heroicons-rocket-launch'
+    title: 'Shelve Alpha Launch'
+    description: 'Shelve is a CLI tool that helps you manage your projects. Early alpha release to a wider audience.'
+  - year: 2024
+    icon: 'i-heroicons-arrow-trending-up'
+    title: 'Growth & Feature Expansion'
+    description: 'Focusing on user acquisition and adding new, requested features to Shelve.'
+  - year: 2024
+    icon: 'i-heroicons-building-office'
+    title: 'Partnership with TechCorp'
+    description: 'Strategic partnership established to enhance market reach and co-develop new integrations.'
+  - year: 2025
+    icon: 'i-simple-icons-vuedotjs'
+    title: 'Building Shelve v2 Architecture'
+    description: 'Shelve is a CLI tool that helps you manage your projects. Planning the next generation.'
+  - year: 2025
+    icon: 'i-heroicons-globe-europe-africa'
+    title: 'Internationalization Efforts'
+    description: 'Adapting Shelve for global users with multi-language support.'
+  - year: 2025
+    icon: 'i-heroicons-academic-cap'
+    title: 'Community Building & Workshops'
+    description: 'Fostering a strong user community through online workshops and resources.'
+---
+::
 
 ::
