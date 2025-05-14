@@ -8,24 +8,23 @@ const items = ref<TabsItem[]>([
   {
     label: 'About me',
     value: 'about',
-    slot: 'about'
+    slot: 'about',
+    to: '/about'
   },
   {
     label: 'Timeline',
     value: 'timeline',
-    slot: 'timeline'
+    slot: 'timeline',
+    to: '/about/timeline'
   }
 ])
 
 const active = computed({
   get() {
-    return (route.query.tab as string) || 'about'
+    return route.path === '/about/timeline' ? 'timeline' : 'about'
   },
   set(tab) {
-    router.push({
-      path: '/about',
-      query: { tab },
-    })
+    router.push(tab === 'timeline' ? '/about/timeline' : '/about')
   }
 })
 </script>
@@ -37,8 +36,6 @@ const active = computed({
     variant="link"
     :items
     class="w-full"
-    data-animate
-    style="--stagger: 1;"
     :ui="{
       trigger: 'data-[state=active]:text-highlighted',
       label: 'relative w-fit font-serif text-2xl sm:text-2xl italic font-normal'
