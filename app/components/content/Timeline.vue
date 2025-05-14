@@ -56,7 +56,7 @@ const shouldDisplayYear = (eventYear: number, index: number): boolean => {
 }
 
 const detailsContainerWidthClass = 'w-[240px]'
-const timelineTrackHeightClass = 'h-80'
+const timelineTrackHeightClass = 'h-70'
 const numberOfIntermediateTicks = 7
 
 const timelineInnerWidth = computed(() => {
@@ -70,12 +70,11 @@ const iconActivePushedTop = computed(() => `calc(${timelineHorizontalLineTop} + 
 
 const detailsDefaultTop = computed(() => `calc(${iconDefaultTop.value} + 2.5rem)`)
 const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value} + 2.5rem)`)
-
 </script>
 
 <template>
   <div class="py-16">
-    <div class="max-w-full mx-auto overflow-x-auto overflow-y-hidden select-none px-6" :class="[timelineTrackHeightClass]" style="padding-bottom: 10rem;">
+    <div class="max-w-full mx-auto overflow-x-auto select-none px-6" :class="[timelineTrackHeightClass]" style="padding-bottom: 10rem;">
       <div class="relative mx-auto" :class="[timelineTrackHeightClass]" :style="{ width: `${timelineInnerWidth}px` }">
         <template v-if="props.showHorizontalLines">
           <div
@@ -104,14 +103,13 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
         >
           <span
             v-if="shouldDisplayYear(event.year, index)"
-            class="absolute top-0 left-0 -translate-x-1/2 text-xs font-medium text-neutral-500 whitespace-nowrap"
+            class="absolute top-0 left-0 font-serif italic -translate-x-1/2 text-xs font-medium text-muted whitespace-nowrap"
           >
             {{ event.year }}
           </span>
 
           <div
-            class="absolute left-0 
-                        transition-all duration-300 ease-out transform origin-top"
+            class="absolute left-0 transition-all duration-300 ease-out transform origin-top"
             :style="{ top: timelineHorizontalLineTop }"
             :class="[
               displayAsActiveIndex === index
@@ -119,7 +117,7 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
                 : `${props.mainTickHeightBase} group-hover:${props.mainTickHeightHover}`, 
               index <= displayAsActiveIndex 
                 ? `${props.tickThicknessActive} bg-primary`
-                : `${props.tickThicknessBase} bg-neutral-600 group-hover:bg-neutral-400`
+                : `${props.tickThicknessBase} bg-accented`
             ]"
           />
 
@@ -130,22 +128,22 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
               class="absolute transition-colors duration-300 ease-out"
               :class="[
                 props.intermediateTickHeight,
-                index < displayAsActiveIndex ? `${props.tickThicknessActive} bg-primary group-hover:bg-primary` : `${props.tickThicknessBase} bg-neutral-700 group-hover:bg-neutral-500`
+                index < displayAsActiveIndex ? `${props.tickThicknessActive} bg-primary group-hover:bg-primary` : `${props.tickThicknessBase} bg-accented`
               ]"
               :style="{ top: timelineHorizontalLineTop, left: `${(tickNumber * props.itemWidth / (numberOfIntermediateTicks + 1))}px` }"
             />
           </div>
 
           <div
-            class="absolute left-0 -translate-x-1/2 flex items-center justify-center w-10 h-10 transition-all duration-300 ease-out"
+            class="absolute left-0 -translate-x-1/2 flex items-center justify-center size-10 transition-all duration-300 ease-out"
             :style="{ top: displayAsActiveIndex === index ? iconActivePushedTop : iconDefaultTop }"
             :class="[
-              displayAsActiveIndex === index ? '!text-neutral-100' :
-              index < displayAsActiveIndex ? 'text-neutral-400 group-hover:text-neutral-200' :
-              'text-neutral-600 group-hover:text-neutral-300'
+              displayAsActiveIndex === index ? 'text-highlighted' :
+              index < displayAsActiveIndex ? 'text-muted' :
+              'text-muted/50'
             ]"
           >
-            <UIcon :name="event.icon" class="text-xl" />
+            <UIcon :name="event.icon" class="text-xl size-5" />
           </div>
 
           <div
@@ -159,10 +157,10 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
             ]"
             :style="{ top: displayAsActiveIndex === index ? detailsActivePushedTop : detailsDefaultTop }"
           >
-            <h4 class="mb-1 text-base font-semibold text-neutral-100">
+            <h4 class="mb-1 text-base font-semibold text-highlighted">
               {{ event.title }}
             </h4>
-            <p class="text-sm leading-snug text-neutral-400">
+            <p class="text-sm leading-snug text-muted">
               {{ event.description }}
             </p>
           </div>
