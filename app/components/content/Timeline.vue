@@ -56,7 +56,7 @@ const shouldDisplayYear = (eventYear: number, index: number): boolean => {
 }
 
 const detailsContainerWidthClass = 'w-[240px]'
-const timelineTrackHeightClass = 'h-70'
+const timelineTrackHeightClass = 'h-55'
 const numberOfIntermediateTicks = 7
 
 const timelineInnerWidth = computed(() => {
