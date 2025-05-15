@@ -147,12 +147,15 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
           </div>
 
           <div
-            class="absolute transition-all duration-300 ease-out pointer-events-none z-20"
+            class="absolute transition-all duration-300 ease-out z-20"
             :class="[
               detailsContainerWidthClass,
               displayAsActiveIndex === index ? 'opacity-100' : 'opacity-0',
-              index === 0 && props.events.length > 1 ? 'left-0 text-left' :
-              (index === props.events.length - 1 && props.events.length > 1 && index !== 0) ? 'left-0 -translate-x-full text-right' :
+              props.events.length === 1 ? 'left-0 -translate-x-1/2 text-center' :
+              index === 0 ? 'left-0 text-left' :
+              index === 1 ? (props.events.length === 2 ? 'left-0 -translate-x-full text-right' : 'left-0 text-left') :
+              index === props.events.length - 1 ? 'left-0 -translate-x-full text-right' :
+              index === props.events.length - 2 ? 'left-0 -translate-x-full text-right' :
               'left-0 -translate-x-1/2 text-center'
             ]"
             :style="{ top: displayAsActiveIndex === index ? detailsActivePushedTop : detailsDefaultTop }"
