@@ -74,7 +74,7 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
 
 <template>
   <div class="py-16">
-    <div class="max-w-full mx-auto overflow-x-auto select-none px-6" :class="[timelineTrackHeightClass]" style="padding-bottom: 10rem;">
+    <div class="max-w-full mx-auto overflow-x-auto overflow-y-hidden select-none px-6" :class="[timelineTrackHeightClass]" style="padding-bottom: 10rem;">
       <div class="relative mx-auto" :class="[timelineTrackHeightClass]" :style="{ width: `${timelineInnerWidth}px` }">
         <template v-if="props.showHorizontalLines">
           <div
@@ -98,7 +98,7 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
           tabindex="0"
           @mouseenter="handlePointerEnterItem(index)"
           @mouseleave="handlePointerLeaveItem()"
-          @focusin="handlePointerEnterItem(index)" 
+          @focusin="handlePointerEnterItem(index)"
           @focusout="handlePointerLeaveItem()"
         >
           <span
@@ -114,8 +114,8 @@ const detailsActivePushedTop = computed(() => `calc(${iconActivePushedTop.value}
             :class="[
               displayAsActiveIndex === index
                 ? `${props.mainTickHeightActive} ${props.tickThicknessActive} bg-primary`
-                : `${props.mainTickHeightBase} group-hover:${props.mainTickHeightHover}`, 
-              index <= displayAsActiveIndex 
+                : `${props.mainTickHeightBase} group-hover:${props.mainTickHeightHover}`,
+              index <= displayAsActiveIndex
                 ? `${props.tickThicknessActive} bg-primary`
                 : `${props.tickThicknessBase} bg-accented`
             ]"
