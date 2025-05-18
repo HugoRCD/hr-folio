@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ContentCollectionItem } from '@nuxt/content'
 
-const { page, isWriting } = defineProps<{
+const { page, isWriting = false } = defineProps<{
   page: ContentCollectionItem
-  isWriting: boolean
+  isWriting?: boolean
 }>()
 
 useScriptPlausibleAnalytics({
