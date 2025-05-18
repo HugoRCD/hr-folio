@@ -5,7 +5,13 @@ import { z } from 'zod'
 
 export default defineEventHandler(async (event: H3Event) => {
   const { messages } = await readBody(event)
-  const workersAI = createWorkersAI({ binding: hubAI() })
+  const gateway = process.env.CLOUDFLARE_AI_GATEWAY_ID
+    ? {
+      id: process.env.CLOUDFLARE_AI_GATEWAY_ID,
+      cacheTtl: 60 * 60 * 24 // 24 hours
+    }
+    : undefined
+  const workersAI = createWorkersAI({ binding: hubAI(), gateway })
   const autorag = hubAutoRAG('hrcd')
 
   return streamText({
