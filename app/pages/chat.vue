@@ -28,7 +28,7 @@ const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
       :status
       :ui="{
         root: 'flex-none [&>article]:last-of-type:min-h-auto',
-        indicator: 'h-auto *:size-auto *:bg-transparent'
+        indicator: 'h-auto *:size-auto *:bg-transparent [&>*:nth-child(1)]:animate-none [&>*:nth-child(2)]:animate-none [&>*:nth-child(3)]:animate-none'
       }"
     >
       <template #content="{ message }">
