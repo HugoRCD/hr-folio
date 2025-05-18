@@ -5,8 +5,28 @@ const title = 'AI Chat'
 const description = `
 Have questions about me, my projects, or my blog posts? Ask my AI assistant! It has access to all the content on this portfolio.
 `
+/* 
+const status = ref('submitted')
 
-const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
+const messages = ref([
+  {
+    id: '6045235a-a435-46b8-989d-2df38ca2eb47',
+    role: 'user',
+    content: 'Hello, how are you?'
+  },
+  {
+    id: '7a92b3c1-d5f8-4e76-b8a9-3c1e5fb2e0d8',
+    role: 'assistant',
+    content: 'I am doing well, thank you for asking! How can I assist you today?'
+  },
+  {
+    id: '9c84d6a7-8b23-4f12-a1d5-e7f3b9c05e2a',
+    role: 'user',
+    content: 'What is the current weather in Tokyo?'
+  },
+]) */
+
+const { input, messages, statuts, handleSubmit, reload, stop, error } = useChat()
 </script>
 
 <template>
@@ -24,11 +44,18 @@ const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
     class="mt-10"
   >
     <UChatMessages
+      :class="messages.length > 0 ? 'mt-10' : ''" 
       :messages
+      :assistant="{
+        ui: { container: 'pb-4 group-last:pb-0' }
+      }"
+      :user="{
+        ui: { container: 'pb-4' }
+      }"
       :status
       :ui="{
         root: 'flex-none [&>article]:last-of-type:min-h-auto',
-        indicator: 'h-auto *:size-auto *:bg-transparent [&>*:nth-child(1)]:animate-none [&>*:nth-child(2)]:animate-none [&>*:nth-child(3)]:animate-none'
+        indicator: 'h-auto *:size-auto *:bg-transparent [&>*:nth-child(1)]:animate-none [&>*:nth-child(2)]:animate-none [&>*:nth-child(3)]:animate-none',
       }"
     >
       <template #content="{ message }">
@@ -37,7 +64,6 @@ const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
           :value="message.toolInvocations?.[0]?.result"
           :cache-key="message.id"
           unwrap="p"
-          :components
           :parser-options="{ highlight: false }"
         />
         <MDCCached
@@ -45,7 +71,6 @@ const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
           :value="message.content"
           :cache-key="message.id"
           unwrap="p"
-          :components
           :parser-options="{ highlight: false }"
         />
         <TextBloom v-else label="Thinking..." />
