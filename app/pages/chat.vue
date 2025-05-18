@@ -2,7 +2,9 @@
 import { useChat } from '@ai-sdk/vue'
 
 const title = 'AI Chat'
-const description = 'Get answer to your questions'
+const description = `
+Have questions about me, my projects, or my blog posts? Ask my AI assistant! It has access to all the content on this portfolio.
+`
 
 const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
 </script>
@@ -14,7 +16,7 @@ const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
       description
     }"
   />
-  <SectionItem 
+  <SectionItem
     :title
     :description
     :number="1"

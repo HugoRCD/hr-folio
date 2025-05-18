@@ -7,6 +7,8 @@ type SectionItemProps = {
 }
 
 const { size = 'max-w-[600px]' } = defineProps<SectionItemProps>()
+
+const route = useRoute()
 </script>
 
 <template>
@@ -20,6 +22,9 @@ const { size = 'max-w-[600px]' } = defineProps<SectionItemProps>()
     <p v-if="description" class="text-pretty font-light text-muted italic text-sm">
       {{ description }}
     </p>
+    <span v-if="description && route.path === '/chat'" class="text-pretty font-light text-muted/60 italic text-xs">
+      Please note: This is an AI assistant. While it strives for accuracy, information may occasionally be incomplete or not entirely precise. Always verify critical information.
+    </span>
     <div :class="size" class="text-pretty font-light mt-2">
       <slot />
     </div>
