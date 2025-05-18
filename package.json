@@ -45,7 +45,7 @@
     "wrangler": "^4.15.2"
   },
   "resolutions": {
-    "unimport": "4.2.0"
+    "unimport": "5.0.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
