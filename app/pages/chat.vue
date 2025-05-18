@@ -30,7 +30,23 @@ const { input, messages, handleSubmit, reload, stop, status, error } = useChat()
       }"
     >
       <template #content="{ message }">
-        <MDC :value="message.content" :cache-key="message.id" unwrap="p" />
+        <MDCCached
+          v-if="message.toolInvocations?.[0]?.state === 'result'"
+          :value="message.toolInvocations?.[0]?.result"
+          :cache-key="message.id"
+          unwrap="p"
+          :components
+          :parser-options="{ highlight: false }"
+        />
+        <MDCCached
+          v-else-if="message.content.length > 0"
+          :value="message.content"
+          :cache-key="message.id"
+          unwrap="p"
+          :components
+          :parser-options="{ highlight: false }"
+        />
+        <TextBloom v-else label="Thinking..." />
       </template>
       <template #indicator>
         <TextBloom label="Thinking..." />
