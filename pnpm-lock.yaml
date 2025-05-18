@@ -80,6 +80,9 @@ importers:
       vue-sonner:
         specifier: ^1.3.2
         version: 1.3.2
+      workers-ai-provider:
+        specifier: ^0.4.1
+        version: 0.4.1
       zod:
         specifier: ^3.24.4
         version: 3.24.4
@@ -6600,6 +6603,9 @@ packages:
     resolution: {integrity: sha512-ffLxe7dXSuGoA6jb3Qx2SClIV1aLHfJQ6RhGhzYHjQgv7dL6fdUOSIIGgzmu2mRKs+WFSujp6c8WgKquco6w3w==}
     engines: {node: '>=16'}
     hasBin: true
+
+  workers-ai-provider@0.4.1:
+    resolution: {integrity: sha512-MnwDbdWrsuUJYJjMyPYpoGHVZe/gy9Z3GPtDx9OCysOhdkQfuc/0pBFKo62CL4+swbVunO518g2EsgAgELd2GQ==}
 
   wrangler@4.15.2:
     resolution: {integrity: sha512-Rv7zP61DOVzIS3af+/1UzJkRVpqu6VDRi6uIVMiwD1LkXG5Ov08tv94jgnE9bSjVf0paQg3dl0E89h+wQ0x/Bw==}
@@ -14874,6 +14880,11 @@ snapshots:
       '@cloudflare/workerd-linux-64': 1.20250508.0
       '@cloudflare/workerd-linux-arm64': 1.20250508.0
       '@cloudflare/workerd-windows-64': 1.20250508.0
+
+  workers-ai-provider@0.4.1:
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@cloudflare/workers-types': 4.20250508.0
 
   wrangler@4.15.2(@cloudflare/workers-types@4.20250508.0):
     dependencies:

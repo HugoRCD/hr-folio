@@ -84,7 +84,7 @@ export default defineNuxtConfig({
         contentFilters: [{ field: 'path', operator: 'LIKE', value: '/works%' }]
       }
     ],
-    notes: ['Hugo Richard is a Frontend Engineer at Nuxtlabs, contributing to the Nuxt ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
+    notes: ['Hugo Richard is a Frontend Engineer at Nuxtlabs, contributing to the Nuxt.js ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
   },
 
   colorMode: {

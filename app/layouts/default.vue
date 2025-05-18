@@ -38,6 +38,7 @@ const router = useRouter()
           <CopyLink v-if="route.path.includes('/writing/') && route.name !== 'writing'" />
 
           <Motion
+            v-if="route.path !== '/chat'"
             layout
             class="flex items-end justify-end"
             :class="route.path !== '/' ? 'cursor-pointer' : 'cursor-default'"
