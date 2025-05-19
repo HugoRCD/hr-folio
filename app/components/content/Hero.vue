@@ -35,6 +35,9 @@ const { profile, global } = useAppConfig()
       <NuxtLink :to="global.meetingLink" class="italic font-serif text-lg hover:underline decoration-primary cursor-pointer">
         Make a call
       </NuxtLink>
+      <NuxtLink to="/chat" class="italic font-serif text-lg hover:underline decoration-primary cursor-pointer">
+        AI Chat
+      </NuxtLink>
     </div>
   </div>
 </template>
