@@ -34,7 +34,7 @@ importers:
         version: 0.11.7(@unhead/vue@2.0.9(vue@3.5.14(typescript@5.8.3)))(db0@0.3.2(better-sqlite3@11.10.0))(ioredis@5.6.1)(magicast@0.3.5)(nuxt@3.17.4(@parcel/watcher@2.5.1)(@types/node@22.15.17)(better-sqlite3@11.10.0)(db0@0.3.2(better-sqlite3@11.10.0))(encoding@0.1.13)(eslint@9.27.0(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.30.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.40.2)(terser@5.39.0)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(yaml@2.7.1))(typescript@5.8.3)(vue@3.5.14(typescript@5.8.3))
       '@nuxt/ui-pro':
         specifier: ^3.1.2
-        version: 3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.12)
+        version: 3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)
       '@nuxthub/core':
         specifier: 0.8.27
         version: 0.8.27(db0@0.3.2(better-sqlite3@11.10.0))(ioredis@5.6.1)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))
@@ -51,11 +51,11 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(typescript@5.8.3)
       motion-plus-vue:
-        specifier: ^1.1.5
-        version: 1.1.5(motion-v@1.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))
+        specifier: ^1.1.6
+        version: 1.1.6(motion-v@1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))
       motion-v:
-        specifier: 1.0.2
-        version: 1.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3))
+        specifier: 1.1.1
+        version: 1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3))
       nuxt:
         specifier: ^3.17.4
         version: 3.17.4(@parcel/watcher@2.5.1)(@types/node@22.15.17)(better-sqlite3@11.10.0)(db0@0.3.2(better-sqlite3@11.10.0))(encoding@0.1.13)(eslint@9.27.0(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.30.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.40.2)(terser@5.39.0)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(yaml@2.7.1)
@@ -75,8 +75,8 @@ importers:
         specifier: ^1.3.2
         version: 1.3.2
       zod:
-        specifier: ^3.25.12
-        version: 3.25.12
+        specifier: ^3.25.28
+        version: 3.25.28
     devDependencies:
       '@hrcd/eslint-config':
         specifier: ^3.0.3
@@ -88,8 +88,8 @@ importers:
         specifier: 9.27.0
         version: 9.27.0(jiti@2.4.2)
       wrangler:
-        specifier: ^4.16.0
-        version: 4.16.0(@cloudflare/workers-types@4.20250508.0)
+        specifier: ^4.16.1
+        version: 4.16.1(@cloudflare/workers-types@4.20250508.0)
 
 packages:
 
@@ -3505,8 +3505,8 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@12.5.0:
-    resolution: {integrity: sha512-buPlioFbH9/W7rDzYh1C09AuZHAk2D1xTA1BlounJ2Rb9aRg84OXexP0GLd+R83v0khURdMX7b5MKnGTaSg5iA==}
+  framer-motion@12.12.1:
+    resolution: {integrity: sha512-PFw4/GCREHI2suK/NlPSUxd+x6Rkp80uQsfCRFSOQNrm5pZif7eGtmG1VaD/UF1fW9tRBy5AaS77StatB3OJDg==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -4618,20 +4618,20 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  motion-dom@12.10.4:
-    resolution: {integrity: sha512-GSv8kz0ANFfeGrFKi99s3GQjLiL1IKH3KtSNEqrPiVbloHVRiNbNtpsYQq9rkV2AV+7jxvd1X1ObUMVDnAEnXA==}
+  motion-dom@12.12.1:
+    resolution: {integrity: sha512-GXq/uUbZBEiFFE+K1Z/sxdPdadMdfJ/jmBALDfIuHGi0NmtealLOfH9FqT+6aNPgVx8ilq0DtYmyQlo6Uj9LKQ==}
 
-  motion-plus-vue@1.1.5:
-    resolution: {integrity: sha512-BQLyTN1I16fuCTYPBY5fa0TKu0KQmfxCDonv69FmX9RT40NO3O5q57vu3FNrD8beZrDfr1DoYKpWi5NOhLUojQ==}
+  motion-plus-vue@1.1.6:
+    resolution: {integrity: sha512-vrWf5fFyuVbYvxRYTkf9d6fqB1otwi8datIXKyIbUG/x/qPyXZvpY2i0CHDo2sArqQxlzT7BtzLHse8swUwVJw==}
     peerDependencies:
       motion-v: '>=0.13.0-beta.1'
       vue: '>=3.0.0'
 
-  motion-utils@12.9.4:
-    resolution: {integrity: sha512-BW3I65zeM76CMsfh3kHid9ansEJk9Qvl+K5cu4DVHKGsI52n76OJ4z2CUJUV+Mn3uEP9k1JJA3tClG0ggSrRcg==}
+  motion-utils@12.12.1:
+    resolution: {integrity: sha512-f9qiqUHm7hWSLlNW8gS9pisnsN7CRFRD58vNjptKdsqFLpkVnX00TNeD6Q0d27V9KzT7ySFyK1TZ/DShfVOv6w==}
 
-  motion-v@1.0.2:
-    resolution: {integrity: sha512-Qn/X9Mx/5g02rjvpGtn5fht2OWTAnZoed4vLXgjM0lJgkSEtoGuadwEVypbCVH3WW1AHsns2k2okKAjpDrKu6A==}
+  motion-v@1.1.1:
+    resolution: {integrity: sha512-lm2q8DnQYokkSwT9+X86Ea9bDmhoYC5H/xk0RGFjhwmwPgTbaokWBvPcXn1B9Od4D/LQoHq0fY0kap0irgU78Q==}
     peerDependencies:
       vue: '>=3.0.0'
 
@@ -6578,8 +6578,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.16.0:
-    resolution: {integrity: sha512-zQojiBJKAWRVG4WdUgTP5/i9N5UcwOixhWljnBrcKxJd+kpqUXVV/L03ytO+0cnr5IhgYUs7qhjd8EWU6UwPfg==}
+  wrangler@4.16.1:
+    resolution: {integrity: sha512-YiLdWXcaQva2K/bqokpsZbySPmoT8TJFyJPsQPZumnkgimM9+/g/yoXArByA+pf+xU8jhw7ybQ8X1yBGXv731g==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -6737,36 +6737,36 @@ packages:
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
-  zod@3.25.12:
-    resolution: {integrity: sha512-A8e9eiwm2L5YEupdjn1YcxL1ZDWuL3Bc4JKvLwUrpKZZtRUDOijR7XXsV5WMuUCZPc1tFYO5yfH14STI08MquA==}
+  zod@3.25.28:
+    resolution: {integrity: sha512-/nt/67WYKnr5by3YS7LroZJbtcCBurDKKPBPWWzaxvVCGuG/NOsiKkrjoOhI8mJ+SQUXEbUzeB3S+6XDUEEj7Q==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
 
-  '@ai-sdk/provider-utils@2.2.8(zod@3.25.12)':
+  '@ai-sdk/provider-utils@2.2.8(zod@3.25.28)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
       nanoid: 3.3.11
       secure-json-parse: 2.7.0
-      zod: 3.25.12
+      zod: 3.25.28
 
   '@ai-sdk/provider@1.1.3':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/ui-utils@1.2.11(zod@3.25.12)':
+  '@ai-sdk/ui-utils@1.2.11(zod@3.25.28)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.12)
-      zod: 3.25.12
-      zod-to-json-schema: 3.24.5(zod@3.25.12)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.28)
+      zod: 3.25.28
+      zod-to-json-schema: 3.24.5(zod@3.25.28)
 
-  '@ai-sdk/vue@1.2.12(vue@3.5.14(typescript@5.8.3))(zod@3.25.12)':
+  '@ai-sdk/vue@1.2.12(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)':
     dependencies:
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.12)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.12)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.28)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.28)
       swrv: 1.1.0(vue@3.5.14(typescript@5.8.3))
     optionalDependencies:
       vue: 3.5.14(typescript@5.8.3)
@@ -7554,7 +7554,7 @@ snapshots:
       unixify: 1.0.0
       urlpattern-polyfill: 8.0.2
       yargs: 17.7.2
-      zod: 3.25.12
+      zod: 3.25.28
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -7584,7 +7584,7 @@ snapshots:
 
   '@npmcli/fs@4.0.0':
     dependencies:
-      semver: 7.7.1
+      semver: 7.7.2
 
   '@npmcli/redact@3.2.2': {}
 
@@ -7660,9 +7660,9 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       unist-util-visit: 5.0.0
       ws: 8.18.2
-      zod: 3.25.12
-      zod-to-json-schema: 3.24.5(zod@3.25.12)
-      zod-to-ts: 1.2.0(typescript@5.8.3)(zod@3.25.12)
+      zod: 3.25.28
+      zod-to-json-schema: 3.24.5(zod@3.25.28)
+      zod-to-ts: 1.2.0(typescript@5.8.3)(zod@3.25.28)
     transitivePeerDependencies:
       - bufferutil
       - drizzle-orm
@@ -8013,12 +8013,12 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/ui-pro@3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.12)':
+  '@nuxt/ui-pro@3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)':
     dependencies:
-      '@ai-sdk/vue': 1.2.12(vue@3.5.14(typescript@5.8.3))(zod@3.25.12)
+      '@ai-sdk/vue': 1.2.12(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)
       '@nuxt/kit': 3.17.3(magicast@0.3.5)
       '@nuxt/schema': 3.17.3
-      '@nuxt/ui': 3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.12)
+      '@nuxt/ui': 3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)
       '@standard-schema/spec': 1.0.0
       '@vueuse/core': 13.2.0(vue@3.5.14(typescript@5.8.3))
       consola: 3.4.2
@@ -8037,7 +8037,7 @@ snapshots:
       unplugin-vue-components: 28.5.0(@babel/parser@7.27.2)(@nuxt/kit@3.17.3(magicast@0.3.5))(vue@3.5.14(typescript@5.8.3))
     optionalDependencies:
       valibot: 1.1.0(typescript@5.8.3)
-      zod: 3.25.12
+      zod: 3.25.28
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -8078,7 +8078,7 @@ snapshots:
       - vue
       - vue-router
 
-  '@nuxt/ui@3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.12)':
+  '@nuxt/ui@3.1.2(@babel/parser@7.27.2)(db0@0.3.2(better-sqlite3@11.10.0))(embla-carousel@8.6.0)(encoding@0.1.13)(ioredis@5.6.1)(jwt-decode@4.0.0)(magicast@0.3.5)(typescript@5.8.3)(valibot@1.1.0(typescript@5.8.3))(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.0)(yaml@2.7.1))(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)':
     dependencies:
       '@iconify/vue': 4.3.0(vue@3.5.14(typescript@5.8.3))
       '@internationalized/date': 3.8.0
@@ -8126,7 +8126,7 @@ snapshots:
     optionalDependencies:
       valibot: 1.1.0(typescript@5.8.3)
       vue-router: 4.5.1(vue@3.5.14(typescript@5.8.3))
-      zod: 3.25.12
+      zod: 3.25.28
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -8246,7 +8246,7 @@ snapshots:
       ufo: 1.6.1
       uncrypto: 0.1.3
       unstorage: 1.16.0(db0@0.3.2(better-sqlite3@11.10.0))(ioredis@5.6.1)
-      zod: 3.25.12
+      zod: 3.25.28
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -8274,7 +8274,7 @@ snapshots:
       '@nuxt/kit': 3.17.3(magicast@0.3.5)
       pathe: 1.1.2
       pkg-types: 1.3.1
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - magicast
 
@@ -8519,7 +8519,7 @@ snapshots:
       extract-zip: 2.0.1
       progress: 2.0.3
       proxy-agent: 6.5.0
-      semver: 7.7.1
+      semver: 7.7.2
       tar-fs: 3.0.8
       unbzip2-stream: 1.4.3
       yargs: 17.7.2
@@ -9039,7 +9039,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.1
+      semver: 7.7.2
       ts-api-utils: 2.1.0(typescript@5.8.3)
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -10562,7 +10562,7 @@ snapshots:
   eslint-compat-utils@0.6.5(eslint@9.27.0(jiti@2.4.2)):
     dependencies:
       eslint: 9.27.0(jiti@2.4.2)
-      semver: 7.7.1
+      semver: 7.7.2
 
   eslint-config-flat-gitignore@0.3.0(eslint@9.27.0(jiti@2.4.2)):
     dependencies:
@@ -10598,7 +10598,7 @@ snapshots:
       get-tsconfig: 4.10.0
       is-glob: 4.0.3
       minimatch: 10.0.1
-      semver: 7.7.1
+      semver: 7.7.2
       stable-hash: 0.0.5
       tslib: 2.8.1
       unrs-resolver: 1.7.2
@@ -10617,7 +10617,7 @@ snapshots:
       espree: 10.3.0
       esquery: 1.6.0
       parse-imports-exports: 0.2.4
-      semver: 7.7.1
+      semver: 7.7.2
       spdx-expression-parse: 4.0.0
     transitivePeerDependencies:
       - supports-color
@@ -10631,7 +10631,7 @@ snapshots:
       eslint-fix-utils: 0.2.1(@types/estree@1.0.7)(eslint@9.27.0(jiti@2.4.2))
       jsonc-eslint-parser: 2.4.0
       package-json-validator: 0.10.2
-      semver: 7.7.1
+      semver: 7.7.2
       sort-object-keys: 1.1.3
       sort-package-json: 3.2.1
       validate-npm-package-name: 6.0.0
@@ -10656,7 +10656,7 @@ snapshots:
       natural-compare: 1.4.0
       nth-check: 2.1.1
       postcss-selector-parser: 6.1.2
-      semver: 7.7.1
+      semver: 7.7.2
       vue-eslint-parser: 9.4.3(eslint@9.27.0(jiti@2.4.2))
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
@@ -10957,10 +10957,10 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@12.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  framer-motion@12.12.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      motion-dom: 12.10.4
-      motion-utils: 12.9.4
+      motion-dom: 12.12.1
+      motion-utils: 12.12.1
       tslib: 2.8.1
     optionalDependencies:
       react: 19.1.0
@@ -11661,7 +11661,7 @@ snapshots:
       acorn: 8.14.1
       eslint-visitor-keys: 3.4.3
       espree: 9.6.1
-      semver: 7.7.1
+      semver: 7.7.2
 
   jsonparse@1.3.1: {}
 
@@ -12349,23 +12349,22 @@ snapshots:
       ast-module-types: 5.0.0
       node-source-walk: 6.0.2
 
-  motion-dom@12.10.4:
+  motion-dom@12.12.1:
     dependencies:
-      motion-utils: 12.9.4
+      motion-utils: 12.12.1
 
-  motion-plus-vue@1.1.5(motion-v@1.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3)):
+  motion-plus-vue@1.1.6(motion-v@1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3)):
     dependencies:
-      motion-v: 1.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3))
+      motion-v: 1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3))
       vue: 3.5.14(typescript@5.8.3)
 
-  motion-utils@12.9.4: {}
+  motion-utils@12.12.1: {}
 
-  motion-v@1.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3)):
+  motion-v@1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(vue@3.5.14(typescript@5.8.3)):
     dependencies:
       '@vueuse/core': 10.11.1(vue@3.5.14(typescript@5.8.3))
-      framer-motion: 12.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      framer-motion: 12.12.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       hey-listen: 1.0.8
-      motion-dom: 12.10.4
       vue: 3.5.14(typescript@5.8.3)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
@@ -12518,7 +12517,7 @@ snapshots:
 
   node-abi@3.75.0:
     dependencies:
-      semver: 7.7.1
+      semver: 7.7.2
 
   node-addon-api@6.1.0:
     optional: true
@@ -13869,7 +13868,7 @@ snapshots:
     dependencies:
       color: 4.2.3
       detect-libc: 2.0.4
-      semver: 7.7.1
+      semver: 7.7.2
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.33.5
       '@img/sharp-darwin-x64': 0.33.5
@@ -14028,7 +14027,7 @@ snapshots:
       detect-newline: 4.0.1
       git-hooks-list: 4.1.1
       is-plain-obj: 4.1.0
-      semver: 7.7.1
+      semver: 7.7.2
       sort-object-keys: 1.1.3
       tinyglobby: 0.2.13
 
@@ -14789,7 +14788,7 @@ snapshots:
       espree: 9.6.1
       esquery: 1.6.0
       lodash: 4.17.21
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
@@ -14867,7 +14866,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250508.0
       '@cloudflare/workerd-windows-64': 1.20250508.0
 
-  wrangler@4.16.0(@cloudflare/workers-types@4.20250508.0):
+  wrangler@4.16.1(@cloudflare/workers-types@4.20250508.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.3.2(unenv@2.0.0-rc.17)(workerd@1.20250508.0)
@@ -14990,19 +14989,19 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-to-json-schema@3.24.5(zod@3.25.12):
+  zod-to-json-schema@3.24.5(zod@3.25.28):
     dependencies:
-      zod: 3.25.12
+      zod: 3.25.28
 
-  zod-to-ts@1.2.0(typescript@5.8.3)(zod@3.25.12):
+  zod-to-ts@1.2.0(typescript@5.8.3)(zod@3.25.28):
     dependencies:
       typescript: 5.8.3
-      zod: 3.25.12
+      zod: 3.25.28
 
   zod@3.22.3: {}
 
   zod@3.23.8: {}
 
-  zod@3.25.12: {}
+  zod@3.25.28: {}
 
   zwitch@2.0.4: {}
