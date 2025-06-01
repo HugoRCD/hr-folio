@@ -140,13 +140,6 @@ export default defineNuxtConfig({
     zeroRuntime: true
   },
 
-  vite: {
-    experimental: {
-      // @ts-expect-error - enableNativePlugin is not typed
-      enableNativePlugin: true
-    }
-  },
-
   imports: {
     presets: [
       {
