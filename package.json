@@ -9,7 +9,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "local:studio": "npx nuxt dev --tunnel",
+    "deploy": "nuxthub deploy",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -30,7 +30,7 @@
     "capture-website": "^4.2.0",
     "motion-plus-vue": "^1.1.6",
     "motion-v": "1.1.1",
-    "nuxt": "^4.0.0-alpha.1",
+    "nuxt": "^3.17.4",
     "nuxt-llms": "^0.1.2",
     "resend": "4.5.1",
     "vue": "3.5.16",
