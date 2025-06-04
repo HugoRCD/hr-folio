@@ -3,9 +3,6 @@ import { LayoutGroup } from 'motion-v'
 
 const route = useRoute()
 const router = useRouter()
-
-const contentRef = ref(null)
-const containerRef = ref(null)
 </script>
 
 <template>
@@ -17,7 +14,6 @@ const containerRef = ref(null)
     <main class="flex min-h-screen flex-col p-3 sm:p-12">
       <LayoutGroup id="main-layout">
         <Motion
-          ref="containerRef"
           layout
           :transition="{
             type: 'tween',
@@ -35,7 +31,7 @@ const containerRef = ref(null)
             <ThemeSelector />
           </div>
 
-          <Motion ref="contentRef" layout class="flex-1">
+          <Motion layout class="flex-1">
             <slot />
           </Motion>
 

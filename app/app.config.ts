@@ -1,6 +1,6 @@
 export default defineAppConfig({
   global: {
-    meetingLink: 'https://cal.com/hugorcd/15min',
+    meetingLink: 'https://cal.com/hugorcd/30min',
   },
   profile: {
     email: 'contact@hrcd.fr',
