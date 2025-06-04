@@ -12,21 +12,19 @@ interface Position {
 
 interface GridItem {
   position: Position
-  gridIndex: number
-}
-
-interface ItemConfig {
-  isMoving: boolean
-  position: Position
-  gridIndex: number
+  index: number
+  isVisible: boolean
 }
 
 interface UseInfiniteCanvasOptions {
-  gridSize: number
+  itemSize: number
+  gap?: number
+  items: Array<any>
   initialPosition?: Position
+  overscan?: number // How many items to render outside viewport
 }
 
-// Custom debounce implementation
+// Debounce utility
 function debounce<T extends(...args: unknown[]) => unknown>(
   func: T,
   wait: number
@@ -51,33 +49,26 @@ function debounce<T extends(...args: unknown[]) => unknown>(
   return debouncedFn
 }
 
-// Custom throttle implementation
+// Throttle utility
 function throttle<T extends(...args: unknown[]) => unknown>(
   func: T,
-  limit: number,
-  options: { leading?: boolean; trailing?: boolean } = {}
+  limit: number
 ) {
   let lastCall = 0
   let timeoutId: NodeJS.Timeout | undefined = undefined
-  const { leading = true, trailing = true } = options
 
   const throttledFn = function(...args: Parameters<T>) {
     const now = Date.now()
-
-    if (!lastCall && !leading) {
-      lastCall = now
-    }
-
     const remaining = limit - (now - lastCall)
 
-    if (remaining <= 0 || remaining > limit) {
+    if (remaining <= 0) {
       clearTimeout(timeoutId)
       timeoutId = undefined
       lastCall = now
       func(...args)
-    } else if (!timeoutId && trailing) {
+    } else if (!timeoutId) {
       timeoutId = setTimeout(() => {
-        lastCall = leading ? Date.now() : 0
+        lastCall = Date.now()
         timeoutId = undefined
         func(...args)
       }, remaining)
@@ -94,143 +85,94 @@ function throttle<T extends(...args: unknown[]) => unknown>(
   return throttledFn
 }
 
-function getDistance(p1: Position, p2: Position) {
-  const dx = p2.x - p1.x
-  const dy = p2.y - p1.y
-  return Math.sqrt(dx * dx + dy * dy)
-}
-
 export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
-  const { gridSize, initialPosition = { x: 0, y: 0 } } = options
+  const { 
+    itemSize,
+    gap = 0,
+    items,
+    initialPosition = { x: 0, y: 0 },
+    overscan = 2
+  } = options
+
+  const effectiveItemSize = itemSize + gap
 
   // Reactive state
   const offset = ref<Position>({ ...initialPosition })
-  const restPos = ref<Position>({ ...initialPosition })
-  const startPos = ref<Position>({ ...initialPosition })
   const velocity = ref<Position>({ x: 0, y: 0 })
   const isDragging = ref(false)
   const gridItems = ref<GridItem[]>([])
   const isMoving = ref(false)
-  const lastMoveTime = ref(0)
-  const velocityHistory = ref<Position[]>([])
 
   // Internal state
   const containerRef = ref<HTMLElement>()
   const lastPos = ref<Position>({ x: 0, y: 0 })
   const animationFrame = ref<number | null>(null)
   const lastUpdateTime = ref(0)
+  const lastMoveTime = ref(0)
+  const velocityHistory = ref<Position[]>([])
 
-  const calculateVisiblePositions = (): Position[] => {
-    if (!containerRef.value) return []
-
+  const containerDimensions = computed(() => {
+    if (!containerRef.value) return { width: 0, height: 0 }
     const rect = containerRef.value.getBoundingClientRect()
-    const { width } = rect
-    const { height } = rect
+    return { width: rect.width, height: rect.height }
+  })
 
-    // Calculate grid cells needed to fill container
-    const cellsX = Math.ceil(width / gridSize)
-    const cellsY = Math.ceil(height / gridSize)
+  const calculateVisibleItems = (): GridItem[] => {
+    const { width, height } = containerDimensions.value
+    if (!width || !height) return []
 
-    // Calculate center position based on offset
-    const centerX = -Math.round(offset.value.x / gridSize)
-    const centerY = -Math.round(offset.value.y / gridSize)
+    // Calculate visible grid bounds
+    const startX = Math.floor((-offset.value.x - effectiveItemSize * overscan) / effectiveItemSize)
+    const endX = Math.ceil((-offset.value.x + width + effectiveItemSize * overscan) / effectiveItemSize)
+    const startY = Math.floor((-offset.value.y - effectiveItemSize * overscan) / effectiveItemSize)
+    const endY = Math.ceil((-offset.value.y + height + effectiveItemSize * overscan) / effectiveItemSize)
 
-    const positions: Position[] = []
-    const halfCellsX = Math.ceil(cellsX / 2)
-    const halfCellsY = Math.ceil(cellsY / 2)
+    const visibleItems: GridItem[] = []
 
-    for (let y = centerY - halfCellsY; y <= centerY + halfCellsY; y++) {
-      for (let x = centerX - halfCellsX; x <= centerX + halfCellsX; x++) {
-        positions.push({ x, y })
+    for (let y = startY; y <= endY; y++) {
+      for (let x = startX; x <= endX; x++) {
+        const index = Math.abs((x * 31 + y * 17) % items.length) // Simple but deterministic distribution
+        
+        visibleItems.push({
+          position: { x, y },
+          index,
+          isVisible: true
+        })
       }
     }
 
-    return positions
-  }
-
-  const getItemIndexForPosition = (x: number, y: number): number => {
-    // Special case for center
-    if (x === 0 && y === 0) return 0
-
-    // Determine which layer of the spiral we're in
-    const layer = Math.max(Math.abs(x), Math.abs(y))
-
-    // Calculate the size of all inner layers
-    const innerLayersSize = Math.pow(2 * layer - 1, 2)
-
-    // Calculate position within current layer
-    let positionInLayer = 0
-
-    if (y === 0 && x === layer) {
-      // Starting position (middle right)
-      positionInLayer = 0
-    } else if (y < 0 && x === layer) {
-      // Right side, bottom half
-      positionInLayer = -y
-    } else if (y === -layer && x > -layer) {
-      // Bottom side
-      positionInLayer = layer + (layer - x)
-    } else if (x === -layer && y < layer) {
-      // Left side
-      positionInLayer = 3 * layer + (layer + y)
-    } else if (y === layer && x < layer) {
-      // Top side
-      positionInLayer = 5 * layer + (layer + x)
-    } else {
-      // Right side, top half (y > 0 && x === layer)
-      positionInLayer = 7 * layer + (layer - y)
-    }
-
-    const index = innerLayersSize + positionInLayer
-    return index
+    return visibleItems
   }
 
   const debouncedStopMoving = debounce(() => {
     isMoving.value = false
-    restPos.value = { ...offset.value }
-  }, 200)
+  }, 150)
 
   const updateGridItems = () => {
-    const positions = calculateVisiblePositions()
-    const newItems = positions.map((position) => {
-      const gridIndex = getItemIndexForPosition(position.x, position.y)
-      return {
-        position,
-        gridIndex,
-      }
-    })
-
-    const distanceFromRest = getDistance(offset.value, restPos.value)
-
-    gridItems.value = newItems
-    isMoving.value = distanceFromRest > 5
+    gridItems.value = calculateVisibleItems()
+    
+    const speed = Math.sqrt(velocity.value.x ** 2 + velocity.value.y ** 2)
+    isMoving.value = speed > 0.1
 
     debouncedStopMoving()
   }
 
-  const debouncedUpdateGridItems = throttle(updateGridItems, UPDATE_INTERVAL, {
-    leading: true,
-    trailing: true,
-  })
+  const throttledUpdate = throttle(updateGridItems, UPDATE_INTERVAL)
 
   const animate = () => {
     const currentTime = performance.now()
     const deltaTime = currentTime - lastUpdateTime.value
 
     if (deltaTime >= UPDATE_INTERVAL) {
-      const speed = Math.sqrt(
-        velocity.value.x * velocity.value.x + velocity.value.y * velocity.value.y
-      )
+      const speed = Math.sqrt(velocity.value.x ** 2 + velocity.value.y ** 2)
 
       if (speed < MIN_VELOCITY) {
         velocity.value = { x: 0, y: 0 }
         return
       }
 
-      // Apply non-linear deceleration based on speed
       let deceleration = FRICTION
       if (speed < VELOCITY_THRESHOLD) {
-        // Apply stronger deceleration at lower speeds for more natural stopping
         deceleration = FRICTION * (speed / VELOCITY_THRESHOLD)
       }
 
@@ -243,64 +185,58 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
         y: velocity.value.y * deceleration,
       }
 
-      debouncedUpdateGridItems()
+      throttledUpdate()
       lastUpdateTime.value = currentTime
     }
 
     animationFrame.value = requestAnimationFrame(animate)
   }
 
-  const handleDown = (p: Position) => {
+  const handleDown = (clientX: number, clientY: number) => {
     if (animationFrame.value) {
       cancelAnimationFrame(animationFrame.value)
     }
 
     isDragging.value = true
-    startPos.value = {
-      x: p.x - offset.value.x,
-      y: p.y - offset.value.y,
-    }
+    lastPos.value = { x: clientX - offset.value.x, y: clientY - offset.value.y }
     velocity.value = { x: 0, y: 0 }
-    lastPos.value = { x: p.x, y: p.y }
+    velocityHistory.value = []
   }
 
-  const handleMove = (p: Position) => {
+  const handleMove = (clientX: number, clientY: number) => {
     if (!isDragging.value) return
 
     const currentTime = performance.now()
-    const timeDelta = currentTime - lastMoveTime.value
-
-    // Calculate raw velocity based on position and time
-    const rawVelocity = {
-      x: (p.x - lastPos.value.x) / (timeDelta || 1),
-      y: (p.y - lastPos.value.y) / (timeDelta || 1),
+    const newOffset = {
+      x: clientX - lastPos.value.x,
+      y: clientY - lastPos.value.y,
     }
 
-    // Add to velocity history and maintain fixed size
-    const newVelocityHistory = [...velocityHistory.value, rawVelocity]
-    if (newVelocityHistory.length > VELOCITY_HISTORY_SIZE) {
-      newVelocityHistory.shift()
+    const deltaTime = currentTime - lastMoveTime.value
+    if (deltaTime > 0) {
+      const rawVelocity = {
+        x: (newOffset.x - offset.value.x) / deltaTime,
+        y: (newOffset.y - offset.value.y) / deltaTime,
+      }
+
+      velocityHistory.value.push(rawVelocity)
+      if (velocityHistory.value.length > VELOCITY_HISTORY_SIZE) {
+        velocityHistory.value.shift()
+      }
+
+      // Smooth velocity
+      velocity.value = velocityHistory.value.reduce(
+        (acc, vel) => ({
+          x: acc.x + vel.x / velocityHistory.value.length,
+          y: acc.y + vel.y / velocityHistory.value.length,
+        }),
+        { x: 0, y: 0 }
+      )
     }
 
-    // Calculate smoothed velocity using moving average
-    const smoothedVelocity = newVelocityHistory.reduce(
-      (acc, vel) => ({
-        x: acc.x + vel.x / newVelocityHistory.length,
-        y: acc.y + vel.y / newVelocityHistory.length,
-      }),
-      { x: 0, y: 0 }
-    )
-
-    velocity.value = smoothedVelocity
-    offset.value = {
-      x: p.x - startPos.value.x,
-      y: p.y - startPos.value.y,
-    }
+    offset.value = newOffset
     lastMoveTime.value = currentTime
-    velocityHistory.value = newVelocityHistory
-    
     updateGridItems()
-    lastPos.value = { x: p.x, y: p.y }
   }
 
   const handleUp = () => {
@@ -308,103 +244,73 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
     animationFrame.value = requestAnimationFrame(animate)
   }
 
+  // Event handlers
   const handleMouseDown = (e: MouseEvent) => {
-    handleDown({
-      x: e.clientX,
-      y: e.clientY,
-    })
+    handleDown(e.clientX, e.clientY)
   }
 
   const handleMouseMove = (e: MouseEvent) => {
     e.preventDefault()
-    handleMove({
-      x: e.clientX,
-      y: e.clientY,
-    })
-  }
-
-  const handleMouseUp = () => {
-    handleUp()
+    handleMove(e.clientX, e.clientY)
   }
 
   const handleTouchStart = (e: TouchEvent) => {
     const [touch] = e.touches
-    if (!touch) return
-
-    handleDown({
-      x: touch.clientX,
-      y: touch.clientY,
-    })
+    if (touch) {
+      handleDown(touch.clientX, touch.clientY)
+    }
   }
 
   const handleTouchMove = (e: TouchEvent) => {
     const [touch] = e.touches
-    if (!touch) return
-
-    handleMove({
-      x: touch.clientX,
-      y: touch.clientY,
-    })
-  }
-
-  const handleTouchEnd = () => {
-    handleUp()
+    if (touch) {
+      handleMove(touch.clientX, touch.clientY)
+    }
   }
 
   const handleWheel = (e: WheelEvent) => {
-    // Get the scroll deltas
-    const { deltaX } = e
-    const { deltaY } = e
-
     offset.value = {
-      x: offset.value.x - deltaX,
-      y: offset.value.y - deltaY,
+      x: offset.value.x - e.deltaX,
+      y: offset.value.y - e.deltaY,
     }
-    velocity.value = { x: 0, y: 0 } // Reset velocity when scrolling
-    
-    debouncedUpdateGridItems()
+    velocity.value = { x: 0, y: 0 }
+    throttledUpdate()
   }
 
-  // Initialize grid items on mount
+  // Initialize
   onMounted(() => {
-    updateGridItems()
+    nextTick(updateGridItems)
   })
 
-  // Cleanup on unmount
+  // Cleanup
   onUnmounted(() => {
     if (animationFrame.value) {
       cancelAnimationFrame(animationFrame.value)
     }
-    debouncedUpdateGridItems.cancel()
+    throttledUpdate.cancel()
     debouncedStopMoving.cancel()
   })
 
-  const getCurrentPosition = () => {
-    return offset.value
-  }
-
   return {
-    // Refs
     containerRef,
-    
-    // State
     offset: readonly(offset),
     isDragging: readonly(isDragging),
     gridItems: readonly(gridItems),
     isMoving: readonly(isMoving),
+    containerDimensions: readonly(containerDimensions),
+    itemSize,
+    gap,
+    items,
     
     // Event handlers
     handleMouseDown,
     handleMouseMove,
-    handleMouseUp,
+    handleMouseUp: handleUp,
     handleTouchStart,
     handleTouchMove,
-    handleTouchEnd,
+    handleTouchEnd: handleUp,
     handleWheel,
-    
-    // Methods
-    getCurrentPosition,
   }
 }
 
-export type { Position, GridItem, ItemConfig } 
+export type { Position, GridItem, UseInfiniteCanvasOptions } 

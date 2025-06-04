@@ -1,19 +1,21 @@
-<script setup lang="ts" generic="T extends Record<string, any>">
-import type { ItemConfig } from '~/composables/useInfiniteCanvas'
-
+<script setup lang="ts" generic="T = any">
 interface InfiniteCanvasProps {
-  gridSize: number
+  itemSize: number
+  gap?: number
+  items: T[]
   initialPosition?: { x: number; y: number }
+  overscan?: number
   class?: string
 }
 
 const props = withDefaults(defineProps<InfiniteCanvasProps>(), {
-  gridSize: 160,
+  gap: 0,
   initialPosition: () => ({ x: 0, y: 0 }),
+  overscan: 2,
 })
 
 const slots = defineSlots<{
-  default(props: { item: ItemConfig }): any
+  default(props: { item: T; index: number; position: { x: number; y: number }; isMoving: boolean }): any
 }>()
 
 const {
@@ -22,6 +24,7 @@ const {
   isDragging,
   gridItems,
   isMoving,
+  containerDimensions,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
@@ -30,11 +33,13 @@ const {
   handleTouchEnd,
   handleWheel,
 } = useInfiniteCanvas({
-  gridSize: props.gridSize,
+  itemSize: props.itemSize,
+  gap: props.gap,
+  items: props.items,
   initialPosition: props.initialPosition,
+  overscan: props.overscan,
 })
 
-// Computed styles
 const containerStyle = computed(() => ({
   position: 'absolute' as const,
   inset: '0',
@@ -50,12 +55,21 @@ const innerStyle = computed(() => ({
   willChange: 'transform',
 }))
 
-// Container dimensions
-const containerDimensions = computed(() => {
-  if (!containerRef.value) return { width: 0, height: 0 }
-  const rect = containerRef.value.getBoundingClientRect()
-  return { width: rect.width, height: rect.height }
-})
+const getItemStyle = (gridItem: any) => {
+  const effectiveItemSize = props.itemSize + props.gap
+  const x = gridItem.position.x * effectiveItemSize + containerDimensions.value.width / 2
+  const y = gridItem.position.y * effectiveItemSize + containerDimensions.value.height / 2
+
+  return {
+    position: 'absolute' as const,
+    width: `${props.itemSize}px`,
+    height: `${props.itemSize}px`,
+    transform: `translate3d(${x}px, ${y}px, 0)`,
+    marginLeft: `-${props.itemSize / 2}px`,
+    marginTop: `-${props.itemSize / 2}px`,
+    willChange: 'transform',
+  }
+}
 </script>
 
 <template>
@@ -75,32 +89,16 @@ const containerDimensions = computed(() => {
   >
     <div :style="innerStyle">
       <div
-        v-for="item in gridItems"
-        :key="`${item.position.x}-${item.position.y}`"
-        :style="{
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          userSelect: 'none',
-          width: `${gridSize}px`,
-          height: `${gridSize}px`,
-          transform: `translate3d(${
-            item.position.x * gridSize + containerDimensions.width / 2
-          }px, ${
-            item.position.y * gridSize + containerDimensions.height / 2
-          }px, 0)`,
-          marginLeft: `-${gridSize / 2}px`,
-          marginTop: `-${gridSize / 2}px`,
-          willChange: 'transform',
-        }"
+        v-for="gridItem in gridItems"
+        :key="`${gridItem.position.x}-${gridItem.position.y}`"
+        :style="getItemStyle(gridItem)"
       >
         <slot 
-          :item="{ 
-            gridIndex: item.gridIndex, 
-            position: item.position, 
-            isMoving 
-          }" 
+          v-if="items[gridItem.index]"
+          :item="items[gridItem.index]!"
+          :index="gridItem.index"
+          :position="gridItem.position"
+          :is-moving
         />
       </div>
     </div>
