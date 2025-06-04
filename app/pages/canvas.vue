@@ -1,30 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
 definePageMeta({
-  layout: false
+  layout: false,
 })
 
-useHead({
-  title: 'Canvas',
-})
 
-interface Image {
-  id: string
-  url: string
-  width: number
-  height: number
-}
-
-const IMAGE_COUNT = 200
-const COLUMN_COUNT = 5
-const GAP = 32
-
-function randomInt(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
+const IMAGE_COUNT = 20
 
 const images = Array.from({ length: IMAGE_COUNT }).map((_, i) => ({
   id: String(i),
@@ -32,91 +12,54 @@ const images = Array.from({ length: IMAGE_COUNT }).map((_, i) => ({
   width: 300,
   height: 200 + (i % 3) * 40,
 }))
-
-const columns = computed(() => {
-  const cols: Image[][] = Array.from({ length: COLUMN_COUNT }, () => [])
-  images.forEach((img, i) => {
-    cols[i % COLUMN_COUNT]?.push(img)
-  })
-  return cols
-})
-
-const offset = ref({ x: 0, y: 0 })
-const isDragging = ref(false)
-const dragStart = ref({ x: 0, y: 0 })
-const offsetStart = ref({ x: 0, y: 0 })
-
-const handleMouseDown = (e: MouseEvent) => {
-  isDragging.value = true
-  dragStart.value = { x: e.clientX, y: e.clientY }
-  offsetStart.value = { ...offset.value }
-}
-const handleMouseMove = (e: MouseEvent) => {
-  if (!isDragging.value) return
-  offset.value = {
-    x: offsetStart.value.x + (e.clientX - dragStart.value.x),
-    y: offsetStart.value.y + (e.clientY - dragStart.value.y),
-  }
-}
-const handleMouseUp = () => {
-  isDragging.value = false
-}
-
-onMounted(() => {
-  window.addEventListener('mousemove', handleMouseMove)
-  window.addEventListener('mouseup', handleMouseUp)
-})
-onUnmounted(() => {
-  window.removeEventListener('mousemove', handleMouseMove)
-  window.removeEventListener('mouseup', handleMouseUp)
-})
-
-const COLUMN_WIDTH = 300 + GAP
-const ROW_HEIGHT = 300 + GAP
-const VIRTUAL_COLS = 2
-const VIRTUAL_ROWS = 2
-
-const columnHeights = computed(() =>
-  columns.value.map(col =>
-    col.reduce((sum, img) => sum + img.height + GAP, 0)
-  )
-)
 </script>
 
 <template>
-  <div class="h-screen w-full bg-black">
-    <DynamicScroller
-      :items="images"
-      :min-item-size="220"
-      class="w-full h-full"
-      key-field="id"
-      page-mode
+  <div class="relative h-screen w-screen overflow-hidden">
+    <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
+    <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
+      <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
+    </div>
+
+    <InfiniteCanvas 
+      :grid-size="160" 
+      class="absolute inset-0 z-10"
+      :initial-position="{ x: 0, y: 0 }"
     >
       <template #default="{ item }">
-        <DynamicScrollerItem :item :active="true" :size-dependencies="[item.height]">
-          <div
-            class="m-4 rounded-xl shadow-lg bg-white overflow-hidden"
-            :style="{ width: item.width + 'px', height: item.height + 'px' }"
-          >
-            <img
-              :src="item.url"
-              :alt="`Image ${item.id}`"
-              class="w-full h-full object-cover"
-              loading="lazy"
-            >
-          </div>
-        </DynamicScrollerItem>
+        <div class="absolute inset-1 flex items-center justify-center">
+          <Motion
+            v-if="images[item.gridIndex % images.length]"
+            as="img"
+            :initial="{
+              scale: 1.1,
+              opacity: 0,
+              filter: 'blur(20px)'
+            }"
+            :animate="{
+              scale: 1,
+              opacity: 1,
+              filter: 'blur(0px)'
+            }"
+            :transition="{
+              duration: 0.4,
+              delay: Math.random() * 0.2
+            }"
+            :src="images[item.gridIndex % images.length]?.url"
+            :alt="`Image ${item.gridIndex}`"
+            draggable="false"
+            class="size-full rounded-lg object-cover shadow-lg"
+          />
+        </div>
       </template>
-    </DynamicScroller>
+    </InfiniteCanvas>
+
+    <div class="pointer-events-none absolute inset-0 z-50 flex items-center justify-center">
+      <div class="rounded-full bg-black/20 px-4 py-2 text-white backdrop-blur-sm">
+        <p class="text-sm font-medium">
+          Drag, scroll, or swipe to explore
+        </p>
+      </div>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.grab {
-  cursor: grab;
-}
-
-.grabbing {
-  cursor: grabbing;
-}
-</style> 
