@@ -111,10 +111,23 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
   const lastMoveTime = ref(0)
   const velocityHistory = ref<Position[]>([])
 
+  // Drag detection state
+  const dragStartTime = ref(0)
+  const dragStartPosition = ref<Position>({ x: 0, y: 0 })
+  const hasMoved = ref(false)
+  const justFinishedDragging = ref(false)
+  const DRAG_THRESHOLD = 5 // pixels
+  const DRAG_TIME_THRESHOLD = 100 // milliseconds
+
   const containerDimensions = computed(() => {
     if (!containerRef.value) return { width: 0, height: 0 }
     const rect = containerRef.value.getBoundingClientRect()
     return { width: rect.width, height: rect.height }
+  })
+
+  // Check if user is actually dragging (moved enough distance/time)
+  const isActuallyDragging = computed(() => {
+    return (isDragging.value && hasMoved.value) || justFinishedDragging.value
   })
 
   const calculateVisibleItems = (): GridItem[] => {
@@ -198,6 +211,9 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
     }
 
     isDragging.value = true
+    hasMoved.value = false
+    dragStartTime.value = Date.now()
+    dragStartPosition.value = { x: clientX, y: clientY }
     lastPos.value = { x: clientX - offset.value.x, y: clientY - offset.value.y }
     velocity.value = { x: 0, y: 0 }
     velocityHistory.value = []
@@ -205,6 +221,16 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
 
   const handleMove = (clientX: number, clientY: number) => {
     if (!isDragging.value) return
+
+    // Check if we've moved enough to consider it a drag
+    const deltaX = Math.abs(clientX - dragStartPosition.value.x)
+    const deltaY = Math.abs(clientY - dragStartPosition.value.y)
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    const timeDelta = Date.now() - dragStartTime.value
+
+    if (distance > DRAG_THRESHOLD || timeDelta > DRAG_TIME_THRESHOLD) {
+      hasMoved.value = true
+    }
 
     const currentTime = performance.now()
     const newOffset = {
@@ -240,7 +266,16 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
   }
 
   const handleUp = () => {
+    if (hasMoved.value) {
+      justFinishedDragging.value = true
+      // Keep the "just finished dragging" state for longer to prevent accidental clicks
+      setTimeout(() => {
+        justFinishedDragging.value = false
+      }, 300)
+    }
+    
     isDragging.value = false
+    hasMoved.value = false
     animationFrame.value = requestAnimationFrame(animate)
   }
 
@@ -295,6 +330,7 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions) {
     containerRef,
     offset: readonly(offset),
     isDragging: readonly(isDragging),
+    isActuallyDragging: readonly(isActuallyDragging),
     gridItems: readonly(gridItems),
     isMoving: readonly(isMoving),
     containerDimensions: readonly(containerDimensions),

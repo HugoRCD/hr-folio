@@ -15,13 +15,25 @@ const props = withDefaults(defineProps<InfiniteCanvasProps>(), {
 })
 
 const slots = defineSlots<{
-  default(props: { item: T; index: number; position: { x: number; y: number }; isMoving: boolean }): any
+  default(props: { 
+    item: T
+    index: number
+    position: { x: number; y: number }
+    isMoving: boolean
+    isActuallyDragging: boolean
+    onItemClick: (event: MouseEvent) => void
+  }): any
+}>()
+
+const emit = defineEmits<{
+  itemClick: [item: T, event: MouseEvent]
 }>()
 
 const {
   containerRef,
   offset,
   isDragging,
+  isActuallyDragging,
   gridItems,
   isMoving,
   containerDimensions,
@@ -70,6 +82,25 @@ const getItemStyle = (gridItem: any) => {
     willChange: 'transform',
   }
 }
+
+// Handle item clicks - only fire if not dragging
+const handleItemClick = (item: T, event: MouseEvent) => {
+  if (isActuallyDragging.value || isDragging.value) {
+    event.preventDefault()
+    event.stopPropagation()
+    event.stopImmediatePropagation()
+    return false
+  }
+  
+  emit('itemClick', item, event)
+}
+
+// Wrapper to ensure no clicks during drag
+const createItemClickHandler = (item: T) => {
+  return (event: MouseEvent) => {
+    handleItemClick(item, event)
+  }
+}
 </script>
 
 <template>
@@ -99,6 +130,8 @@ const getItemStyle = (gridItem: any) => {
           :index="gridItem.index"
           :position="gridItem.position"
           :is-moving
+          :is-actually-dragging
+          :on-item-click="createItemClickHandler(items[gridItem.index]!)"
         />
       </div>
     </div>

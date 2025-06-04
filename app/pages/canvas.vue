@@ -74,6 +74,10 @@ const items: CanvasItem[] = [
     link: 'https://medium.com/@example/article'
   },
 ]
+
+const handleItemClick = (item: CanvasItem) => {
+  window.open(item.link, '_blank', 'noopener,noreferrer')
+}
 </script>
 
 <template>
@@ -82,13 +86,15 @@ const items: CanvasItem[] = [
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
     </div>
+    
     <InfiniteCanvas 
       :item-size="400"
       :gap="200"
       :items
       class="absolute inset-0"
+      @item-click="handleItemClick"
     >
-      <template #default="{ item, index }">
+      <template #default="{ item, index, onItemClick }">
         <Motion
           :initial="{
             opacity: 0,
@@ -104,8 +110,8 @@ const items: CanvasItem[] = [
           }" 
           class="group relative size-full cursor-pointer select-none overflow-hidden transition-all duration-300 hover:scale-105 ease-in-out"
           :class="index % 2 === 0 ? 'rotate-2 hover:rotate-0' : '-rotate-2 hover:rotate-0'"
+          @click="onItemClick"
         >
-          <NuxtLink :to="item.link" target="_blank" class="absolute inset-0 z-10" />
           <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 transition-all duration-300 border-2 border-default/50">
             <div class="relative size-full overflow-hidden rounded-xl">
               <img
