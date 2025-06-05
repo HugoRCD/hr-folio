@@ -78,16 +78,36 @@ const items: CanvasItem[] = [
 const handleItemClick = (item: CanvasItem) => {
   window.open(item.link, '_blank', 'noopener,noreferrer')
 }
+
+// Ref to access InfiniteCanvas methods
+const canvasRef = ref<{
+  offset: { x: number; y: number }
+  gridItems: Array<{ position: { x: number; y: number }; index: number }>
+  containerDimensions: { width: number; height: number }
+  canvasBounds: { width: number; height: number }
+}>()
+
+useHead({
+  meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }]
+})
+
+// Prevent browser navigation gestures
+if (import.meta.client) {
+  document.documentElement.style.overscrollBehavior = 'none'
+  document.body.style.overscrollBehavior = 'none'
+  document.body.style.touchAction = 'manipulation'
+}
 </script>
 
 <template>
-  <div class="relative h-screen w-screen overflow-hidden">
+  <div class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
     </div>
     
     <InfiniteCanvas 
+      ref="canvasRef"
       :item-size="400"
       :gap="200"
       :items
@@ -126,7 +146,19 @@ const handleItemClick = (item: CanvasItem) => {
       </template>
     </InfiniteCanvas>
 
-    <div class="pointer-events-none absolute inset-0 z-50 flex items-center justify-center">
+    <!-- Minimap -->
+    <CanvasMinimap
+      v-if="canvasRef"
+      :items
+      :grid-items="canvasRef.gridItems || []"
+      :item-size="400"
+      :gap="200"
+      :offset="canvasRef.offset || { x: 0, y: 0 }"
+      :container-dimensions="canvasRef.containerDimensions || { width: 0, height: 0 }"
+      :canvas-bounds="canvasRef.canvasBounds || { width: 0, height: 0 }"
+    />
+
+    <div class="pointer-events-none absolute bottom-4 left-4 z-50">
       <div class="rounded-full bg-black/50 px-6 py-3 text-white backdrop-blur-sm">
         <p class="text-sm font-medium">
           Click items to open links • {{ items.length }} items
