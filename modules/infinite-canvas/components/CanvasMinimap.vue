@@ -80,7 +80,7 @@ const viewportRect = computed(() => {
 </script>
 
 <template>
-  <div class="fixed bottom-20 sm:bottom-4 right-4 pointer-events-none">
+  <div class="fixed bottom-4 right-4 pointer-events-none">
     <div class="relative overflow-hidden rounded-lg border border-default bg-default/40 p-2 backdrop-blur-sm shadow-lg">
       <!-- Minimap container -->
       <div 

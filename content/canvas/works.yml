@@ -1,27 +1,58 @@
-title: Works
-description: A canvas for my works.
+title: Works Canvas
+description: A canvas featuring all my works that i'm proud of.
 items:
-  - title: Shelve
-    description: A tool to manage your bookmarks.
-    link: https://shelve.dev
-    image: /assets/works/shelve.png
+  - title: Shelve Open Graph Image
+    link: https://shelve.cloud
+    image: /assets/canvas/works/shelve/og.png
     width: 480
     height: 270
-  - title: Canvas
-    description: A canvas for my projects.
-    link: https://canvas.dev
-    image: /assets/works/canvas.png
-    width: 480
-    height: 270
-  - title: Nuxt.com
+  - title: Nuxt.com 2025 Redesign
     description: The official website of Nuxt.
     link: https://nuxt.com
     image: /assets/works/nuxt.com.png
+    width: 500
+    height: 290
+  - title: Shelve Navbar
+    link: https://shelve.cloud
+    image: /assets/canvas/works/shelve/navbar.png
+    width: 680
+    height: 240
+  - title: Shelve Command Console
+    link: https://shelve.cloud
+    image: /assets/canvas/works/shelve/command-console.gif
+    width: 480
+    height: 270
+  - title: Nuxt UI Pro Portfolio Template Hero
+    link: https://portfolio-template.nuxt.dev/
+    image: /assets/canvas/works/nuxt-ui-portfolio/hero.gif
+    width: 480
+    height: 270
+  - title: Canvas Portfolio Template
+    description: A portfolio template
+    link: https://canvas.cloud
+    image: /assets/works/canvas.png
     width: 480
     height: 270
   - title: Nuxt UI
     description: The official website of Nuxt UI.
     link: https://ui.nuxt.com
     image: /assets/works/nuxt-ui.png
+    width: 480
+    height: 270
+  - title: Nuxt.com Modules Page
+    description: The modules page of Nuxt.com.
+    link: https://nuxt.com/modules
+    image: /assets/canvas/works/nuxt.com/modules-page.gif
+    width: 480
+    height: 270
+  - title: Nuxt Raycast Extension
+    description: A Raycast extension for Nuxt.
+    link: https://github.com/nuxt/raycast-extension
+    image: /assets/canvas/works/nuxt-raycast-extension.png
+    width: 480
+    height: 270
+  - title: Inkly Open Graph Image
+    link: https://inkly.hrcd.fr
+    image: /assets/canvas/works/inkly.png
     width: 480
     height: 270

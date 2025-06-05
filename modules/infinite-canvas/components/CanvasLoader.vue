@@ -1,10 +1,15 @@
 <script setup lang="ts">
 interface LoaderProps {
+  title?: string
+  description?: string
   progress: number
   isVisible: boolean
 }
 
-const props = defineProps<LoaderProps>()
+const props = withDefaults(defineProps<LoaderProps>(), {
+  title: 'Loading Canvas',
+  description: 'Preparing your visual journey...',
+})
 
 const circumference = 2 * Math.PI * 45
 const strokeDashoffset = computed(() => {
@@ -75,10 +80,10 @@ const progressPercent = computed(() => {
             :transition="{ duration: 0.5, delay: 0.2 }"
           >
             <h2 class="text-2xl font-light text-white mb-2">
-              Loading Canvas
+              {{ title }}
             </h2>
             <p class="text-sm text-white/60">
-              Preparing your visual journey...
+              {{ description }}
             </p>
           </Motion>
         </div>

@@ -42,10 +42,7 @@ onMounted(() => {
 })
 
 const canvasRef = ref<any>(null)
-
-useHead({
-  meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }]
-})
+const route = useRoute()
 
 // Prevent browser navigation gestures
 if (import.meta.client) {
@@ -56,9 +53,17 @@ if (import.meta.client) {
 </script>
 
 <template>
-  <UApp class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
+  <UApp v-if="data" class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
+    <FolioMeta :page="data" :is-writing="false" />
     <div class="absolute top-4 right-4 z-50 isolate touch-auto select-auto cursor-pointer">
       <ThemeSelector />
+    </div>
+    <div class="absolute top-4 left-4 z-50 isolate touch-auto select-auto cursor-pointer">
+      <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
+        <span class="font-serif italic hover:text-primary hover:underline">
+          go back<span class="text-primary">.</span>
+        </span>
+      </NuxtLink>
     </div>
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
@@ -80,7 +85,7 @@ if (import.meta.client) {
       class="absolute inset-0"
       @item-click="handleItemClick"
     >
-      <template #default="{ item, onItemClick }">
+      <template #default="{ item, index, onItemClick }">
         <Motion
           :initial="{
             opacity: 0,
@@ -102,6 +107,7 @@ if (import.meta.client) {
             ease: 'easeOut'
           }" 
           class="group relative size-full cursor-pointer select-none overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300"
+          :class="index % 2 === 0 ? 'rotate-1' : '-rotate-1'"
           @click="onItemClick"
         >
           <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 border-2 border-default/50">
@@ -126,9 +132,10 @@ if (import.meta.client) {
       :zoom="canvasRef.zoom || 1"
       :container-dimensions="canvasRef.containerDimensions || { width: 0, height: 0 }"
       :canvas-bounds="canvasRef.canvasBounds || { width: 0, height: 0 }"
+      class="scale-85 sm:scale-100 origin-bottom-right"
     />
 
-    <div class="pointer-events-none absolute bottom-4 left-4 z-40">
+    <div class="pointer-events-none absolute bottom-4 left-4 z-40 flex flex-col gap-2">
       <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
         <p class="text-xs opacity-75">
           <span class="sm:hidden">Tap items to open links</span><span class="hidden sm:inline">Click items to open links</span> • {{ data?.items.length }} items
@@ -137,11 +144,7 @@ if (import.meta.client) {
           </span>
         </p>
       </div>
-    </div>
-
-    <!-- Zoom indicator - Desktop only -->
-    <div class="pointer-events-none absolute top-4 left-4 z-40 hidden sm:block">
-      <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
+      <div class="hidden sm:block rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
         <p class="text-xs opacity-75">
           Hold Ctrl/⌘/Alt + scroll to zoom (40%-220%)
         </p>
@@ -151,6 +154,7 @@ if (import.meta.client) {
     <CanvasLoader
       :progress="loaderProgress"
       :is-visible="showLoader"
+      title="Loading Works Canvas"
     />
   </UApp>
 </template>
