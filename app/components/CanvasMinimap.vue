@@ -1,10 +1,14 @@
 <script setup lang="ts">
 interface MinimapProps {
   items: Array<any>
-  gridItems: Array<{ position: { x: number; y: number }; index: number }>
-  itemSize: number
-  gap: number
+  gridItems: Array<{ 
+    position: { x: number; y: number }
+    index: number
+    width: number
+    height: number
+  }>
   offset: { x: number; y: number }
+  zoom: number
   containerDimensions: { width: number; height: number }
   canvasBounds: { width: number; height: number }
 }
@@ -27,30 +31,44 @@ const minimapDimensions = computed(() => ({
   height: props.canvasBounds.height * minimapScale.value
 }))
 
-// Convert grid items to minimap positions
+// Convert grid items to minimap positions with real dimensions
 const minimapItems = computed(() => {
-  return props.gridItems.map(item => ({
-    ...item,
-    minimapPosition: {
-      x: item.position.x * minimapScale.value,
-      y: item.position.y * minimapScale.value
+  return props.gridItems.map(item => {
+    const scaledWidth = (item.width || 300) * minimapScale.value
+    const scaledHeight = (item.height || 300) * minimapScale.value
+    
+    return {
+      ...item,
+      minimapPosition: {
+        x: item.position.x * minimapScale.value,
+        y: item.position.y * minimapScale.value
+      },
+      minimapSize: {
+        width: Math.max(2, scaledWidth),
+        height: Math.max(2, scaledHeight)
+      }
     }
-  }))
+  })
 })
 
-// Calculate viewport rectangle in minimap coordinates
+// Calculate viewport rectangle in minimap coordinates with zoom
 const viewportRect = computed(() => {
   const { width, height } = props.containerDimensions
+  const currentZoom = props.zoom
   
-  // Current viewport position in canvas coordinates (top-left corner)
-  const viewportX = -props.offset.x
-  const viewportY = -props.offset.y
+  // Current viewport position in canvas coordinates (accounting for zoom)
+  const viewportX = (-props.offset.x) / currentZoom
+  const viewportY = (-props.offset.y) / currentZoom
+  
+  // Actual viewport size in canvas coordinates (smaller when zoomed in)
+  const actualViewportWidth = width / currentZoom
+  const actualViewportHeight = height / currentZoom
   
   // Convert to minimap coordinates
   const minimapX = viewportX * minimapScale.value
   const minimapY = viewportY * minimapScale.value
-  const minimapWidth = width * minimapScale.value
-  const minimapHeight = height * minimapScale.value
+  const minimapWidth = actualViewportWidth * minimapScale.value
+  const minimapHeight = actualViewportHeight * minimapScale.value
   
   return {
     x: Math.max(0, Math.min(minimapDimensions.value.width - minimapWidth, minimapX)),
@@ -79,14 +97,14 @@ const viewportRect = computed(() => {
             height: minimapDimensions.height + 'px'
           }"
         >
-          <!-- Items as small dots -->
+          <!-- Items with real shapes -->
           <div
             v-for="item in minimapItems"
             :key="item.index"
-            class="absolute bg-white/70 rounded-full"
+            class="absolute bg-white/80 border border-white/30 rounded-sm"
             :style="{
-              width: '2px',
-              height: '2px',
+              width: item.minimapSize.width + 'px',
+              height: item.minimapSize.height + 'px',
               left: item.minimapPosition.x + 'px',
               top: item.minimapPosition.y + 'px'
             }"

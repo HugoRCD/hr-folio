@@ -126,7 +126,13 @@ onMounted(() => {
 
 const canvasRef = ref<{
   offset: { x: number; y: number }
-  gridItems: Array<{ position: { x: number; y: number }; index: number }>
+  zoom: number
+  gridItems: Array<{ 
+    position: { x: number; y: number }
+    index: number
+    width: number
+    height: number
+  }>
   containerDimensions: { width: number; height: number }
   canvasBounds: { width: number; height: number }
 }>()
@@ -157,6 +163,14 @@ if (import.meta.client) {
       ref="canvasRef"
       :items
       :base-gap="50"
+      :zoom-options="{
+        minZoom: 0.5,
+        maxZoom: 2.0,
+        zoomFactor: 1.08,
+        enableCtrl: true,
+        enableMeta: true,
+        enableAlt: true
+      }"
       class="absolute inset-0"
       @item-click="handleItemClick"
     >
@@ -203,9 +217,8 @@ if (import.meta.client) {
       v-if="canvasRef"
       :items
       :grid-items="canvasRef.gridItems || []"
-      :item-size="400"
-      :gap="200"
       :offset="canvasRef.offset || { x: 0, y: 0 }"
+      :zoom="canvasRef.zoom || 1"
       :container-dimensions="canvasRef.containerDimensions || { width: 0, height: 0 }"
       :canvas-bounds="canvasRef.canvasBounds || { width: 0, height: 0 }"
     />
@@ -214,6 +227,18 @@ if (import.meta.client) {
       <div class="rounded-full bg-black/50 px-6 py-3 text-white backdrop-blur-sm">
         <p class="text-sm font-medium">
           Click items to open links • {{ items.length }} items
+          <span v-if="canvasRef?.zoom" class="ml-2 opacity-60">
+            • {{ Math.round((canvasRef.zoom || 1) * 100) }}%
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Zoom indicator -->
+    <div class="pointer-events-none absolute top-4 left-4 z-50">
+      <div class="rounded-lg bg-black/50 px-3 py-2 text-white backdrop-blur-sm">
+        <p class="text-xs opacity-75">
+          Hold Ctrl/⌘/Alt + scroll to zoom (50%-200%)
         </p>
       </div>
     </div>

@@ -91,9 +91,19 @@ interface CanvasItem {
   [key: string]: any
 }
 
+interface ZoomOptions {
+  minZoom?: number
+  maxZoom?: number
+  zoomFactor?: number
+  enableCtrl?: boolean
+  enableMeta?: boolean
+  enableAlt?: boolean
+}
+
 export function useInfiniteCanvas(props: {
   items: CanvasItem[]
   baseGap?: number
+  zoomOptions?: ZoomOptions
   containerRef: Ref<HTMLElement | null>
 }) {
   // Physics constants
@@ -107,6 +117,7 @@ export function useInfiniteCanvas(props: {
   const isDragging = ref(false)
   const justFinishedDragging = ref(false)
   const containerDimensions = ref({ width: 0, height: 0 })
+  const zoom = ref(1) // Zoom level, 1 = 100%
 
   // Drag state
   const dragStart = ref({ x: 0, y: 0 })
@@ -227,15 +238,17 @@ export function useInfiniteCanvas(props: {
     })
   })
 
-  // Get visible items based on viewport
+  // Get visible items based on viewport with zoom consideration
   const visibleItems = computed(() => {
     const { width, height } = containerDimensions.value
     const buffer = 500
+    const currentZoom = zoom.value
     
-    const viewportLeft = -offset.value.x - buffer
-    const viewportRight = -offset.value.x + width + buffer
-    const viewportTop = -offset.value.y - buffer
-    const viewportBottom = -offset.value.y + height + buffer
+    // Calculate the actual viewport in canvas coordinates (accounting for zoom)
+    const viewportLeft = (-offset.value.x) / currentZoom - buffer
+    const viewportRight = (-offset.value.x + width) / currentZoom + buffer
+    const viewportTop = (-offset.value.y) / currentZoom - buffer
+    const viewportBottom = (-offset.value.y + height) / currentZoom + buffer
     
     return gridItems.value.filter(gridItem => {
       const itemRight = gridItem.position.x + gridItem.width
@@ -250,16 +263,20 @@ export function useInfiniteCanvas(props: {
     })
   })
 
-  // Constrain offset to canvas bounds
+  // Constrain offset to canvas bounds with zoom consideration
   const constrainOffset = (newOffset: { x: number; y: number }) => {
     const { width: containerWidth, height: containerHeight } = containerDimensions.value
     const { width: canvasWidth, height: canvasHeight } = canvasBounds.value
+    const currentZoom = zoom.value
     
-    // Calculate limits
+    // Calculate limits with zoom
+    const scaledCanvasWidth = canvasWidth * currentZoom
+    const scaledCanvasHeight = canvasHeight * currentZoom
+    
     const maxOffsetX = 0
-    const minOffsetX = Math.min(0, containerWidth - canvasWidth)
+    const minOffsetX = Math.min(0, containerWidth - scaledCanvasWidth)
     const maxOffsetY = 0
-    const minOffsetY = Math.min(0, containerHeight - canvasHeight)
+    const minOffsetY = Math.min(0, containerHeight - scaledCanvasHeight)
     
     return {
       x: Math.max(minOffsetX, Math.min(maxOffsetX, newOffset.x)),
@@ -364,16 +381,65 @@ export function useInfiniteCanvas(props: {
     dragStart.value = { x: 0, y: 0 }
   }
 
-  // Wheel handler
+  // Wheel handler with zoom support
   const handleWheel = (event: WheelEvent) => {
     event.preventDefault()
     
-    const newOffset = {
-      x: offset.value.x - event.deltaX,
-      y: offset.value.y - event.deltaY
+    // Get zoom options with defaults
+    const zoomOpts = props.zoomOptions || {}
+    const minZoom = zoomOpts.minZoom ?? 0.5 // 50% minimum
+    const maxZoom = zoomOpts.maxZoom ?? 2.0 // 200% maximum
+    const zoomFactorIn = zoomOpts.zoomFactor ?? 1.08
+    const zoomFactorOut = 1 / zoomFactorIn
+    const enableCtrl = zoomOpts.enableCtrl ?? true
+    const enableMeta = zoomOpts.enableMeta ?? true
+    const enableAlt = zoomOpts.enableAlt ?? true
+    
+    // Check if any of the enabled modifier keys are pressed
+    const isZoomModifier = (
+      (enableCtrl && event.ctrlKey) ||
+      (enableMeta && event.metaKey) ||
+      (enableAlt && event.altKey)
+    )
+    
+    if (isZoomModifier) {
+      // Zoom with configurable limits
+      const zoomFactor = event.deltaY > 0 ? zoomFactorOut : zoomFactorIn
+      const newZoom = Math.max(minZoom, Math.min(maxZoom, zoom.value * zoomFactor))
+      
+      // Zoom towards mouse position
+      const rect = props.containerRef.value?.getBoundingClientRect()
+      if (rect) {
+        const mouseX = event.clientX - rect.left
+        const mouseY = event.clientY - rect.top
+        
+        // Calculate zoom center point in canvas coordinates
+        const canvasX = (mouseX - offset.value.x) / zoom.value
+        const canvasY = (mouseY - offset.value.y) / zoom.value
+        
+        // Update zoom
+        zoom.value = newZoom
+        
+        // Adjust offset to zoom towards mouse position
+        const newOffset = {
+          x: mouseX - canvasX * zoom.value,
+          y: mouseY - canvasY * zoom.value
+        }
+        
+        offset.value = constrainOffset(newOffset)
+      } else {
+        zoom.value = newZoom
+      }
+    } else {
+      // Pan
+      const newOffset = {
+        x: offset.value.x - event.deltaX,
+        y: offset.value.y - event.deltaY
+      }
+      
+      offset.value = constrainOffset(newOffset)
     }
     
-    offset.value = constrainOffset(newOffset)
     velocity.value = { x: 0, y: 0 }
   }
 
@@ -394,6 +460,7 @@ export function useInfiniteCanvas(props: {
 
   return {
     offset: readonly(offset),
+    zoom: readonly(zoom),
     visibleItems,
     gridItems,
     containerDimensions: readonly(containerDimensions),

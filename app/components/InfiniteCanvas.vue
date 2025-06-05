@@ -1,7 +1,17 @@
 <script setup lang="ts" generic="T = any">
+interface ZoomOptions {
+  minZoom?: number
+  maxZoom?: number
+  zoomFactor?: number
+  enableCtrl?: boolean
+  enableMeta?: boolean
+  enableAlt?: boolean
+}
+
 interface InfiniteCanvasProps {
   items: T[]
   baseGap?: number
+  zoomOptions?: ZoomOptions
 }
 
 interface InfiniteCanvasEmits {
@@ -20,6 +30,7 @@ const containerRef = ref<HTMLElement | null>(null)
 // Canvas logic
 const {
   offset,
+  zoom,
   visibleItems,
   gridItems,
   containerDimensions,
@@ -34,6 +45,7 @@ const {
 } = useInfiniteCanvas({
   items: props.items as any[],
   baseGap: props.baseGap,
+  zoomOptions: props.zoomOptions,
   containerRef
 })
 
@@ -99,6 +111,7 @@ onUnmounted(() => {
 defineExpose({
   navigateTo,
   offset,
+  zoom,
   gridItems,
   containerDimensions,
   canvasBounds
@@ -120,9 +133,9 @@ defineExpose({
   >
     <!-- Canvas -->
     <div
-      class="absolute"
+      class="absolute origin-top-left"
       :style="{
-        transform: `translate(${offset.x}px, ${offset.y}px)`,
+        transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
         width: `${canvasBounds.width}px`,
         height: `${canvasBounds.height}px`
       }"
