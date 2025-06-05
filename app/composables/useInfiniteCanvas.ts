@@ -85,10 +85,15 @@ function throttle<T extends(...args: unknown[]) => unknown>(
   return throttledFn
 }
 
+interface CanvasItem {
+  width?: number
+  height?: number
+  [key: string]: any
+}
+
 export function useInfiniteCanvas(props: {
-  items: any[]
-  itemSize: number
-  gap: number
+  items: CanvasItem[]
+  baseGap?: number
   containerRef: Ref<HTMLElement | null>
 }) {
   // Physics constants
@@ -126,42 +131,66 @@ export function useInfiniteCanvas(props: {
   const gridItems = computed(() => {
     const { centerX, centerY } = canvasBounds.value
     const maxRadius = Math.min(centerX, centerY) * 0.8
-    const safetyMargin = Math.max(props.gap, 40) // Minimum 40px gap
-    const minDistance = props.itemSize + safetyMargin // Safe distance between items
+    const baseGap = props.baseGap || 40
     
-    const placedItems: Array<{ position: { x: number; y: number }; index: number }> = []
+    const placedItems: Array<{ 
+      position: { x: number; y: number }
+      index: number
+      width: number
+      height: number
+    }> = []
     
-    // Check if two items collide with extra safety margin
-    const checkCollision = (pos1: { x: number; y: number }, pos2: { x: number; y: number }) => {
-      const dx = pos1.x - pos2.x
-      const dy = pos1.y - pos2.y
-      const distance = Math.sqrt(dx * dx + dy * dy)
-      return distance < minDistance
+    // Check if two items collide with their actual dimensions
+    const checkCollision = (
+      pos1: { x: number; y: number }, 
+      size1: { width: number; height: number },
+      pos2: { x: number; y: number }, 
+      size2: { width: number; height: number }
+    ) => {
+      const left1 = pos1.x - baseGap
+      const right1 = pos1.x + size1.width + baseGap
+      const top1 = pos1.y - baseGap
+      const bottom1 = pos1.y + size1.height + baseGap
+      
+      const left2 = pos2.x
+      const right2 = pos2.x + size2.width
+      const top2 = pos2.y
+      const bottom2 = pos2.y + size2.height
+      
+      return !(right1 < left2 || left1 > right2 || bottom1 < top2 || top1 > bottom2)
     }
     
     // Simplified positioning algorithm
     const findValidPosition = (index: number) => {
+      const item = props.items[index]
+      if (!item) return { x: centerX, y: centerY }
+        
+      const itemWidth = item.width || 300
+      const itemHeight = item.height || 300
+      const maxDimension = Math.max(itemWidth, itemHeight)
+      
       let attempts = 0
-      const maxAttempts = 200 // More attempts for better results
+      const maxAttempts = 200
       
       while (attempts < maxAttempts) {
         // Start from center and spiral outward
-        const radiusStep = minDistance * 0.8
-        const currentRadius = Math.sqrt(attempts) * radiusStep
-        const angle = index * 137.508 + attempts * 13.7 // Golden angle with variation
+        const radiusStep = maxDimension + baseGap
+        const currentRadius = Math.sqrt(attempts) * radiusStep * 0.6
+        const angle = index * 137.508 + attempts * 13.7
         
-        // Add some controlled variation
+        // Add variation
         const variation = Math.sin(index * 17.3 + attempts * 5.7) * radiusStep * 0.3
         const finalRadius = Math.min(currentRadius + variation, maxRadius)
         
-        const x = centerX + Math.cos(angle) * finalRadius
-        const y = centerY + Math.sin(angle) * finalRadius
+        const x = centerX + Math.cos(angle) * finalRadius - itemWidth / 2
+        const y = centerY + Math.sin(angle) * finalRadius - itemHeight / 2
         
         const newPosition = { x, y }
+        const newSize = { width: itemWidth, height: itemHeight }
         
         // Check collision with all placed items
-        const hasCollision = placedItems.some(item => 
-          checkCollision(newPosition, item.position)
+        const hasCollision = placedItems.some(placedItem => 
+          checkCollision(newPosition, newSize, placedItem.position, placedItem)
         )
         
         if (!hasCollision) {
@@ -171,20 +200,28 @@ export function useInfiniteCanvas(props: {
         attempts++
       }
       
-      // Emergency spiral fallback if no position found
+      // Emergency spiral fallback
       const emergencyAngle = index * 2.4
-      const emergencyRadius = Math.sqrt(index) * minDistance
+      const emergencyRadius = Math.sqrt(index) * (maxDimension + baseGap)
       
       return {
-        x: centerX + Math.cos(emergencyAngle) * emergencyRadius,
-        y: centerY + Math.sin(emergencyAngle) * emergencyRadius
+        x: centerX + Math.cos(emergencyAngle) * emergencyRadius - itemWidth / 2,
+        y: centerY + Math.sin(emergencyAngle) * emergencyRadius - itemHeight / 2
       }
     }
     
     // Place all items one by one
     return props.items.map((item, index) => {
       const position = findValidPosition(index)
-      const gridItem = { position, index }
+      const itemWidth = item.width || 300
+      const itemHeight = item.height || 300
+      
+      const gridItem = { 
+        position, 
+        index,
+        width: itemWidth,
+        height: itemHeight
+      }
       placedItems.push(gridItem)
       return gridItem
     })
@@ -193,21 +230,21 @@ export function useInfiniteCanvas(props: {
   // Get visible items based on viewport
   const visibleItems = computed(() => {
     const { width, height } = containerDimensions.value
-    const buffer = Math.max(props.itemSize, 500)
+    const buffer = 500
     
     const viewportLeft = -offset.value.x - buffer
     const viewportRight = -offset.value.x + width + buffer
     const viewportTop = -offset.value.y - buffer
     const viewportBottom = -offset.value.y + height + buffer
     
-    return gridItems.value.filter(item => {
-      const itemRight = item.position.x + props.itemSize
-      const itemBottom = item.position.y + props.itemSize
+    return gridItems.value.filter(gridItem => {
+      const itemRight = gridItem.position.x + gridItem.width
+      const itemBottom = gridItem.position.y + gridItem.height
       
       return (
-        item.position.x < viewportRight &&
+        gridItem.position.x < viewportRight &&
         itemRight > viewportLeft &&
-        item.position.y < viewportBottom &&
+        gridItem.position.y < viewportBottom &&
         itemBottom > viewportTop
       )
     })

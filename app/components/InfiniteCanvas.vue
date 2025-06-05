@@ -1,8 +1,7 @@
 <script setup lang="ts" generic="T = any">
 interface InfiniteCanvasProps {
   items: T[]
-  itemSize: number
-  gap?: number
+  baseGap?: number
 }
 
 interface InfiniteCanvasEmits {
@@ -10,7 +9,7 @@ interface InfiniteCanvasEmits {
 }
 
 const props = withDefaults(defineProps<InfiniteCanvasProps>(), {
-  gap: 0
+  baseGap: 40
 })
 
 const emit = defineEmits<InfiniteCanvasEmits>()
@@ -33,9 +32,8 @@ const {
   handleWheel,
   navigateTo
 } = useInfiniteCanvas({
-  items: props.items,
-  itemSize: props.itemSize,
-  gap: props.gap,
+  items: props.items as any[],
+  baseGap: props.baseGap,
   containerRef
 })
 
@@ -137,8 +135,8 @@ defineExpose({
         :style="{
           left: `${gridItem.position.x}px`,
           top: `${gridItem.position.y}px`,
-          width: `${itemSize}px`,
-          height: `${itemSize}px`
+          width: `${gridItem.width}px`,
+          height: `${gridItem.height}px`
         }"
       >
         <slot

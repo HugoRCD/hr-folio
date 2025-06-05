@@ -94,7 +94,7 @@ const viewportRect = computed(() => {
 
           <!-- Viewport indicator -->
           <div
-            class="absolute border border-blue-400/80 bg-blue-400/10"
+            class="absolute border border-primary/80 bg-primary/10"
             :style="{
               left: viewportRect.x + 'px',
               top: viewportRect.y + 'px',

@@ -10,68 +10,90 @@ interface CanvasItem {
   title: string
   type: ItemType
   link: string
+  width?: number
+  height?: number
 }
 
 const items: CanvasItem[] = [
   {
-    image: 'https://picsum.photos/seed/1/600/400',
-    title: 'Beautiful Landscape',
-    type: 'image',
-    link: 'https://example.com/landscape'
+    image: '/assets/works/shelve.png',
+    title: 'Shelve',
+    type: 'project',
+    link: 'https://shelve.cloud',
+    width: 480,
+    height: 270 // 16:9 ratio
   },
   {
-    image: 'https://picsum.photos/seed/2/600/400', 
+    image: 'https://picsum.photos/seed/2/400/400', 
     title: 'Architecture Design',
     type: 'project',
-    link: 'https://dribbble.com/shots/example'
+    link: 'https://dribbble.com/shots/example',
+    width: 300,
+    height: 300 // Square
   },
   {
-    image: 'https://picsum.photos/seed/3/600/400',
+    image: 'https://picsum.photos/seed/3/300/450',
     title: 'Nature Photography',
     type: 'image',
-    link: 'https://unsplash.com/@example'
+    link: 'https://unsplash.com/@example',
+    width: 250,
+    height: 375 // 2:3 ratio
   },
   {
-    image: 'https://picsum.photos/seed/4/600/400',
+    image: 'https://picsum.photos/seed/4/400/300',
     title: 'Tweet Thread',
     type: 'tweet',
-    link: 'https://twitter.com/example/status/123'
+    link: 'https://twitter.com/example/status/123',
+    width: 320,
+    height: 240 // 4:3 ratio
   },
   {
-    image: 'https://picsum.photos/seed/5/600/400',
+    image: 'https://picsum.photos/seed/5/500/300',
     title: 'Web Design',
     type: 'website',
-    link: 'https://example.com'
+    link: 'https://example.com',
+    width: 400,
+    height: 240 // Wide format
   },
   {
-    image: 'https://picsum.photos/seed/6/600/400',
+    image: 'https://picsum.photos/seed/6/300/400',
     title: 'Mobile App',
     type: 'app',
-    link: 'https://apps.apple.com/app/example'
+    link: 'https://apps.apple.com/app/example',
+    width: 240,
+    height: 320 // Phone ratio
   },
   {
-    image: 'https://picsum.photos/seed/7/600/400',
+    image: 'https://picsum.photos/seed/7/350/350',
     title: 'UI Components',
     type: 'design',
-    link: 'https://figma.com/example'
+    link: 'https://figma.com/example',
+    width: 280,
+    height: 280 // Square
   },
   {
-    image: 'https://picsum.photos/seed/8/600/400',
+    image: 'https://picsum.photos/seed/8/450/300',
     title: 'Brand Identity',
     type: 'branding',
-    link: 'https://behance.net/example'
+    link: 'https://behance.net/example',
+    width: 360,
+    height: 240 // 3:2 ratio
   },
   {
-    image: 'https://picsum.photos/seed/9/600/400',
+    image: 'https://picsum.photos/seed/9/350/200',
     title: 'Code Repository',
     type: 'code',
-    link: 'https://github.com/example/repo'
+    link: 'https://github.com/example/repo',
+    width: 350,
+    height: 200 // Wide
   },
   {
-    image: 'https://picsum.photos/seed/10/600/400',
+    image: 'https://picsum.photos/seed/10/300/400',
     title: 'Blog Article',
     type: 'article',
-    link: 'https://medium.com/@example/article'
+    link: 'https://medium.com/@example/article',
+    width: 260,
+    height: 347 // Article format
   },
 ]
 
@@ -79,7 +101,29 @@ const handleItemClick = (item: CanvasItem) => {
   window.open(item.link, '_blank', 'noopener,noreferrer')
 }
 
-// Ref to access InfiniteCanvas methods
+const imageUrls = computed(() => items.map(item => item.image))
+
+const loaderProgress = ref(0)
+const showLoader = ref(true)
+const isImagesLoaded = ref(false)
+
+const { progress, isComplete, startPreloading } = useImagePreloader({
+  images: imageUrls.value,
+  onProgress: (newProgress) => {
+    loaderProgress.value = newProgress
+  },
+  onComplete: () => {
+    isImagesLoaded.value = true
+    setTimeout(() => {
+      showLoader.value = false
+    }, 500)
+  }
+})
+
+onMounted(() => {
+  startPreloading()
+})
+
 const canvasRef = ref<{
   offset: { x: number; y: number }
   gridItems: Array<{ position: { x: number; y: number }; index: number }>
@@ -100,7 +144,10 @@ if (import.meta.client) {
 </script>
 
 <template>
-  <div class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
+  <UApp class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
+    <div class="absolute top-4 right-4 z-50 isolate touch-auto select-auto cursor-pointer">
+      <ThemeSelector />
+    </div>
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
@@ -108,9 +155,8 @@ if (import.meta.client) {
     
     <InfiniteCanvas 
       ref="canvasRef"
-      :item-size="400"
-      :gap="200"
       :items
+      :base-gap="50"
       class="absolute inset-0"
       @item-click="handleItemClick"
     >
@@ -118,15 +164,22 @@ if (import.meta.client) {
         <Motion
           :initial="{
             opacity: 0,
-            filter: 'blur(20px)'
+            filter: 'blur(20px)',
+            scale: 0.8
           }"
-          :animate="{
+          :animate="isImagesLoaded ? {
             opacity: 1,
-            filter: 'blur(0px)'
+            filter: 'blur(0px)',
+            scale: 1
+          } : {
+            opacity: 0,
+            filter: 'blur(20px)',
+            scale: 0.8
           }"
           :transition="{
-            duration: 0.6,
-            delay: Math.random() * 0.6
+            duration: 0.8,
+            delay: isImagesLoaded ? Math.random() * 0.8 : 0,
+            ease: 'easeOut'
           }" 
           class="group relative size-full cursor-pointer select-none overflow-hidden transition-all duration-300 hover:scale-105 ease-in-out"
           :class="index % 2 === 0 ? 'rotate-2 hover:rotate-0' : '-rotate-2 hover:rotate-0'"
@@ -146,7 +199,6 @@ if (import.meta.client) {
       </template>
     </InfiniteCanvas>
 
-    <!-- Minimap -->
     <CanvasMinimap
       v-if="canvasRef"
       :items
@@ -165,5 +217,10 @@ if (import.meta.client) {
         </p>
       </div>
     </div>
-  </div>
+
+    <CanvasLoader
+      :progress="loaderProgress"
+      :is-visible="showLoader"
+    />
+  </UApp>
 </template>
