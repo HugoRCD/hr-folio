@@ -3,12 +3,10 @@ definePageMeta({
   layout: false,
 })
 
-type ItemType = 'image' | 'project' | 'tweet' | 'website' | 'app' | 'design' | 'branding' | 'code' | 'article'
 
 interface CanvasItem {
   image: string
   title: string
-  type: ItemType
   link: string
   width?: number
   height?: number
@@ -18,7 +16,6 @@ const items: CanvasItem[] = [
   {
     image: '/assets/works/shelve.png',
     title: 'Shelve',
-    type: 'project',
     link: 'https://shelve.cloud',
     width: 480,
     height: 270 // 16:9 ratio
@@ -26,7 +23,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/2/400/400', 
     title: 'Architecture Design',
-    type: 'project',
     link: 'https://dribbble.com/shots/example',
     width: 300,
     height: 300 // Square
@@ -34,7 +30,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/3/300/450',
     title: 'Nature Photography',
-    type: 'image',
     link: 'https://unsplash.com/@example',
     width: 250,
     height: 375 // 2:3 ratio
@@ -42,7 +37,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/4/400/300',
     title: 'Tweet Thread',
-    type: 'tweet',
     link: 'https://twitter.com/example/status/123',
     width: 320,
     height: 240 // 4:3 ratio
@@ -50,7 +44,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/5/500/300',
     title: 'Web Design',
-    type: 'website',
     link: 'https://example.com',
     width: 400,
     height: 240 // Wide format
@@ -58,7 +51,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/6/300/400',
     title: 'Mobile App',
-    type: 'app',
     link: 'https://apps.apple.com/app/example',
     width: 240,
     height: 320 // Phone ratio
@@ -66,7 +58,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/7/350/350',
     title: 'UI Components',
-    type: 'design',
     link: 'https://figma.com/example',
     width: 280,
     height: 280 // Square
@@ -74,7 +65,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/8/450/300',
     title: 'Brand Identity',
-    type: 'branding',
     link: 'https://behance.net/example',
     width: 360,
     height: 240 // 3:2 ratio
@@ -82,7 +72,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/9/350/200',
     title: 'Code Repository',
-    type: 'code',
     link: 'https://github.com/example/repo',
     width: 350,
     height: 200 // Wide
@@ -90,7 +79,6 @@ const items: CanvasItem[] = [
   {
     image: 'https://picsum.photos/seed/10/300/400',
     title: 'Blog Article',
-    type: 'article',
     link: 'https://medium.com/@example/article',
     width: 260,
     height: 347 // Article format
@@ -159,8 +147,8 @@ if (import.meta.client) {
       :items
       :base-gap="50"
       :zoom-options="{
-        minZoom: 0.5,
-        maxZoom: 2.0,
+        minZoom: 0.4,
+        maxZoom: 2.2,
         zoomFactor: 1.08,
         enableCtrl: true,
         enableMeta: true,
@@ -169,7 +157,7 @@ if (import.meta.client) {
       class="absolute inset-0"
       @item-click="handleItemClick"
     >
-      <template #default="{ item, index, onItemClick }">
+      <template #default="{ item, onItemClick }">
         <Motion
           :initial="{
             opacity: 0,
@@ -190,11 +178,10 @@ if (import.meta.client) {
             delay: isImagesLoaded ? Math.random() * 0.8 : 0,
             ease: 'easeOut'
           }" 
-          class="group relative size-full cursor-pointer select-none overflow-hidden transition-all duration-300 hover:scale-105 ease-in-out"
-          :class="index % 2 === 0 ? 'rotate-2 hover:rotate-0' : '-rotate-2 hover:rotate-0'"
+          class="group relative size-full cursor-pointer select-none overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300"
           @click="onItemClick"
         >
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 transition-all duration-300 border-2 border-default/50">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 border-2 border-default/50">
             <div class="relative size-full overflow-hidden rounded-xl">
               <img
                 :src="item.image"
@@ -218,10 +205,10 @@ if (import.meta.client) {
       :canvas-bounds="canvasRef.canvasBounds || { width: 0, height: 0 }"
     />
 
-    <div class="pointer-events-none absolute bottom-4 left-4 z-50">
-      <div class="rounded-full bg-black/50 px-6 py-3 text-white backdrop-blur-sm">
-        <p class="text-sm font-medium">
-          Click items to open links • {{ items.length }} items
+    <div class="pointer-events-none absolute bottom-4 left-4 z-40">
+      <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
+        <p class="text-xs opacity-75">
+          <span class="sm:hidden">Tap items to open links</span><span class="hidden sm:inline">Click items to open links</span> • {{ items.length }} items
           <span v-if="canvasRef?.zoom" class="ml-2 opacity-60">
             • {{ Math.round((canvasRef.zoom || 1) * 100) }}%
           </span>
@@ -229,11 +216,11 @@ if (import.meta.client) {
       </div>
     </div>
 
-    <!-- Zoom indicator -->
-    <div class="pointer-events-none absolute top-4 left-4 z-50">
-      <div class="rounded-lg bg-black/50 px-3 py-2 text-white backdrop-blur-sm">
+    <!-- Zoom indicator - Desktop only -->
+    <div class="pointer-events-none absolute top-4 left-4 z-40 hidden sm:block">
+      <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
         <p class="text-xs opacity-75">
-          Hold Ctrl/⌘/Alt + scroll to zoom (50%-200%)
+          Hold Ctrl/⌘/Alt + scroll to zoom (40%-220%)
         </p>
       </div>
     </div>

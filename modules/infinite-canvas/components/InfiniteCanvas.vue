@@ -75,25 +75,45 @@ const handleMouseUp = (event: MouseEvent) => {
   handlePointerUp(event.clientX, event.clientY)
 }
 
-// Touch event handlers
+// Touch event handlers with proper cancelable check
 const handleTouchStart = (event: TouchEvent) => {
-  const [touch] = event.touches
-  if (touch) {
-    handlePointerDown(touch.clientX, touch.clientY)
+  try {
+    const [touch] = event.touches
+    if (touch) {
+      // Only prevent default if the event is cancelable
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+      handlePointerDown(touch.clientX, touch.clientY)
+    }
+  } catch (error) {
+    // Silently ignore touch errors on mobile
   }
 }
 
 const handleTouchMove = (event: TouchEvent) => {
-  const [touch] = event.touches
-  if (touch) {
-    handlePointerMove(touch.clientX, touch.clientY)
+  try {
+    const [touch] = event.touches
+    if (touch) {
+      // Only prevent default if the event is cancelable
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+      handlePointerMove(touch.clientX, touch.clientY)
+    }
+  } catch (error) {
+    // Silently ignore touch errors on mobile
   }
 }
 
 const handleTouchEnd = (event: TouchEvent) => {
-  const [touch] = event.changedTouches
-  if (touch) {
-    handlePointerUp(touch.clientX, touch.clientY)
+  try {
+    const [touch] = event.changedTouches
+    if (touch) {
+      handlePointerUp(touch.clientX, touch.clientY)
+    }
+  } catch (error) {
+    // Silently ignore touch errors on mobile
   }
 }
 
@@ -101,10 +121,26 @@ const handleTouchEnd = (event: TouchEvent) => {
 onMounted(() => {
   updateDimensions()
   window.addEventListener('resize', updateDimensions)
+  
+  // Add touch listeners with proper options for mobile
+  nextTick(() => {
+    if (containerRef.value) {
+      containerRef.value.addEventListener('touchstart', handleTouchStart, { passive: false })
+      containerRef.value.addEventListener('touchmove', handleTouchMove, { passive: false })
+      containerRef.value.addEventListener('touchend', handleTouchEnd, { passive: true })
+    }
+  })
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateDimensions)
+  
+  // Clean up touch listeners
+  if (containerRef.value) {
+    containerRef.value.removeEventListener('touchstart', handleTouchStart)
+    containerRef.value.removeEventListener('touchmove', handleTouchMove)  
+    containerRef.value.removeEventListener('touchend', handleTouchEnd)
+  }
 })
 
 // Expose public API with reactive values
@@ -126,9 +162,6 @@ defineExpose({
     @mousedown="handleMouseDown"
     @mousemove="handleMouseMove"
     @mouseup="handleMouseUp"
-    @touchstart.prevent="handleTouchStart"
-    @touchmove.prevent="handleTouchMove"
-    @touchend.prevent="handleTouchEnd"
     @wheel.prevent="handleWheel"
   >
     <!-- Canvas -->

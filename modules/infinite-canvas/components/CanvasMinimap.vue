@@ -80,8 +80,8 @@ const viewportRect = computed(() => {
 </script>
 
 <template>
-  <div class="fixed bottom-4 right-4 z-50 pointer-events-none">
-    <div class="relative overflow-hidden rounded-lg border border-white/20 bg-black/40 p-2 backdrop-blur-sm">
+  <div class="fixed bottom-20 sm:bottom-4 right-4 pointer-events-none">
+    <div class="relative overflow-hidden rounded-lg border border-default bg-default/40 p-2 backdrop-blur-sm shadow-lg">
       <!-- Minimap container -->
       <div 
         class="relative"
@@ -89,7 +89,7 @@ const viewportRect = computed(() => {
       >
         <!-- Centered minimap content -->
         <div
-          class="absolute bg-white/5"
+          class="absolute bg-muted/50"
           :style="{
             left: (MINIMAP_SIZE - minimapDimensions.width) / 2 + 'px',
             top: (MINIMAP_SIZE - minimapDimensions.height) / 2 + 'px',
@@ -101,7 +101,7 @@ const viewportRect = computed(() => {
           <div
             v-for="item in minimapItems"
             :key="item.index"
-            class="absolute bg-white/80 border border-white/30 rounded-sm"
+            class="absolute bg-accented border border-inverted/30 rounded-sm"
             :style="{
               width: item.minimapSize.width + 'px',
               height: item.minimapSize.height + 'px',
