@@ -1,7 +1,6 @@
 export interface CanvasItem {
   image: string
   title: string
-  type: string
   link: string
   width?: number
   height?: number

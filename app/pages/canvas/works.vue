@@ -1,102 +1,25 @@
 <script setup lang="ts">
+import type { CanvasItem } from '~~/modules/infinite-canvas/types'
+
 definePageMeta({
   layout: false,
 })
 
-
-interface CanvasItem {
-  image: string
-  title: string
-  link: string
-  width?: number
-  height?: number
-}
-
-const items: CanvasItem[] = [
-  {
-    image: '/assets/works/shelve.png',
-    title: 'Shelve',
-    link: 'https://shelve.cloud',
-    width: 480,
-    height: 270 // 16:9 ratio
-  },
-  {
-    image: 'https://picsum.photos/seed/2/400/400', 
-    title: 'Architecture Design',
-    link: 'https://dribbble.com/shots/example',
-    width: 300,
-    height: 300 // Square
-  },
-  {
-    image: 'https://picsum.photos/seed/3/300/450',
-    title: 'Nature Photography',
-    link: 'https://unsplash.com/@example',
-    width: 250,
-    height: 375 // 2:3 ratio
-  },
-  {
-    image: 'https://picsum.photos/seed/4/400/300',
-    title: 'Tweet Thread',
-    link: 'https://twitter.com/example/status/123',
-    width: 320,
-    height: 240 // 4:3 ratio
-  },
-  {
-    image: 'https://picsum.photos/seed/5/500/300',
-    title: 'Web Design',
-    link: 'https://example.com',
-    width: 400,
-    height: 240 // Wide format
-  },
-  {
-    image: 'https://picsum.photos/seed/6/300/400',
-    title: 'Mobile App',
-    link: 'https://apps.apple.com/app/example',
-    width: 240,
-    height: 320 // Phone ratio
-  },
-  {
-    image: 'https://picsum.photos/seed/7/350/350',
-    title: 'UI Components',
-    link: 'https://figma.com/example',
-    width: 280,
-    height: 280 // Square
-  },
-  {
-    image: 'https://picsum.photos/seed/8/450/300',
-    title: 'Brand Identity',
-    link: 'https://behance.net/example',
-    width: 360,
-    height: 240 // 3:2 ratio
-  },
-  {
-    image: 'https://picsum.photos/seed/9/350/200',
-    title: 'Code Repository',
-    link: 'https://github.com/example/repo',
-    width: 350,
-    height: 200 // Wide
-  },
-  {
-    image: 'https://picsum.photos/seed/10/300/400',
-    title: 'Blog Article',
-    link: 'https://medium.com/@example/article',
-    width: 260,
-    height: 347 // Article format
-  },
-]
+const { data } = await useAsyncData('canvas', () => queryCollection('canvas').path('/canvas/works').first())
+if (!data.value) throw createError({ statusCode: 404, statusMessage: 'Canvas not found' })
 
 const handleItemClick = (item: CanvasItem) => {
   window.open(item.link, '_blank', 'noopener,noreferrer')
 }
 
-const imageUrls = computed(() => items.map(item => item.image))
+const imageUrls = computed(() => data.value?.items.map(item => item.image))
 
 const loaderProgress = ref(0)
 const showLoader = ref(true)
 const isImagesLoaded = ref(false)
 
 const { progress, isComplete, startPreloading } = useImagePreloader({
-  images: imageUrls.value,
+  images: imageUrls.value || [],
   onProgress: (newProgress) => {
     loaderProgress.value = newProgress
   },
@@ -144,7 +67,7 @@ if (import.meta.client) {
     
     <Canvas 
       ref="canvasRef"
-      :items
+      :items="data?.items || []"
       :base-gap="50"
       :zoom-options="{
         minZoom: 0.4,
@@ -197,7 +120,7 @@ if (import.meta.client) {
 
     <CanvasMinimap
       v-if="canvasRef"
-      :items
+      :items="data?.items || []"
       :grid-items="canvasRef.gridItems || []"
       :offset="canvasRef.offset || { x: 0, y: 0 }"
       :zoom="canvasRef.zoom || 1"
@@ -208,7 +131,7 @@ if (import.meta.client) {
     <div class="pointer-events-none absolute bottom-4 left-4 z-40">
       <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
         <p class="text-xs opacity-75">
-          <span class="sm:hidden">Tap items to open links</span><span class="hidden sm:inline">Click items to open links</span> • {{ items.length }} items
+          <span class="sm:hidden">Tap items to open links</span><span class="hidden sm:inline">Click items to open links</span> • {{ data?.items.length }} items
           <span v-if="canvasRef?.zoom" class="ml-2 opacity-60">
             • {{ Math.round((canvasRef.zoom || 1) * 100) }}%
           </span>

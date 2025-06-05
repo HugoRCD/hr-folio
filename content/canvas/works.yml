@@ -1,0 +1,27 @@
+title: Works
+description: A canvas for my works.
+items:
+  - title: Shelve
+    description: A tool to manage your bookmarks.
+    link: https://shelve.dev
+    image: /assets/works/shelve.png
+    width: 480
+    height: 270
+  - title: Canvas
+    description: A canvas for my projects.
+    link: https://canvas.dev
+    image: /assets/works/canvas.png
+    width: 480
+    height: 270
+  - title: Nuxt.com
+    description: The official website of Nuxt.
+    link: https://nuxt.com
+    image: /assets/works/nuxt.com.png
+    width: 480
+    height: 270
+  - title: Nuxt UI
+    description: The official website of Nuxt UI.
+    link: https://ui.nuxt.com
+    image: /assets/works/nuxt-ui.png
+    width: 480
+    height: 270
