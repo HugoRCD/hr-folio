@@ -107,14 +107,14 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateDimensions)
 })
 
-// Expose public API
+// Expose public API with reactive values
 defineExpose({
   navigateTo,
-  offset,
-  zoom,
-  gridItems,
-  containerDimensions,
-  canvasBounds
+  offset: readonly(offset),
+  zoom: readonly(zoom),
+  gridItems: readonly(gridItems),
+  containerDimensions: readonly(containerDimensions),
+  canvasBounds: readonly(canvasBounds)
 })
 </script>
 

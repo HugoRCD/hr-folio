@@ -1,10 +1,6 @@
-interface ImagePreloaderOptions {
-  images: string[]
-  onProgress?: (progress: number) => void
-  onComplete?: () => void
-}
+import type { ImagePreloaderOptions, UseImagePreloaderReturn } from '../types'
 
-export function useImagePreloader(options: ImagePreloaderOptions) {
+export function useImagePreloader(options: ImagePreloaderOptions): UseImagePreloaderReturn {
   const { images, onProgress, onComplete } = options
   
   const progress = ref(0)

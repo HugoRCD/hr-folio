@@ -122,20 +122,15 @@ const { progress, isComplete, startPreloading } = useImagePreloader({
 
 onMounted(() => {
   startPreloading()
+  // Force update dimensions when canvas ref is available
+  nextTick(() => {
+    if (canvasRef.value?.updateDimensions) {
+      canvasRef.value.updateDimensions()
+    }
+  })
 })
 
-const canvasRef = ref<{
-  offset: { x: number; y: number }
-  zoom: number
-  gridItems: Array<{ 
-    position: { x: number; y: number }
-    index: number
-    width: number
-    height: number
-  }>
-  containerDimensions: { width: number; height: number }
-  canvasBounds: { width: number; height: number }
-}>()
+const canvasRef = ref<any>(null)
 
 useHead({
   meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }]
@@ -159,7 +154,7 @@ if (import.meta.client) {
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
     </div>
     
-    <InfiniteCanvas 
+    <Canvas 
       ref="canvasRef"
       :items
       :base-gap="50"
@@ -211,7 +206,7 @@ if (import.meta.client) {
           </div>
         </Motion>
       </template>
-    </InfiniteCanvas>
+    </Canvas>
 
     <CanvasMinimap
       v-if="canvasRef"

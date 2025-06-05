@@ -41,7 +41,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'motion-v/nuxt'
+    'motion-v/nuxt',
   ],
 
   hub: {

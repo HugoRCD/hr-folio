@@ -1,116 +1,18 @@
-// Grid physics constants
+import type { 
+  CanvasItem, 
+  ZoomOptions, 
+  Position, 
+  GridItem,
+  UseInfiniteCanvasOptions,
+  UseInfiniteCanvasReturn 
+} from '../types'
+
+// Physics constants
 const MIN_VELOCITY = 0.1
-const UPDATE_INTERVAL = 16
-const VELOCITY_HISTORY_SIZE = 5
 const FRICTION = 0.92
-const VELOCITY_THRESHOLD = 0.3
+const DRAG_THRESHOLD = 5
 
-interface Position {
-  x: number
-  y: number
-}
-
-interface GridItem {
-  position: Position
-  index: number
-  isVisible: boolean
-}
-
-interface UseInfiniteCanvasOptions {
-  itemSize: number
-  gap?: number
-  items: Array<any>
-  initialPosition?: Position
-  overscan?: number // How many items to render outside viewport
-}
-
-// Debounce utility
-function debounce<T extends(...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
-) {
-  let timeoutId: NodeJS.Timeout | undefined = undefined
-
-  const debouncedFn = function(...args: Parameters<T>) {
-    if (timeoutId) {
-      clearTimeout(timeoutId)
-    }
-    timeoutId = setTimeout(() => {
-      func(...args)
-      timeoutId = undefined
-    }, wait)
-  }
-
-  debouncedFn.cancel = function() {
-    clearTimeout(timeoutId)
-    timeoutId = undefined
-  }
-
-  return debouncedFn
-}
-
-// Throttle utility
-function throttle<T extends(...args: unknown[]) => unknown>(
-  func: T,
-  limit: number
-) {
-  let lastCall = 0
-  let timeoutId: NodeJS.Timeout | undefined = undefined
-
-  const throttledFn = function(...args: Parameters<T>) {
-    const now = Date.now()
-    const remaining = limit - (now - lastCall)
-
-    if (remaining <= 0) {
-      clearTimeout(timeoutId)
-      timeoutId = undefined
-      lastCall = now
-      func(...args)
-    } else if (!timeoutId) {
-      timeoutId = setTimeout(() => {
-        lastCall = Date.now()
-        timeoutId = undefined
-        func(...args)
-      }, remaining)
-    }
-  }
-
-  throttledFn.cancel = function() {
-    if (timeoutId) {
-      clearTimeout(timeoutId)
-      timeoutId = undefined
-    }
-  }
-
-  return throttledFn
-}
-
-interface CanvasItem {
-  width?: number
-  height?: number
-  [key: string]: any
-}
-
-interface ZoomOptions {
-  minZoom?: number
-  maxZoom?: number
-  zoomFactor?: number
-  enableCtrl?: boolean
-  enableMeta?: boolean
-  enableAlt?: boolean
-}
-
-export function useInfiniteCanvas(props: {
-  items: CanvasItem[]
-  baseGap?: number
-  zoomOptions?: ZoomOptions
-  containerRef: Ref<HTMLElement | null>
-}) {
-  // Physics constants
-  const MIN_VELOCITY = 0.1
-  const FRICTION = 0.92
-  const DRAG_THRESHOLD = 5
-
+export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteCanvasReturn {
   // Canvas state - start at center
   const offset = ref({ x: 0, y: 0 })
   const velocity = ref({ x: 0, y: 0 })
@@ -145,7 +47,7 @@ export function useInfiniteCanvas(props: {
     const baseGap = props.baseGap || 40
     
     const placedItems: Array<{ 
-      position: { x: number; y: number }
+      position: Position
       index: number
       width: number
       height: number
@@ -153,9 +55,9 @@ export function useInfiniteCanvas(props: {
     
     // Check if two items collide with their actual dimensions
     const checkCollision = (
-      pos1: { x: number; y: number }, 
+      pos1: Position, 
       size1: { width: number; height: number },
-      pos2: { x: number; y: number }, 
+      pos2: Position, 
       size2: { width: number; height: number }
     ) => {
       const left1 = pos1.x - baseGap
@@ -172,7 +74,7 @@ export function useInfiniteCanvas(props: {
     }
     
     // Simplified positioning algorithm
-    const findValidPosition = (index: number) => {
+    const findValidPosition = (index: number): Position => {
       const item = props.items[index]
       if (!item) return { x: centerX, y: centerY }
         
@@ -264,7 +166,7 @@ export function useInfiniteCanvas(props: {
   })
 
   // Constrain offset to canvas bounds with zoom consideration
-  const constrainOffset = (newOffset: { x: number; y: number }) => {
+  const constrainOffset = (newOffset: Position): Position => {
     const { width: containerWidth, height: containerHeight } = containerDimensions.value
     const { width: canvasWidth, height: canvasHeight } = canvasBounds.value
     const currentZoom = zoom.value
@@ -413,17 +315,24 @@ export function useInfiniteCanvas(props: {
         const mouseX = event.clientX - rect.left
         const mouseY = event.clientY - rect.top
         
-        // Calculate zoom center point in canvas coordinates
-        const canvasX = (mouseX - offset.value.x) / zoom.value
-        const canvasY = (mouseY - offset.value.y) / zoom.value
+        // Get current values before any updates
+        const oldZoom = zoom.value
+        const oldOffset = { ...offset.value }
         
-        // Update zoom
+        // Calculate the point in the canvas that's currently under the mouse
+        // This point should stay under the mouse after zooming
+        const pointX = (mouseX - oldOffset.x) / oldZoom
+        const pointY = (mouseY - oldOffset.y) / oldZoom
+        
+        // Update zoom first
         zoom.value = newZoom
         
-        // Adjust offset to zoom towards mouse position
+        // Calculate new offset so that the same canvas point stays under mouse
+        // mouseX = newOffset.x + pointX * newZoom
+        // Therefore: newOffset.x = mouseX - pointX * newZoom
         const newOffset = {
-          x: mouseX - canvasX * zoom.value,
-          y: mouseY - canvasY * zoom.value
+          x: mouseX - pointX * newZoom,
+          y: mouseY - pointY * newZoom
         }
         
         offset.value = constrainOffset(newOffset)
@@ -444,7 +353,7 @@ export function useInfiniteCanvas(props: {
   }
 
   // Navigation function for minimap
-  const navigateTo = (position: { x: number; y: number }) => {
+  const navigateTo = (position: Position) => {
     const { width, height } = containerDimensions.value
     const newOffset = {
       x: -position.x + width / 2,
@@ -473,6 +382,4 @@ export function useInfiniteCanvas(props: {
     handleWheel,
     navigateTo
   }
-}
-
-export type { Position, GridItem, UseInfiniteCanvasOptions } 
+} 
