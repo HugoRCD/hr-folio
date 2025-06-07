@@ -1,14 +1,64 @@
-import type { ImagePreloaderOptions, UseImagePreloaderReturn } from '../types'
+/**
+ * @fileoverview Composable for preloading images and videos
+ */
 
-// Utility function to determine media type
-const getMediaType = (url: string) => {
-  const extension = url.split('.').pop()?.toLowerCase()
-  if (extension === 'mp4' || extension === 'webm' || extension === 'mov') {
-    return 'video'
-  }
-  return 'image'
+import type { ImagePreloaderOptions, UseImagePreloaderReturn } from '../types'
+import { isVideo } from '../utils'
+
+/**
+ * Preloads a single media file (image or video)
+ * @param src Media URL to preload
+ * @returns Promise that resolves when loaded
+ */
+function preloadMedia(src: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (isVideo(src)) {
+      const video = document.createElement('video')
+      video.preload = 'metadata'
+      video.muted = true
+      
+      const handleLoad = () => {
+        video.removeEventListener('loadedmetadata', handleLoad)
+        video.removeEventListener('error', handleError)
+        resolve()
+      }
+      
+      const handleError = () => {
+        video.removeEventListener('loadedmetadata', handleLoad)
+        video.removeEventListener('error', handleError)
+        resolve() // Don't reject to avoid breaking the flow
+      }
+      
+      video.addEventListener('loadedmetadata', handleLoad)
+      video.addEventListener('error', handleError)
+      video.src = src
+    } else {
+      const img = new Image()
+      
+      const handleLoad = () => {
+        img.removeEventListener('load', handleLoad)
+        img.removeEventListener('error', handleError)
+        resolve()
+      }
+      
+      const handleError = () => {
+        img.removeEventListener('load', handleLoad)
+        img.removeEventListener('error', handleError)
+        resolve() // Don't reject to avoid breaking the flow
+      }
+      
+      img.addEventListener('load', handleLoad)
+      img.addEventListener('error', handleError)
+      img.src = src
+    }
+  })
 }
 
+/**
+ * Composable for preloading multiple media files with progress tracking
+ * @param options Configuration options
+ * @returns Preloader state and controls
+ */
 export function useImagePreloader(options: ImagePreloaderOptions): UseImagePreloaderReturn {
   const { images, onProgress, onComplete } = options
   
@@ -17,86 +67,24 @@ export function useImagePreloader(options: ImagePreloaderOptions): UseImagePrelo
   const isLoading = ref(true)
   const isComplete = ref(false)
 
-  const preloadMedia = (src: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const mediaType = getMediaType(src)
-      
-      if (mediaType === 'video') {
-        const video = document.createElement('video')
-        video.preload = 'metadata'
-        video.muted = true
-        
-        video.onloadedmetadata = () => {
-          loadedCount.value++
-          const newProgress = loadedCount.value / images.length
-          progress.value = newProgress
-          onProgress?.(newProgress)
-          
-          if (loadedCount.value === images.length) {
-            isComplete.value = true
-            isLoading.value = false
-            onComplete?.()
-          }
-          
-          resolve()
-        }
-        
-        video.onerror = () => {
-          // Even on error, continue loading other media
-          loadedCount.value++
-          const newProgress = loadedCount.value / images.length
-          progress.value = newProgress
-          onProgress?.(newProgress)
-          
-          if (loadedCount.value === images.length) {
-            isComplete.value = true
-            isLoading.value = false
-            onComplete?.()
-          }
-          
-          resolve() // Don't reject to avoid breaking the flow
-        }
-        
-        video.src = src
-      } else {
-        const img = new Image()
-        
-        img.onload = () => {
-          loadedCount.value++
-          const newProgress = loadedCount.value / images.length
-          progress.value = newProgress
-          onProgress?.(newProgress)
-          
-          if (loadedCount.value === images.length) {
-            isComplete.value = true
-            isLoading.value = false
-            onComplete?.()
-          }
-          
-          resolve()
-        }
-        
-        img.onerror = () => {
-          // Even on error, continue loading other images
-          loadedCount.value++
-          const newProgress = loadedCount.value / images.length
-          progress.value = newProgress
-          onProgress?.(newProgress)
-          
-          if (loadedCount.value === images.length) {
-            isComplete.value = true
-            isLoading.value = false
-            onComplete?.()
-          }
-          
-          resolve() // Don't reject to avoid breaking the flow
-        }
-        
-        img.src = src
-      }
-    })
+  /**
+   * Updates progress and triggers callbacks
+   */
+  const updateProgress = () => {
+    const newProgress = loadedCount.value / images.length
+    progress.value = newProgress
+    onProgress?.(newProgress)
+    
+    if (loadedCount.value === images.length) {
+      isComplete.value = true
+      isLoading.value = false
+      onComplete?.()
+    }
   }
 
+  /**
+   * Starts the preloading process for all media files
+   */
   const startPreloading = async () => {
     if (images.length === 0) {
       progress.value = 1
@@ -106,8 +94,14 @@ export function useImagePreloader(options: ImagePreloaderOptions): UseImagePrelo
       return
     }
 
-    // Preload all media in parallel
-    await Promise.all(images.map(preloadMedia))
+    // Preload all media in parallel with individual progress tracking
+    const preloadPromises = images.map(async (src) => {
+      await preloadMedia(src)
+      loadedCount.value++
+      updateProgress()
+    })
+
+    await Promise.all(preloadPromises)
   }
 
   return {

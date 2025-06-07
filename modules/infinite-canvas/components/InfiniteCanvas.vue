@@ -1,39 +1,14 @@
-<script setup lang="ts" generic="T = any">
-interface ZoomOptions {
-  minZoom?: number
-  maxZoom?: number
-  zoomFactor?: number
-  enableCtrl?: boolean
-  enableMeta?: boolean
-  enableAlt?: boolean
-}
+<script setup lang="ts" generic="T extends CanvasItem">
+import type { InfiniteCanvasProps, InfiniteCanvasEmits, CanvasItem } from '../types'
+import { PHYSICS } from '../constants'
 
-interface InfiniteCanvasProps {
-  items: T[]
-  baseGap?: number
-  zoomOptions?: ZoomOptions
-}
-
-interface InfiniteCanvasEmits {
-  itemClick: [item: T, index: number]
-}
-
-const props = withDefaults(defineProps<InfiniteCanvasProps>(), {
+const props = withDefaults(defineProps<InfiniteCanvasProps<T>>(), {
   baseGap: 40
 })
 
-const emit = defineEmits<InfiniteCanvasEmits>()
+const emit = defineEmits<InfiniteCanvasEmits<T>>()
 
-// Template refs
 const containerRef = ref<HTMLElement | null>(null)
-
-// Canvas logic
-const canvas = useInfiniteCanvas({
-  items: props.items as any[],
-  baseGap: props.baseGap,
-  zoomOptions: props.zoomOptions,
-  containerRef
-})
 
 const {
   offset,
@@ -44,148 +19,120 @@ const {
   canvasBounds,
   canClick,
   updateDimensions,
-  handlePointerDown,
-  handlePointerMove,
-  handlePointerUp,
+  handlePointerDown: handlePointerDownCore,
+  handlePointerMove: handlePointerMoveCore,
+  handlePointerUp: handlePointerUpCore,
   handleWheel,
+  handleTouchStart,
+  handleTouchMove,
+  handleTouchEnd,
   navigateTo
-} = canvas
+} = useInfiniteCanvas({
+  items: props.items as CanvasItem[],
+  baseGap: props.baseGap,
+  zoomOptions: props.zoomOptions,
+  containerRef
+})
 
-// Destructure touch handlers separately to avoid conflicts
-const { handleTouchStart, handleTouchMove, handleTouchEnd } = canvas
+// Track drag state for click handling
+const isCurrentlyDragging = ref(false)
+const dragStartPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+const totalDragDistance = ref(0)
 
-// Handle item clicks
-const handleItemClick = (item: T, index: number, event: Event) => {
-  if (!canClick.value) {
-    event.preventDefault()
-    event.stopPropagation()
-    event.stopImmediatePropagation()
-    return false
+const handlePointerDown = (event: PointerEvent) => {
+  handlePointerDownCore(event.clientX, event.clientY)
+  isCurrentlyDragging.value = false
+  dragStartPosition.value = { x: event.clientX, y: event.clientY }
+  totalDragDistance.value = 0
+}
+
+const handlePointerMove = (event: PointerEvent) => {
+  const currentPos = { x: event.clientX, y: event.clientY }
+  const distance = Math.sqrt(
+    Math.pow(currentPos.x - dragStartPosition.value.x, 2) + 
+    Math.pow(currentPos.y - dragStartPosition.value.y, 2)
+  )
+  
+  if (distance > PHYSICS.DRAG_THRESHOLD) {
+    isCurrentlyDragging.value = true
   }
   
-  emit('itemClick', item, index)
+  totalDragDistance.value = distance
+  handlePointerMoveCore(event.clientX, event.clientY)
 }
 
-// Mouse event handlers
-const handleMouseDown = (event: MouseEvent) => {
-  handlePointerDown(event.clientX, event.clientY)
-}
-
-const handleMouseMove = (event: MouseEvent) => {
-  event.preventDefault()
-  handlePointerMove(event.clientX, event.clientY)
-}
-
-const handleMouseUp = (event: MouseEvent) => {
-  handlePointerUp(event.clientX, event.clientY)
-}
-
-// Touch event handlers with proper cancelable check and preventDefault
-const handleTouchStartWrapper = (event: TouchEvent) => {
-  try {
-    // Only prevent default if the event is cancelable
-    if (event.cancelable) {
-      event.preventDefault()
-    }
-    handleTouchStart(event)
-  } catch (error) {
-    // Silently ignore touch errors on mobile
+const handlePointerUp = (event: PointerEvent) => {
+  handlePointerUpCore(event.clientX, event.clientY)
+  
+  if (isCurrentlyDragging.value) {
+    setTimeout(() => {
+      isCurrentlyDragging.value = false
+    }, 100)
   }
 }
 
-const handleTouchMoveWrapper = (event: TouchEvent) => {
-  try {
-    // Only prevent default if the event is cancelable
-    if (event.cancelable) {
-      event.preventDefault()
-    }
-    handleTouchMove(event)
-  } catch (error) {
-    // Silently ignore touch errors on mobile
+const handleItemClick = (item: T | undefined, index: number) => {
+  if (item && canClick.value && !isCurrentlyDragging.value && totalDragDistance.value <= PHYSICS.DRAG_THRESHOLD) {
+    emit('itemClick', item, index)
   }
 }
 
-const handleTouchEndWrapper = (event: TouchEvent) => {
-  try {
-    handleTouchEnd(event)
-  } catch (error) {
-    // Silently ignore touch errors on mobile
-  }
-}
-
-// Lifecycle
 onMounted(() => {
   updateDimensions()
-  window.addEventListener('resize', updateDimensions)
-  
-  // Add touch listeners with proper options for mobile
-  nextTick(() => {
-    if (containerRef.value) {
-      containerRef.value.addEventListener('touchstart', handleTouchStartWrapper, { passive: false })
-      containerRef.value.addEventListener('touchmove', handleTouchMoveWrapper, { passive: false })
-      containerRef.value.addEventListener('touchend', handleTouchEndWrapper, { passive: true })
-    }
-  })
+  useResizeObserver(containerRef, updateDimensions)
 })
 
-onUnmounted(() => {
-  window.removeEventListener('resize', updateDimensions)
-  
-  // Clean up touch listeners
-  if (containerRef.value) {
-    containerRef.value.removeEventListener('touchstart', handleTouchStartWrapper)
-    containerRef.value.removeEventListener('touchmove', handleTouchMoveWrapper)  
-    containerRef.value.removeEventListener('touchend', handleTouchEndWrapper)
-  }
-})
-
-// Expose public API with reactive values
 defineExpose({
-  navigateTo,
-  offset: readonly(offset),
-  zoom: readonly(zoom),
-  gridItems: readonly(gridItems),
-  containerDimensions: readonly(containerDimensions),
-  canvasBounds: readonly(canvasBounds)
+  offset,
+  zoom,
+  visibleItems,
+  gridItems,
+  containerDimensions,
+  canvasBounds,
+  updateDimensions,
+  navigateTo
 })
 </script>
 
 <template>
   <div
     ref="containerRef"
-    class="relative h-full w-full overflow-hidden cursor-grab active:cursor-grabbing touch-pan-x touch-pan-y overscroll-none"
-    style="touch-action: none; overscroll-behavior: none;"
-    @mousedown="handleMouseDown"
-    @mousemove="handleMouseMove"
-    @mouseup="handleMouseUp"
-    @wheel.prevent="handleWheel"
+    class="relative size-full overflow-hidden touch-none select-none"
+    style="touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;"
+    @pointerdown="handlePointerDown"
+    @pointermove="handlePointerMove"
+    @pointerup="handlePointerUp"
+    @wheel="handleWheel"
+    @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleTouchEnd"
   >
-    <!-- Canvas -->
     <div
-      class="absolute origin-top-left will-change-transform"
+      class="absolute transform-gpu will-change-transform"
       :style="{
         transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})`,
-        width: `${canvasBounds.width}px`,
-        height: `${canvasBounds.height}px`
+        backfaceVisibility: 'hidden',
+        perspective: '1000px'
       }"
     >
-      <!-- Visible items -->
       <div
-        v-for="gridItem in visibleItems"
+        v-for="(gridItem, visibleIndex) in visibleItems"
         :key="gridItem.index"
-        class="absolute will-change-transform"
+        class="absolute transform-gpu will-change-transform"
         :style="{
-          transform: `translate3d(${gridItem.position.x}px, ${gridItem.position.y}px, 0)`,
+          left: `${gridItem.position.x}px`,
+          top: `${gridItem.position.y}px`,
           width: `${gridItem.width}px`,
-          height: `${gridItem.height}px`
+          height: `${gridItem.height}px`,
+          backfaceVisibility: 'hidden',
         }"
       >
         <slot
-          v-if="items[gridItem.index]"
-          :item="items[gridItem.index]!"
+          v-if="props.items[gridItem.index]"
+          :item="props.items[gridItem.index]"
           :index="gridItem.index"
-          :position="gridItem.position"
-          :on-item-click="(event: Event) => handleItemClick(items[gridItem.index]!, gridItem.index, event)"
+          :visible-index
+          :on-item-click="() => handleItemClick(props.items[gridItem.index], gridItem.index)"
         />
       </div>
     </div>

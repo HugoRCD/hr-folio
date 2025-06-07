@@ -1,9 +1,31 @@
-import { defineNuxtModule, addComponent, addImports, createResolver } from '@nuxt/kit'
+/**
+ * @fileoverview Nuxt module for infinite canvas functionality
+ */
 
+import { defineNuxtModule, createResolver, addComponent, addImports } from '@nuxt/kit'
+
+/**
+ * Module configuration options
+ */
 export interface ModuleOptions {
+  /** Component name prefix (default: '') */
   prefix?: string
 }
 
+/**
+ * Infinite Canvas Nuxt Module
+ * 
+ * Provides components and composables for creating infinite, zoomable canvases
+ * with drag interactions, touch support, and performance optimizations.
+ * 
+ * @example
+ * ```ts
+ * // nuxt.config.ts
+ * export default defineNuxtConfig({
+ *   modules: ['./modules/infinite-canvas']
+ * })
+ * ```
+ */
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@nuxt/infinite-canvas',
@@ -18,7 +40,7 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    // Add components
+    // Register components
     addComponent({
       name: `${options.prefix}Canvas`,
       filePath: resolver.resolve('./components/InfiniteCanvas.vue'),
@@ -37,7 +59,7 @@ export default defineNuxtModule<ModuleOptions>({
       export: 'default'
     })
 
-    // Add composables
+    // Register composables
     addImports([
       {
         name: 'useInfiniteCanvas',
@@ -51,7 +73,31 @@ export default defineNuxtModule<ModuleOptions>({
       }
     ])
 
-    // Add types (optional)
+    // Register utilities (optional, for advanced usage)
+    addImports([
+      {
+        name: 'getTouchDistance',
+        from: resolver.resolve('./utils'),
+        as: 'getTouchDistance'
+      },
+      {
+        name: 'getTouchCenter',
+        from: resolver.resolve('./utils'),
+        as: 'getTouchCenter'
+      },
+      {
+        name: 'isVideo',
+        from: resolver.resolve('./utils'),
+        as: 'isVideo'
+      },
+      {
+        name: 'isMobileDevice',
+        from: resolver.resolve('./utils'),
+        as: 'isMobileDevice'
+      }
+    ])
+
+    // Add type definitions
     nuxt.hook('prepare:types', (options) => {
       options.references.push({
         path: resolver.resolve('./types')

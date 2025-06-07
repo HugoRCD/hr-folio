@@ -1,80 +1,71 @@
 <script setup lang="ts">
-interface MinimapProps {
-  items: Array<any>
-  gridItems: Array<{ 
-    position: { x: number; y: number }
-    index: number
-    width: number
-    height: number
-  }>
-  offset: { x: number; y: number }
-  zoom: number
-  containerDimensions: { width: number; height: number }
-  canvasBounds: { width: number; height: number }
-}
+import type { MinimapProps } from '../types'
 
 const props = defineProps<MinimapProps>()
 
-// Minimap dimensions
 const MINIMAP_SIZE = 120
 
-// Calculate minimap scale
-const minimapScale = computed(() => {
-  const scaleX = MINIMAP_SIZE / props.canvasBounds.width
-  const scaleY = MINIMAP_SIZE / props.canvasBounds.height
-  return Math.min(scaleX, scaleY)
+/**
+ * Calculate the scale factor to fit canvas in minimap
+ */
+const scale = computed(() => {
+  const { width, height } = props.canvasBounds
+  return Math.min(MINIMAP_SIZE / width, MINIMAP_SIZE / height)
 })
 
-// Calculate minimap dimensions based on scale
-const minimapDimensions = computed(() => ({
-  width: props.canvasBounds.width * minimapScale.value,
-  height: props.canvasBounds.height * minimapScale.value
+/**
+ * Actual minimap dimensions after scaling
+ */
+const dimensions = computed(() => ({
+  width: props.canvasBounds.width * scale.value,
+  height: props.canvasBounds.height * scale.value
 }))
 
-// Convert grid items to minimap positions with real dimensions
-const minimapItems = computed(() => {
-  return props.gridItems.map(item => {
-    const scaledWidth = (item.width || 300) * minimapScale.value
-    const scaledHeight = (item.height || 300) * minimapScale.value
-    
-    return {
-      ...item,
-      minimapPosition: {
-        x: item.position.x * minimapScale.value,
-        y: item.position.y * minimapScale.value
-      },
-      minimapSize: {
-        width: Math.max(2, scaledWidth),
-        height: Math.max(2, scaledHeight)
-      }
-    }
-  })
-})
+/**
+ * Positioning to center the minimap content
+ */
+const centerOffset = computed(() => ({
+  x: (MINIMAP_SIZE - dimensions.value.width) / 2,
+  y: (MINIMAP_SIZE - dimensions.value.height) / 2
+}))
 
-// Calculate viewport rectangle in minimap coordinates with zoom
-const viewportRect = computed(() => {
+/**
+ * Transform grid items to minimap coordinates with proper scaling
+ */
+const items = computed(() => 
+  props.gridItems.map(item => ({
+    index: item.index,
+    x: item.position.x * scale.value,
+    y: item.position.y * scale.value,
+    width: Math.max(2, item.width * scale.value),
+    height: Math.max(2, item.height * scale.value)
+  }))
+)
+
+/**
+ * Calculate viewport rectangle in minimap space
+ */
+const viewport = computed(() => {
   const { width, height } = props.containerDimensions
-  const currentZoom = props.zoom
+  const { zoom } = props
   
-  // Current viewport position in canvas coordinates (accounting for zoom)
-  const viewportX = (-props.offset.x) / currentZoom
-  const viewportY = (-props.offset.y) / currentZoom
-  
-  // Actual viewport size in canvas coordinates (smaller when zoomed in)
-  const actualViewportWidth = width / currentZoom
-  const actualViewportHeight = height / currentZoom
+  // Canvas coordinates of current viewport
+  const viewX = -props.offset.x / zoom
+  const viewY = -props.offset.y / zoom
+  const viewWidth = width / zoom
+  const viewHeight = height / zoom
   
   // Convert to minimap coordinates
-  const minimapX = viewportX * minimapScale.value
-  const minimapY = viewportY * minimapScale.value
-  const minimapWidth = actualViewportWidth * minimapScale.value
-  const minimapHeight = actualViewportHeight * minimapScale.value
+  const x = viewX * scale.value
+  const y = viewY * scale.value
+  const w = viewWidth * scale.value
+  const h = viewHeight * scale.value
   
   return {
-    x: Math.max(0, Math.min(minimapDimensions.value.width - minimapWidth, minimapX)),
-    y: Math.max(0, Math.min(minimapDimensions.value.height - minimapHeight, minimapY)),
-    width: Math.min(minimapDimensions.value.width, minimapWidth),
-    height: Math.min(minimapDimensions.value.height, minimapHeight)
+    x: Math.max(0, Math.min(dimensions.value.width - w, x)),
+    y: Math.max(0, Math.min(dimensions.value.height - h, y)),
+    width: Math.min(dimensions.value.width, w),
+    height: Math.min(dimensions.value.height, h)
   }
 })
 </script>
@@ -90,22 +81,22 @@ const viewportRect = computed(() => {
       <div
         class="absolute bg-muted/50"
         :style="{
-          left: (MINIMAP_SIZE - minimapDimensions.width) / 2 + 'px',
-          top: (MINIMAP_SIZE - minimapDimensions.height) / 2 + 'px',
-          width: minimapDimensions.width + 'px',
-          height: minimapDimensions.height + 'px'
+          left: centerOffset.x + 'px',
+          top: centerOffset.y + 'px',
+          width: dimensions.width + 'px',
+          height: dimensions.height + 'px'
         }"
       >
         <!-- Items with real shapes -->
         <div
-          v-for="item in minimapItems"
+          v-for="item in items"
           :key="item.index"
           class="absolute bg-accented border border-inverted/30 rounded-sm"
           :style="{
-            width: item.minimapSize.width + 'px',
-            height: item.minimapSize.height + 'px',
-            left: item.minimapPosition.x + 'px',
-            top: item.minimapPosition.y + 'px'
+            width: item.width + 'px',
+            height: item.height + 'px',
+            left: item.x + 'px',
+            top: item.y + 'px'
           }"
         />
 
@@ -113,10 +104,10 @@ const viewportRect = computed(() => {
         <div
           class="absolute border border-primary bg-primary/10"
           :style="{
-            left: viewportRect.x + 'px',
-            top: viewportRect.y + 'px',
-            width: viewportRect.width + 'px',
-            height: viewportRect.height + 'px',
+            left: viewport.x + 'px',
+            top: viewport.y + 'px',
+            width: viewport.width + 'px',
+            height: viewport.height + 'px',
           }"
         />
       </div>

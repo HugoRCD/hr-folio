@@ -1,292 +1,236 @@
 # Infinite Canvas Module
 
-A powerful Nuxt 3 module for creating infinite canvas experiences with drag, zoom, and virtualization support.
+A high-performance, scrollable canvas for Nuxt applications with drag, zoom, and touch support.
 
 ## Features
 
-- ✨ **Infinite Canvas** - Smooth pan and zoom interactions
-- 🎯 **Virtualization** - Only renders visible items for optimal performance
-- 📱 **Touch Support** - Works on mobile and desktop
-- 🔍 **Zoom System** - Configurable zoom with modifier keys
-- 🗺️ **Minimap** - Visual navigation with actual item shapes
-- 📦 **Scattered Layout** - Intelligent positioning with collision avoidance  
-- 🖼️ **Image Preloading** - Elegant loading experience
-- 🎨 **Fully Customizable** - Complete control over item rendering
-- 📏 **Variable Sizes** - Support for different aspect ratios
+- 🚀 **Performance optimized** with viewport culling and virtualization
+- 📱 **Mobile-first** with touch gestures and pinch-to-zoom
+- 🎯 **TypeScript support** with comprehensive type definitions
+- 🎨 **Customizable** components and styling
+- 📊 **Built-in minimap** for navigation
+- ⚡ **Smooth animations** with momentum and physics
 
 ## Installation
 
-1. Add the module to your Nuxt project:
+Copy this module to your `modules` folder and add it will automatically be loaded by Nuxt.
 
-```bash
-# Copy the module to your project
-cp -r modules/infinite-canvas modules/
-```
-
-2. Register the module in your `nuxt.config.ts`:
-
-```typescript
-export default defineNuxtConfig({
-  modules: [
-    './modules/infinite-canvas'
-  ],
-  infiniteCanvas: {
-    prefix: 'Infinite' // Optional: customize component prefix
-  }
-})
-```
-
-## Components
-
-### InfiniteCanvas
-
-The main canvas component that handles all interactions and virtualization.
+## Basic Usage
 
 ```vue
 <template>
-  <InfiniteCanvas 
-    :items="canvasItems"
+  <Canvas 
+    :items="items"
     :base-gap="50"
-    :zoom-options="{
-      minZoom: 0.5,
-      maxZoom: 2.0,
-      zoomFactor: 1.08,
-      enableCtrl: true,
-      enableMeta: true,
-      enableAlt: true
-    }"
     @item-click="handleItemClick"
   >
     <template #default="{ item, index, onItemClick }">
-      <!-- Your custom item rendering -->
       <div @click="onItemClick">
         <img :src="item.image" :alt="item.title" />
         <h3>{{ item.title }}</h3>
       </div>
     </template>
-  </InfiniteCanvas>
+  </Canvas>
 </template>
+
+<script setup>
+const items = ref([
+  { 
+    image: '/image1.jpg', 
+    title: 'Item 1', 
+    link: 'https://example.com' 
+  },
+  // ... more items
+])
+
+const handleItemClick = (item, index) => {
+  window.open(item.link, '_blank')
+}
+</script>
 ```
+
+## Components
+
+### Canvas
+
+The main infinite canvas component.
 
 #### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `items` | `T[]` | required | Array of items to display |
-| `baseGap` | `number` | `40` | Minimum gap between items |
+| `items` | `CanvasItem[]` | `[]` | Array of items to display |
+| `baseGap` | `number` | `40` | Minimum gap between items (px) |
 | `zoomOptions` | `ZoomOptions` | `{}` | Zoom configuration |
 
 #### Events
 
 | Event | Payload | Description |
 |-------|---------|-------------|
-| `item-click` | `(item: T, index: number)` | Triggered when an item is clicked (not dragged) |
+| `item-click` | `(item, index)` | Fired when an item is clicked |
 
 #### Slot Props
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `item` | `T` | The current item data |
+| `item` | `T` | The item data |
 | `index` | `number` | Item index |
-| `position` | `Position` | Item position on canvas |
+| `visibleIndex` | `number` | Index among visible items |
 | `onItemClick` | `Function` | Click handler for the item |
 
-### InfiniteCanvasMinimap
+### CanvasMinimap
 
-A minimap component showing the viewport and item positions.
+Navigation minimap component.
 
-```vue
-<template>
-  <InfiniteCanvasMinimap
-    :items="items"
-    :grid-items="canvas.gridItems"
-    :offset="canvas.offset"
-    :zoom="canvas.zoom"
-    :container-dimensions="canvas.containerDimensions"
-    :canvas-bounds="canvas.canvasBounds"
-  />
-</template>
-```
+#### Props
 
-### InfiniteCanvasLoader
+| Prop | Type | Description |
+|------|------|-------------|
+| `items` | `CanvasItem[]` | Canvas items |
+| `gridItems` | `GridItem[]` | Positioned grid items |
+| `offset` | `Position` | Current canvas offset |
+| `zoom` | `number` | Current zoom level |
+| `containerDimensions` | `ContainerDimensions` | Container size |
+| `canvasBounds` | `CanvasBounds` | Canvas boundaries |
 
-An elegant loader component for image preloading.
+### CanvasLoader
 
-```vue
-<template>
-  <InfiniteCanvasLoader
-    :progress="loadingProgress"
-    :is-visible="showLoader"
-  />
-</template>
-```
+Loading progress component.
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `progress` | `number` | `0` | Loading progress (0-1) |
+| `isVisible` | `boolean` | `true` | Whether loader is visible |
+| `title` | `string` | `undefined` | Optional title |
+| `description` | `string` | `undefined` | Optional description |
 
 ## Composables
 
 ### useInfiniteCanvas
 
-The core composable handling canvas logic.
+Core canvas functionality composable.
 
-```typescript
+```ts
 const canvas = useInfiniteCanvas({
-  items: canvasItems,
+  items: myItems,
   baseGap: 50,
   zoomOptions: {
-    minZoom: 0.5,
-    maxZoom: 2.0
+    minZoom: 0.4,
+    maxZoom: 2.2
   },
-  containerRef: canvasElement
+  containerRef
 })
 ```
+
+#### Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `items` | `CanvasItem[]` | Items to display |
+| `baseGap` | `number` | Gap between items |
+| `zoomOptions` | `ZoomOptions` | Zoom configuration |
+| `containerRef` | `Ref<HTMLElement>` | Container element reference |
+
+#### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `offset` | `Ref<Position>` | Current canvas offset |
+| `zoom` | `Ref<number>` | Current zoom level |
+| `visibleItems` | `ComputedRef<GridItem[]>` | Currently visible items |
+| `gridItems` | `ComputedRef<GridItem[]>` | All positioned items |
+| `canClick` | `Ref<boolean>` | Whether clicks are allowed |
+| `updateDimensions` | `Function` | Update container dimensions |
+| `navigateTo` | `Function` | Navigate to position |
 
 ### useImagePreloader
 
-Handles image preloading with progress tracking.
+Media preloading composable.
 
-```typescript
+```ts
 const { progress, isComplete, startPreloading } = useImagePreloader({
   images: imageUrls,
-  onProgress: (progress) => console.log(`Loading: ${progress}%`),
-  onComplete: () => console.log('All images loaded!')
-})
-
-onMounted(() => {
-  startPreloading()
+  onProgress: (progress) => console.log(`${progress * 100}%`),
+  onComplete: () => console.log('Done!')
 })
 ```
+
+#### Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `images` | `string[]` | Array of image/video URLs |
+| `onProgress` | `Function` | Progress callback (0-1) |
+| `onComplete` | `Function` | Completion callback |
 
 ## Types
 
 ### CanvasItem
 
-```typescript
+```ts
 interface CanvasItem {
-  image: string
-  title: string
-  type: string
-  link: string
-  width?: number
-  height?: number
-  [key: string]: any
+  image: string      // URL to image or video
+  title: string      // Display title
+  link: string       // External link URL
+  width?: number     // Item width (default: 300)
+  height?: number    // Item height (default: 300)
+  [key: string]: any // Additional properties
 }
 ```
 
 ### ZoomOptions
 
-```typescript
+```ts
 interface ZoomOptions {
-  minZoom?: number      // Default: 0.5 (50%)
-  maxZoom?: number      // Default: 2.0 (200%)
-  zoomFactor?: number   // Default: 1.08
-  enableCtrl?: boolean  // Default: true
-  enableMeta?: boolean  // Default: true (⌘ on Mac)
-  enableAlt?: boolean   // Default: true
+  minZoom?: number      // Minimum zoom level (default: 0.4)
+  maxZoom?: number      // Maximum zoom level (default: 2.2)
+  zoomFactor?: number   // Zoom step factor (default: 1.08)
+  enableCtrl?: boolean  // Enable Ctrl+scroll zoom (default: true)
+  enableMeta?: boolean  // Enable Cmd+scroll zoom (default: true)
+  enableAlt?: boolean   // Enable Alt+scroll zoom (default: true)
 }
 ```
 
-## Usage Examples
+## Utilities
 
-### Basic Portfolio Canvas
+### isVideo(url)
 
-```vue
-<script setup>
-const items = [
-  {
-    image: '/project1.jpg',
-    title: 'Project 1',
-    type: 'project',
-    link: 'https://example.com',
-    width: 400,
-    height: 300
-  }
-  // ... more items
-]
+Detects if a URL points to a video file.
 
-const handleItemClick = (item) => {
-  window.open(item.link, '_blank')
+```ts
+if (isVideo(item.image)) {
+  // Render video element
 }
-</script>
-
-<template>
-  <InfiniteCanvas :items="items" @item-click="handleItemClick">
-    <template #default="{ item, onItemClick }">
-      <div 
-        class="canvas-item"
-        @click="onItemClick"
-      >
-        <img :src="item.image" :alt="item.title" />
-        <div class="overlay">
-          <h3>{{ item.title }}</h3>
-          <span class="type">{{ item.type }}</span>
-        </div>
-      </div>
-    </template>
-  </InfiniteCanvas>
-</template>
 ```
 
-### With Image Preloading
+### isMobileDevice(userAgent, windowWidth)
 
-```vue
-<script setup>
-const items = ref([...])
-const imageUrls = computed(() => items.value.map(item => item.image))
+Detects mobile devices.
 
-const { progress, isComplete, startPreloading } = useImagePreloader({
-  images: imageUrls.value,
-  onComplete: () => {
-    // Hide loader, show canvas
-  }
-})
-
-onMounted(() => {
-  startPreloading()
-})
-</script>
-
-<template>
-  <div>
-    <InfiniteCanvasLoader 
-      :progress="progress" 
-      :is-visible="!isComplete" 
-    />
-    
-    <InfiniteCanvas 
-      v-show="isComplete"
-      :items="items"
-    >
-      <!-- Item template -->
-    </InfiniteCanvas>
-  </div>
-</template>
+```ts
+const isMobile = isMobileDevice(navigator.userAgent, window.innerWidth)
 ```
 
-## Configuration
+### getTouchDistance(touch1, touch2)
 
-You can configure the module in your `nuxt.config.ts`:
+Calculates distance between two touch points.
 
-```typescript
-export default defineNuxtConfig({
-  infiniteCanvas: {
-    prefix: 'Canvas' // Components will be named CanvasInfinite, etc.
-  }
-})
-```
+### getTouchCenter(touch1, touch2)
 
-## Browser Support
+Calculates center point between two touches.
 
-- Chrome 80+
-- Firefox 75+
-- Safari 13+
-- Edge 80+
+## Performance
 
-## Performance Tips
+The module includes several performance optimizations:
 
-1. **Virtualization**: Only visible items are rendered, but consider your item count
-2. **Image Optimization**: Use optimized images and consider using Nuxt Image
-3. **Debounced Interactions**: The canvas automatically debounces resize events
-4. **Memory Management**: Large canvases are automatically constrained
+- **Viewport culling**: Only renders visible items
+- **Adaptive throttling**: Reduces event frequency at high zoom
+- **Item limiting**: Caps visible items based on zoom level
+- **GPU acceleration**: Uses `transform3d` and `will-change`
+- **Distance sorting**: Prioritizes items closest to viewport center
 
 ## License
 
-MIT License - feel free to use in your projects! 
+MIT 

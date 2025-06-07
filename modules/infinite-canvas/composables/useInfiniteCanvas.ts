@@ -1,78 +1,52 @@
+/**
+ * @fileoverview Main composable for infinite canvas functionality
+ */
+
 import type { 
   CanvasItem, 
-  ZoomOptions, 
   Position, 
   GridItem,
   UseInfiniteCanvasOptions,
   UseInfiniteCanvasReturn 
 } from '../types'
+import { PHYSICS, TOUCH, VIEWPORT, ZOOM_DEFAULTS } from '../constants'
+import { getTouchDistance, getTouchCenter, clamp } from '../utils'
 
-// Physics constants
-const MIN_VELOCITY = 0.1
-const FRICTION = 0.92
-const DRAG_THRESHOLD = 5
+/**
+ * Creates an infinite canvas with drag, zoom, and virtualization support
+ * @param options Configuration options
+ * @returns Canvas state and event handlers
+ */
+export function useInfiniteCanvas(options: UseInfiniteCanvasOptions): UseInfiniteCanvasReturn {
+  const { items, baseGap = 40, zoomOptions, containerRef } = options
 
-// Touch/pinch constants
-const PINCH_THRESHOLD = 10
-const TOUCH_THROTTLE_MS = 16 // ~60fps base
-const TOUCH_THROTTLE_MS_HIGH_ZOOM = 32 // ~30fps for high zoom performance
+  // Canvas state
+  const offset = ref<Position>({ x: 0, y: 0 })
+  const velocity = ref<Position>({ x: 0, y: 0 })
+  const zoom = ref(1)
+  const containerDimensions = ref({ width: 0, height: 0 })
 
-// Throttle function for performance
-const throttle = <T extends (...args: any[]) => any>(func: T, delay: number): T => {
-  let lastCall = 0
-  return ((...args: any[]) => {
-    const now = Date.now()
-    if (now - lastCall >= delay) {
-      lastCall = now
-      return func(...args)
-    }
-  }) as T
-}
-
-// Helper to get distance between two touches
-const getTouchDistance = (touch1: Touch, touch2: Touch) => {
-  const dx = touch1.clientX - touch2.clientX
-  const dy = touch1.clientY - touch2.clientY
-  return Math.sqrt(dx * dx + dy * dy)
-}
-
-// Helper to get center point between two touches
-const getTouchCenter = (touch1: Touch, touch2: Touch) => {
-  return {
-    x: (touch1.clientX + touch2.clientX) / 2,
-    y: (touch1.clientY + touch2.clientY) / 2
-  }
-}
-
-export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteCanvasReturn {
-  // Canvas state - start at center
-  const offset = ref({ x: 0, y: 0 })
-  const velocity = ref({ x: 0, y: 0 })
+  // Interaction state
   const isDragging = ref(false)
   const justFinishedDragging = ref(false)
-  const containerDimensions = ref({ width: 0, height: 0 })
-  const zoom = ref(1) // Zoom level, 1 = 100%
-
-  // Drag state
-  const dragStart = ref({ x: 0, y: 0 })
-  const dragStartOffset = ref({ x: 0, y: 0 })
+  const dragStart = ref<Position>({ x: 0, y: 0 })
+  const dragStartOffset = ref<Position>({ x: 0, y: 0 })
   const totalDragDistance = ref(0)
   const dragStartTime = ref(0)
 
-  // Touch/pinch state
+  // Touch state
   const isPinching = ref(false)
   const initialPinchDistance = ref(0)
   const initialPinchZoom = ref(1)
-  const pinchCenter = ref({ x: 0, y: 0 })
-  const lastTouchTime = ref(0)
+  const pinchCenter = ref<Position & { canvasX?: number; canvasY?: number }>({ x: 0, y: 0 })
   const touchStartTime = ref(0)
   const wasPinching = ref(false)
 
-  // Calculate canvas dimensions for scattered layout
+  /**
+   * Calculate canvas bounds based on item count
+   */
   const canvasBounds = computed(() => {
-    // Create a larger canvas area for scattered items
-    const canvasSize = Math.max(4000, props.items.length * 100)
-    
+    const canvasSize = Math.max(4000, items.length * 100)
     return { 
       width: canvasSize, 
       height: canvasSize, 
@@ -81,123 +55,133 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     }
   })
 
-  // Generate scattered positions around center with collision avoidance
-  const gridItems = computed(() => {
-    const { centerX, centerY } = canvasBounds.value
-    const maxRadius = Math.min(centerX, centerY) * 0.8
-    const baseGap = props.baseGap || 40
+  /**
+   * Check collision between two positioned items
+   */
+  const checkCollision = (
+    pos1: Position, 
+    size1: { width: number; height: number },
+    pos2: Position, 
+    size2: { width: number; height: number }
+  ): boolean => {
+    const gap = baseGap
+    return !(
+      pos1.x + size1.width + gap < pos2.x ||
+      pos2.x + size2.width + gap < pos1.x ||
+      pos1.y + size1.height + gap < pos2.y ||
+      pos2.y + size2.height + gap < pos1.y
+    )
+  }
+
+  /**
+   * Find a valid position for an item using spiral placement
+   */
+  const findValidPosition = (index: number, placedItems: GridItem[]): Position => {
+    const { centerX = 0, centerY = 0 } = canvasBounds.value
+    const itemWidth = items[index]?.width || 300
+    const itemHeight = items[index]?.height || 300
     
-    const placedItems: Array<{ 
-      position: Position
-      index: number
-      width: number
-      height: number
-    }> = []
-    
-    // Check if two items collide with their actual dimensions
-    const checkCollision = (
-      pos1: Position, 
-      size1: { width: number; height: number },
-      pos2: Position, 
-      size2: { width: number; height: number }
-    ) => {
-      const left1 = pos1.x - baseGap
-      const right1 = pos1.x + size1.width + baseGap
-      const top1 = pos1.y - baseGap
-      const bottom1 = pos1.y + size1.height + baseGap
-      
-      const left2 = pos2.x
-      const right2 = pos2.x + size2.width
-      const top2 = pos2.y
-      const bottom2 = pos2.y + size2.height
-      
-      return !(right1 < left2 || left1 > right2 || bottom1 < top2 || top1 > bottom2)
+    if (index === 0) {
+      return { 
+        x: centerX - itemWidth / 2, 
+        y: centerY - itemHeight / 2 
+      }
     }
+
+    let radius = 200
+    const maxRadius = 2000
+    const angleStep = 0.5
     
-    // Simplified positioning algorithm
-    const findValidPosition = (index: number): Position => {
-      const item = props.items[index]
-      if (!item) return { x: centerX, y: centerY }
-        
-      const itemWidth = item.width || 300
-      const itemHeight = item.height || 300
-      const maxDimension = Math.max(itemWidth, itemHeight)
-      
-      let attempts = 0
-      const maxAttempts = 200
-      
-      while (attempts < maxAttempts) {
-        // Start from center and spiral outward
-        const radiusStep = maxDimension + baseGap
-        const currentRadius = Math.sqrt(attempts) * radiusStep * 0.6
-        const angle = index * 137.508 + attempts * 13.7
-        
-        // Add variation
-        const variation = Math.sin(index * 17.3 + attempts * 5.7) * radiusStep * 0.3
-        const finalRadius = Math.min(currentRadius + variation, maxRadius)
-        
-        const x = centerX + Math.cos(angle) * finalRadius - itemWidth / 2
-        const y = centerY + Math.sin(angle) * finalRadius - itemHeight / 2
-        
+    while (radius < maxRadius) {
+      for (let angle = 0; angle < Math.PI * 2; angle += angleStep) {
+        const x = centerX + Math.cos(angle) * radius - itemWidth / 2
+        const y = centerY + Math.sin(angle) * radius - itemHeight / 2
         const newPosition = { x, y }
-        const newSize = { width: itemWidth, height: itemHeight }
         
-        // Check collision with all placed items
-        const hasCollision = placedItems.some(placedItem => 
-          checkCollision(newPosition, newSize, placedItem.position, placedItem)
+        const hasCollision = placedItems.some(placedItem =>
+          checkCollision(
+            newPosition,
+            { width: itemWidth, height: itemHeight },
+            placedItem.position,
+            { width: placedItem.width, height: placedItem.height }
+          )
         )
         
         if (!hasCollision) {
           return newPosition
         }
-        
-        attempts++
       }
-      
-      // Emergency spiral fallback
-      const emergencyAngle = index * 2.4
-      const emergencyRadius = Math.sqrt(index) * (maxDimension + baseGap)
-      
-      return {
-        x: centerX + Math.cos(emergencyAngle) * emergencyRadius - itemWidth / 2,
-        y: centerY + Math.sin(emergencyAngle) * emergencyRadius - itemHeight / 2
-      }
+      radius += 150
     }
     
-    // Place all items one by one
-    return props.items.map((item, index) => {
-      const position = findValidPosition(index)
-      const itemWidth = item.width || 300
-      const itemHeight = item.height || 300
-      
-      const gridItem = { 
+    return { x: centerX, y: centerY }
+  }
+
+  /**
+   * Calculate positions for all grid items
+   */
+  const gridItems = computed<GridItem[]>(() => {
+    const placedItems: GridItem[] = []
+    
+    return items.map((item, index) => {
+      const position = findValidPosition(index, placedItems)
+      const gridItem: GridItem = { 
         position, 
         index,
-        width: itemWidth,
-        height: itemHeight
+        width: item.width || 300,
+        height: item.height || 300
       }
       placedItems.push(gridItem)
       return gridItem
     })
   })
 
-  // Get visible items based on viewport with zoom consideration and performance optimization
-  const visibleItems = computed(() => {
+  /**
+   * Constrain offset to canvas bounds
+   */
+  const constrainOffset = (newOffset: Position): Position => {
+    const { width, height } = containerDimensions.value
+    const { width: canvasWidth, height: canvasHeight } = canvasBounds.value
+    const currentZoom = zoom.value
+    
+    const maxOffsetX = width - canvasWidth * currentZoom
+    const maxOffsetY = height - canvasHeight * currentZoom
+    
+    return {
+      x: clamp(newOffset.x, maxOffsetX, 0),
+      y: clamp(newOffset.y, maxOffsetY, 0)
+    }
+  }
+
+  /**
+   * Throttled visible items calculation to reduce flickering during zoom
+   */
+  const _visibleItemsCache = ref<GridItem[]>([])
+  let _lastVisibleItemsUpdate = 0
+  
+  const calculateVisibleItems = () => {
     const { width, height } = containerDimensions.value
     const currentZoom = zoom.value
     
-    // Dynamic buffer based on zoom level - smaller buffer at high zoom for better performance
-    const baseBuffer = 300
-    const buffer = Math.max(100, baseBuffer / Math.max(currentZoom, 1))
+    // Increase buffer during pinching to reduce flickering
+    const baseBuffer = isPinching.value 
+      ? VIEWPORT.BASE_BUFFER * 1.5 
+      : VIEWPORT.BASE_BUFFER
     
-    // Calculate the actual viewport in canvas coordinates (accounting for zoom)
+    const buffer = Math.max(
+      VIEWPORT.MIN_BUFFER, 
+      baseBuffer / Math.max(currentZoom, 1)
+    )
+    
     const viewportLeft = (-offset.value.x) / currentZoom - buffer
     const viewportRight = (-offset.value.x + width) / currentZoom + buffer
     const viewportTop = (-offset.value.y) / currentZoom - buffer
     const viewportBottom = (-offset.value.y + height) / currentZoom + buffer
     
-    // Performance optimization: limit the number of visible items at high zoom
-    const maxVisibleItems = Math.min(100, Math.ceil(120 / currentZoom))
+    const maxVisibleItems = Math.min(
+      VIEWPORT.MAX_VISIBLE_ITEMS, 
+      Math.ceil(VIEWPORT.VISIBLE_ITEMS_FACTOR / currentZoom)
+    )
     
     const visibleItemsList = gridItems.value.filter(gridItem => {
       const itemRight = gridItem.position.x + gridItem.width
@@ -211,7 +195,6 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
       )
     })
     
-    // If too many items are visible, prioritize closest to center
     if (visibleItemsList.length > maxVisibleItems) {
       const centerX = (-offset.value.x + width / 2) / currentZoom
       const centerY = (-offset.value.y + height / 2) / currentZoom
@@ -229,46 +212,54 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     }
     
     return visibleItemsList
-  })
-
-  // Constrain offset to canvas bounds with zoom consideration
-  const constrainOffset = (newOffset: Position): Position => {
-    const { width: containerWidth, height: containerHeight } = containerDimensions.value
-    const { width: canvasWidth, height: canvasHeight } = canvasBounds.value
-    const currentZoom = zoom.value
-    
-    // Calculate limits with zoom
-    const scaledCanvasWidth = canvasWidth * currentZoom
-    const scaledCanvasHeight = canvasHeight * currentZoom
-    
-    const maxOffsetX = 0
-    const minOffsetX = Math.min(0, containerWidth - scaledCanvasWidth)
-    const maxOffsetY = 0
-    const minOffsetY = Math.min(0, containerHeight - scaledCanvasHeight)
-    
-    return {
-      x: Math.max(minOffsetX, Math.min(maxOffsetX, newOffset.x)),
-      y: Math.max(minOffsetY, Math.min(maxOffsetY, newOffset.y))
-    }
   }
 
-  // Update container dimensions
+  const visibleItems = computed(() => {
+    const now = Date.now()
+    const updateDelay = isPinching.value ? 50 : 16 // Throttle more during pinching for stability
+    
+    // Throttle updates during rapid changes to reduce flickering
+    if (now - _lastVisibleItemsUpdate > updateDelay || !isPinching.value) {
+      _lastVisibleItemsUpdate = now
+      const newVisibleItems = calculateVisibleItems()
+      
+      // During pinching, only update if there's a significant change
+      if (isPinching.value) {
+        const currentCount = _visibleItemsCache.value.length
+        const newCount = newVisibleItems.length
+        const changeThreshold = Math.max(2, Math.floor(currentCount * 0.1))
+        
+        if (Math.abs(newCount - currentCount) >= changeThreshold) {
+          _visibleItemsCache.value = newVisibleItems
+        }
+      } else {
+        _visibleItemsCache.value = newVisibleItems
+      }
+    }
+    
+    return _visibleItemsCache.value
+  })
+
+  /**
+   * Update container dimensions and center view if needed
+   */
   const updateDimensions = () => {
-    if (props.containerRef.value) {
-      const rect = props.containerRef.value.getBoundingClientRect()
+    if (containerRef.value) {
+      const rect = containerRef.value.getBoundingClientRect()
       containerDimensions.value = { width: rect.width, height: rect.height }
       
-      // Initialize position at center if this is the first time
       if (offset.value.x === 0 && offset.value.y === 0 && rect.width > 0) {
         centerView()
       }
     }
   }
 
-  // Center the view on the canvas
+  /**
+   * Center the view on the canvas
+   */
   const centerView = () => {
     const { width, height } = containerDimensions.value
-    const { centerX, centerY } = canvasBounds.value
+    const { centerX = 0, centerY = 0 } = canvasBounds.value
     
     offset.value = {
       x: -centerX + width / 2,
@@ -276,24 +267,25 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     }
   }
 
-  // Animation loop
+  /**
+   * Animation loop for momentum
+   */
   const animate = () => {
-    if (Math.abs(velocity.value.x) > MIN_VELOCITY || Math.abs(velocity.value.y) > MIN_VELOCITY) {
-      const newOffset = {
+    if (Math.abs(velocity.value.x) > PHYSICS.MIN_VELOCITY || 
+        Math.abs(velocity.value.y) > PHYSICS.MIN_VELOCITY) {
+      offset.value = constrainOffset({
         x: offset.value.x + velocity.value.x,
         y: offset.value.y + velocity.value.y
-      }
+      })
       
-      offset.value = constrainOffset(newOffset)
-      
-      velocity.value.x *= FRICTION
-      velocity.value.y *= FRICTION
+      velocity.value.x *= PHYSICS.FRICTION
+      velocity.value.y *= PHYSICS.FRICTION
       
       requestAnimationFrame(animate)
     }
   }
 
-  // Mouse/touch event handlers
+  // Event handlers
   const handlePointerDown = (clientX: number, clientY: number) => {
     dragStart.value = { x: clientX, y: clientY }
     dragStartOffset.value = { ...offset.value }
@@ -311,15 +303,14 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     
     totalDragDistance.value = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
 
-    if (totalDragDistance.value > DRAG_THRESHOLD) {
+    if (totalDragDistance.value > PHYSICS.DRAG_THRESHOLD) {
       isDragging.value = true
       
-      const newOffset = {
+      offset.value = constrainOffset({
         x: dragStartOffset.value.x + deltaX,
         y: dragStartOffset.value.y + deltaY
-      }
+      })
       
-      offset.value = constrainOffset(newOffset)
       velocity.value = { x: 0, y: 0 }
     }
   }
@@ -330,7 +321,7 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
       const deltaX = clientX - dragStart.value.x
       const deltaY = clientY - dragStart.value.y
       
-      if (deltaTime > 0 && totalDragDistance.value > DRAG_THRESHOLD) {
+      if (deltaTime > 0 && totalDragDistance.value > PHYSICS.DRAG_THRESHOLD) {
         const velocityMultiplier = Math.min(deltaTime, 100) / 100
         velocity.value = {
           x: (deltaX / deltaTime) * 16 * velocityMultiplier,
@@ -349,195 +340,186 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     dragStart.value = { x: 0, y: 0 }
   }
 
-  // Wheel handler with zoom support
   const handleWheel = (event: WheelEvent) => {
     event.preventDefault()
     
-    // Get zoom options with defaults
-    const zoomOpts = props.zoomOptions || {}
-    const minZoom = zoomOpts.minZoom ?? 0.5 // 50% minimum
-    const maxZoom = zoomOpts.maxZoom ?? 2.0 // 200% maximum
-    const zoomFactorIn = zoomOpts.zoomFactor ?? 1.08
-    const zoomFactorOut = 1 / zoomFactorIn
-    const enableCtrl = zoomOpts.enableCtrl ?? true
-    const enableMeta = zoomOpts.enableMeta ?? true
-    const enableAlt = zoomOpts.enableAlt ?? true
+    const opts = zoomOptions || {}
+    const minZoom = opts.minZoom ?? ZOOM_DEFAULTS.MIN
+    const maxZoom = opts.maxZoom ?? ZOOM_DEFAULTS.MAX
+    const zoomFactor = opts.zoomFactor ?? ZOOM_DEFAULTS.FACTOR
+    const zoomFactorOut = 1 / zoomFactor
     
-    // Check if any of the enabled modifier keys are pressed
     const isZoomModifier = (
-      (enableCtrl && event.ctrlKey) ||
-      (enableMeta && event.metaKey) ||
-      (enableAlt && event.altKey)
+      (opts.enableCtrl !== false && event.ctrlKey) ||
+      (opts.enableMeta !== false && event.metaKey) ||
+      (opts.enableAlt !== false && event.altKey)
     )
     
     if (isZoomModifier) {
-      // Zoom with configurable limits
-      const zoomFactor = event.deltaY > 0 ? zoomFactorOut : zoomFactorIn
-      const newZoom = Math.max(minZoom, Math.min(maxZoom, zoom.value * zoomFactor))
+      const newZoom = clamp(
+        zoom.value * (event.deltaY > 0 ? zoomFactorOut : zoomFactor),
+        minZoom,
+        maxZoom
+      )
       
-      // Zoom towards mouse position
-      const rect = props.containerRef.value?.getBoundingClientRect()
+      const rect = containerRef.value?.getBoundingClientRect()
       if (rect) {
         const mouseX = event.clientX - rect.left
         const mouseY = event.clientY - rect.top
         
-        // Get current values before any updates
         const oldZoom = zoom.value
-        const oldOffset = { ...offset.value }
+        const pointX = (mouseX - offset.value.x) / oldZoom
+        const pointY = (mouseY - offset.value.y) / oldZoom
         
-        // Calculate the point in the canvas that's currently under the mouse
-        // This point should stay under the mouse after zooming
-        const pointX = (mouseX - oldOffset.x) / oldZoom
-        const pointY = (mouseY - oldOffset.y) / oldZoom
-        
-        // Update zoom first
         zoom.value = newZoom
         
-        // Calculate new offset so that the same canvas point stays under mouse
-        // mouseX = newOffset.x + pointX * newZoom
-        // Therefore: newOffset.x = mouseX - pointX * newZoom
-        const newOffset = {
+        offset.value = constrainOffset({
           x: mouseX - pointX * newZoom,
           y: mouseY - pointY * newZoom
-        }
-        
-        offset.value = constrainOffset(newOffset)
+        })
       } else {
         zoom.value = newZoom
       }
     } else {
-      // Pan
-      const newOffset = {
+      offset.value = constrainOffset({
         x: offset.value.x - event.deltaX,
         y: offset.value.y - event.deltaY
-      }
-      
-      offset.value = constrainOffset(newOffset)
+      })
     }
     
     velocity.value = { x: 0, y: 0 }
   }
 
-  // Navigation function for minimap
   const navigateTo = (position: Position) => {
     const { width, height } = containerDimensions.value
-    const newOffset = {
+    offset.value = constrainOffset({
       x: -position.x + width / 2,
       y: -position.y + height / 2
-    }
-    
-    offset.value = constrainOffset(newOffset)
+    })
     velocity.value = { x: 0, y: 0 }
   }
 
-  // Touch event handlers with pinch-to-zoom support
+  // Touch handlers
   const handleTouchStart = (event: TouchEvent) => {
+    // Prevent default to avoid browser zoom/pan
+    event.preventDefault()
+    
     const touches = Array.from(event.touches)
     touchStartTime.value = Date.now()
     wasPinching.value = false
     
     if (touches.length === 1 && touches[0]) {
-      // Single touch - start dragging
       const [touch] = touches
       handlePointerDown(touch.clientX, touch.clientY)
       isPinching.value = false
     } else if (touches.length === 2 && touches[0] && touches[1]) {
-      // Two fingers - start pinching
       const [touch1, touch2] = touches
       isPinching.value = true
       wasPinching.value = true
       initialPinchDistance.value = getTouchDistance(touch1, touch2)
       initialPinchZoom.value = zoom.value
       
-      // Calculate pinch center relative to container
-      const rect = props.containerRef.value?.getBoundingClientRect()
+      const rect = containerRef.value?.getBoundingClientRect()
       if (rect) {
         const center = getTouchCenter(touch1, touch2)
+        // Store the center in canvas coordinates (accounting for current transform)
+        const canvasX = (center.x - rect.left - offset.value.x) / zoom.value
+        const canvasY = (center.y - rect.top - offset.value.y) / zoom.value
         pinchCenter.value = {
           x: center.x - rect.left,
-          y: center.y - rect.top
+          y: center.y - rect.top,
+          canvasX,
+          canvasY
         }
       }
       
-      // Stop any ongoing drag
       isDragging.value = false
       velocity.value = { x: 0, y: 0 }
     }
   }
 
-  // Adaptive throttle for touch move events
   let lastTouchMoveCall = 0
   const handleTouchMove = (event: TouchEvent) => {
-    const now = Date.now()
-    const throttleDelay = zoom.value > 1.5 ? TOUCH_THROTTLE_MS_HIGH_ZOOM : TOUCH_THROTTLE_MS
+    // Prevent default to avoid browser zoom/pan
+    event.preventDefault()
     
-    if (now - lastTouchMoveCall < throttleDelay) {
-      return
-    }
+    const now = Date.now()
+    // Reduce throttling during pinch for smoother zoom
+    const throttleDelay = isPinching.value 
+      ? 8 // More frequent updates during pinch
+      : (zoom.value > ZOOM_DEFAULTS.HIGH_ZOOM_THRESHOLD 
+        ? TOUCH.THROTTLE_MS_HIGH_ZOOM 
+        : TOUCH.THROTTLE_MS)
+    
+    if (now - lastTouchMoveCall < throttleDelay) return
     lastTouchMoveCall = now
     
     const touches = Array.from(event.touches)
     
     if (touches.length === 1 && !isPinching.value && touches[0]) {
-      // Single touch - drag
       const [touch] = touches
       handlePointerMove(touch.clientX, touch.clientY)
     } else if (touches.length === 2 && isPinching.value && touches[0] && touches[1]) {
-      // Two fingers - pinch zoom
       const [touch1, touch2] = touches
       const currentDistance = getTouchDistance(touch1, touch2)
       const distanceChange = currentDistance - initialPinchDistance.value
       
-      if (Math.abs(distanceChange) > PINCH_THRESHOLD) {
-        // Calculate zoom factor based on distance change
-        const zoomOpts = props.zoomOptions || {}
-        const minZoom = zoomOpts.minZoom ?? 0.4
-        const maxZoom = zoomOpts.maxZoom ?? 2.2
+      if (Math.abs(distanceChange) > TOUCH.PINCH_THRESHOLD) {
+        const opts = zoomOptions || {}
+        const minZoom = opts.minZoom ?? ZOOM_DEFAULTS.MIN
+        const maxZoom = opts.maxZoom ?? ZOOM_DEFAULTS.MAX
         
-        // Calculate new zoom - more sensitive on mobile
-        const zoomFactor = 1 + (distanceChange / initialPinchDistance.value) * 1.5
-        const newZoom = Math.max(minZoom, Math.min(maxZoom, initialPinchZoom.value * zoomFactor))
+        const zoomFactor = 1 + (distanceChange / initialPinchDistance.value) * 1.2
+        const newZoom = clamp(initialPinchZoom.value * zoomFactor, minZoom, maxZoom)
         
-        // Zoom towards pinch center
-        const oldZoom = zoom.value
-        const oldOffset = { ...offset.value }
-        
-        // Calculate the point in the canvas under the pinch center
-        const pointX = (pinchCenter.value.x - oldOffset.x) / oldZoom
-        const pointY = (pinchCenter.value.y - oldOffset.y) / oldZoom
-        
-        // Update zoom
-        zoom.value = newZoom
-        
-        // Adjust offset so the same point stays under the pinch center
-        const newOffset = {
-          x: pinchCenter.value.x - pointX * newZoom,
-          y: pinchCenter.value.y - pointY * newZoom
+        // Use the stored canvas coordinates if available for more stable zooming
+        let pointX, pointY
+        if (pinchCenter.value.canvasX !== undefined && pinchCenter.value.canvasY !== undefined) {
+          pointX = pinchCenter.value.canvasX
+          pointY = pinchCenter.value.canvasY
+        } else {
+          // Fallback to the old method
+          const oldZoom = zoom.value
+          pointX = (pinchCenter.value.x - offset.value.x) / oldZoom
+          pointY = (pinchCenter.value.y - offset.value.y) / oldZoom
         }
         
-        offset.value = constrainOffset(newOffset)
+        // Batch zoom and offset updates to reduce flickering
+        const newOffset = constrainOffset({
+          x: pinchCenter.value.x - pointX * newZoom,
+          y: pinchCenter.value.y - pointY * newZoom
+        })
+        
+        // Apply changes in a single frame
+        requestAnimationFrame(() => {
+          zoom.value = newZoom
+          offset.value = newOffset
+        })
       }
     }
   }
 
   const handleTouchEnd = (event: TouchEvent) => {
+    // Prevent default to avoid browser zoom/pan
+    event.preventDefault()
+    
     const touches = Array.from(event.touches)
     const touchDuration = Date.now() - touchStartTime.value
     
     if (touches.length === 0) {
-      // All fingers lifted
       if (isPinching.value || wasPinching.value) {
         isPinching.value = false
         wasPinching.value = false
-        // Don't trigger justFinishedDragging for pinch gestures
+        // Force a clean update of visible items after pinching ends
+        setTimeout(() => {
+          _visibleItemsCache.value = calculateVisibleItems()
+        }, 100)
       } else {
-        // End drag - but check if it was actually a tap
         const changedTouches = Array.from(event.changedTouches)
         const [touch] = changedTouches
         if (touch) {
-          // For short touches with minimal movement, consider it a tap
-          if (touchDuration < 300 && totalDragDistance.value <= DRAG_THRESHOLD) {
-            // Reset drag state immediately for taps
+          if (touchDuration < TOUCH.TAP_DURATION && 
+              totalDragDistance.value <= TOUCH.TAP_DISTANCE) {
             isDragging.value = false
             justFinishedDragging.value = false
             totalDragDistance.value = 0
@@ -546,18 +528,16 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
         }
       }
     } else if (touches.length === 1 && isPinching.value && touches[0]) {
-      // One finger lifted during pinch - continue with single touch
       isPinching.value = false
       const [touch] = touches
       handlePointerDown(touch.clientX, touch.clientY)
     }
   }
 
-  // Check if user can click (not dragging and not pinching)
   const canClick = computed(() => 
     !justFinishedDragging.value && 
     !isPinching.value && 
-    totalDragDistance.value <= DRAG_THRESHOLD
+    totalDragDistance.value <= PHYSICS.DRAG_THRESHOLD
   )
 
   return {

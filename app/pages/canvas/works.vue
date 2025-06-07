@@ -11,8 +11,7 @@ if (!data.value) throw createError({ statusCode: 404, statusMessage: 'Canvas not
 // Detect if user is on mobile device
 const isMobile = computed(() => {
   if (!import.meta.client) return false
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-         window.innerWidth <= 768
+  return isMobileDevice(navigator.userAgent, window.innerWidth)
 })
 
 const handleItemClick = (item: CanvasItem) => {
@@ -20,8 +19,6 @@ const handleItemClick = (item: CanvasItem) => {
   if (isMobile.value) {
     return
   }
-  
-  console.log('Item clicked:', item.title)
   
   // Desktop-only click handling
   if (import.meta.client) {
@@ -50,7 +47,6 @@ const { progress, isComplete, startPreloading } = useImagePreloader({
 
 onMounted(() => {
   startPreloading()
-  // Force update dimensions when canvas ref is available
   nextTick(() => {
     if (canvasRef.value?.updateDimensions) {
       canvasRef.value.updateDimensions()
@@ -67,23 +63,16 @@ if (import.meta.client) {
   document.body.style.overscrollBehavior = 'none'
   document.body.style.touchAction = 'manipulation'
 }
-
-// Utility function to determine media type
-const getMediaType = (url: string) => {
-  const extension = url.split('.').pop()?.toLowerCase()
-  if (extension === 'mp4' || extension === 'webm' || extension === 'mov') {
-    return 'video'
-  }
-  return 'image'
-}
 </script>
 
 <template>
   <UApp v-if="data" class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
     <FolioMeta :page="data" :is-writing="false" />
+    
     <div class="absolute top-4 right-4 z-50 isolate touch-auto select-auto cursor-pointer">
       <ThemeSelector />
     </div>
+    
     <div class="absolute top-4 left-4 z-50 isolate touch-auto select-auto cursor-pointer">
       <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
         <span class="font-serif italic hover:text-primary hover:underline">
@@ -91,6 +80,7 @@ const getMediaType = (url: string) => {
         </span>
       </NuxtLink>
     </div>
+    
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
@@ -143,7 +133,7 @@ const getMediaType = (url: string) => {
           <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 border-2 border-default/50">
             <div class="relative size-full overflow-hidden rounded-xl">
               <video
-                v-if="getMediaType(item.image) === 'video'"
+                v-if="item && isVideo(item.image)"
                 :src="item.image"
                 class="size-full object-cover"
                 autoplay
@@ -153,7 +143,7 @@ const getMediaType = (url: string) => {
                 :draggable="false"
               />
               <img
-                v-else
+                v-else-if="item"
                 :src="item.image"
                 :alt="item.title"
                 class="size-full object-cover"
@@ -164,7 +154,7 @@ const getMediaType = (url: string) => {
         </Motion>
       </template>
     </Canvas>
-    
+
     <div v-if="canvasRef" class="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 pointer-events-none">
       <CanvasMinimap
         :items="data?.items || []"
@@ -176,7 +166,6 @@ const getMediaType = (url: string) => {
         class="scale-85 sm:scale-100 origin-bottom-right"
       />
     </div>
-
 
     <div class="pointer-events-none absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-40 flex flex-col gap-2">
       <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
