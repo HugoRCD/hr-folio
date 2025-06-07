@@ -80,47 +80,45 @@ const viewportRect = computed(() => {
 </script>
 
 <template>
-  <div class="fixed bottom-4 right-4 pointer-events-none">
-    <div class="relative overflow-hidden rounded-lg border border-default bg-default/40 p-2 backdrop-blur-sm shadow-lg">
-      <!-- Minimap container -->
-      <div 
-        class="relative"
-        :style="{ width: MINIMAP_SIZE + 'px', height: MINIMAP_SIZE + 'px' }"
+  <div class="relative overflow-hidden rounded-lg border border-default bg-default/40 p-2 backdrop-blur-sm shadow-lg">
+    <!-- Minimap container -->
+    <div 
+      class="relative"
+      :style="{ width: MINIMAP_SIZE + 'px', height: MINIMAP_SIZE + 'px' }"
+    >
+      <!-- Centered minimap content -->
+      <div
+        class="absolute bg-muted/50"
+        :style="{
+          left: (MINIMAP_SIZE - minimapDimensions.width) / 2 + 'px',
+          top: (MINIMAP_SIZE - minimapDimensions.height) / 2 + 'px',
+          width: minimapDimensions.width + 'px',
+          height: minimapDimensions.height + 'px'
+        }"
       >
-        <!-- Centered minimap content -->
+        <!-- Items with real shapes -->
         <div
-          class="absolute bg-muted/50"
+          v-for="item in minimapItems"
+          :key="item.index"
+          class="absolute bg-accented border border-inverted/30 rounded-sm"
           :style="{
-            left: (MINIMAP_SIZE - minimapDimensions.width) / 2 + 'px',
-            top: (MINIMAP_SIZE - minimapDimensions.height) / 2 + 'px',
-            width: minimapDimensions.width + 'px',
-            height: minimapDimensions.height + 'px'
+            width: item.minimapSize.width + 'px',
+            height: item.minimapSize.height + 'px',
+            left: item.minimapPosition.x + 'px',
+            top: item.minimapPosition.y + 'px'
           }"
-        >
-          <!-- Items with real shapes -->
-          <div
-            v-for="item in minimapItems"
-            :key="item.index"
-            class="absolute bg-accented border border-inverted/30 rounded-sm"
-            :style="{
-              width: item.minimapSize.width + 'px',
-              height: item.minimapSize.height + 'px',
-              left: item.minimapPosition.x + 'px',
-              top: item.minimapPosition.y + 'px'
-            }"
-          />
+        />
 
-          <!-- Viewport indicator -->
-          <div
-            class="absolute border border-primary bg-primary/10"
-            :style="{
-              left: viewportRect.x + 'px',
-              top: viewportRect.y + 'px',
-              width: viewportRect.width + 'px',
-              height: viewportRect.height + 'px',
-            }"
-          />
-        </div>
+        <!-- Viewport indicator -->
+        <div
+          class="absolute border border-primary bg-primary/10"
+          :style="{
+            left: viewportRect.x + 'px',
+            top: viewportRect.y + 'px',
+            width: viewportRect.width + 'px',
+            height: viewportRect.height + 'px',
+          }"
+        />
       </div>
     </div>
   </div>

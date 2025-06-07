@@ -8,8 +8,25 @@ definePageMeta({
 const { data } = await useAsyncData('canvas', () => queryCollection('canvas').path('/canvas/works').first())
 if (!data.value) throw createError({ statusCode: 404, statusMessage: 'Canvas not found' })
 
+// Detect if user is on mobile device
+const isMobile = computed(() => {
+  if (!import.meta.client) return false
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+         window.innerWidth <= 768
+})
+
 const handleItemClick = (item: CanvasItem) => {
-  window.open(item.link, '_blank', 'noopener,noreferrer')
+  // Disable clicks on mobile devices
+  if (isMobile.value) {
+    return
+  }
+  
+  console.log('Item clicked:', item.title)
+  
+  // Desktop-only click handling
+  if (import.meta.client) {
+    window.open(item.link, '_blank', 'noopener,noreferrer')
+  }
 }
 
 const imageUrls = computed(() => data.value?.items.map(item => item.image))
@@ -115,8 +132,12 @@ const getMediaType = (url: string) => {
             delay: isImagesLoaded ? Math.random() * 0.8 : 0,
             ease: 'easeOut'
           }" 
-          class="group relative size-full cursor-pointer select-none overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300"
-          :class="index % 2 === 0 ? 'rotate-1' : '-rotate-1'"
+          class="group relative size-full select-none overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300"
+          :class="[
+            isMobile ? 'cursor-default' : 'cursor-pointer',
+            index % 2 === 0 ? 'rotate-1' : '-rotate-1'
+          ]"
+          data-canvas-item
           @click="onItemClick"
         >
           <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 border-2 border-default/50">
@@ -143,22 +164,24 @@ const getMediaType = (url: string) => {
         </Motion>
       </template>
     </Canvas>
+    
+    <div v-if="canvasRef" class="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 pointer-events-none">
+      <CanvasMinimap
+        :items="data?.items || []"
+        :grid-items="canvasRef.gridItems || []"
+        :offset="canvasRef.offset || { x: 0, y: 0 }"
+        :zoom="canvasRef.zoom || 1"
+        :container-dimensions="canvasRef.containerDimensions || { width: 0, height: 0 }"
+        :canvas-bounds="canvasRef.canvasBounds || { width: 0, height: 0 }"
+        class="scale-85 sm:scale-100 origin-bottom-right"
+      />
+    </div>
 
-    <CanvasMinimap
-      v-if="canvasRef"
-      :items="data?.items || []"
-      :grid-items="canvasRef.gridItems || []"
-      :offset="canvasRef.offset || { x: 0, y: 0 }"
-      :zoom="canvasRef.zoom || 1"
-      :container-dimensions="canvasRef.containerDimensions || { width: 0, height: 0 }"
-      :canvas-bounds="canvasRef.canvasBounds || { width: 0, height: 0 }"
-      class="scale-85 sm:scale-100 origin-bottom-right"
-    />
 
     <div class="pointer-events-none absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-40 flex flex-col gap-2">
       <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
         <p class="text-xs opacity-75">
-          <span class="sm:hidden">Tap items to open links</span><span class="hidden sm:inline">Click items to open links</span> • {{ data?.items.length }} items
+          <span class="sm:hidden">{{ data?.items.length }} items</span><span class="hidden sm:inline">Click items to open links • {{ data?.items.length }} items</span>
           <span v-if="canvasRef?.zoom" class="ml-2 opacity-60">
             • {{ Math.round((canvasRef.zoom || 1) * 100) }}%
           </span>
