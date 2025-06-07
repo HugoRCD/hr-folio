@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ContentCollectionItem } from '@nuxt/content'
+import type { ContentCollectionItem, CanvasCollectionItem } from '@nuxt/content'
 
 const { page, isWriting } = defineProps<{
-  page: ContentCollectionItem
+  page: ContentCollectionItem | CanvasCollectionItem
   isWriting: boolean
 }>()
 

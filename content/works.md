@@ -21,3 +21,5 @@ description: List of all my works, projects, and contributions.
   :::works{category="personal"}
   :::
 ::
+
+::u-button{to="/canvas/works" block label="View all works on canvas" class="text-highlighted py-4 text-md"}

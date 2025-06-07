@@ -4,7 +4,7 @@
 @import "./animations.css";
 @import "./playground.css";
 
-@source "../../../content";
+@source "../../../";
 
 @theme static {
   --font-serif: "Newsreader", serif;
