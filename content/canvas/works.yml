@@ -58,7 +58,6 @@ items:
     height: 270
   - title: Nuxt 100k Followers Post
     description: A post about Nuxt 100k followers.
-    link: https://x.com/nuxt_js/status/1870000000000000000
     image: /assets/canvas/works/nuxt/100k-followers.mp4
     width: 480
     height: 270

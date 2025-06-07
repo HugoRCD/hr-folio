@@ -1,5 +1,14 @@
 import type { ImagePreloaderOptions, UseImagePreloaderReturn } from '../types'
 
+// Utility function to determine media type
+const getMediaType = (url: string) => {
+  const extension = url.split('.').pop()?.toLowerCase()
+  if (extension === 'mp4' || extension === 'webm' || extension === 'mov') {
+    return 'video'
+  }
+  return 'image'
+}
+
 export function useImagePreloader(options: ImagePreloaderOptions): UseImagePreloaderReturn {
   const { images, onProgress, onComplete } = options
   
@@ -8,42 +17,83 @@ export function useImagePreloader(options: ImagePreloaderOptions): UseImagePrelo
   const isLoading = ref(true)
   const isComplete = ref(false)
 
-  const preloadImage = (src: string): Promise<void> => {
+  const preloadMedia = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const img = new Image()
+      const mediaType = getMediaType(src)
       
-      img.onload = () => {
-        loadedCount.value++
-        const newProgress = loadedCount.value / images.length
-        progress.value = newProgress
-        onProgress?.(newProgress)
+      if (mediaType === 'video') {
+        const video = document.createElement('video')
+        video.preload = 'metadata'
+        video.muted = true
         
-        if (loadedCount.value === images.length) {
-          isComplete.value = true
-          isLoading.value = false
-          onComplete?.()
+        video.onloadedmetadata = () => {
+          loadedCount.value++
+          const newProgress = loadedCount.value / images.length
+          progress.value = newProgress
+          onProgress?.(newProgress)
+          
+          if (loadedCount.value === images.length) {
+            isComplete.value = true
+            isLoading.value = false
+            onComplete?.()
+          }
+          
+          resolve()
         }
         
-        resolve()
-      }
-      
-      img.onerror = () => {
-        // Even on error, continue loading other images
-        loadedCount.value++
-        const newProgress = loadedCount.value / images.length
-        progress.value = newProgress
-        onProgress?.(newProgress)
-        
-        if (loadedCount.value === images.length) {
-          isComplete.value = true
-          isLoading.value = false
-          onComplete?.()
+        video.onerror = () => {
+          // Even on error, continue loading other media
+          loadedCount.value++
+          const newProgress = loadedCount.value / images.length
+          progress.value = newProgress
+          onProgress?.(newProgress)
+          
+          if (loadedCount.value === images.length) {
+            isComplete.value = true
+            isLoading.value = false
+            onComplete?.()
+          }
+          
+          resolve() // Don't reject to avoid breaking the flow
         }
         
-        resolve() // Don't reject to avoid breaking the flow
+        video.src = src
+      } else {
+        const img = new Image()
+        
+        img.onload = () => {
+          loadedCount.value++
+          const newProgress = loadedCount.value / images.length
+          progress.value = newProgress
+          onProgress?.(newProgress)
+          
+          if (loadedCount.value === images.length) {
+            isComplete.value = true
+            isLoading.value = false
+            onComplete?.()
+          }
+          
+          resolve()
+        }
+        
+        img.onerror = () => {
+          // Even on error, continue loading other images
+          loadedCount.value++
+          const newProgress = loadedCount.value / images.length
+          progress.value = newProgress
+          onProgress?.(newProgress)
+          
+          if (loadedCount.value === images.length) {
+            isComplete.value = true
+            isLoading.value = false
+            onComplete?.()
+          }
+          
+          resolve() // Don't reject to avoid breaking the flow
+        }
+        
+        img.src = src
       }
-      
-      img.src = src
     })
   }
 
@@ -56,8 +106,8 @@ export function useImagePreloader(options: ImagePreloaderOptions): UseImagePrelo
       return
     }
 
-    // Preload all images in parallel
-    await Promise.all(images.map(preloadImage))
+    // Preload all media in parallel
+    await Promise.all(images.map(preloadMedia))
   }
 
   return {

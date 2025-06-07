@@ -65,7 +65,7 @@ export interface UseInfiniteCanvasReturn {
 }
 
 export interface ImagePreloaderOptions {
-  images: string[]
+  images: string[] // Can contain both image and video URLs
   onProgress?: (progress: number) => void
   onComplete?: () => void
 }

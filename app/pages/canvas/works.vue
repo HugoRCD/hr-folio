@@ -50,6 +50,15 @@ if (import.meta.client) {
   document.body.style.overscrollBehavior = 'none'
   document.body.style.touchAction = 'manipulation'
 }
+
+// Utility function to determine media type
+const getMediaType = (url: string) => {
+  const extension = url.split('.').pop()?.toLowerCase()
+  if (extension === 'mp4' || extension === 'webm' || extension === 'mov') {
+    return 'video'
+  }
+  return 'image'
+}
 </script>
 
 <template>
@@ -112,7 +121,18 @@ if (import.meta.client) {
         >
           <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 border-2 border-default/50">
             <div class="relative size-full overflow-hidden rounded-xl">
+              <video
+                v-if="getMediaType(item.image) === 'video'"
+                :src="item.image"
+                class="size-full object-cover"
+                autoplay
+                loop
+                muted
+                playsinline
+                :draggable="false"
+              />
               <img
+                v-else
                 :src="item.image"
                 :alt="item.title"
                 class="size-full object-cover"
