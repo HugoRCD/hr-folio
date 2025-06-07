@@ -14,7 +14,8 @@ const DRAG_THRESHOLD = 5
 
 // Touch/pinch constants
 const PINCH_THRESHOLD = 10
-const TOUCH_THROTTLE_MS = 16 // ~60fps
+const TOUCH_THROTTLE_MS = 16 // ~60fps base
+const TOUCH_THROTTLE_MS_HIGH_ZOOM = 32 // ~30fps for high zoom performance
 
 // Throttle function for performance
 const throttle = <T extends (...args: any[]) => any>(func: T, delay: number): T => {
@@ -64,6 +65,8 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
   const initialPinchZoom = ref(1)
   const pinchCenter = ref({ x: 0, y: 0 })
   const lastTouchTime = ref(0)
+  const touchStartTime = ref(0)
+  const wasPinching = ref(false)
 
   // Calculate canvas dimensions for scattered layout
   const canvasBounds = computed(() => {
@@ -178,11 +181,14 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     })
   })
 
-  // Get visible items based on viewport with zoom consideration
+  // Get visible items based on viewport with zoom consideration and performance optimization
   const visibleItems = computed(() => {
     const { width, height } = containerDimensions.value
-    const buffer = 500
     const currentZoom = zoom.value
+    
+    // Dynamic buffer based on zoom level - smaller buffer at high zoom for better performance
+    const baseBuffer = 300
+    const buffer = Math.max(100, baseBuffer / Math.max(currentZoom, 1))
     
     // Calculate the actual viewport in canvas coordinates (accounting for zoom)
     const viewportLeft = (-offset.value.x) / currentZoom - buffer
@@ -190,7 +196,10 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     const viewportTop = (-offset.value.y) / currentZoom - buffer
     const viewportBottom = (-offset.value.y + height) / currentZoom + buffer
     
-    return gridItems.value.filter(gridItem => {
+    // Performance optimization: limit the number of visible items at high zoom
+    const maxVisibleItems = Math.min(100, Math.ceil(120 / currentZoom))
+    
+    const visibleItemsList = gridItems.value.filter(gridItem => {
       const itemRight = gridItem.position.x + gridItem.width
       const itemBottom = gridItem.position.y + gridItem.height
       
@@ -201,6 +210,25 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
         itemBottom > viewportTop
       )
     })
+    
+    // If too many items are visible, prioritize closest to center
+    if (visibleItemsList.length > maxVisibleItems) {
+      const centerX = (-offset.value.x + width / 2) / currentZoom
+      const centerY = (-offset.value.y + height / 2) / currentZoom
+      
+      return visibleItemsList
+        .map(item => ({
+          ...item,
+          distanceToCenter: Math.sqrt(
+            Math.pow(item.position.x + item.width / 2 - centerX, 2) +
+            Math.pow(item.position.y + item.height / 2 - centerY, 2)
+          )
+        }))
+        .sort((a, b) => a.distanceToCenter - b.distanceToCenter)
+        .slice(0, maxVisibleItems)
+    }
+    
+    return visibleItemsList
   })
 
   // Constrain offset to canvas bounds with zoom consideration
@@ -405,6 +433,8 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
   // Touch event handlers with pinch-to-zoom support
   const handleTouchStart = (event: TouchEvent) => {
     const touches = Array.from(event.touches)
+    touchStartTime.value = Date.now()
+    wasPinching.value = false
     
     if (touches.length === 1 && touches[0]) {
       // Single touch - start dragging
@@ -415,6 +445,7 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
       // Two fingers - start pinching
       const [touch1, touch2] = touches
       isPinching.value = true
+      wasPinching.value = true
       initialPinchDistance.value = getTouchDistance(touch1, touch2)
       initialPinchZoom.value = zoom.value
       
@@ -434,7 +465,17 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     }
   }
 
-  const handleTouchMove = throttle((event: TouchEvent) => {
+  // Adaptive throttle for touch move events
+  let lastTouchMoveCall = 0
+  const handleTouchMove = (event: TouchEvent) => {
+    const now = Date.now()
+    const throttleDelay = zoom.value > 1.5 ? TOUCH_THROTTLE_MS_HIGH_ZOOM : TOUCH_THROTTLE_MS
+    
+    if (now - lastTouchMoveCall < throttleDelay) {
+      return
+    }
+    lastTouchMoveCall = now
+    
     const touches = Array.from(event.touches)
     
     if (touches.length === 1 && !isPinching.value && touches[0]) {
@@ -477,20 +518,30 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
         offset.value = constrainOffset(newOffset)
       }
     }
-  }, TOUCH_THROTTLE_MS)
+  }
 
   const handleTouchEnd = (event: TouchEvent) => {
     const touches = Array.from(event.touches)
+    const touchDuration = Date.now() - touchStartTime.value
     
     if (touches.length === 0) {
       // All fingers lifted
-      if (isPinching.value) {
+      if (isPinching.value || wasPinching.value) {
         isPinching.value = false
+        wasPinching.value = false
+        // Don't trigger justFinishedDragging for pinch gestures
       } else {
-        // End drag
+        // End drag - but check if it was actually a tap
         const changedTouches = Array.from(event.changedTouches)
         const [touch] = changedTouches
         if (touch) {
+          // For short touches with minimal movement, consider it a tap
+          if (touchDuration < 300 && totalDragDistance.value <= DRAG_THRESHOLD) {
+            // Reset drag state immediately for taps
+            isDragging.value = false
+            justFinishedDragging.value = false
+            totalDragDistance.value = 0
+          }
           handlePointerUp(touch.clientX, touch.clientY)
         }
       }
@@ -502,8 +553,12 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     }
   }
 
-  // Check if user can click (not dragging)
-  const canClick = computed(() => !justFinishedDragging.value && totalDragDistance.value <= DRAG_THRESHOLD)
+  // Check if user can click (not dragging and not pinching)
+  const canClick = computed(() => 
+    !justFinishedDragging.value && 
+    !isPinching.value && 
+    totalDragDistance.value <= DRAG_THRESHOLD
+  )
 
   return {
     offset: readonly(offset),

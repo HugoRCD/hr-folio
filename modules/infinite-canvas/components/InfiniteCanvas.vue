@@ -162,9 +162,9 @@ defineExpose({
   >
     <!-- Canvas -->
     <div
-      class="absolute origin-top-left"
+      class="absolute origin-top-left will-change-transform"
       :style="{
-        transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+        transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})`,
         width: `${canvasBounds.width}px`,
         height: `${canvasBounds.height}px`
       }"
@@ -173,10 +173,9 @@ defineExpose({
       <div
         v-for="gridItem in visibleItems"
         :key="gridItem.index"
-        class="absolute"
+        class="absolute will-change-transform"
         :style="{
-          left: `${gridItem.position.x}px`,
-          top: `${gridItem.position.y}px`,
+          transform: `translate3d(${gridItem.position.x}px, ${gridItem.position.y}px, 0)`,
           width: `${gridItem.width}px`,
           height: `${gridItem.height}px`
         }"
