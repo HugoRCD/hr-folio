@@ -155,7 +155,7 @@ const getMediaType = (url: string) => {
       class="scale-85 sm:scale-100 origin-bottom-right"
     />
 
-    <div class="pointer-events-none absolute bottom-4 left-4 z-40 flex flex-col gap-2">
+    <div class="pointer-events-none absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-40 flex flex-col gap-2">
       <div class="rounded-lg bg-default/80 px-3 py-2 text-highlighted backdrop-blur-sm">
         <p class="text-xs opacity-75">
           <span class="sm:hidden">Tap items to open links</span><span class="hidden sm:inline">Click items to open links</span> • {{ data?.items.length }} items

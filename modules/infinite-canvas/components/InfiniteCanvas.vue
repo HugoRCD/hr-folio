@@ -28,6 +28,13 @@ const emit = defineEmits<InfiniteCanvasEmits>()
 const containerRef = ref<HTMLElement | null>(null)
 
 // Canvas logic
+const canvas = useInfiniteCanvas({
+  items: props.items as any[],
+  baseGap: props.baseGap,
+  zoomOptions: props.zoomOptions,
+  containerRef
+})
+
 const {
   offset,
   zoom,
@@ -42,12 +49,10 @@ const {
   handlePointerUp,
   handleWheel,
   navigateTo
-} = useInfiniteCanvas({
-  items: props.items as any[],
-  baseGap: props.baseGap,
-  zoomOptions: props.zoomOptions,
-  containerRef
-})
+} = canvas
+
+// Destructure touch handlers separately to avoid conflicts
+const { handleTouchStart, handleTouchMove, handleTouchEnd } = canvas
 
 // Handle item clicks
 const handleItemClick = (item: T, index: number, event: Event) => {
@@ -75,43 +80,34 @@ const handleMouseUp = (event: MouseEvent) => {
   handlePointerUp(event.clientX, event.clientY)
 }
 
-// Touch event handlers with proper cancelable check
-const handleTouchStart = (event: TouchEvent) => {
+// Touch event handlers with proper cancelable check and preventDefault
+const handleTouchStartWrapper = (event: TouchEvent) => {
   try {
-    const [touch] = event.touches
-    if (touch) {
-      // Only prevent default if the event is cancelable
-      if (event.cancelable) {
-        event.preventDefault()
-      }
-      handlePointerDown(touch.clientX, touch.clientY)
+    // Only prevent default if the event is cancelable
+    if (event.cancelable) {
+      event.preventDefault()
     }
+    handleTouchStart(event)
   } catch (error) {
     // Silently ignore touch errors on mobile
   }
 }
 
-const handleTouchMove = (event: TouchEvent) => {
+const handleTouchMoveWrapper = (event: TouchEvent) => {
   try {
-    const [touch] = event.touches
-    if (touch) {
-      // Only prevent default if the event is cancelable
-      if (event.cancelable) {
-        event.preventDefault()
-      }
-      handlePointerMove(touch.clientX, touch.clientY)
+    // Only prevent default if the event is cancelable
+    if (event.cancelable) {
+      event.preventDefault()
     }
+    handleTouchMove(event)
   } catch (error) {
     // Silently ignore touch errors on mobile
   }
 }
 
-const handleTouchEnd = (event: TouchEvent) => {
+const handleTouchEndWrapper = (event: TouchEvent) => {
   try {
-    const [touch] = event.changedTouches
-    if (touch) {
-      handlePointerUp(touch.clientX, touch.clientY)
-    }
+    handleTouchEnd(event)
   } catch (error) {
     // Silently ignore touch errors on mobile
   }
@@ -125,9 +121,9 @@ onMounted(() => {
   // Add touch listeners with proper options for mobile
   nextTick(() => {
     if (containerRef.value) {
-      containerRef.value.addEventListener('touchstart', handleTouchStart, { passive: false })
-      containerRef.value.addEventListener('touchmove', handleTouchMove, { passive: false })
-      containerRef.value.addEventListener('touchend', handleTouchEnd, { passive: true })
+      containerRef.value.addEventListener('touchstart', handleTouchStartWrapper, { passive: false })
+      containerRef.value.addEventListener('touchmove', handleTouchMoveWrapper, { passive: false })
+      containerRef.value.addEventListener('touchend', handleTouchEndWrapper, { passive: true })
     }
   })
 })
@@ -137,9 +133,9 @@ onUnmounted(() => {
   
   // Clean up touch listeners
   if (containerRef.value) {
-    containerRef.value.removeEventListener('touchstart', handleTouchStart)
-    containerRef.value.removeEventListener('touchmove', handleTouchMove)  
-    containerRef.value.removeEventListener('touchend', handleTouchEnd)
+    containerRef.value.removeEventListener('touchstart', handleTouchStartWrapper)
+    containerRef.value.removeEventListener('touchmove', handleTouchMoveWrapper)  
+    containerRef.value.removeEventListener('touchend', handleTouchEndWrapper)
   }
 })
 

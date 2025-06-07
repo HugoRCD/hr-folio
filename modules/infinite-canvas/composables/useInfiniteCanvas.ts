@@ -12,6 +12,37 @@ const MIN_VELOCITY = 0.1
 const FRICTION = 0.92
 const DRAG_THRESHOLD = 5
 
+// Touch/pinch constants
+const PINCH_THRESHOLD = 10
+const TOUCH_THROTTLE_MS = 16 // ~60fps
+
+// Throttle function for performance
+const throttle = <T extends (...args: any[]) => any>(func: T, delay: number): T => {
+  let lastCall = 0
+  return ((...args: any[]) => {
+    const now = Date.now()
+    if (now - lastCall >= delay) {
+      lastCall = now
+      return func(...args)
+    }
+  }) as T
+}
+
+// Helper to get distance between two touches
+const getTouchDistance = (touch1: Touch, touch2: Touch) => {
+  const dx = touch1.clientX - touch2.clientX
+  const dy = touch1.clientY - touch2.clientY
+  return Math.sqrt(dx * dx + dy * dy)
+}
+
+// Helper to get center point between two touches
+const getTouchCenter = (touch1: Touch, touch2: Touch) => {
+  return {
+    x: (touch1.clientX + touch2.clientX) / 2,
+    y: (touch1.clientY + touch2.clientY) / 2
+  }
+}
+
 export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteCanvasReturn {
   // Canvas state - start at center
   const offset = ref({ x: 0, y: 0 })
@@ -26,6 +57,13 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
   const dragStartOffset = ref({ x: 0, y: 0 })
   const totalDragDistance = ref(0)
   const dragStartTime = ref(0)
+
+  // Touch/pinch state
+  const isPinching = ref(false)
+  const initialPinchDistance = ref(0)
+  const initialPinchZoom = ref(1)
+  const pinchCenter = ref({ x: 0, y: 0 })
+  const lastTouchTime = ref(0)
 
   // Calculate canvas dimensions for scattered layout
   const canvasBounds = computed(() => {
@@ -364,6 +402,106 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     velocity.value = { x: 0, y: 0 }
   }
 
+  // Touch event handlers with pinch-to-zoom support
+  const handleTouchStart = (event: TouchEvent) => {
+    const touches = Array.from(event.touches)
+    
+    if (touches.length === 1 && touches[0]) {
+      // Single touch - start dragging
+      const [touch] = touches
+      handlePointerDown(touch.clientX, touch.clientY)
+      isPinching.value = false
+    } else if (touches.length === 2 && touches[0] && touches[1]) {
+      // Two fingers - start pinching
+      const [touch1, touch2] = touches
+      isPinching.value = true
+      initialPinchDistance.value = getTouchDistance(touch1, touch2)
+      initialPinchZoom.value = zoom.value
+      
+      // Calculate pinch center relative to container
+      const rect = props.containerRef.value?.getBoundingClientRect()
+      if (rect) {
+        const center = getTouchCenter(touch1, touch2)
+        pinchCenter.value = {
+          x: center.x - rect.left,
+          y: center.y - rect.top
+        }
+      }
+      
+      // Stop any ongoing drag
+      isDragging.value = false
+      velocity.value = { x: 0, y: 0 }
+    }
+  }
+
+  const handleTouchMove = throttle((event: TouchEvent) => {
+    const touches = Array.from(event.touches)
+    
+    if (touches.length === 1 && !isPinching.value && touches[0]) {
+      // Single touch - drag
+      const [touch] = touches
+      handlePointerMove(touch.clientX, touch.clientY)
+    } else if (touches.length === 2 && isPinching.value && touches[0] && touches[1]) {
+      // Two fingers - pinch zoom
+      const [touch1, touch2] = touches
+      const currentDistance = getTouchDistance(touch1, touch2)
+      const distanceChange = currentDistance - initialPinchDistance.value
+      
+      if (Math.abs(distanceChange) > PINCH_THRESHOLD) {
+        // Calculate zoom factor based on distance change
+        const zoomOpts = props.zoomOptions || {}
+        const minZoom = zoomOpts.minZoom ?? 0.4
+        const maxZoom = zoomOpts.maxZoom ?? 2.2
+        
+        // Calculate new zoom - more sensitive on mobile
+        const zoomFactor = 1 + (distanceChange / initialPinchDistance.value) * 1.5
+        const newZoom = Math.max(minZoom, Math.min(maxZoom, initialPinchZoom.value * zoomFactor))
+        
+        // Zoom towards pinch center
+        const oldZoom = zoom.value
+        const oldOffset = { ...offset.value }
+        
+        // Calculate the point in the canvas under the pinch center
+        const pointX = (pinchCenter.value.x - oldOffset.x) / oldZoom
+        const pointY = (pinchCenter.value.y - oldOffset.y) / oldZoom
+        
+        // Update zoom
+        zoom.value = newZoom
+        
+        // Adjust offset so the same point stays under the pinch center
+        const newOffset = {
+          x: pinchCenter.value.x - pointX * newZoom,
+          y: pinchCenter.value.y - pointY * newZoom
+        }
+        
+        offset.value = constrainOffset(newOffset)
+      }
+    }
+  }, TOUCH_THROTTLE_MS)
+
+  const handleTouchEnd = (event: TouchEvent) => {
+    const touches = Array.from(event.touches)
+    
+    if (touches.length === 0) {
+      // All fingers lifted
+      if (isPinching.value) {
+        isPinching.value = false
+      } else {
+        // End drag
+        const changedTouches = Array.from(event.changedTouches)
+        const [touch] = changedTouches
+        if (touch) {
+          handlePointerUp(touch.clientX, touch.clientY)
+        }
+      }
+    } else if (touches.length === 1 && isPinching.value && touches[0]) {
+      // One finger lifted during pinch - continue with single touch
+      isPinching.value = false
+      const [touch] = touches
+      handlePointerDown(touch.clientX, touch.clientY)
+    }
+  }
+
   // Check if user can click (not dragging)
   const canClick = computed(() => !justFinishedDragging.value && totalDragDistance.value <= DRAG_THRESHOLD)
 
@@ -380,6 +518,9 @@ export function useInfiniteCanvas(props: UseInfiniteCanvasOptions): UseInfiniteC
     handlePointerMove,
     handlePointerUp,
     handleWheel,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
     navigateTo
   }
 } 
