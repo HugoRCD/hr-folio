@@ -32,6 +32,9 @@ const loaderProgress = ref(0)
 const showLoader = ref(true)
 const isImagesLoaded = ref(false)
 
+// Hover state for item details
+const hoveredItemIndex = ref<number | null>(null)
+
 const { progress, isComplete, startPreloading } = useImagePreloader({
   images: imageUrls.value || [],
   onProgress: (newProgress) => {
@@ -129,6 +132,8 @@ if (import.meta.client) {
           ]"
           data-canvas-item
           @click="onItemClick"
+          @mouseenter="hoveredItemIndex = index"
+          @mouseleave="hoveredItemIndex = null"
         >
           <div class="absolute inset-0 rounded-2xl bg-gradient-to-br p-1 border-2 border-default/50">
             <div class="relative size-full overflow-hidden rounded-xl">
@@ -149,6 +154,57 @@ if (import.meta.client) {
                 class="size-full object-cover"
                 :draggable="false"
               >
+              
+              <!-- Item details overlay -->
+              <Motion
+                v-if="!isMobile"
+                :initial="{ opacity: 0, scale: 0.95, transformOrigin: 'bottom left' }"
+                :animate="hoveredItemIndex === index ? { 
+                  opacity: 1, 
+                  scale: 1,
+                  transformOrigin: 'bottom left'
+                } : { 
+                  opacity: 0, 
+                  scale: 0.95,
+                  transformOrigin: 'bottom left'
+                }"
+                :transition="{
+                  duration: 0.2,
+                  ease: 'easeOut'
+                }"
+                class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-[2px] p-4 rounded-xl"
+              >
+                <Motion
+                  :initial="{ y: 20, opacity: 0 }"
+                  :animate="hoveredItemIndex === index ? { 
+                    y: 0, 
+                    opacity: 1 
+                  } : { 
+                    y: 20, 
+                    opacity: 0 
+                  }"
+                  :transition="{
+                    duration: 0.25,
+                    delay: 0.05,
+                    ease: 'easeOut'
+                  }"
+                >
+                  <div class="flex items-start gap-2">
+                    <div class="flex-1">
+                      <h3 class="font-medium text-white mb-1 line-clamp-2 leading-tight">
+                        {{ item?.title }}
+                      </h3>
+                      <p 
+                        v-if="item?.description" 
+                        class="text-sm text-white/85 line-clamp-2"
+                      >
+                        {{ item.description }}
+                      </p>
+                    </div>
+                    <UIcon name="i-heroicons-arrow-top-right-on-square" class="size-4 text-white/70 flex-shrink-0 mt-0.5" />
+                  </div>
+                </Motion>
+              </Motion>
             </div>
           </div>
         </Motion>

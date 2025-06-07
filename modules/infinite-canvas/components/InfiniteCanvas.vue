@@ -102,6 +102,7 @@ defineExpose({
     @pointerdown="handlePointerDown"
     @pointermove="handlePointerMove"
     @pointerup="handlePointerUp"
+    @pointercancel="handlePointerUp"
     @wheel="handleWheel"
     @touchstart="handleTouchStart"
     @touchmove="handleTouchMove"

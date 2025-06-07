@@ -401,8 +401,10 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions): UseInfinit
 
   // Touch handlers
   const handleTouchStart = (event: TouchEvent) => {
-    // Prevent default to avoid browser zoom/pan
-    event.preventDefault()
+    // Only prevent default for multi-touch to allow single touch scrolling
+    if (event.touches.length > 1) {
+      event.preventDefault()
+    }
     
     const touches = Array.from(event.touches)
     touchStartTime.value = Date.now()
@@ -440,8 +442,10 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions): UseInfinit
 
   let lastTouchMoveCall = 0
   const handleTouchMove = (event: TouchEvent) => {
-    // Prevent default to avoid browser zoom/pan
-    event.preventDefault()
+    // Prevent default only for multi-touch (pinch/zoom)
+    if (event.touches.length > 1) {
+      event.preventDefault()
+    }
     
     const now = Date.now()
     // Reduce throttling during pinch for smoother zoom
@@ -500,8 +504,10 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions): UseInfinit
   }
 
   const handleTouchEnd = (event: TouchEvent) => {
-    // Prevent default to avoid browser zoom/pan
-    event.preventDefault()
+    // Only prevent default if we were handling multi-touch
+    if (wasPinching.value || isPinching.value) {
+      event.preventDefault()
+    }
     
     const touches = Array.from(event.touches)
     const touchDuration = Date.now() - touchStartTime.value
