@@ -131,6 +131,7 @@ export default defineNuxtConfig({
         '/about',
         '/about/timeline',
         '/writing',
+        '/canvas/works'
       ],
       ignore: ['/notes', '/notes/**'],
     },
