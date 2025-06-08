@@ -1,0 +1,57 @@
+title: Works Canvas
+description: A canvas featuring all my works that i'm proud of.
+items:
+  - title: Shelve OG Image
+    link: https://shelve.cloud
+    image: /assets/canvas/works/shelve/og.png
+    width: 480
+    height: 270
+  - title: Nuxt.com 2025 Redesign
+    link: https://nuxt.com
+    image: /assets/works/nuxt.com.png
+    width: 500
+    height: 290
+  - title: Shelve Navbar
+    link: https://shelve.cloud
+    image: /assets/canvas/works/shelve/navbar.png
+    width: 680
+    height: 240
+  - title: Shelve Command Console
+    link: https://shelve.cloud
+    image: /assets/canvas/works/shelve/command-console.gif
+    width: 480
+    height: 270
+  - title: Nuxt UI Pro Portfolio Template
+    link: https://portfolio-template.nuxt.dev/
+    image: /assets/canvas/works/nuxt-ui-portfolio/hero.gif
+    width: 480
+    height: 270
+  - title: Canvas Portfolio Template
+    link: https://canvas.cloud
+    image: /assets/works/canvas.png
+    width: 480
+    height: 270
+  - title: Nuxt UI
+    link: https://ui.nuxt.com
+    image: /assets/works/nuxt-ui.png
+    width: 480
+    height: 270
+  - title: Nuxt.com Modules Page
+    link: https://nuxt.com/modules
+    image: /assets/canvas/works/nuxt.com/modules-page.gif
+    width: 480
+    height: 270
+  - title: Nuxt Raycast Extension
+    link: https://github.com/nuxt/raycast-extension
+    image: /assets/canvas/works/nuxt-raycast-extension.png
+    width: 480
+    height: 270
+  - title: Inkly OG Image
+    link: https://inkly.hrcd.fr
+    image: /assets/canvas/works/inkly.png
+    width: 480
+    height: 270
+  - title: Nuxt 100k Followers Post
+    image: /assets/canvas/works/nuxt/100k-followers.mp4
+    width: 480
+    height: 270
