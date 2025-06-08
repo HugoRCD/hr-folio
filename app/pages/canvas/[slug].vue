@@ -5,10 +5,20 @@ definePageMeta({
   layout: false,
 })
 
-const { data } = await useAsyncData('canvas', () => queryCollection('canvas').path('/canvas/works').first())
-if (!data.value) throw createError({ statusCode: 404, statusMessage: 'Canvas not found' })
+const route = useRoute()
+const slug = route.params.slug as string
 
-// Detect if user is on mobile device
+const { data } = await useAsyncData(`canvas-${slug}`, () => 
+  queryCollection('canvas').path(`/canvas/${slug}`).first()
+)
+
+if (!data.value) {
+  throw createError({ 
+    statusCode: 404, 
+    statusMessage: `Canvas "${slug}" not found` 
+  })
+}
+
 const isMobile = computed(() => {
   if (!import.meta.client) return false
   return isMobileDevice(navigator.userAgent, window.innerWidth)
@@ -32,10 +42,9 @@ const loaderProgress = ref(0)
 const showLoader = ref(true)
 const isImagesLoaded = ref(false)
 
-// Hover state for item details
 const hoveredItemIndex = ref<number | null>(null)
 
-const { progress, isComplete, startPreloading } = useImagePreloader({
+const { startPreloading } = useImagePreloader({
   images: imageUrls.value || [],
   onProgress: (newProgress) => {
     loaderProgress.value = newProgress
@@ -58,7 +67,6 @@ onMounted(() => {
 })
 
 const canvasRef = ref<any>(null)
-const route = useRoute()
 
 // Prevent browser navigation gestures
 if (import.meta.client) {
@@ -66,6 +74,14 @@ if (import.meta.client) {
   document.body.style.overscrollBehavior = 'none'
   document.body.style.touchAction = 'manipulation'
 }
+
+const canvasTitle = computed(() => {
+  const titleMap: Record<string, string> = {
+    works: 'Loading Works Canvas',
+    photos: 'Loading Photo Canvas',
+  }
+  return titleMap[slug] || `Loading ${slug.charAt(0).toUpperCase() + slug.slice(1)} Canvas`
+})
 </script>
 
 <template>
@@ -242,7 +258,7 @@ if (import.meta.client) {
     <CanvasLoader
       :progress="loaderProgress"
       :is-visible="showLoader"
-      title="Loading Works Canvas"
+      :title="canvasTitle"
     />
   </UApp>
-</template>
+</template> 
