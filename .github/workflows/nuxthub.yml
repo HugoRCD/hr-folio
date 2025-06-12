@@ -5,9 +5,6 @@ jobs:
   deploy:
     name: "Deploy to NuxtHub"
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
-      url: ${{ steps.deploy.outputs.deployment-url }}
     permissions:
       contents: read
       id-token: write
@@ -27,18 +24,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Ensure NuxtHub module is installed
-        run: pnpx nuxthub@latest ensure
-
-      - name: Build application
-        run: pnpm build
-        env:
-          NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
-          NUXT_PRIVATE_NOTES_PASSWORD: :${{ secrets.NUXT_PRIVATE_NOTES_PASSWORD }}
-          NUXT_PRIVATE_GITHUB_TOKEN: ${{ secrets.NUXT_PRIVATE_GITHUB_TOKEN }}
-
       - name: Deploy to NuxtHub
-        uses: nuxt-hub/action@v1
-        id: deploy
+        uses: nuxt-hub/action@v2
         with:
           project-key: hr-folio-xpuq
