@@ -40,15 +40,8 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@vueuse/nuxt',
     'nuxt-llms',
-    '@nuxthub/core',
     'motion-v/nuxt'
   ],
-
-  hub: {
-    cache: true,
-    ai: true,
-    blob: true,
-  },
 
   llms: {
     domain: 'https://hrcd.fr',
