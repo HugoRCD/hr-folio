@@ -10,7 +10,7 @@ export default defineAppConfig({
   },
   seo: {
     title: 'Hugo Richard',
-    description: 'Frontend Architect, Designer & OSS Contributor based in Nice.',
+    description: 'Software Engineer, Designer & OSS Contributor based in Nice.',
     url: 'https://hrcd.fr',
     lang: 'en'
   },
