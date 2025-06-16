@@ -55,3 +55,13 @@ items:
     image: /assets/canvas/works/nuxt/100k-followers.mp4
     width: 480
     height: 270
+  - title: NuxtHub x Cloudflare Workers
+    link: https://hub.nuxt.com/changelog/workers
+    image: /assets/canvas/works/nuxthub-cf-workers.png
+    width: 480
+    height: 270
+  - title: Shelve Ripple Loader
+    link: https://app.shelve.cloud
+    image: /assets/canvas/works/shelve/ripple-loader.mp4
+    width: 480
+    height: 270
