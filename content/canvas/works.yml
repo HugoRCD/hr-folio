@@ -65,3 +65,7 @@ items:
     image: /assets/canvas/works/shelve/ripple-loader.mp4
     width: 480
     height: 270
+  - title: Nuxt Logo Blueprint
+    image: /assets/canvas/works/nuxt/blueprint-logo.png
+    width: 480
+    height: 270
