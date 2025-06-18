@@ -69,3 +69,8 @@ items:
     image: /assets/canvas/works/nuxt/blueprint-logo.png
     width: 480
     height: 270
+  - title: Nuxt.com Feedbacks Admin
+    link: https://nuxt.com/feedbacks
+    image: /assets/canvas/works/nuxt.com/feedbacks-admin.png
+    width: 480
+    height: 270
