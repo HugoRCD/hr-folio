@@ -44,7 +44,7 @@
     "wrangler": "^4.22.0"
   },
   "resolutions": {
-    "unimport": "5.0.1"
+    "unimport": "5.1.0"
   },
   "pnpm": {
     "overrides": {
