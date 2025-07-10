@@ -41,6 +41,20 @@ items:
     image: /assets/canvas/works/nuxt.com/modules-page.gif
     width: 480
     height: 270
+  - title: NuxtLabs is Joining Vercel
+    link: https://nuxtlabs.com
+    image: /assets/canvas/works/vercel-x-nuxtlabs.mp4
+    width: 480
+    height: 270
+  - title: Nuxt UI Raycast Clone
+    link: https://raycast-nuxt-ui-clone.vercel.app/
+    image: /assets/canvas/works/nuxt-ui/raycast-clone.mp4
+    width: 480
+    height: 270
+  - title: Nuxt Ship
+    image: /assets/canvas/works/nuxt/nuxt-ship.mp4
+    width: 480
+    height: 270
   - title: Nuxt Raycast Extension
     link: https://github.com/nuxt/raycast-extension
     image: /assets/canvas/works/nuxt-raycast-extension.png
