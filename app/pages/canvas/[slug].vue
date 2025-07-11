@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Analytics } from '@vercel/analytics/nuxt'
 import type { CanvasItem } from '~~/modules/infinite-canvas/types'
 
 definePageMeta({
@@ -87,7 +88,7 @@ const canvasTitle = computed(() => {
 <template>
   <UApp v-if="data" class="canvas-page relative h-screen w-screen overflow-hidden" style="touch-action: none; overscroll-behavior: none;">
     <FolioMeta :page="data" :is-writing="false" />
-    
+    <Analytics />
     <div class="absolute top-4 right-4 z-50 isolate touch-auto select-auto cursor-pointer">
       <ThemeSelector />
     </div>

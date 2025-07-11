@@ -24,6 +24,7 @@
     "@nuxt/ui-pro": "^3.2.0",
     "@nuxtjs/seo": "^3.1.0",
     "@shelve/cli": "^4.1.6",
+    "@vercel/analytics": "^1.5.0",
     "@vueuse/nuxt": "13.5.0",
     "capture-website": "^4.2.0",
     "motion-plus-vue": "^1.2.1",

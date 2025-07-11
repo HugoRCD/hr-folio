@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Analytics } from '@vercel/analytics/nuxt'
 import { Toaster } from 'vue-sonner'
 
 const route = useRoute()
@@ -40,6 +41,7 @@ defineShortcuts({
 
 <template>
   <div v-if="page">
+    <Analytics />
     <FolioMeta :page :is-writing />
     <Toc v-if="isWriting" :links="page.body.toc?.links!" />
     <ContentRenderer :value="page" :class="isWriting ? contentClasses.writing : contentClasses.default" :data="mdcVars" />
