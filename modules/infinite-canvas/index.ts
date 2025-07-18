@@ -29,10 +29,7 @@ export interface ModuleOptions {
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@nuxt/infinite-canvas',
-    configKey: 'infiniteCanvas',
-    compatibility: {
-      nuxt: '^3.0.0'
-    }
+    configKey: 'infiniteCanvas'
   },
   defaults: {
     prefix: ''
