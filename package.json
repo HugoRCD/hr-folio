@@ -41,7 +41,7 @@
   "devDependencies": {
     "@hrcd/eslint-config": "^3.0.3",
     "automd": "0.4.0",
-    "eslint": "9.31.0"
+    "eslint": "9.32.0"
   },
   "resolutions": {
     "unimport": "5.2.0"
