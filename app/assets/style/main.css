@@ -9,7 +9,6 @@
 @theme static {
   --font-serif: "Newsreader", serif;
   --font-sans: "Geist", sans-serif;
-  --font-mono: "Geist Mono", sans-serif;
 }
 
 :root {
