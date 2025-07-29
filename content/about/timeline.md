@@ -50,7 +50,6 @@ events:
     icon: 'i-simple-icons-nuxtdotjs'
     title: 'Joined NuxtLabs!'
     description: "Achieved a dream goal by joining NuxtLabs in January, I can't even express how grateful I am to Sebastian for this opportunity 💚"
-    active: true
   - year: 2025
     icon: 'i-heroicons-puzzle-piece'
     title: 'Nuxt UI & UI Pro v3 Contributions'
@@ -64,9 +63,10 @@ events:
     title: 'Shelve v2.0'
     description: 'The first major update to Shelve bringing the project to the next level.'
   - year: 2025
-    icon: 'i-heroicons-arrow-trending-up'
-    title: 'Shaping the Future with NuxtLabs'
-    description: 'Continuing to build amazing things with the NuxtLabs team, with many exciting projects ahead.'
+    icon: 'i-simple-icons-vercel'
+    title: 'Vercel × NuxtLabs'
+    description: 'Mind-blowing milestone: our whole team joined Vercel to push the boundaries of web development even further!'
+    active: true
 ---
 ::
 
