@@ -44,22 +44,17 @@ const startViewTransition = (event: MouseEvent) => {
 </script>
 
 <template>
-  <ClientOnly>
-    <div class="size-3 flex items-center justify-center">
-      <UTooltip text="Switch theme">
-        <UButton
-          class="bg-inverted size-3 rounded-full"
-          size="xs"
-          variant="link"
-          :aria-label="`Switch to ${nextTheme} mode`"
-          @click="startViewTransition"
-        />
-      </UTooltip>
-    </div>
-    <template #fallback>
-      <div class="size-3 rounded-full bg-inverted" />
-    </template>
-  </ClientOnly>
+  <div class="size-3 flex items-center justify-center">
+    <UTooltip text="Switch theme">
+      <UButton
+        class="bg-inverted size-3 rounded-full"
+        size="xs"
+        variant="link"
+        :aria-label="`Switch to ${nextTheme} mode`"
+        @click="startViewTransition"
+      />
+    </UTooltip>
+  </div>
 </template>
 
 <style>
