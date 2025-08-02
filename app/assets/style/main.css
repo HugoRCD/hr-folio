@@ -35,7 +35,7 @@
   }
 
   .no-link {
-    @apply text-muted ! border-none cursor-default font-normal not-italic !;
+    @apply text-muted! border-none cursor-default font-normal not-italic!;
   }
 }
 
