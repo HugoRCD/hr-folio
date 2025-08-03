@@ -25,14 +25,6 @@ races toward complexity. I prefer to **step back and ask "why?" before asking "h
 transformed my understanding of development. Through open-source contributions and years of experience, I've learned
 that the most powerful solutions are often the most thoughtfully simplified ones.
 
-Currently, I'm working on:
-
-- Building Shelve into something extraordinary
-- Contributing to open-source projects that matter
-- Pushing the boundaries of modern web architecture with Vue.js & Nuxt
-- Finding beauty in the details others overlook
-- Sharing knowledge and experiences with the community
-
 Want to create something remarkable together? [Let's talk.](/contact)
 
 :: 

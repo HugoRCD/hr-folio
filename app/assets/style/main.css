@@ -6,7 +6,7 @@
 
 @source "../../../";
 
-@theme static {
+@theme {
   --font-serif: "Newsreader", serif;
   --font-sans: "Geist", sans-serif;
 }
