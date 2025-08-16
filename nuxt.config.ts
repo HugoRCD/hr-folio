@@ -36,7 +36,8 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@vueuse/nuxt',
     'nuxt-llms',
-    'motion-v/nuxt'
+    'motion-v/nuxt',
+    'vue-sonner/nuxt',
   ],
 
   llms: {
