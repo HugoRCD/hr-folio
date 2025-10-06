@@ -88,3 +88,22 @@ items:
     image: /assets/canvas/works/nuxt.com/feedbacks-admin.png
     width: 480
     height: 270
+  - title: Concept for a Nuxt Metro Ad
+    image: /assets/canvas/works/nuxt/metro-ad.jpeg
+    width: 680
+    height: 240
+  - title: Nuxt UI Figma Kit
+    image: /assets/canvas/works/nuxt-ui/figma-kit.jpeg
+    link: https://go.nuxt.com/figma-ui
+    width: 480
+    height: 270
+  - title: Nuxt UI MCP Server
+    image: /assets/canvas/works/nuxt-ui/mcp.jpeg
+    link: https://ui.nuxt.com/docs/getting-started/ai/mcp
+    width: 480
+    height: 270
+  - title: NuxtL.com new mobile navigation
+    image: /assets/canvas/works/nuxt.com/mobile-navigation.jpeg
+    link: https://nuxt.com
+    width: 480
+    height: 270
