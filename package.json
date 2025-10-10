@@ -27,6 +27,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "@vueuse/nuxt": "^13.9.0",
+    "better-sqlite3": "^12.4.1",
     "capture-website": "^5.0.1",
     "motion-plus-vue": "^1.4.0",
     "motion-v": "^1.7.2",

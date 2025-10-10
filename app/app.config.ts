@@ -61,9 +61,7 @@ export default defineAppConfig({
     },
     textarea: {
       base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
-    }
-  },
-  uiPro: {
+    },
     prose: {
       codeIcon: {
         'shelve.json': 'custom:shelve',
@@ -119,5 +117,5 @@ export default defineAppConfig({
         base: 'italic border-b border-(--color-primary) text-highlighted font-medium'
       }
     },
-  },
+  }
 })
