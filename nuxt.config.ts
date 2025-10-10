@@ -29,7 +29,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    '@nuxt/ui-pro',
+    '@nuxt/ui',
     '@nuxtjs/seo',
     '@nuxt/content',
     '@nuxt/image',
