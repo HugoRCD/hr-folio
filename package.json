@@ -44,9 +44,6 @@
     "automd": "^0.4.2",
     "eslint": "^9.39.1"
   },
-  "resolutions": {
-    "unimport": "^5.5.0"
-  },
   "pnpm": {
     "overrides": {
       "vite": "npm:rolldown-vite@latest"
