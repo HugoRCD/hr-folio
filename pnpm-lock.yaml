@@ -15,16 +15,16 @@ importers:
         specifier: ^1.2.3
         version: 1.2.3
       '@iconify-json/lucide':
-        specifier: ^1.2.72
+        specifier: ^1.2.73
         version: 1.2.73
       '@iconify-json/simple-icons':
-        specifier: ^1.2.57
+        specifier: ^1.2.59
         version: 1.2.59
       '@iconify-json/vscode-icons':
-        specifier: ^1.2.33
+        specifier: ^1.2.35
         version: 1.2.35
       '@nuxt/content':
-        specifier: ^3.8.0
+        specifier: ^3.8.2
         version: 3.8.2(better-sqlite3@12.4.1)(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))
       '@nuxt/image':
         specifier: ^1.11.0
@@ -60,7 +60,7 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(motion-v@1.7.4(@vueuse/core@13.9.0(vue@3.5.24(typescript@5.9.3)))(vue@3.5.24(typescript@5.9.3)))(vue@3.5.24(typescript@5.9.3))
       motion-v:
-        specifier: ^1.7.3
+        specifier: ^1.7.4
         version: 1.7.4(@vueuse/core@13.9.0(vue@3.5.24(typescript@5.9.3)))(vue@3.5.24(typescript@5.9.3))
       nuxt:
         specifier: ^4.2.1
@@ -10151,7 +10151,7 @@ snapshots:
 
   framer-motion@12.23.12:
     dependencies:
-      motion-dom: 12.23.12
+      motion-dom: 12.23.23
       motion-utils: 12.23.6
       tslib: 2.8.1
 
