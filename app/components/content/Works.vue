@@ -82,12 +82,12 @@ const workImage = computed(() => {
 
 const enterTransition = {
   duration: 0.5,
-  ease: [0, 0.54, 0.37, 0.97],
+  ease: [0, 0.54, 0.37, 0.97] as [number, number, number, number],
 }
 
 const exitTransition = {
   duration: 0.2,
-  ease: 'easeIn',
+  ease: 'easeIn' as const,
 }
 
 function getWorkImage(work: any): string | null {
@@ -116,7 +116,6 @@ function handleMouseLeave() {
         :to="work.url"
         target="_blank"
         class="group relative cursor-pointer"
-        data-animate
         :aria-label="`Open ${work.name}`"
         :style="{ '--stagger': index }"
         @mouseenter="hoveredIndex = index"

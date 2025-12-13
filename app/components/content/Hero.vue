@@ -3,10 +3,10 @@ const { profile, global } = useAppConfig()
 </script>
 
 <template>
-  <div class="flex flex-col" data-animate style="--stagger: 1">
+  <div class="flex flex-col" style="--stagger: 1">
     <div class="flex items-center gap-2 mb-2">
       <UColorModeImage
-        v-if="profile.pictureDark && profile.pictureLight"
+        v-if="profile?.pictureDark && profile?.pictureLight"
         :dark="profile.pictureDark"
         :light="profile.pictureLight"
         alt="Hugo Richard"
@@ -32,7 +32,7 @@ const { profile, global } = useAppConfig()
       <NuxtLink to="/contact" class="italic font-serif text-lg hover:underline decoration-primary">
         Send me a message
       </NuxtLink>
-      <NuxtLink :to="global.meetingLink" class="italic font-serif text-lg hover:underline decoration-primary cursor-pointer">
+      <NuxtLink v-if="global?.meetingLink" :to="global.meetingLink" class="italic font-serif text-lg hover:underline decoration-primary cursor-pointer">
         Make a call
       </NuxtLink>
     </div>

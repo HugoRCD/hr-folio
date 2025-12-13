@@ -13,7 +13,6 @@ defineProps<{
       :key="post.title"
       :to="post.path"
       class="group relative max-w-prose"
-      data-animate
       :style="{ '--stagger': index }"
       :aria-label="`Read ${post.title}`"
     >

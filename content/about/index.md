@@ -8,12 +8,12 @@ description: I'm a developer, designer, and OSS maintainer based in Nice (France
 #about
 Some see code as just instructions for machines. I see it as an **art form**.
 
-**Frontend Architect** based in Nice, France, with **7+ years of crafting digital experiences**. My journey started with
+**Software Engineer** based in Nice, France, with **7+ years of crafting digital experiences**. My journey started with
 a simple curiosity about **how things work**. Today, that curiosity drives me to build tools that push boundaries
 while remaining elegantly simple. _**"Create things because they have to be created, not because they can be
 created"**_ — this philosophy guides everything I do. Shelve, my latest creation, embodies this evolution — what began
 as a straightforward CLI tool has grown into an ambitious platform that challenges conventional thinking about developer
-workflows. My expertise in :icon{align name="simple-icons:vuedotjs" size="18px"} **Vue.js** and 
+workflows. My expertise in :icon{align name="simple-icons:vuedotjs" size="18px"} **Vue.js** and
 :icon{align name="simple-icons:nuxtdotjs" size="20px"} **Nuxt** has shaped my approach to development. The discovery of these technologies
 showed me that **true innovation isn't about adding more** — it's about **making the complex feel natural**. This
 revelation pushed me to **embrace open-source development**, sharing my work with the community and learning from
@@ -27,4 +27,4 @@ that the most powerful solutions are often the most thoughtfully simplified ones
 
 Want to create something remarkable together? [Let's talk.](/contact)
 
-:: 
+::

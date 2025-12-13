@@ -40,10 +40,10 @@ export default defineNuxtConfig({
   llms: {
     domain: 'https://hrcd.fr',
     title: 'Hugo Richard Portfolio',
-    description: 'Frontend Engineer at Nuxtlabs, specializing in Vue.js and Nuxt ecosystem',
+    description: 'Software Engineer at Vercel, specializing in Vue.js and Nuxt ecosystem',
     full: {
       title: 'Hugo Richard Portfolio - Complete Content',
-      description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Frontend Engineer at Nuxtlabs.',
+      description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Software Engineer at Vercel.',
     },
     sections: [
       {
@@ -71,7 +71,7 @@ export default defineNuxtConfig({
         contentFilters: [{ field: 'path', operator: 'LIKE', value: '/works%' }]
       }
     ],
-    notes: ['Hugo Richard is a Frontend Engineer at Nuxtlabs, contributing to the Nuxt.js ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
+    notes: ['Hugo Richard is a Software Engineer at Vercel, contributing to the Vercel ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
   },
 
   colorMode: {
