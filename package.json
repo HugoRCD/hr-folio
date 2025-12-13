@@ -20,7 +20,7 @@
     "@iconify-json/vscode-icons": "^1.2.37",
     "@nuxt/content": "^3.9.0",
     "@nuxt/image": "^2.0.0",
-    "@nuxt/scripts": "^0.13.0",
+    "@nuxt/scripts": "^0.13.1",
     "@nuxt/ui": "^4.2.1",
     "@nuxtjs/seo": "^3.3.0",
     "@shelve/cli": "^4.1.6",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@hrcd/eslint-config": "^3.0.3",
     "automd": "^0.4.2",
-    "eslint": "^9.39.1"
+    "eslint": "^9.39.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
