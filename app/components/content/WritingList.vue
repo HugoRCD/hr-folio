@@ -15,7 +15,6 @@ if (!data.value || !error.value) createError({ statusCode: 404 })
       :key="post.title"
       :to="post.path"
       class="italic decoration-primary hover:underline font-extralight"
-      data-animate
       :aria-label="`Read ${post.title}`"
       :style="{ '--stagger': index }"
     >

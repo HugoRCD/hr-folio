@@ -45,7 +45,7 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
           description="Subscribe to get notified about new articles"
           class="flex flex-col gap-2"
         >
-          <UButtonGroup>
+          <UFieldGroup>
             <UInput
               v-model="state.email"
               type="email"
@@ -58,7 +58,7 @@ if (!posts.value || !error.value) createError({ statusCode: 404 })
               loading-auto
               label="Subscribe"
             />
-          </UButtonGroup>
+          </UFieldGroup>
         </UFormField>
       </UForm>
     </div>

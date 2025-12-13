@@ -30,7 +30,7 @@ const active = computed({
 </script>
 
 <template>
-  <UTabs 
+  <UTabs
     v-model="active"
     size="md"
     variant="link"
@@ -51,13 +51,13 @@ const active = computed({
     </template>
 
     <template #about>
-      <div data-animate style="--stagger: 2;">
+      <div style="--stagger: 2;">
         <slot name="about" />
       </div>
     </template>
 
     <template #timeline>
-      <div data-animate style="--stagger: 2;">
+      <div style="--stagger: 2;">
         <slot name="timeline" />
       </div>
     </template>

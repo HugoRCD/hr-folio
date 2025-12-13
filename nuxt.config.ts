@@ -1,8 +1,4 @@
 export default defineNuxtConfig({
-  experimental: {
-    viewTransition: true,
-  },
-
   site: {
     defaultLocale: 'en',
     indexable: true,
@@ -24,29 +20,30 @@ export default defineNuxtConfig({
     disallow: ['/notes'],
   },
 
+  compatibilityDate: '2025-12-13',
+
   routeRules: {
     '/': { isr: true },
   },
 
-  modules: [
-    '@nuxt/ui',
-    '@nuxtjs/seo',
-    '@nuxt/content',
-    '@nuxt/image',
-    '@nuxt/scripts',
-    '@vueuse/nuxt',
-    'nuxt-llms',
-    'motion-v/nuxt',
-    'vue-sonner/nuxt',
-  ],
+  studio: {
+    route: '/admin',
+    repository: {
+      provider: 'github',
+      owner: 'HugoRCD',
+      repo: 'hr-folio',
+    }
+  },
+
+  modules: ['@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'motion-v/nuxt', 'vue-sonner/nuxt', 'nuxt-studio'],
 
   llms: {
     domain: 'https://hrcd.fr',
     title: 'Hugo Richard Portfolio',
-    description: 'Frontend Engineer at Nuxtlabs, specializing in Vue.js and Nuxt ecosystem',
+    description: 'Software Engineer at Vercel, specializing in Vue.js and Nuxt ecosystem',
     full: {
       title: 'Hugo Richard Portfolio - Complete Content',
-      description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Frontend Engineer at Nuxtlabs.',
+      description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Software Engineer at Vercel.',
     },
     sections: [
       {
@@ -74,7 +71,7 @@ export default defineNuxtConfig({
         contentFilters: [{ field: 'path', operator: 'LIKE', value: '/works%' }]
       }
     ],
-    notes: ['Hugo Richard is a Frontend Engineer at Nuxtlabs, contributing to the Nuxt.js ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
+    notes: ['Hugo Richard is a Software Engineer at Vercel, contributing to the Vercel ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
   },
 
   colorMode: {
@@ -98,9 +95,6 @@ export default defineNuxtConfig({
           }
         }
       },
-    },
-    preview: {
-      api: 'https://api.nuxt.studio'
     },
   },
 
@@ -144,8 +138,6 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
-  compatibilityDate: '2024-08-19',
-
   icon: {
     customCollections: [
       {
@@ -158,5 +150,33 @@ export default defineNuxtConfig({
       includeCustomCollections: true
     },
     provider: 'iconify'
+  },
+
+  fonts: {
+    families: [
+      {
+        name: 'Redaction',
+        provider: 'local',
+        weights: [400, 700],
+        styles: ['normal', 'italic'],
+        src: [
+          {
+            weight: 400,
+            style: 'normal',
+            src: '/fonts/Redaction-Regular.otf'
+          },
+          {
+            weight: 400,
+            style: 'italic',
+            src: '/fonts/Redaction-Italic.otf'
+          },
+          {
+            weight: 700,
+            style: 'normal',
+            src: '/fonts/Redaction-Bold.otf'
+          }
+        ]
+      }
+    ]
   },
 })

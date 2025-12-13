@@ -10,14 +10,14 @@ definePageMeta({
 const route = useRoute()
 const slug = route.params.slug as string
 
-const { data } = await useAsyncData(`canvas-${slug}`, () => 
+const { data } = await useAsyncData(`canvas-${slug}`, () =>
   queryCollection('canvas').path(`/canvas/${slug}`).first()
 )
 
 if (!data.value) {
-  throw createError({ 
-    statusCode: 404, 
-    statusMessage: `Canvas "${slug}" not found` 
+  throw createError({
+    statusCode: 404,
+    statusMessage: `Canvas "${slug}" not found`
   })
 }
 
@@ -31,7 +31,7 @@ const handleItemClick = (item: CanvasItem) => {
   if (isMobile.value) {
     return
   }
-  
+
   // Desktop-only click handling
   if (import.meta.client) {
     window.open(item.link, '_blank', 'noopener,noreferrer')
@@ -94,7 +94,7 @@ const canvasTitle = computed(() => {
     <div class="absolute top-4 right-4 z-50 isolate touch-auto select-auto cursor-pointer">
       <ThemeSelector />
     </div>
-    
+
     <div class="absolute top-4 left-4 z-50 isolate touch-auto select-auto cursor-pointer">
       <NuxtLink v-if="route.path !== '/'" aria-label="Go back to home page" class="group cursor-pointer" to="/">
         <span class="font-serif italic hover:text-primary hover:underline">
@@ -102,13 +102,13 @@ const canvasTitle = computed(() => {
         </span>
       </NuxtLink>
     </div>
-    
+
     <div class="pointer-events-none absolute -top-56 z-40 size-44 rounded-full opacity-50 blur-[200px] dark:bg-white dark:blur-[200px] sm:size-72" />
     <div class="pointer-events-none fixed inset-0 z-40 size-full overflow-hidden">
       <div class="noise pointer-events-none absolute inset-[-200%] z-50 size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
     </div>
-    
-    <Canvas 
+
+    <Canvas
       ref="canvasRef"
       :items="data?.items || []"
       :base-gap="50"
@@ -143,7 +143,7 @@ const canvasTitle = computed(() => {
             duration: 0.8,
             delay: isImagesLoaded ? Math.random() * 0.8 : 0,
             ease: 'easeOut'
-          }" 
+          }"
           class="group relative size-full select-none overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300"
           :class="[
             isMobile ? 'cursor-default' : 'cursor-pointer',
@@ -173,17 +173,17 @@ const canvasTitle = computed(() => {
                 class="size-full object-cover"
                 :draggable="false"
               >
-              
+
               <!-- Item details overlay -->
               <Motion
                 v-if="!isMobile"
                 :initial="{ opacity: 0, scale: 0.95, transformOrigin: 'bottom left' }"
-                :animate="hoveredItemIndex === index ? { 
-                  opacity: 1, 
+                :animate="hoveredItemIndex === index ? {
+                  opacity: 1,
                   scale: 1,
                   transformOrigin: 'bottom left'
-                } : { 
-                  opacity: 0, 
+                } : {
+                  opacity: 0,
                   scale: 0.95,
                   transformOrigin: 'bottom left'
                 }"
@@ -195,12 +195,12 @@ const canvasTitle = computed(() => {
               >
                 <Motion
                   :initial="{ y: 20, opacity: 0 }"
-                  :animate="hoveredItemIndex === index ? { 
-                    y: 0, 
-                    opacity: 1 
-                  } : { 
-                    y: 20, 
-                    opacity: 0 
+                  :animate="hoveredItemIndex === index ? {
+                    y: 0,
+                    opacity: 1
+                  } : {
+                    y: 20,
+                    opacity: 0
                   }"
                   :transition="{
                     duration: 0.25,
@@ -213,8 +213,8 @@ const canvasTitle = computed(() => {
                       <h3 class="font-medium text-white mb-1 line-clamp-2 leading-tight">
                         {{ item?.title }}
                       </h3>
-                      <p 
-                        v-if="item?.description" 
+                      <p
+                        v-if="item?.description"
                         class="text-sm text-white/85 line-clamp-2"
                       >
                         {{ item.description }}
@@ -264,4 +264,4 @@ const canvasTitle = computed(() => {
       :title="canvasTitle"
     />
   </UApp>
-</template> 
+</template>

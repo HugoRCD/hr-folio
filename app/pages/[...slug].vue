@@ -16,7 +16,7 @@ const mdcVars = ref({ ...seo, ...profile, ...socials, date: page.value?.date })
 const isWriting = computed(() => route.path.includes('/writing/') || route.path.includes('/notes/') || route.path.includes('/playground/'))
 
 const contentClasses = {
-  writing: 'enter-content mb-4 mt-8',
+  writing: 'mb-4 mt-8',
   default: 'mb-4 mt-8 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
 }
 

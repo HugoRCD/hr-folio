@@ -6,13 +6,6 @@ const { page, isWriting } = defineProps<{
   isWriting: boolean
 }>()
 
-useScriptPlausibleAnalytics({
-  domain: 'hrcd.fr',
-  scriptInput: {
-    src: 'https://analytics.hrcd.fr/js/script.js',
-  }
-})
-
 const route = useRoute()
 const { link, seo, profile } = useAppConfig()
 
@@ -22,9 +15,9 @@ const getPageSEO = () => ({
 })
 
 const getTitleTemplate = (title: string | undefined) => {
-  if (route.path === '/') return title || `${seo.title} | Frontend Engineer at NuxtLabs`
+  if (route.path === '/') return title || `${seo.title} | Software Engineer at Vercel`
   if (isWriting) return title
-  return `${title} | ${seo.title} - Frontend Engineer at NuxtLabs`
+  return `${title} | ${seo.title} - Software Engineer at Vercel`
 }
 
 const pageSEO = getPageSEO()
@@ -67,4 +60,3 @@ useHead({
 <template>
   <slot />
 </template>
-
