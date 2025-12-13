@@ -6,8 +6,8 @@
   <a aria-label="License" href="https://github.com/hugorcd/hr-folio/blob/master/LICENSE">
     <img alt="" src="https://img.shields.io/npm/l/vue.svg?style=for-the-badge&labelColor=000000&color=blue">
     </a>
-  <a aria-label="Follow Hugo on Twitter" href="https://twitter.com/HugoRCD__">
-    <img alt="" src="https://img.shields.io/twitter/follow/HugoRCD__.svg?style=for-the-badge&labelColor=000000&logo=twitter&label=Follow%20Hugo&logoWidth=20&logoColor=white">
+  <a aria-label="Follow Hugo on Twitter" href="https://twitter.com/HugoRCD">
+    <img alt="" src="https://img.shields.io/twitter/follow/HugoRCD.svg?style=for-the-badge&labelColor=000000&logo=twitter&label=Follow%20Hugo&logoWidth=20&logoColor=white">
   </a>
 </p>
 
@@ -34,7 +34,7 @@ You can see it live at [hrcd.fr](https://hrcd.fr/).
 - Easy to customize
 - Auto generated sitemap
 - Super easy self-hosted setup
-- One-click deploy with Vercel or Coolify
+- One-click deploy with Vercel
 
 ## Quick Setup
 
@@ -117,7 +117,7 @@ To start contributing, you can follow these steps:
 
 <!-- /automd -->
 
-<!-- automd:fetch url="gh:hugorcd/markdown/main/src/local_development_dev.md" -->
+<!-- automd:fetch url="gh:hugorcd/markdown/main/src/local_development_pnpm_dev.md" -->
 
 <details>
   <summary>Local development</summary>
@@ -138,7 +138,7 @@ To start contributing, you can follow these steps:
 ## Sponsors
 
 <p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/hugorcd/static/sponsors.svg">
+  <a href="https://github.com/sponsors/HugoRCD">
     <img src='https://cdn.jsdelivr.net/gh/hugorcd/static/sponsors.svg' alt="HugoRCD sponsors" />
   </a>
 </p>
@@ -162,6 +162,6 @@ Made by [@HugoRCD](https://github.com/HugoRCD) and [community](https://github.co
 
 ---
 
-_🤖 auto updated with [automd](https://automd.unjs.io) (last updated: Wed Jan 01 2025)_
+_🤖 auto updated with [automd](https://automd.unjs.io) (last updated: Sat Dec 13 2025)_
 
 <!-- /automd -->

@@ -29,7 +29,7 @@ const position = usePointerPosition()
 
 function usePointerToSkew(axisMotionValue: any) {
   const velocity = useVelocity(axisMotionValue)
-  const maxVelocity = useTransform(velocity, v => clamp(-500, 500, v))
+  const maxVelocity = useTransform(velocity, (v: number) => clamp(-500, 500, v))
   const smoothVelocity = useSpring(maxVelocity, {
     damping: 20,
     stiffness: 300,

@@ -6,13 +6,6 @@ const { page, isWriting } = defineProps<{
   isWriting: boolean
 }>()
 
-useScriptPlausibleAnalytics({
-  domain: 'hrcd.fr',
-  scriptInput: {
-    src: 'https://analytics.hrcd.fr/js/script.js',
-  }
-})
-
 const route = useRoute()
 const { link, seo, profile } = useAppConfig()
 
@@ -67,4 +60,3 @@ useHead({
 <template>
   <slot />
 </template>
-

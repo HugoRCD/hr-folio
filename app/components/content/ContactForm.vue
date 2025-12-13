@@ -3,7 +3,7 @@ import * as z from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 
 const schema = z.object({
-  email: z.string().email('Invalid email'),
+  email: z.email('Invalid email'),
   message: z.string().min(2, 'Too short'),
   name: z.string().optional()
 })
@@ -11,9 +11,9 @@ const schema = z.object({
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({
-  email: undefined,
-  message: undefined,
-  name: undefined
+  email: '',
+  message: '',
+  name: ''
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {

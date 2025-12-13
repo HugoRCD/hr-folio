@@ -10,7 +10,7 @@ export default defineAppConfig({
   },
   seo: {
     title: 'Hugo Richard',
-    description: 'Software Engineer, Designer & OSS Contributor based in Nice.',
+    description: 'Software Engineer & Designer at Vercel',
     url: 'https://hrcd.fr',
     lang: 'en'
   },
@@ -96,7 +96,7 @@ export default defineAppConfig({
         }
       },
       h1: {
-        base: 'text-2xl sm:text-3xl font-serif italic font-[500]'
+        base: 'text-2xl sm:text-3xl font-serif italic font-medium'
       },
       hr: {
         base: 'my-2'

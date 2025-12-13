@@ -9,6 +9,7 @@
 @theme {
   --font-serif: "Newsreader", serif;
   --font-sans: "Geist", sans-serif;
+  --font-redaction: "Redaction", serif;
 }
 
 :root {

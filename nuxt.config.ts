@@ -1,8 +1,4 @@
 export default defineNuxtConfig({
-  experimental: {
-    viewTransition: true,
-  },
-
   site: {
     defaultLocale: 'en',
     indexable: true,
@@ -24,21 +20,22 @@ export default defineNuxtConfig({
     disallow: ['/notes'],
   },
 
+  compatibilityDate: '2025-12-13',
+
   routeRules: {
     '/': { isr: true },
   },
 
-  modules: [
-    '@nuxt/ui',
-    '@nuxtjs/seo',
-    '@nuxt/content',
-    '@nuxt/image',
-    '@nuxt/scripts',
-    '@vueuse/nuxt',
-    'nuxt-llms',
-    'motion-v/nuxt',
-    'vue-sonner/nuxt',
-  ],
+  studio: {
+    route: '/admin',
+    repository: {
+      provider: 'github',
+      owner: 'HugoRCD',
+      repo: 'hr-folio',
+    }
+  },
+
+  modules: ['@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'motion-v/nuxt', 'vue-sonner/nuxt', 'nuxt-studio'],
 
   llms: {
     domain: 'https://hrcd.fr',
@@ -99,9 +96,6 @@ export default defineNuxtConfig({
         }
       },
     },
-    preview: {
-      api: 'https://api.nuxt.studio'
-    },
   },
 
   runtimeConfig: {
@@ -144,8 +138,6 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
-  compatibilityDate: '2024-08-19',
-
   icon: {
     customCollections: [
       {
@@ -158,5 +150,33 @@ export default defineNuxtConfig({
       includeCustomCollections: true
     },
     provider: 'iconify'
+  },
+
+  fonts: {
+    families: [
+      {
+        name: 'Redaction',
+        provider: 'local',
+        weights: [400, 700],
+        styles: ['normal', 'italic'],
+        src: [
+          {
+            weight: 400,
+            style: 'normal',
+            src: '/fonts/Redaction-Regular.otf'
+          },
+          {
+            weight: 400,
+            style: 'italic',
+            src: '/fonts/Redaction-Italic.otf'
+          },
+          {
+            weight: 700,
+            style: 'normal',
+            src: '/fonts/Redaction-Bold.otf'
+          }
+        ]
+      }
+    ]
   },
 })
