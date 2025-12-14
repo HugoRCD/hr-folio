@@ -29,7 +29,7 @@ export default defineNuxtModule((_, nuxt) => {
       if (template.screenshotUrl) return
 
       const name = template.name.toLowerCase().replace(/\s/g, '-')
-      const filename = join(process.cwd(), 'public/assets/works', `${name}.png`)
+      const filename = join(process.cwd(), 'public/works', `${name}.png`)
 
       if (existsSync(filename)) return
 

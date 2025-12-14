@@ -10,14 +10,14 @@ const route = useRoute()
 const { link, seo, profile } = useAppConfig()
 
 const getPageSEO = () => ({
-  title: isWriting ? page?.title : page?.title || seo.title,
-  description: isWriting ? page?.description : page?.description || seo.description,
+  title: isWriting ? page?.title : page?.title || seo?.title,
+  description: isWriting ? page?.description : page?.description || seo?.description,
 })
 
 const getTitleTemplate = (title: string | undefined) => {
-  if (route.path === '/') return title || `${seo.title} | Software Engineer at Vercel`
+  if (route.path === '/') return title || `${seo?.title}, Software Engineer at Vercel`
   if (isWriting) return title
-  return `${title} | ${seo.title} - Software Engineer at Vercel`
+  return `${title} | ${seo?.title}, Software Engineer at Vercel`
 }
 
 const pageSEO = getPageSEO()
@@ -27,16 +27,16 @@ if (page.image) {
 } else {
   defineOgImageComponent(isWriting ? 'WritingPost' : 'Main', {
     ...pageSEO,
-    avatar: profile.pictureDark
+    avatar: profile?.pictureDark
   }, {
     fonts: ['Geist:400', 'Geist:600'],
   })
 }
 
 useSeoMeta({
-  ogSiteName: seo.title,
+  ogSiteName: seo?.title,
   ogType: isWriting ? 'article' : 'website',
-  author: profile.name,
+  author: profile?.name,
   title: pageSEO.title,
   description: pageSEO.description,
   twitterTitle: pageSEO.title,

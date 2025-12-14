@@ -98,7 +98,7 @@ function getWorkImage(work: any): string | null {
   }
 
   const name = work.name.replace(/\s+/g, '-').toLowerCase()
-  return `/assets/works/${name}.png`
+  return `/works/${name}.png`
 }
 
 function handleMouseLeave() {

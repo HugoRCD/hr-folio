@@ -96,7 +96,7 @@ export default defineAppConfig({
         }
       },
       h1: {
-        base: 'text-2xl sm:text-3xl font-serif italic font-medium'
+        base: 'text-xl font-serif font-medium'
       },
       hr: {
         base: 'my-2'
@@ -107,14 +107,11 @@ export default defineAppConfig({
       icon: {
         base: 'text-highlighted'
       },
-      p: {
-        base: 'text-muted'
-      },
       li: {
         base: 'text-muted'
       },
       a: {
-        base: 'italic border-b border-(--color-primary) text-highlighted font-medium'
+        base: 'border-b border-primary text-highlighted'
       }
     },
   }

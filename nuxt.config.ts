@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'motion-v/nuxt', 'vue-sonner/nuxt', 'nuxt-studio'],
+  modules: ['@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'motion-v/nuxt', 'vue-sonner/nuxt', 'nuxt-studio', '@nuxt/hints'],
 
   llms: {
     domain: 'https://hrcd.fr',

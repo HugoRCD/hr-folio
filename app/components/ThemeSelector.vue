@@ -1,7 +1,9 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const { enabled: soundEnabled, toggle: toggleSound } = useHoverSound()
 
 const nextTheme = computed(() => (colorMode.value === 'dark' ? 'light' : 'dark'))
+const soundLabel = computed(() => (soundEnabled.value ? 'Disable sound' : 'Enable sound'))
 
 const switchTheme = () => {
   colorMode.preference = nextTheme.value
@@ -44,14 +46,28 @@ const startViewTransition = (event: MouseEvent) => {
 </script>
 
 <template>
-  <div class="size-3 flex items-center justify-center">
-    <UTooltip text="Switch theme">
+  <div class="flex items-center gap-2">
+    <div class="size-3 flex items-center justify-center">
+      <UTooltip text="Switch theme">
+        <UButton
+          class="bg-inverted size-3 rounded-full"
+          size="xs"
+          variant="link"
+          :aria-label="`Switch to ${nextTheme} mode`"
+          @click="startViewTransition"
+        />
+      </UTooltip>
+    </div>
+
+    <UTooltip :text="soundLabel">
       <UButton
-        class="bg-inverted size-3 rounded-full"
+        class="rounded-full"
         size="xs"
-        variant="link"
-        :aria-label="`Switch to ${nextTheme} mode`"
-        @click="startViewTransition"
+        color="neutral"
+        variant="ghost"
+        :icon="soundEnabled ? 'i-lucide-volume-2' : 'i-lucide-volume-x'"
+        :aria-label="soundLabel"
+        @click="toggleSound"
       />
     </UTooltip>
   </div>

@@ -7,7 +7,7 @@
 @source "../../../";
 
 @theme {
-  --font-serif: "Newsreader", serif;
+  --font-serif: "Redaction", serif;
   --font-sans: "Geist", sans-serif;
   --font-redaction: "Redaction", serif;
 }
@@ -17,7 +17,6 @@
   scrollbar-width: thin;
 
   --ui-primary: rgb(40, 83, 255) !important;
-  --ui-bg: rgb(248, 243, 238);
   --ui-radius: 0
 }
 
