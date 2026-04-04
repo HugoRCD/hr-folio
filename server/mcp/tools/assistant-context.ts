@@ -1,8 +1,5 @@
-import { useEvent } from 'nitropack/runtime'
-import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
-/** Single-call pack so any MCP client can bootstrap persona + recency without chaining list/get. */
 export default defineMcpTool({
   name: 'assistant-context',
   title: 'Assistant context pack',
@@ -52,8 +49,11 @@ export default defineMcpTool({
       clipboardLimit > 0
         ? queryCollection(event, 'clipboard')
           .order('date', 'DESC')
-          .limit(clipboardLimit)
+          .limit(clipboardLimit + 8)
           .all()
+          .then(rows => rows
+            .filter(c => !(c as { draft?: boolean }).draft)
+            .slice(0, clipboardLimit))
         : Promise.resolve([]),
       queryCollection(event, 'content').path('/').first(),
     ])

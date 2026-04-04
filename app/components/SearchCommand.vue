@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import type { CommandPaletteGroup } from '@nuxt/ui'
+import type { FolioClipboardListItem, FolioWritingListItem } from '~/types/folio-lists'
 
 const isOpen = ref(false)
 const paletteQuery = ref('')
 const router = useRouter()
 const { copy } = useClipboard()
 
-const { data: articles } = await useAsyncData('cmd-writing', () =>
-  queryCollection('writing').order('date', 'DESC').all(),
-)
+const { data: articles } = await useFetch<FolioWritingListItem[]>('/api/folio/writing', {
+  key: 'folio-writing-cmd',
+  credentials: 'include',
+})
+
+const { data: clipboards } = await useFetch<FolioClipboardListItem[]>('/api/folio/clipboard', {
+  key: 'folio-clipboard-cmd',
+  credentials: 'include',
+})
 
 const { data: projects } = await useAsyncData('cmd-works', () =>
   queryCollection('works').order('date', 'DESC').all(),
@@ -75,7 +82,23 @@ const groups = computed<CommandPaletteGroup[]>(() => {
         label: a.title,
         icon: 'i-lucide-file-text',
         to: a.path,
-        suffix: new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
+        suffix: [
+          a.draft ? 'Draft' : '',
+          new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
+        ].filter(Boolean).join(' · '),
+      })),
+    },
+    {
+      id: 'clipboard',
+      label: 'Clipboard',
+      items: (clipboards.value || []).map(c => ({
+        label: c.title,
+        icon: 'i-lucide-clipboard-list',
+        to: c.path,
+        suffix: [
+          c.draft ? 'Draft' : '',
+          new Date(c.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
+        ].filter(Boolean).join(' · '),
       })),
     },
     {

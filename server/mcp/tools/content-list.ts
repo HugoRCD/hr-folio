@@ -1,5 +1,3 @@
-import { useEvent } from 'nitropack/runtime'
-import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
 const collectionId = z.enum(['content', 'writing', 'clipboard', 'works'])
@@ -23,7 +21,7 @@ export default defineMcpTool({
     includeDrafts: z
       .boolean()
       .default(false)
-      .describe('When true, include writing posts marked draft.'),
+      .describe('When true, include writing and clipboard entries marked draft.'),
     limitPerCollection: z
       .number()
       .min(1)
@@ -88,7 +86,7 @@ export default defineMcpTool({
         .limit(limitPerCollection)
         .all()
 
-      if (col === 'writing' && !includeDrafts) {
+      if ((col === 'writing' || col === 'clipboard') && !includeDrafts) {
         rows = rows.filter(r => !(r as { draft?: boolean }).draft)
       }
 
@@ -110,7 +108,7 @@ export default defineMcpTool({
         description: r.description,
         date: r.date,
         ...('tags' in r && r.tags ? { tags: r.tags } : {}),
-        ...(col === 'writing'
+        ...((col === 'writing' || col === 'clipboard')
           ? { draft: Boolean((r as { draft?: boolean }).draft) }
           : {}),
       }))

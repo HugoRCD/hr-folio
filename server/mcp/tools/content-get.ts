@@ -1,6 +1,3 @@
-import { createError } from 'h3'
-import { useEvent } from 'nitropack/runtime'
-import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
 function normalizePath(p: string) {
@@ -44,6 +41,9 @@ export default defineMcpTool({
       for (const col of ['writing', 'clipboard', 'content'] as const) {
         const doc = await queryCollection(event, col).path(p).first()
         if (!doc) continue
+        if (isDraftDoc(doc as { draft?: boolean })) {
+          throw createError({ statusCode: 404, message: `No page found for path ${p}` })
+        }
         return {
           collection: col,
           path: doc.path,
