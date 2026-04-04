@@ -62,7 +62,7 @@ export default defineMcpTool({
       path.startsWith('http') ? path : `${siteUrl}${path.startsWith('/') ? path : `/${path}`}`
 
     return {
-      generatedFor: 'MCP clients — ground conversations about Hugo Richard and hrcd.fr',
+      generatedFor: 'MCP clients — ground conversations about Hugo Richard and hugorcd.com',
       profile: {
         name: folio.seo.title,
         tagline: folio.seo.description,

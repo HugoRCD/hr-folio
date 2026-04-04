@@ -13,7 +13,7 @@ type Resolved
     | { kind: 'text' }
 
 function siteHosts(): Set<string> {
-  const s = new Set<string>(['hrcd.fr', 'www.hrcd.fr'])
+  const s = new Set<string>(['hugorcd.com', 'www.hugorcd.com'])
   try {
     s.add(new URL(seo.url).hostname)
   } catch {

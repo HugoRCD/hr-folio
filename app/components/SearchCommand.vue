@@ -21,7 +21,7 @@ const { data: projects } = await useAsyncData('cmd-works', () =>
   queryCollection('works').order('date', 'DESC').all(),
 )
 
-const mcpUrl = 'https://hrcd.fr/mcp'
+const mcpUrl = 'https://hugorcd.com/mcp'
 const skillsCmd = 'npx skills add https://hugorcd.com'
 
 const { agentTitle, agentLabel } = useAgentBrand()

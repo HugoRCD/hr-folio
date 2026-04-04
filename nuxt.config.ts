@@ -32,7 +32,7 @@ export default defineNuxtConfig({
 
   $production: {
     site: {
-      url: 'https://hrcd.fr',
+      url: 'https://hugorcd.com',
     }
   },
 
@@ -92,7 +92,7 @@ export default defineNuxtConfig({
   mcp: {
     name: 'Hugo Richard — Portfolio',
     description: 'Read-only access to Hugo Richard’s portfolio content: pages, articles, clipboard notes, and project metadata from Nuxt Content.',
-    instructions: `This server exposes Hugo Richard’s public portfolio (hrcd.fr), built with Nuxt Content.
+    instructions: `This server exposes Hugo Richard’s public portfolio (hugorcd.com), built with Nuxt Content.
 
 Collections:
 - content: main site pages (Markdown/MDC).
@@ -109,7 +109,7 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   llms: {
-    domain: 'https://hrcd.fr',
+    domain: 'https://hugorcd.com',
     title: 'Hugo Richard Portfolio',
     description: 'Software Engineer & Designer at Vercel, specializing in Vue.js and Nuxt ecosystem',
     full: {

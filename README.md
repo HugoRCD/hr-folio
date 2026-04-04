@@ -1,13 +1,13 @@
 ![Portfolio Social Preview](./public/images/banner.jpg)
 
-# hrcd.fr
+# hugorcd.com
 
 Minimal, content-driven portfolio built with [Nuxt](https://nuxt.com), [Nuxt UI](https://ui.nuxt.com), and [Nuxt Content](https://content.nuxt.com).
 
-[![Website](https://img.shields.io/badge/hrcd.fr-000?style=flat-square&logo=vercel&logoColor=white)](https://hrcd.fr)
+[![Website](https://img.shields.io/badge/hugorcd.com-000?style=flat-square&logo=vercel&logoColor=white)](https://hugorcd.com)
 [![License](https://img.shields.io/github/license/HugoRCD/hr-folio?style=flat-square&color=blue)](./LICENSE)
-[![Install in Cursor](https://hrcd.fr/mcp/badge.svg)](https://hrcd.fr/mcp/deeplink)
-[![Install in VS Code](https://hrcd.fr/mcp/badge.svg?ide=vscode)](https://hrcd.fr/mcp/deeplink?ide=vscode)
+[![Install in Cursor](https://hugorcd.com/mcp/badge.svg)](https://hugorcd.com/mcp/deeplink)
+[![Install in VS Code](https://hugorcd.com/mcp/badge.svg?ide=vscode)](https://hugorcd.com/mcp/deeplink?ide=vscode)
 
 ## Stack
 
@@ -72,10 +72,10 @@ Rich components available in clipboard posts: `::spotify-embed`, `::video-embed`
 
 ## MCP Server
 
-The portfolio exposes a read-only MCP server at [`/mcp`](https://hrcd.fr/mcp) with tools to query content programmatically.
+The portfolio exposes a read-only MCP server at [`/mcp`](https://hugorcd.com/mcp) with tools to query content programmatically.
 
 ```bash
-npx add-mcp https://hrcd.fr/mcp
+npx add-mcp https://hugorcd.com/mcp
 ```
 
 ## Agent Skills

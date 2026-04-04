@@ -12,7 +12,7 @@ export const folioPublic = {
   seo: {
     title: 'Hugo Richard',
     description: 'Software Engineer & Designer at Vercel',
-    url: 'https://hrcd.fr',
+    url: 'https://hugorcd.com',
     lang: 'en',
   },
   socials: {
