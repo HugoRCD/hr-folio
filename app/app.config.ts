@@ -55,21 +55,22 @@ export default defineAppConfig({
         'docker-compose.yml': 'simple-icons:docker',
         'Dockerfile': 'simple-icons:docker'
       },
-      pre: {
-        slots: {
-          header: 'bg-muted/10',
-          base: 'bg-muted/30',
-        }
-      },
       code: {
+        base: 'px-1.5 py-0.5 text-[13px] font-mono font-normal rounded-md inline-block',
         variants: {
           color: {
-            neutral: 'bg-muted/40 border-default/60',
+            neutral: 'code-inline',
           }
         },
       },
       h1: {
         base: 'text-xl font-serif font-medium'
+      },
+      h2: {
+        base: 'text-lg font-serif font-medium'
+      },
+      h3: {
+        base: 'text-base font-serif font-medium'
       },
       hr: {
         base: 'my-2'

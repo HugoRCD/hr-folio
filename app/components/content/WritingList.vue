@@ -59,7 +59,7 @@ const posts = computed(() => {
   return items
 })
 
-const hasMore = computed(() => limit > 0 && (allPosts.value?.length ?? 0) > limit)
+const showViewAll = computed(() => limit > 0)
 
 watch(searchQuery, (q) => {
   if (!isFullPage.value) return
@@ -111,17 +111,17 @@ const { highlightedIndex } = isFullPage.value
       >
         <span class="font-medium text-highlighted decoration-primary group-hover:underline">{{ post.title }}</span>
         <span class="flex shrink-0 items-baseline gap-2 text-sm text-muted/60">
-          <span v-if="post.body" class="text-muted/30">{{ useReadingTime(post.body) }} min</span>
+          <span v-if="isFullPage && post.rawbody" class="text-muted/30">{{ useReadingTime(post.rawbody) }} min</span>
           {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) }}
         </span>
       </NuxtLink>
     </div>
     <NuxtLink
-      v-if="hasMore"
+      v-if="showViewAll"
       to="/writing"
-      class="text-sm text-muted/50 transition-colors hover:text-muted"
+      class="text-sm text-muted/50 transition-colors hover:text-highlighted"
     >
-      View all &rarr;
+      All writing &rarr;
     </NuxtLink>
   </div>
 </template>

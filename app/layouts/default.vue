@@ -5,6 +5,8 @@ const isHome = computed(() => route.path === '/')
 
 <template>
   <UApp :tooltip="{ delayDuration: 0 }">
+    <ThemeSelector class="fixed right-6 top-6 z-50" />
+
     <main class="mx-auto flex min-h-dvh max-w-xl flex-col px-6 py-12 sm:py-20">
       <NuxtLink
         v-if="!isHome"
@@ -18,9 +20,8 @@ const isHome = computed(() => route.path === '/')
         <slot />
       </div>
 
-      <footer class="mt-16 flex items-center justify-between text-sm text-muted/40">
+      <footer class="mt-16 text-sm text-muted/40">
         <span>&copy; {{ new Date().getFullYear() }}</span>
-        <ThemeSelector />
       </footer>
     </main>
   </UApp>

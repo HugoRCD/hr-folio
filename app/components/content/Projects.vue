@@ -195,7 +195,7 @@ onMounted(() => {
             :key="project.name"
             :to="project.url"
             target="_blank"
-            class="group flex items-baseline justify-between gap-4 py-2 opacity-0 animate-in"
+            class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
             :class="{ 'bg-muted/5': highlightedIndex === index }"
             :style="{ animationDelay: `${index * 40}ms` }"
             @mouseenter="onProjectHover(project)"

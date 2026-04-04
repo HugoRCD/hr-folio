@@ -14,12 +14,28 @@
   scrollbar-width: thin;
 
   --ui-primary: rgb(40, 83, 255) !important;
-  --ui-radius: 0
+  --code-bg: #f6f6f6;
+  --code-border: #e5e5e5;
+
+  overscroll-behavior-y: none;
 }
 
 .dark {
   --ui-primary: rgb(8, 73, 236) !important;
   --ui-bg: rgb(2, 2, 2);
+  --code-bg: #0a0a0a;
+  --code-border: #1e1e1e;
+}
+
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+}
+
+.code-inline {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  color: var(--ui-text-highlighted);
 }
 
 @layer base {
@@ -37,6 +53,26 @@
   }
 }
 
+.prose-breakout :where(.prose-code-block, figure, video, iframe, .breakout) {
+  --breakout: 4rem;
+  width: calc(100% + var(--breakout) * 2);
+  max-width: calc(100% + var(--breakout) * 2);
+  margin-inline: calc(var(--breakout) * -1);
+}
+
+.prose-breakout :where(img:not(a img):not(p img)) {
+  --breakout: 4rem;
+  width: calc(100% + var(--breakout) * 2);
+  max-width: calc(100% + var(--breakout) * 2);
+  margin-inline: calc(var(--breakout) * -1);
+}
+
+@media (max-width: 639px) {
+  .prose-breakout :where(.prose-code-block, figure, video, iframe, img:not(a img):not(p img), .breakout) {
+    --breakout: 0px;
+  }
+}
+
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -44,6 +80,11 @@
 
 .animate-in {
   animation: slideIn 0.3s ease forwards;
+}
+
+html.revisit .animate-in {
+  animation: none;
+  opacity: 1;
 }
 
 * {

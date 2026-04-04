@@ -16,6 +16,7 @@ export default defineContentConfig({
         description: z.string().optional(),
         date: z.string().optional(),
         image: z.string().optional(),
+        rawbody: z.string().optional(),
       })
     }),
     writing: defineCollection({
@@ -27,6 +28,7 @@ export default defineContentConfig({
         date: z.string(),
         draft: z.boolean().default(false),
         tags: z.array(z.string()).optional(),
+        rawbody: z.string(),
       })
     }),
     works: defineCollection({

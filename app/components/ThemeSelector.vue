@@ -5,18 +5,35 @@ const { enabled: soundEnabled, toggle: toggleSound } = useHoverSound()
 const nextTheme = computed(() => (colorMode.value === 'dark' ? 'light' : 'dark'))
 const soundLabel = computed(() => (soundEnabled.value ? 'Disable sound' : 'Enable sound'))
 
+const themeButton = useTemplateRef('themeButton')
+
 const switchTheme = () => {
   colorMode.preference = nextTheme.value
 }
 
-const startViewTransition = (event: MouseEvent) => {
+const triggerTransition = (event?: MouseEvent) => {
   if (!document.startViewTransition) {
     switchTheme()
     return
   }
 
-  const x = event.clientX
-  const y = event.clientY
+  let x: number, y: number
+
+  if (event) {
+    x = event.clientX
+    y = event.clientY
+  } else {
+    const el = themeButton.value?.$el as HTMLElement | undefined
+    if (el) {
+      const rect = el.getBoundingClientRect()
+      x = rect.left + rect.width / 2
+      y = rect.top + rect.height / 2
+    } else {
+      switchTheme()
+      return
+    }
+  }
+
   const endRadius = Math.hypot(
     Math.max(x, window.innerWidth - x),
     Math.max(y, window.innerHeight - y)
@@ -27,7 +44,6 @@ const startViewTransition = (event: MouseEvent) => {
   })
 
   transition.ready.then(() => {
-    const duration = 600
     document.documentElement.animate(
       {
         clipPath: [
@@ -36,7 +52,7 @@ const startViewTransition = (event: MouseEvent) => {
         ],
       },
       {
-        duration: duration,
+        duration: 600,
         easing: 'cubic-bezier(.76,.32,.29,.99)',
         pseudoElement: '::view-transition-new(root)',
       }
@@ -50,11 +66,12 @@ const startViewTransition = (event: MouseEvent) => {
     <div class="size-3 flex items-center justify-center">
       <UTooltip text="Switch theme">
         <UButton
+          ref="themeButton"
           class="bg-inverted size-3 rounded-full"
           size="xs"
           variant="link"
           :aria-label="`Switch to ${nextTheme} mode`"
-          @click="startViewTransition"
+          @click="triggerTransition"
         />
       </UTooltip>
     </div>

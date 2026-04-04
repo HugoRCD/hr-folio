@@ -4,7 +4,7 @@ description: Software Engineer & Designer at Vercel. Building with obsession. Op
 ---
 
 ::hero{subtitle="Software Engineer & Designer at Vercel" title="Hugo Richard"}
-Building with obsession. Open source by default, [Nuxt](https://nuxt.com) at heart.
+Building with obsession ▲ Open source by default, [Nuxt](https://nuxt.com) at heart.
 ::
 
 ::experience

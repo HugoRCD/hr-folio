@@ -52,11 +52,11 @@ defineExpose({ searchInput })
 
 <template>
   <div class="flex items-center gap-2">
-    <span class="text-[11px] text-muted/20">{{ count }} {{ label }}</span>
+    <span class="text-[11px] text-muted/50">{{ count }} {{ label }}</span>
     <UPopover v-model:open="isOpen" :content="{ align: 'end', side: 'bottom', sideOffset: 8 }">
       <button
         class="relative transition-colors"
-        :class="hasActiveFilters ? 'text-primary' : 'text-muted/20 hover:text-muted/40'"
+        :class="hasActiveFilters ? 'text-primary' : 'text-muted/40 hover:text-muted/60'"
       >
         <UIcon name="i-lucide-search" class="size-3.5" />
         <span
@@ -72,22 +72,22 @@ defineExpose({ searchInput })
               type="text"
               :value="search"
               placeholder="Search..."
-              class="w-full border-0 border-b border-muted/10 bg-transparent py-1 text-sm text-highlighted outline-hidden placeholder:text-muted/30 focus:border-primary/30"
+              class="w-full border-0 border-b border-muted/20 bg-transparent py-1 text-sm text-highlighted outline-hidden placeholder:text-muted/50 focus:border-primary/40"
               @input="emit('update:search', ($event.target as HTMLInputElement).value)"
             >
-            <kbd class="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-muted/15">/</kbd>
+            <kbd class="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-muted/30">/</kbd>
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 text-[11px]">
               <button
-                :class="sort === 'newest' ? 'text-highlighted' : 'text-muted/30 hover:text-muted/50'"
+                :class="sort === 'newest' ? 'text-highlighted' : 'text-muted/50 hover:text-muted/70'"
                 @click="emit('update:sort', 'newest')"
               >
                 newest
               </button>
-              <span class="text-muted/15">·</span>
+              <span class="text-muted/30">·</span>
               <button
-                :class="sort === 'a-z' ? 'text-highlighted' : 'text-muted/30 hover:text-muted/50'"
+                :class="sort === 'a-z' ? 'text-highlighted' : 'text-muted/50 hover:text-muted/70'"
                 @click="emit('update:sort', 'a-z')"
               >
                 a-z
@@ -95,7 +95,7 @@ defineExpose({ searchInput })
             </div>
             <button
               v-if="hasActiveFilters"
-              class="text-[11px] text-muted/30 hover:text-muted/50"
+              class="text-[11px] text-muted/50 hover:text-muted/70"
               @click="emit('update:search', ''); emit('update:selectedTags', [])"
             >
               clear
@@ -106,7 +106,7 @@ defineExpose({ searchInput })
               v-for="tag in tags"
               :key="tag"
               class="text-[11px] transition-colors"
-              :class="selectedTags.includes(tag) ? 'text-primary' : 'text-muted/30 hover:text-muted/50'"
+              :class="selectedTags.includes(tag) ? 'text-primary' : 'text-muted/50 hover:text-muted/70'"
               @click="toggleTag(tag)"
             >
               {{ tag }}

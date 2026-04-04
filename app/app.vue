@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { SpeedInsights } from '@vercel/speed-insights/nuxt'
-import { Analytics } from '@vercel/analytics/nuxt'
-
 const { seo, profile, socials, link } = useFolioConfig()
 
 useHead({
@@ -30,6 +27,4 @@ useSchemaOrg([
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
-  <SpeedInsights />
-  <Analytics />
 </template>
