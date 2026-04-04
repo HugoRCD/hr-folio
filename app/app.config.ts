@@ -1,21 +1,9 @@
+import { folioPublic } from '../shared/folio-public'
+
 export default defineAppConfig({
-  profile: {
-    email: 'contact@hrcd.fr',
-    picture: 'https://avatars.githubusercontent.com/u/71938701?v=4',
-  },
-  seo: {
-    title: 'Hugo Richard',
-    description: 'Software Engineer & Designer at Vercel',
-    url: 'https://hrcd.fr',
-    lang: 'en'
-  },
-  socials: {
-    github: 'https://git.new/hugorcd',
-    twitter: 'https://dub.sh/hrcd-x',
-    linkedin: 'https://dub.sh/hrcd-linkedin',
-    instagram: 'https://dub.sh/hrcd-insta',
-    spotify: 'https://spti.fi/HugoRCD',
-  },
+  profile: { ...folioPublic.profile },
+  seo: { ...folioPublic.seo },
+  socials: { ...folioPublic.socials },
   link: [
     {
       rel: 'icon',

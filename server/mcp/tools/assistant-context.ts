@@ -34,13 +34,8 @@ export default defineMcpTool({
   cache: '5m',
   handler: async ({ writingLimit, worksLimit, clipboardLimit }) => {
     const event = useEvent()
-    const app = useAppConfig() as {
-      profile?: { email?: string, picture?: string }
-      seo?: { title?: string, description?: string, url?: string, lang?: string }
-      socials?: Record<string, string>
-    }
-
-    const siteUrl = (app.seo?.url ?? 'https://hrcd.fr').replace(/\/$/, '')
+    const { folio } = useRuntimeConfig(event)
+    const siteUrl = folio.seo.url.replace(/\/$/, '')
 
     const [writings, works, clipboards, home] = await Promise.all([
       queryCollection(event, 'writing')
@@ -69,13 +64,13 @@ export default defineMcpTool({
     return {
       generatedFor: 'MCP clients — ground conversations about Hugo Richard and hrcd.fr',
       profile: {
-        name: app.seo?.title,
-        tagline: app.seo?.description,
+        name: folio.seo.title,
+        tagline: folio.seo.description,
         siteUrl,
-        lang: app.seo?.lang,
-        email: app.profile?.email,
-        picture: app.profile?.picture,
-        socials: app.socials ?? {},
+        lang: folio.seo.lang,
+        email: folio.profile.email,
+        picture: folio.profile.picture,
+        socials: folio.socials,
       },
       home: home
         ? {

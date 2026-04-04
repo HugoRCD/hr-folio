@@ -1,5 +1,17 @@
+import { folioPublic } from './shared/folio-public'
+
 export default defineNuxtConfig({
+  runtimeConfig: {
+    folio: {
+      profile: { ...folioPublic.profile },
+      seo: { ...folioPublic.seo },
+      socials: { ...folioPublic.socials },
+    },
+  },
+
   site: {
+    name: 'Hugo Richard',
+    description: 'Software Engineer & Designer at Vercel',
     defaultLocale: 'en',
     indexable: true,
   },

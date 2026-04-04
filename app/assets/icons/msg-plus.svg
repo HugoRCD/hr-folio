@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" id="msg-plus">
+  <title>msg-plus</title>
+  <g fill="currentColor">
+    <line x1="14" y1="17" x2="14" y2="11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
+    <path d="m16.944,9.154c-.419-3.466-3.365-6.154-6.944-6.154-3.866,0-7,3.134-7,7,0,1.376.403,2.655,1.088,3.737l-1.088,3.263,3.263-1.088c.853.54,1.832.896,2.881,1.026" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+    <line x1="11" y1="14" x2="17" y2="14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
+  </g>
+</svg>

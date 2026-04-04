@@ -2,6 +2,7 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
 
 const isOpen = ref(false)
+const paletteQuery = ref('')
 const router = useRouter()
 const { copy } = useClipboard()
 
@@ -16,52 +17,102 @@ const { data: projects } = await useAsyncData('cmd-works', () =>
 const mcpUrl = 'https://hrcd.fr/mcp'
 const skillsCmd = 'npx skills add https://hugorcd.com'
 
-const groups = computed<CommandPaletteGroup[]>(() => [
-  {
-    id: 'pages',
-    label: 'Pages',
-    items: [
-      { label: 'Home', icon: 'i-lucide-home', to: '/' },
-      { label: 'Writing', icon: 'i-lucide-pen-line', to: '/writing' },
-      { label: 'Works', icon: 'i-lucide-layers', to: '/works' },
-    ],
-  },
-  {
-    id: 'writing',
-    label: 'Writing',
-    items: (articles.value || []).map(a => ({
-      label: a.title,
-      icon: 'i-lucide-file-text',
-      to: a.path,
-      suffix: new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
-    })),
-  },
-  {
-    id: 'projects',
-    label: 'Projects',
-    items: (projects.value || []).map(p => ({
-      label: p.name,
-      icon: 'i-lucide-arrow-up-right',
-      to: p.url,
-      suffix: p.description,
-    })),
-  },
-  {
-    id: 'ai',
-    label: 'AI & Agents',
-    items: [
-      { label: 'Add MCP to Cursor', icon: 'i-lucide-terminal', action: 'deeplink-cursor' },
-      { label: 'Add MCP to VS Code', icon: 'i-lucide-code', action: 'deeplink-vscode' },
-      { label: 'Copy MCP URL', icon: 'i-lucide-link', action: 'copy-mcp-url' },
-      { label: 'Copy skills install command', icon: 'i-lucide-sparkles', action: 'copy-skills-cmd', suffix: 'npx skills add' },
-    ],
-  },
-])
+const { agentTitle, agentLabel } = useAgentBrand()
+
+function clampText(s: string, max: number) {
+  const t = s.trim()
+  if (t.length <= max) return t
+  return `${t.slice(0, max - 1)}…`
+}
+
+const groups = computed<CommandPaletteGroup[]>(() => {
+  const q = paletteQuery.value.trim()
+  const askInChat: CommandPaletteGroup[] = q
+    ? [
+      {
+        id: 'agent-query',
+        label: `Ask ${agentLabel.value}`,
+        ignoreFilter: true,
+        items: [
+          {
+            label: q.length > 88 ? `${q.slice(0, 87)}…` : q,
+            icon: 'custom:ai',
+            description: 'Open in chat',
+            action: 'open-chat-query',
+          }
+        ],
+      }
+    ]
+    : []
+
+  return [
+    ...askInChat,
+    {
+      id: 'agent',
+      label: agentTitle.value,
+      items: [
+        {
+          label: `Chat with ${agentLabel.value}`,
+          icon: 'custom:ai',
+          to: '/chat',
+          description: 'Grounded in this site’s pages, writing & works only.',
+        },
+      ],
+    },
+    {
+      id: 'pages',
+      label: 'Pages',
+      items: [
+        { label: 'Home', icon: 'i-lucide-home', to: '/' },
+        { label: 'Writing', icon: 'i-lucide-pen-line', to: '/writing' },
+        { label: 'Works', icon: 'i-lucide-layers', to: '/works' },
+      ],
+    },
+    {
+      id: 'writing',
+      label: 'Writing',
+      items: (articles.value || []).map(a => ({
+        label: a.title,
+        icon: 'i-lucide-file-text',
+        to: a.path,
+        suffix: new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
+      })),
+    },
+    {
+      id: 'projects',
+      label: 'Projects',
+      items: (projects.value || []).map(p => ({
+        label: p.name,
+        icon: 'i-lucide-arrow-up-right',
+        to: p.url,
+        ...(p.description ? { description: clampText(String(p.description), 96) } : {}),
+      })),
+    },
+    {
+      id: 'ai',
+      label: 'AI & Agents',
+      items: [
+        { label: 'Add MCP to Cursor', icon: 'i-lucide-terminal', action: 'deeplink-cursor' },
+        { label: 'Add MCP to VS Code', icon: 'i-lucide-code', action: 'deeplink-vscode' },
+        { label: 'Copy MCP URL', icon: 'i-lucide-link', action: 'copy-mcp-url' },
+        { label: 'Copy skills install command', icon: 'i-lucide-sparkles', action: 'copy-skills-cmd', suffix: 'npx skills add' },
+      ],
+    },
+  ]
+})
 
 function onSelect(item: any) {
-  isOpen.value = false
   if (!item) return
 
+  if (item.action === 'open-chat-query') {
+    const q = paletteQuery.value.trim()
+    isOpen.value = false
+    paletteQuery.value = ''
+    if (q) router.push({ path: '/chat', query: { q } })
+    return
+  }
+
+  isOpen.value = false
   if (item.action === 'deeplink-cursor') {
     window.open(`${mcpUrl}/deeplink?ide=cursor`, '_self')
     return
@@ -82,8 +133,7 @@ function onSelect(item: any) {
   if (!item.to) return
   if (item.to.startsWith('http')) {
     window.open(item.to, '_blank')
-  }
-  else {
+  } else {
     router.push(item.to)
   }
 }
@@ -93,30 +143,40 @@ defineShortcuts({
     isOpen.value = !isOpen.value
   },
 })
+
+watch(isOpen, (open) => {
+  if (!open) paletteQuery.value = ''
+})
 </script>
 
 <template>
   <UModal
     v-model:open="isOpen"
     :ui="{
-      overlay: 'bg-default/50',
-      content: 'sm:max-w-md ring-0 shadow-lg border border-muted/15',
+      overlay: 'backdrop-blur-md bg-black/50 dark:bg-black/70',
+      content: 'sm:max-w-lg rounded-xl shadow-2xl ring-1 ring-default/30 border border-default/35',
     }"
   >
     <template #content>
       <UCommandPalette
-        placeholder="Search..."
-        :groups="groups"
+        v-model:search-term="paletteQuery"
+        placeholder="Search pages, writing, projects…"
+        class="max-h-72 min-h-0 sm:max-h-[min(20rem,50vh)]"
+        :groups
         size="sm"
-        :fuse="{ resultLimit: 10, fuseOptions: { threshold: 0.3 } }"
+        :fuse="{
+          resultLimit: 10,
+          fuseOptions: { threshold: 0.3, keys: ['label', 'suffix', 'description'] },
+        }"
         :ui="{
-          root: 'divide-muted/10 **:shadow-none',
+          root: 'divide-muted/10 **:shadow-none min-h-0 flex-1',
           input: '[&>input]:font-mono [&>input]:text-xs [&>input]:placeholder:text-muted/40',
           label: 'text-[10px] uppercase tracking-wider text-muted/50 font-normal',
           itemLeadingIcon: 'text-muted/40',
           itemLabelBase: 'text-highlighted font-normal',
-          itemLabelSuffix: 'text-muted/40',
-          viewport: 'divide-muted/10 max-h-72',
+          itemLabelSuffix: 'text-[10px]/4 text-muted/45 shrink-0',
+          itemDescription: 'mt-0.5 line-clamp-2 text-[11px]/4 text-muted/65 font-normal',
+          viewport: 'divide-muted/10 max-h-none min-h-0 flex-1 overflow-y-auto',
           group: 'p-1',
         }"
         close

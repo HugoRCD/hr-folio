@@ -48,6 +48,17 @@
     box-shadow: 0 1px 0 0 var(--ui-primary);
   }
 
+  /* Chat: no primary underline / ring on fields — keep keyboard UX minimal */
+  .agent-chat *:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .agent-chat textarea:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
   .no-link {
     @apply text-muted! border-none cursor-default font-normal not-italic!;
   }
