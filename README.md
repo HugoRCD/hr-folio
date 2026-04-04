@@ -1,101 +1,89 @@
-![Portfolio Social Preview](./public/images/preview.png)
+![Portfolio Social Preview](./public/images/banner.jpg)
 
-<p align="center">
-    <a aria-label="Hugo's Website" href="https://hrcd.fr">
-        <img alt="" src="https://img.shields.io/badge/Website-hrcd.fr-blue?style=for-the-badge&labelColor=000000&logo=google-chrome&logoColor=white">
-  <a aria-label="License" href="https://github.com/hugorcd/hr-folio/blob/master/LICENSE">
-    <img alt="" src="https://img.shields.io/npm/l/vue.svg?style=for-the-badge&labelColor=000000&color=blue">
-    </a>
-  <a aria-label="Follow Hugo on Twitter" href="https://twitter.com/HugoRCD">
-    <img alt="" src="https://img.shields.io/twitter/follow/HugoRCD.svg?style=for-the-badge&labelColor=000000&logo=twitter&label=Follow%20Hugo&logoWidth=20&logoColor=white">
-  </a>
-</p>
+# hrcd.fr
 
-# HR Folio
+Minimal, content-driven portfolio built with [Nuxt](https://nuxt.com), [Nuxt UI](https://ui.nuxt.com), and [Nuxt Content](https://content.nuxt.com).
 
-This is the code for my personal portfolio built with [Nuxt](https://nuxt.com/) and [Tailwind CSS](https://tailwindcss.com/).
+[![Website](https://img.shields.io/badge/hrcd.fr-000?style=flat-square&logo=vercel&logoColor=white)](https://hrcd.fr)
+[![License](https://img.shields.io/github/license/HugoRCD/hr-folio?style=flat-square&color=blue)](./LICENSE)
+[![Install in Cursor](https://hrcd.fr/mcp/badge.svg)](https://hrcd.fr/mcp/deeplink)
+[![Install in VS Code](https://hrcd.fr/mcp/badge.svg?ide=vscode)](https://hrcd.fr/mcp/deeplink?ide=vscode)
 
-## Live website
+## Stack
 
-You can see it live at [hrcd.fr](https://hrcd.fr/).
+- **[Nuxt 4](https://nuxt.com)** — framework
+- **[Nuxt UI](https://ui.nuxt.com)** — components & theming
+- **[Nuxt Content](https://content.nuxt.com)** — markdown & JSON collections
+- **[Nuxt SEO](https://nuxtseo.com)** — meta, OG images, sitemap, robots
+- **[MCP Toolkit](https://mcp-toolkit.nuxt.dev)** — AI-accessible content via Model Context Protocol
+- **[Vercel](https://vercel.com)** — hosting, analytics, speed insights
 
-## Features
+## Content
 
-- Fully integrated with [Nuxt Content v3](https://content.nuxt.com/)
-- Article & Project Content Type using [Nuxt Content](https://content.nuxt.com/)
-- Hidden notes section for private notes
-- Working contact form with [Resend](https://resend.com/)
-- Auto-Generated Open Graph Image with [Nuxt OG Image](https://nuxtseo.com/og-image/getting-started/installation)
-- [Nuxt Robots](https://sitemap.nuxt.com/) for auto-generate robots.txt
-- [ESLint](https://eslint.org/) using my personal configuration
-- Full typescript support
-- Optimized images with [Nuxt Image](https://image.nuxt.com/)
-- Fully responsive on all browsers
-- Easy to customize
-- Auto generated sitemap
-- Super easy self-hosted setup
-- One-click deploy with Vercel
+All content lives in `content/` as markdown or JSON:
 
-## Quick Setup
-
-1. Clone this repository if you have access or download it from the store
-```bash
-git clone git@github.com:HugoRCD/hr-folio.git
+```
+content/
+├── index.md              # Home page (hero, experience, projects, writing)
+├── writing.md            # Writing listing page
+├── works.md              # Works listing page
+├── clipboard.md          # Clipboard listing page
+├── 1.works/*.json        # Project data
+├── 2.writing/*.md        # Blog posts
+└── 3.clipboard/*.md      # Weekly clipboard posts
 ```
 
-2. Install dependencies
+### Adding content
+
+**New article** — create a `.md` file in `content/2.writing/`:
+
+```yaml
+---
+title: My Article
+description: A short description.
+date: 2026-04-04
+tags: [nuxt, vue]
+---
+```
+
+**New project** — create a `.json` file in `content/1.works/`:
+
+```json
+{
+  "name": "Project Name",
+  "description": "Short description.",
+  "url": "https://example.com",
+  "category": "author",
+  "date": "2026-01-01",
+  "tags": ["nuxt", "open-source"]
+}
+```
+
+**New clipboard post** — create a `.md` file in `content/3.clipboard/`:
+
+```yaml
+---
+title: "Clipboard #2"
+date: 2026-04-14
+---
+```
+
+Rich components available in clipboard posts: `::spotify-embed`, `::video-embed`, `::link-card`, `::quote`.
+
+## MCP Server
+
+The portfolio exposes a read-only MCP server at [`/mcp`](https://hrcd.fr/mcp) with tools to query content programmatically.
+
+```bash
+npx add-mcp https://hrcd.fr/mcp
+```
+
+## Development
+
 ```bash
 pnpm install
-```
-
-3. Start development server
-```bash
 pnpm dev
 ```
-
-4. Generate static project
-```bash
-pnpm generate
-```
-
-5. Start production server
-```bash
-pnpm start
-```
-
-## How to Modify the Portfolio Content
-
-This portfolio uses [Nuxt Content](https://content.nuxt.com/) to manage the content. Here's how you can modify it:
-
-First check the `app.config.ts` file to change the global configuration of the portfolio, there is a lot of stuff you can change here.
-
-### Writing
-
-1. Navigate to the `content/2.writing` directory.
-2. Here, you'll find Markdown files for each article. To modify an article, simply open its Markdown file and make your changes.
-3. To add a new article, create a new Markdown file in this directory. The name of the file will be used as the URL slug for the article.
-
-### Works
-
-1. Navigate to the `content/1.works/` directory.
-2. Here, you'll find JSON files for each project. To modify an project, simply open its JSON file and make your changes.
-3. To add a new project, add a new JSON file in this directory.
-
-### Other Content
-
-Simply go to the `content/` directory and edit any of the Markdown or JSON files to modify the content.
-
-## Setup the Contact Form
-
-This portfolio uses [Resend](https://resend.com/) to handle the contact form. To set it up, follow these steps:
-- Get your api key from [Resend](https://resend.com/) here [your api key](https://resend.com/api-keys)
-- Add your api key in the `.env` file
-- change the `from` key in the `sendEmail` route in the `server/api/` folder, you can customize everything you want in this route
-- That's it, you're good to go!
-
-## Setup the Open Graph Image
-
-To change the main open graph image, go to the `app.config.ts` file and change the `openGrapImage` key.
 
 <!-- automd:fetch url="gh:hugorcd/markdown/main/src/contributions.md" -->
 
@@ -117,22 +105,6 @@ To start contributing, you can follow these steps:
 
 <!-- /automd -->
 
-<!-- automd:fetch url="gh:hugorcd/markdown/main/src/local_development_pnpm_dev.md" -->
-
-<details>
-  <summary>Local development</summary>
-
-- Clone this repository
-- Install latest LTS version of [Node.js](https://nodejs.org/en/)
-- Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable`
-- Install dependencies using `pnpm install`
-- Start development server using `pnpm dev`
-- Open [http://localhost:3000](http://localhost:3000) in your browser
-
-</details>
-
-<!-- /automd -->
-
 <!-- automd:fetch url="gh:hugorcd/markdown/main/src/sponsors.md" -->
 
 ## Sponsors
@@ -145,8 +117,6 @@ To start contributing, you can follow these steps:
 
 <!-- /automd -->
 
-## Contributors
-
 <!-- automd:contributors license=Apache author=HugoRCD github="hugorcd/hr-folio" -->
 
 Published under the [APACHE](https://github.com/hugorcd/hr-folio/blob/main/LICENSE) license.
@@ -155,13 +125,5 @@ Made by [@HugoRCD](https://github.com/HugoRCD) and [community](https://github.co
 <a href="https://github.com/hugorcd/hr-folio/graphs/contributors">
 <img src="https://contrib.rocks/image?repo=hugorcd/hr-folio" />
 </a>
-
-<!-- /automd -->
-
-<!-- automd:with-automd lastUpdate -->
-
----
-
-_🤖 auto updated with [automd](https://automd.unjs.io) (last updated: Sat Dec 13 2025)_
 
 <!-- /automd -->
