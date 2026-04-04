@@ -105,7 +105,7 @@ Workflow for assistants:
 2. Call content-list to discover paths, stems, and metadata; use the optional search string to narrow results.
 3. Call content-get with kind "page" and a path from the list, or kind "work" and a stem, to load full text or full project metadata.
 
-Respect draft posts only when includeDrafts is true on content-list. Prefer raw markdown (rawbody) over rendered AST for analysis.`,
+Respect draft writing and clipboard entries only when includeDrafts is true on content-list. Prefer raw markdown (rawbody) over rendered AST for analysis.`,
   },
 
   llms: {
@@ -127,7 +127,19 @@ Respect draft posts only when includeDrafts is true on content-list. Prefer raw 
         title: 'Writings',
         description: 'Technical articles, tutorials, and insights about frontend development, Vue.js, and the Nuxt ecosystem.',
         contentCollection: 'writing',
-        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/writing%' }]
+        contentFilters: [
+          { field: 'path', operator: 'LIKE', value: '/writing%' },
+          { field: 'draft', operator: '=', value: false as unknown as string },
+        ],
+      },
+      {
+        title: 'Clipboard',
+        description: 'Short notes, links, and weekly picks (published only).',
+        contentCollection: 'clipboard',
+        contentFilters: [
+          { field: 'path', operator: 'LIKE', value: '/clipboard%' },
+          { field: 'draft', operator: '=', value: false as unknown as string },
+        ],
       },
     ],
     notes: ['Hugo Richard is a Software Engineer & Designer at Vercel, contributing to the Nuxt ecosystem. This portfolio showcases his professional work, technical writings, and projects.']
@@ -165,6 +177,8 @@ Respect draft posts only when includeDrafts is true on content-list. Prefer raw 
       crawlLinks: true,
       routes: [
         '/',
+        '/llms.txt',
+        '/llms-full.txt',
         '/sitemap.xml',
       ],
     },

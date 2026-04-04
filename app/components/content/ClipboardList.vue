@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { FolioClipboardListItem } from '~/types/folio-lists'
+
 const { limit = 0 } = defineProps<{
   limit?: number
 }>()
 
 const isFullPage = computed(() => limit === 0)
 
-const { data: allPosts } = await useAsyncData('clipboard-list', () =>
-  queryCollection('clipboard')
-    .order('date', 'DESC')
-    .all()
-)
+const { data: allPosts } = await useFetch<FolioClipboardListItem[]>('/api/folio/clipboard', {
+  key: 'folio-clipboard-list',
+  credentials: 'include',
+})
 
 const posts = computed(() => {
   if (!allPosts.value) return []
@@ -33,7 +34,18 @@ const showViewAll = computed(() => limit > 0)
         class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
         :style="{ animationDelay: `${index * 40}ms` }"
       >
-        <span class="font-medium text-highlighted decoration-primary group-hover:underline">{{ post.title }}</span>
+        <span class="flex min-w-0 items-center gap-2 font-medium text-highlighted decoration-primary group-hover:underline">
+          <span class="truncate">{{ post.title }}</span>
+          <UBadge
+            v-if="post.draft"
+            size="xs"
+            color="warning"
+            variant="subtle"
+            class="shrink-0"
+          >
+            Draft
+          </UBadge>
+        </span>
         <span class="shrink-0 text-sm text-muted/60">
           {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}
         </span>

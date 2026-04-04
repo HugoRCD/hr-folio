@@ -19,6 +19,7 @@ const sortMode = ref<SortMode>('newest')
 const selectedTags = ref<string[]>([])
 
 watch(activeTab, (tab) => {
+  hoveredProject.value = null
   if (!featured) {
     const query: Record<string, string> = {}
     if (tab !== 'all') query.tab = tab
@@ -145,7 +146,9 @@ function onMouseMove(e: MouseEvent) {
   cursorY.value = e.clientY
 }
 
-function onProjectHover(project: { name: string, screenshotUrl?: string }) {
+function onProjectHover(project: { name: string, screenshotUrl?: string }, e: MouseEvent) {
+  cursorX.value = e.clientX
+  cursorY.value = e.clientY
   hoveredProject.value = project.name
   preloadImage(getScreenshot(project))
 }
@@ -211,7 +214,7 @@ onMounted(() => {
             class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
             :class="{ 'bg-muted/5': highlightedIndex === index }"
             :style="{ animationDelay: `${index * 40}ms` }"
-            @mouseenter="onProjectHover(project)"
+            @mouseenter="onProjectHover(project, $event)"
           >
             <span class="shrink-0 font-medium text-highlighted decoration-primary group-hover:underline">{{ project.name }}</span>
             <span class="truncate text-right text-sm text-muted">{{ project.description }}</span>

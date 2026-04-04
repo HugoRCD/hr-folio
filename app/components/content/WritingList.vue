@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FolioWritingListItem } from '~/types/folio-lists'
+
 type SortMode = 'newest' | 'a-z'
 
 const { limit = 0 } = defineProps<{
@@ -13,11 +15,10 @@ const searchQuery = ref((route.query.q as string) || '')
 const sortMode = ref<SortMode>('newest')
 const selectedTags = ref<string[]>([])
 
-const { data: allPosts } = await useAsyncData('writing-list', () =>
-  queryCollection('writing')
-    .order('date', 'DESC')
-    .all()
-)
+const { data: allPosts } = await useFetch<FolioWritingListItem[]>('/api/folio/writing', {
+  key: 'folio-writing-list',
+  credentials: 'include',
+})
 
 const allTags = computed(() => {
   if (!allPosts.value) return []
@@ -93,7 +94,7 @@ const { highlightedIndex } = isFullPage.value
         :tags="allTags"
         :search="searchQuery"
         :sort="sortMode"
-        :selected-tags="selectedTags"
+        :selected-tags
         @update:search="searchQuery = $event"
         @update:sort="sortMode = $event"
         @update:selected-tags="selectedTags = $event"
@@ -109,9 +110,20 @@ const { highlightedIndex } = isFullPage.value
         :class="{ 'bg-muted/5': highlightedIndex === index }"
         :style="{ animationDelay: `${index * 40}ms` }"
       >
-        <span class="font-medium text-highlighted decoration-primary group-hover:underline">{{ post.title }}</span>
+        <span class="flex min-w-0 items-center gap-2 font-medium text-highlighted decoration-primary group-hover:underline">
+          <span class="truncate">{{ post.title }}</span>
+          <UBadge
+            v-if="post.draft"
+            size="xs"
+            color="warning"
+            variant="subtle"
+            class="shrink-0"
+          >
+            Draft
+          </UBadge>
+        </span>
         <span class="flex shrink-0 items-baseline gap-2 text-sm text-muted/60">
-          <span v-if="isFullPage && post.rawbody" class="text-muted/30">{{ useReadingTime(post.rawbody) }} min</span>
+          <span v-if="isFullPage && post.readingMinutes" class="text-muted/30">{{ post.readingMinutes }} min</span>
           {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) }}
         </span>
       </NuxtLink>

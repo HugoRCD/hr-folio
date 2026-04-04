@@ -1,4 +1,9 @@
 import { defineCollection, defineContentConfig, z } from '@nuxt/content'
+import { defineSitemapSchema } from '@nuxtjs/sitemap/content'
+
+function publishedForSitemap(entry: { draft?: boolean }) {
+  return !entry.draft
+}
 
 export default defineContentConfig({
   collections: {
@@ -10,8 +15,13 @@ export default defineContentConfig({
         description: z.string().optional(),
         date: z.string().optional(),
         image: z.string().optional(),
+        draft: z.boolean().default(false),
         rawbody: z.string().optional(),
-      })
+        sitemap: defineSitemapSchema({
+          name: 'content',
+          filter: publishedForSitemap,
+        }),
+      }),
     }),
     writing: defineCollection({
       type: 'page',
@@ -23,7 +33,11 @@ export default defineContentConfig({
         draft: z.boolean().default(false),
         tags: z.array(z.string()).optional(),
         rawbody: z.string(),
-      })
+        sitemap: defineSitemapSchema({
+          name: 'writing',
+          filter: publishedForSitemap,
+        }),
+      }),
     }),
     clipboard: defineCollection({
       type: 'page',
@@ -31,8 +45,13 @@ export default defineContentConfig({
       schema: z.object({
         title: z.string(),
         date: z.string(),
+        draft: z.boolean().default(false),
         rawbody: z.string(),
-      })
+        sitemap: defineSitemapSchema({
+          name: 'clipboard',
+          filter: publishedForSitemap,
+        }),
+      }),
     }),
     works: defineCollection({
       type: 'data',
@@ -47,10 +66,10 @@ export default defineContentConfig({
         github: z.string().optional(),
         screenshotUrl: z.string().optional(),
         screenshotOptions: z.object({
-          delay: z.number()
+          delay: z.number(),
         }).optional(),
         tags: z.array(z.string()).optional(),
-      })
+      }),
     }),
-  }
+  },
 })
