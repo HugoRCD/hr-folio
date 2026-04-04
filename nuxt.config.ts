@@ -1,4 +1,4 @@
-import { folioPublic } from './shared/folio-public'
+import { folioPublic } from './server/utils/folio-public'
 
 export default defineNuxtConfig({
   runtimeConfig: {

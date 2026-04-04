@@ -1,6 +1,8 @@
 /**
  * Public site identity for the folio. Used in `app.config` (client app config) and as the default
  * for Nitro `runtimeConfig.folio` (server / MCP — do not use `useAppConfig()` there).
+ *
+ * Kept under `server/utils/` (not `shared/`) so Nitro production builds bundle it correctly.
  */
 export const folioPublic = {
   profile: {
