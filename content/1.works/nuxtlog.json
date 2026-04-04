@@ -1,8 +1,8 @@
 {
   "name": "Nuxtlog",
   "category": "personal",
-  "description": "A changelog, newsletter and blog template made for Nuxt",
-  "url": "https://nuxtlog.hrcd.fr/",
-  "release": "2024",
-  "date": "2024-01-18"
+  "description": "Changelog & blog template for Nuxt",
+  "url": "https://nuxtlog.hrcd.fr",
+  "date": "2024-04-15",
+  "tags": ["nuxt", "template", "open-source"]
 }

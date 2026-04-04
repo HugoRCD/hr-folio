@@ -48,7 +48,7 @@ const isComplete = computed(() => props.progress >= 1)
       class="fixed inset-0 z-50 flex items-center justify-center bg-default"
     >
       <div class="pointer-events-none fixed inset-0 size-full overflow-hidden">
-        <div class="noise pointer-events-none absolute inset-[-200%] size-[400%] bg-[url('/noise.png')] opacity-[4%]" />
+        <div class="noise pointer-events-none absolute inset-[-200%] size-[400%] bg-[url('/images/noise.png')] opacity-[4%]" />
       </div>
 
       <div class="relative flex flex-col items-center space-y-8">
@@ -78,7 +78,7 @@ const isComplete = computed(() => props.progress >= 1)
               class="transition-all duration-300 ease-out"
             />
           </svg>
-          
+
           <div class="absolute inset-0 flex items-center justify-center">
             <span class="text-xl font-medium text-highlighted">
               {{ percent }}%
@@ -113,4 +113,4 @@ const isComplete = computed(() => props.progress >= 1)
       </div>
     </div>
   </Transition>
-</template> 
+</template>

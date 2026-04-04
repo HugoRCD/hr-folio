@@ -1,40 +1,34 @@
 <script setup lang="ts">
-const { profile, global } = useAppConfig()
+defineProps<{
+  title: string
+  subtitle: string
+}>()
+
+const { profile } = useFolioConfig()
 </script>
 
 <template>
-  <div class="flex flex-col" style="--stagger: 1">
-    <div class="flex items-center gap-2 mb-2">
-      <UColorModeImage
-        v-if="profile?.pictureDark && profile?.pictureLight"
-        :dark="profile.pictureDark"
-        :light="profile.pictureLight"
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center gap-4">
+      <NuxtImg
+        v-if="profile?.picture"
+        :src="profile.picture"
         alt="Hugo Richard"
-        width="80"
-        height="80"
-        sizes="160"
-        format="webp"
-        class="mb-2 size-18 rounded-full object-cover"
+        width="56"
+        height="56"
+        class="size-14 shrink-0 rounded-sm object-cover"
       />
-      <div class="flex flex-col">
-        <h3 class="font-serif text-xl italic">
-          <slot name="title" mdc-unwrap="p" />
-        </h3>
-        <div class="*:mb-0 *:text-primary">
-          <slot name="job" mdc-unwrap="p" />
-        </div>
+      <div class="flex flex-col gap-0.5">
+        <h1 class="font-redaction text-lg">
+          {{ title }}
+        </h1>
+        <h2 class="font-serif text-primary text-xl font-medium">
+          {{ subtitle }}
+        </h2>
       </div>
     </div>
-    <p class="max-w-[600px] text-pretty text-muted text-sm font-extralight sm:text-base">
+    <p class="max-w-prose text-pretty text-muted text-sm/6">
       <slot mdc-unwrap="p" />
     </p>
-    <div class="mt-2 flex gap-8">
-      <NuxtLink to="/contact" class="italic font-serif text-lg hover:underline decoration-primary">
-        Send me a message
-      </NuxtLink>
-      <NuxtLink v-if="global?.meetingLink" :to="global.meetingLink" class="italic font-serif text-lg hover:underline decoration-primary cursor-pointer">
-        Make a call
-      </NuxtLink>
-    </div>
   </div>
 </template>

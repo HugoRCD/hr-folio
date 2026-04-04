@@ -1,8 +1,10 @@
 {
   "name": "Canvas",
   "category": "featured",
-  "description": "A premium portfolio template, with a minimal and clean design",
+  "description": "Minimal portfolio template",
   "url": "https://canvas.hrcd.fr/",
+  "screenshotUrl": "/works/canvas.png",
   "release": "2024",
-  "date": "2024-01-10"
+  "date": "2024-06-15",
+  "tags": ["nuxt", "template", "design"]
 }

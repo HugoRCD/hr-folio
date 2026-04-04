@@ -5,6 +5,7 @@ description: Learn how to properly containerize and deploy a Nuxt application
   practices, automate builds with GitHub Actions, and deploy your application
   anywhere.
 date: 2025-01-15
+tags: [nuxt, docker, devops]
 ---
 
 # From Local to Production: Deploy the Latest Nuxt Stack with Docker

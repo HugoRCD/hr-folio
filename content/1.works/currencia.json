@@ -1,8 +1,8 @@
 {
   "name": "Currencia",
   "category": "personal",
-  "description": "Simple yet beautiful crypto tracker template",
-  "url": "https://currencia.hrcd.fr/",
-  "release": "2023",
-  "date": "2023-11-20"
+  "description": "Crypto tracker template",
+  "url": "https://currencia.hrcd.fr",
+  "date": "2023-06-01",
+  "tags": ["nuxt", "template"]
 }

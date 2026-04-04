@@ -1,7 +1,8 @@
 {
   "name": "Nuxt UI",
   "category": "ecosystem",
-  "description": "The most complete Nuxt / Vue UI library",
+  "description": "UI library for Nuxt & Vue",
   "url": "https://ui.nuxt.com",
-  "date": "2025-01-06"
+  "date": "2025-01-06",
+  "tags": ["vue", "nuxt", "design-system"]
 }

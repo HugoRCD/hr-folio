@@ -1,12 +1,7 @@
 export default defineAppConfig({
-  global: {
-    meetingLink: 'https://cal.com/hugorcd/30min',
-  },
   profile: {
     email: 'contact@hrcd.fr',
-    phone: '(+33) 6 21 56 22 18',
-    pictureDark: 'https://avatars.githubusercontent.com/u/71938701?v=4',
-    pictureLight: 'https://avatars.githubusercontent.com/u/71938701?v=4'
+    picture: 'https://avatars.githubusercontent.com/u/71938701?v=4',
   },
   seo: {
     title: 'Hugo Richard',
@@ -19,7 +14,7 @@ export default defineAppConfig({
     twitter: 'https://dub.sh/hrcd-x',
     linkedin: 'https://dub.sh/hrcd-linkedin',
     instagram: 'https://dub.sh/hrcd-insta',
-    spotify: 'https://spti.fi/HugoRCD'
+    spotify: 'https://spti.fi/HugoRCD',
   },
   link: [
     {
@@ -56,47 +51,28 @@ export default defineAppConfig({
     icons: {
       loading: 'lucide:loader',
     },
-    input: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
-    },
-    textarea: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
-    },
     prose: {
       codeIcon: {
         'shelve.json': 'custom:shelve',
         'docker-compose.yml': 'simple-icons:docker',
         'Dockerfile': 'simple-icons:docker'
       },
-      pre: {
-        slots: {
-          header: 'bg-muted/10',
-          base: 'bg-muted/30',
-        }
-      },
-      field: {
-        slots: {
-          name: 'text-highlighted',
-        }
-      },
       code: {
+        base: 'px-1.5 py-0.5 text-[13px] font-mono font-normal rounded-md inline-block',
         variants: {
           color: {
-            neutral: 'bg-muted/40 border-default/60',
+            neutral: 'code-inline',
           }
         },
       },
-      codeCollapse: {
-        variants: {
-          open: {
-            false: {
-              footer: 'from-default'
-            }
-          }
-        }
-      },
       h1: {
-        base: 'text-2xl sm:text-3xl font-serif italic font-medium'
+        base: 'text-xl font-serif font-medium'
+      },
+      h2: {
+        base: 'text-lg font-serif font-medium'
+      },
+      h3: {
+        base: 'text-base font-serif font-medium'
       },
       hr: {
         base: 'my-2'
@@ -107,14 +83,11 @@ export default defineAppConfig({
       icon: {
         base: 'text-highlighted'
       },
-      p: {
-        base: 'text-muted'
-      },
       li: {
         base: 'text-muted'
       },
       a: {
-        base: 'italic border-b border-(--color-primary) text-highlighted font-medium'
+        base: 'border-b border-primary text-highlighted'
       }
     },
   }

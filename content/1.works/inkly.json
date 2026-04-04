@@ -1,8 +1,8 @@
 {
   "name": "Inkly",
   "category": "personal",
-  "description": "The most simple open-source email signature generator",
-  "url": "https://inkly.hrcd.fr/",
-  "release": "2024",
-  "date": "2024-06-20"
+  "description": "Email signature generator",
+  "url": "https://inkly.email",
+  "date": "2024-05-20",
+  "tags": ["nuxt", "design", "template"]
 }

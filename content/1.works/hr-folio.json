@@ -1,8 +1,9 @@
 {
   "name": "HR Folio",
   "category": "featured",
-  "description": "My personal portfolio website",
-  "url": "https://hrcd.fr/",
+  "description": "My portfolio website",
+  "url": "/",
   "release": "2024",
-  "date": "2024-01-22"
+  "date": "2024-01-22",
+  "tags": ["nuxt", "design", "open-source"]
 }

@@ -4,6 +4,7 @@ description: Learn how to avoid critical security risks in environment variable
   management and discover how Shelve provides a modern, secure solution for
   development teams.
 date: 2024-10-24
+tags: [security, devtools, shelve]
 ---
 
 # How To Securely Share Environment Variables With Your Team

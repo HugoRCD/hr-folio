@@ -1,9 +1,10 @@
 {
   "name": "@hrcd/eslint-config",
   "category": "personal",
-  "description": "My personal ESLint Flat Config, crafted for TS, Vue, and Nuxt development.",
+  "description": "ESLint config for TS, Vue & Nuxt",
   "url": "https://github.com/HugoRCD/eslint-config",
-  "screenshotUrl": "/assets/works/eslint-config.png",
+  "screenshotUrl": "/works/eslint-config.png",
   "release": "2024",
-  "date": "2024-03-23"
+  "date": "2024-03-23",
+  "tags": ["typescript", "devtools", "open-source"]
 }

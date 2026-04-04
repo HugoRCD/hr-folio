@@ -7,13 +7,8 @@ export default defineContentConfig({
       source: [
         {
           include: '**/*.md',
+          exclude: ['_archive/**'],
           prefix: '/'
-        },
-        {
-          repository: 'https://github.com/HugoRCD/notes',
-          include: '*.md',
-          prefix: '/notes',
-          authToken: process.env.NUXT_PRIVATE_GITHUB_TOKEN,
         }
       ],
       schema: z.object({
@@ -21,6 +16,7 @@ export default defineContentConfig({
         description: z.string().optional(),
         date: z.string().optional(),
         image: z.string().optional(),
+        rawbody: z.string().optional(),
       })
     }),
     writing: defineCollection({
@@ -31,16 +27,17 @@ export default defineContentConfig({
         description: z.string(),
         date: z.string(),
         draft: z.boolean().default(false),
+        tags: z.array(z.string()).optional(),
+        rawbody: z.string(),
       })
     }),
-    playground: defineCollection({
+    clipboard: defineCollection({
       type: 'page',
-      source: '3.playground/*.md',
+      source: '3.clipboard/*.md',
       schema: z.object({
         title: z.string(),
-        description: z.string(),
         date: z.string(),
-        draft: z.boolean().default(false),
+        rawbody: z.string(),
       })
     }),
     works: defineCollection({
@@ -56,22 +53,8 @@ export default defineContentConfig({
         screenshotUrl: z.string().optional(),
         screenshotOptions: z.object({
           delay: z.number()
-        }).optional()
-      })
-    }),
-    canvas: defineCollection({
-      type: 'page',
-      source: 'canvas/*.yml',
-      schema: z.object({
-        title: z.string(),
-        description: z.string(),
-        image: z.string(),
-        items: z.array(z.object({
-          title: z.string(),
-          description: z.string(),
-          link: z.string(),
-          image: z.string(),
-        })),
+        }).optional(),
+        tags: z.array(z.string()).optional(),
       })
     }),
   }

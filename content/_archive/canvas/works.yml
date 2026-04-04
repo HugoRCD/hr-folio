@@ -1,0 +1,109 @@
+title: Works Canvas
+description: A canvas featuring all my works that i'm proud of.
+items:
+  - title: Shelve OG Image
+    link: https://shelve.cloud
+    image: /canvas/works/shelve/og.png
+    width: 480
+    height: 270
+  - title: Nuxt.com 2025 Redesign
+    link: https://nuxt.com
+    image: /works/nuxt.com.png
+    width: 500
+    height: 290
+  - title: Shelve Navbar
+    link: https://shelve.cloud
+    image: /canvas/works/shelve/navbar.png
+    width: 680
+    height: 240
+  - title: Shelve Command Console
+    link: https://shelve.cloud
+    image: /canvas/works/shelve/command-console.gif
+    width: 480
+    height: 270
+  - title: Nuxt UI Pro Portfolio Template
+    link: https://portfolio-template.nuxt.dev/
+    image: /canvas/works/nuxt-ui-portfolio/hero.gif
+    width: 480
+    height: 270
+  - title: Canvas Portfolio Template
+    link: https://canvas.cloud
+    image: /works/canvas.png
+    width: 480
+    height: 270
+  - title: Nuxt UI
+    link: https://ui.nuxt.com
+    image: /works/nuxt-ui.png
+    width: 480
+    height: 270
+  - title: Nuxt.com Modules Page
+    link: https://nuxt.com/modules
+    image: /canvas/works/nuxt.com/modules-page.gif
+    width: 480
+    height: 270
+  - title: NuxtLabs is Joining Vercel
+    link: https://nuxtlabs.com
+    image: /canvas/works/vercel-x-nuxtlabs.mp4
+    width: 480
+    height: 270
+  - title: Nuxt UI Raycast Clone
+    link: https://raycast-nuxt-ui-clone.vercel.app/
+    image: /canvas/works/nuxt-ui/raycast-clone.mp4
+    width: 480
+    height: 270
+  - title: Nuxt Ship
+    image: /canvas/works/nuxt/nuxt-ship.mp4
+    width: 480
+    height: 270
+  - title: Nuxt Raycast Extension
+    link: https://github.com/nuxt/raycast-extension
+    image: /canvas/works/nuxt-raycast-extension.png
+    width: 480
+    height: 270
+  - title: Inkly OG Image
+    link: https://inkly.hrcd.fr
+    image: /canvas/works/inkly.png
+    width: 480
+    height: 270
+  - title: Nuxt 100k Followers Post
+    image: /canvas/works/nuxt/100k-followers.mp4
+    width: 480
+    height: 270
+  - title: NuxtHub x Cloudflare Workers
+    link: https://hub.nuxt.com/changelog/workers
+    image: /canvas/works/nuxthub-cf-workers.png
+    width: 480
+    height: 270
+  - title: Shelve Ripple Loader
+    link: https://app.shelve.cloud
+    image: /canvas/works/shelve/ripple-loader.mp4
+    width: 480
+    height: 270
+  - title: Nuxt Logo Blueprint
+    image: /canvas/works/nuxt/blueprint-logo.png
+    width: 480
+    height: 270
+  - title: Nuxt.com Feedbacks Admin
+    link: https://nuxt.com/feedbacks
+    image: /canvas/works/nuxt.com/feedbacks-admin.png
+    width: 480
+    height: 270
+  - title: Concept for a Nuxt Metro Ad
+    image: /canvas/works/nuxt/metro-ad.jpeg
+    width: 680
+    height: 240
+  - title: Nuxt UI Figma Kit
+    image: /canvas/works/nuxt-ui/figma-kit.jpeg
+    link: https://go.nuxt.com/figma-ui
+    width: 480
+    height: 270
+  - title: Nuxt UI MCP Server
+    image: /canvas/works/nuxt-ui/mcp.jpeg
+    link: https://ui.nuxt.com/docs/getting-started/ai/mcp
+    width: 480
+    height: 270
+  - title: NuxtL.com new mobile navigation
+    image: /canvas/works/nuxt.com/mobile-navigation.jpeg
+    link: https://nuxt.com
+    width: 480
+    height: 270
