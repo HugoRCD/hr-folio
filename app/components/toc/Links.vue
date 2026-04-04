@@ -3,7 +3,6 @@ import type { TocLink } from '@nuxt/content'
 
 const { links = [], isHover, isMobile } = defineProps<{
   links: TocLink[]
-  active?: string
   isHover: boolean
   activeHeadings: string[]
   isMobile: boolean

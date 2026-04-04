@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@import "./animations.css";
-@import "./playground.css";
-
 @source "../../../";
 
 @theme {
@@ -30,13 +27,23 @@
     @apply selection:bg-primary selection:text-highlighted;
   }
 
-  .blurred {
-    @apply blur-xs hover:blur-none focus-within:blur-none focus:blur-none transition-all duration-300;
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 1px 0 0 var(--ui-primary);
   }
 
   .no-link {
     @apply text-muted! border-none cursor-default font-normal not-italic!;
   }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: slideIn 0.3s ease forwards;
 }
 
 * {

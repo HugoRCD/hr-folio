@@ -3,6 +3,7 @@ title: 5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects
 description: Discover 5 powerful Raycast snippets that can transform your Nuxt
   and Vue development workflow, saving time and enhancing productivity.
 date: 2024-01-22
+tags: [nuxt, raycast, productivity]
 ---
 
 # 5 Amazing Raycast Snippets for Enhancing Your Nuxt (Vue) Projects

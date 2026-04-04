@@ -1,9 +1,10 @@
 {
   "name": "Nuxt Raycast Extension",
-  "description": "Supercharge your Nuxt workflow",
   "category": "personal",
-  "release": "2025",
+  "description": "Raycast extension for Nuxt",
   "url": "https://www.raycast.com/hugorcd/nuxt-ui",
   "screenshotUrl": "/works/nuxt-raycast-extension.png",
-  "date": "2025-02-13"
+  "release": "2025",
+  "date": "2025-02-13",
+  "tags": ["nuxt", "devtools"]
 }

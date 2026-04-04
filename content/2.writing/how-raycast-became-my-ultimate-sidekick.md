@@ -4,6 +4,7 @@ description: Let me take you on a journey through the magical land of Raycast â€
   an app that has completely revolutionized my workflow and made me wonder how I
   ever survived without it.
 date: 2024-03-05
+tags: [productivity, raycast, devtools]
 ---
 
 # How Raycast Became My Ultimate Sidekick ?

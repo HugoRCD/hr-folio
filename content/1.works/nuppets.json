@@ -1,8 +1,8 @@
 {
   "name": "Nuppets",
   "category": "personal",
-  "description": "A universal hub for Nuxt and Vue snippets - Available for Raycast, VS Code, and more",
+  "description": "Nuxt & Vue snippets hub",
   "url": "https://nuppets.dev",
-  "release": "2025",
-  "date": "2025-02-08"
+  "date": "2024-07-10",
+  "tags": ["nuxt", "vue", "devtools"]
 }

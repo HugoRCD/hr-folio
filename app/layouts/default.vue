@@ -1,25 +1,27 @@
 <script setup lang="ts">
 const route = useRoute()
-const router = useRouter()
+const isHome = computed(() => route.path === '/')
 </script>
 
 <template>
-  <UApp :tooltip="{ delayDuration: 0 }" class="relative">
-    <ThemeSelector class="absolute top-4 right-4 z-50" />
-    <main class="flex min-h-screen flex-col p-6">
+  <UApp :tooltip="{ delayDuration: 0 }">
+    <main class="mx-auto flex min-h-dvh max-w-xl flex-col px-6 py-12 sm:py-20">
+      <NuxtLink
+        v-if="!isHome"
+        to="/"
+        class="mb-8 flex items-center gap-1 text-sm text-muted/50 transition-colors hover:text-highlighted"
+      >
+        &larr; Home
+      </NuxtLink>
+
       <div class="flex-1">
         <slot />
       </div>
 
-      <CopyLink v-if="route.path.includes('/writing/') && route.name !== 'writing'" />
-
-      <div
-        class="flex items-end justify-end"
-        :class="route.path !== '/' ? 'cursor-pointer' : 'cursor-default'"
-        @click="router.push('/')"
-      >
-        <Signature class="mt-4 flex h-16 text-highlighted sm:mt-0 sm:h-20" />
-      </div>
+      <footer class="mt-16 flex items-center justify-between text-sm text-muted/40">
+        <span>&copy; {{ new Date().getFullYear() }}</span>
+        <ThemeSelector />
+      </footer>
     </main>
   </UApp>
 </template>

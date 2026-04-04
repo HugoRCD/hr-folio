@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { SpeedInsights } from '@vercel/speed-insights/nuxt'
-import { Analytics } from '@vercel/analytics/nuxt'
-import { Toaster } from 'vue-sonner'
-
 const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () =>
@@ -10,47 +6,21 @@ const { data: page } = await useAsyncData(route.path, () =>
 )
 if (!page.value) throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 
-const { seo, socials, profile } = useAppConfig()
+const { seo, socials, profile } = useFolioConfig()
 const mdcVars = ref({ ...seo, ...profile, ...socials, date: page.value?.date })
 
-const isWriting = computed(() => route.path.includes('/writing/') || route.path.includes('/notes/') || route.path.includes('/playground/'))
+const isArticle = computed(() => route.path.includes('/writing/'))
 
-const contentClasses = {
-  writing: 'mb-4',
-  default: 'mb-4 flex flex-1 flex-col justify-around gap-8 sm:gap-12'
-}
-
-const { data, refresh } = useFetch('/llms.txt', {
-  immediate: false
-})
-
-async function copyLLMs() {
-  await refresh()
-  await navigator.clipboard.writeText(data.value!)
-}
-
-defineShortcuts({
-  meta_shift_m: () => {
-    toast.promise(copyLLMs(), {
-      loading: 'Loading LLMs...',
-      success: 'LLMs loaded!',
-      error: 'Failed to load LLMs'
-    })
-  }
-})
+useSeoPage(page.value, isArticle.value)
 </script>
 
 <template>
   <div v-if="page">
-    <SpeedInsights />
-    <Analytics />
-    <FolioMeta :page :is-writing />
-    <Toc v-if="isWriting" :links="page.body.toc?.links!" />
+    <Toc v-if="isArticle" :links="page.body.toc?.links!" />
     <ContentRenderer
       :value="page"
-      :class="isWriting ? contentClasses.writing : contentClasses.default"
+      :class="isArticle ? 'mb-4' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16'"
       :data="mdcVars"
     />
-    <Toaster position="top-center" close-button />
   </div>
 </template>

@@ -1,8 +1,8 @@
 {
   "name": "Nuxt Visitors",
   "category": "personal",
-  "description": "Add real-time visitor tracking to your Nuxt app with one line of code. WebSocket made easy",
-  "url": "https://nuxt-visitors.hrcd.fr/",
-  "release": "2025",
-  "date": "2025-01-28"
+  "description": "Visitor tracking for Nuxt",
+  "url": "https://github.com/HugoRCD/nuxt-visitors",
+  "date": "2024-08-01",
+  "tags": ["nuxt", "analytics", "open-source"]
 }

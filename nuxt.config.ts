@@ -16,10 +16,6 @@ export default defineNuxtConfig({
     }
   },
 
-  robots: {
-    disallow: ['/notes'],
-  },
-
   compatibilityDate: '2025-12-13',
 
   routeRules: {
@@ -35,12 +31,12 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'motion-v/nuxt', 'vue-sonner/nuxt', 'nuxt-studio', '@nuxt/hints'],
+  modules: ['@nuxt/fonts', '@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'nuxt-studio', '@nuxt/hints'],
 
   llms: {
     domain: 'https://hrcd.fr',
     title: 'Hugo Richard Portfolio',
-    description: 'Software Engineer at Vercel, specializing in Vue.js and Nuxt ecosystem',
+    description: 'Software Engineer & Designer at Vercel, specializing in Vue.js and Nuxt ecosystem',
     full: {
       title: 'Hugo Richard Portfolio - Complete Content',
       description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Software Engineer at Vercel.',
@@ -53,34 +49,18 @@ export default defineNuxtConfig({
         contentFilters: [{ field: 'path', operator: '=', value: '/' }]
       },
       {
-        title: 'About',
-        description: 'Detailed information about Hugo Richard\'s professional background, skills, and experience.',
-        contentCollection: 'content',
-        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/about%' }]
-      },
-      {
         title: 'Writings',
         description: 'Technical articles, tutorials, and insights about frontend development, Vue.js, and the Nuxt ecosystem.',
         contentCollection: 'writing',
         contentFilters: [{ field: 'path', operator: 'LIKE', value: '/writing%' }]
       },
-      {
-        title: 'Works',
-        description: 'Showcase of notable projects and contributions to the web development community.',
-        contentCollection: 'content',
-        contentFilters: [{ field: 'path', operator: 'LIKE', value: '/works%' }]
-      }
     ],
-    notes: ['Hugo Richard is a Software Engineer at Vercel, contributing to the Vercel ecosystem. This portfolio showcases his professional work, technical writings, and projects. For direct inquiries or collaboration opportunities, please reach out through the contact information provided on the website.']
+    notes: ['Hugo Richard is a Software Engineer & Designer at Vercel, contributing to the Nuxt ecosystem. This portfolio showcases his professional work, technical writings, and projects.']
   },
 
   colorMode: {
     preference: 'dark',
     fallback: 'dark',
-  },
-
-  sitemap: {
-    exclude: ['/notes'],
   },
 
   content: {
@@ -101,7 +81,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     private: {
       resendApiKey: '',
-      notesPassword: '',
     },
   },
 
@@ -111,27 +90,12 @@ export default defineNuxtConfig({
       routes: [
         '/',
         '/sitemap.xml',
-        '/works',
-        '/about',
-        '/about/timeline',
-        '/writing',
-        '/canvas/works'
       ],
-      ignore: ['/notes', '/notes/**'],
     },
   },
 
   ogImage: {
-    zeroRuntime: true
-  },
-
-  imports: {
-    presets: [
-      {
-        from: 'vue-sonner',
-        imports: ['toast'],
-      },
-    ],
+    zeroRuntime: true,
   },
 
   css: ['~/assets/style/main.css'],
@@ -156,27 +120,10 @@ export default defineNuxtConfig({
     families: [
       {
         name: 'Redaction',
-        provider: 'local',
-        weights: [400, 700],
-        styles: ['normal', 'italic'],
-        src: [
-          {
-            weight: 400,
-            style: 'normal',
-            src: '/fonts/Redaction-Regular.otf'
-          },
-          {
-            weight: 400,
-            style: 'italic',
-            src: '/fonts/Redaction-Italic.otf'
-          },
-          {
-            weight: 700,
-            style: 'normal',
-            src: '/fonts/Redaction-Bold.otf'
-          }
-        ]
-      }
+        src: '/fonts/Redaction-Regular.ttf',
+        weights: [400],
+        global: true,
+      },
     ]
   },
 })

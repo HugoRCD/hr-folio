@@ -1,32 +1,127 @@
 <script setup lang="ts">
-const { data, error } = await useAsyncData('feed', () =>
+type SortMode = 'newest' | 'a-z'
+
+const { limit = 0 } = defineProps<{
+  limit?: number
+}>()
+
+const isFullPage = computed(() => limit === 0)
+const route = useRoute()
+const router = useRouter()
+
+const searchQuery = ref((route.query.q as string) || '')
+const sortMode = ref<SortMode>('newest')
+const selectedTags = ref<string[]>([])
+
+const { data: allPosts } = await useAsyncData('writing-list', () =>
   queryCollection('writing')
     .order('date', 'DESC')
-    .limit(4)
     .all()
 )
-if (!data.value || !error.value) createError({ statusCode: 404 })
+
+const allTags = computed(() => {
+  if (!allPosts.value) return []
+  const tagSet = new Set<string>()
+  allPosts.value.forEach((p) => {
+    if (p.tags) p.tags.forEach((t: string) => tagSet.add(t))
+  })
+  return [...tagSet].sort()
+})
+
+const posts = computed(() => {
+  if (!allPosts.value) return []
+
+  let items = [...allPosts.value]
+
+  if (isFullPage.value) {
+    if (searchQuery.value) {
+      const q = searchQuery.value.toLowerCase()
+      items = items.filter(p =>
+        p.title.toLowerCase().includes(q)
+        || p.description?.toLowerCase().includes(q)
+        || (p.tags && p.tags.some((t: string) => t.toLowerCase().includes(q)))
+      )
+    }
+
+    if (selectedTags.value.length) {
+      items = items.filter(p =>
+        p.tags && selectedTags.value.every(t => p.tags!.includes(t))
+      )
+    }
+
+    if (sortMode.value === 'a-z') {
+      items.sort((a, b) => a.title.localeCompare(b.title))
+    }
+  } else {
+    items = items.slice(0, limit)
+  }
+
+  return items
+})
+
+const hasMore = computed(() => limit > 0 && (allPosts.value?.length ?? 0) > limit)
+
+watch(searchQuery, (q) => {
+  if (!isFullPage.value) return
+  const query: Record<string, string> = {}
+  if (q) query.q = q
+  router.replace({ query })
+})
+
+const toolbarRef = ref<{ searchInput: HTMLInputElement | null } | null>(null)
+const searchInputRef = computed(() => toolbarRef.value?.searchInput ?? null)
+
+const { highlightedIndex } = isFullPage.value
+  ? useListNavigation(
+    computed(() => posts.value.map(p => ({ path: p.path }))),
+    searchInputRef as Ref<HTMLInputElement | null>,
+  )
+  : { highlightedIndex: ref(-1) }
 </script>
 
 <template>
-  <div class="flex flex-col text-lg gap-3">
+  <div class="flex flex-col gap-6">
+    <component :is="limit > 0 ? 'h3' : 'h1'" class="font-serif text-lg italic text-highlighted">
+      Writing<span class="text-primary">.</span>
+    </component>
+
+    <div v-if="isFullPage" class="flex justify-end">
+      <ListToolbar
+        ref="toolbarRef"
+        :count="posts.length"
+        label="articles"
+        :tags="allTags"
+        :search="searchQuery"
+        :sort="sortMode"
+        :selected-tags="selectedTags"
+        @update:search="searchQuery = $event"
+        @update:sort="sortMode = $event"
+        @update:selected-tags="selectedTags = $event"
+      />
+    </div>
+
+    <div class="flex flex-col">
+      <NuxtLink
+        v-for="(post, index) in posts"
+        :key="post.path"
+        :to="post.path"
+        class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
+        :class="{ 'bg-muted/5': highlightedIndex === index }"
+        :style="{ animationDelay: `${index * 40}ms` }"
+      >
+        <span class="font-medium text-highlighted decoration-primary group-hover:underline">{{ post.title }}</span>
+        <span class="flex shrink-0 items-baseline gap-2 text-sm text-muted/60">
+          <span v-if="post.body" class="text-muted/30">{{ useReadingTime(post.body) }} min</span>
+          {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) }}
+        </span>
+      </NuxtLink>
+    </div>
     <NuxtLink
-      v-for="(post, index) in data"
-      :key="post.title"
-      :to="post.path"
-      class="italic decoration-primary hover:underline font-extralight"
-      :aria-label="`Read ${post.title}`"
-      :style="{ '--stagger': index }"
-    >
-      {{ post.title }}
-    </NuxtLink>
-    <NuxtLink
+      v-if="hasMore"
       to="/writing"
-      class="mt-2 italic font-serif text-lg hover:underline decoration-primary"
-      aria-label="See more, go to all articles, writing, etc ..."
+      class="text-sm text-muted/50 transition-colors hover:text-muted"
     >
-      <span class="sr-only">More writing</span>
-      See more
+      View all &rarr;
     </NuxtLink>
   </div>
 </template>

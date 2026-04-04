@@ -1,12 +1,7 @@
 export default defineAppConfig({
-  global: {
-    meetingLink: 'https://cal.com/hugorcd/30min',
-  },
   profile: {
     email: 'contact@hrcd.fr',
-    phone: '(+33) 6 21 56 22 18',
-    pictureDark: 'https://avatars.githubusercontent.com/u/71938701?v=4',
-    pictureLight: 'https://avatars.githubusercontent.com/u/71938701?v=4'
+    picture: 'https://avatars.githubusercontent.com/u/71938701?v=4',
   },
   seo: {
     title: 'Hugo Richard',
@@ -18,8 +13,6 @@ export default defineAppConfig({
     github: 'https://git.new/hugorcd',
     twitter: 'https://dub.sh/hrcd-x',
     linkedin: 'https://dub.sh/hrcd-linkedin',
-    instagram: 'https://dub.sh/hrcd-insta',
-    spotify: 'https://spti.fi/HugoRCD'
   },
   link: [
     {
@@ -56,12 +49,6 @@ export default defineAppConfig({
     icons: {
       loading: 'lucide:loader',
     },
-    input: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
-    },
-    textarea: {
-      base: 'bg-primary rounded-none ring-0 px-2 py-1 focus:outline-none resize-none caret-primary'
-    },
     prose: {
       codeIcon: {
         'shelve.json': 'custom:shelve',
@@ -74,26 +61,12 @@ export default defineAppConfig({
           base: 'bg-muted/30',
         }
       },
-      field: {
-        slots: {
-          name: 'text-highlighted',
-        }
-      },
       code: {
         variants: {
           color: {
             neutral: 'bg-muted/40 border-default/60',
           }
         },
-      },
-      codeCollapse: {
-        variants: {
-          open: {
-            false: {
-              footer: 'from-default'
-            }
-          }
-        }
       },
       h1: {
         base: 'text-xl font-serif font-medium'
