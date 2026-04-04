@@ -62,7 +62,7 @@ const triggerTransition = (event?: MouseEvent) => {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-3.5">
     <div class="size-3 flex items-center justify-center">
       <UTooltip text="Switch theme">
         <UButton

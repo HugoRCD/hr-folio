@@ -38,10 +38,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const ctx = resolvePortfolioChatContext(event)
+  await consumeVisitorChatTurnOrThrow(event)
+
+  const ctx = await resolvePortfolioChatContext(event)
   const tools = mergePortfolioChatTools(mcpTools, ctx)
   const { folio: { seo: { title: seoTitle } } } = useRuntimeConfig(event)
-  const agent = createPortfolioChatAgent(ai.wrap('google/gemini-3-flash'), tools, seoTitle)
+  const agent = createPortfolioChatAgent(ai.wrap('google/gemini-3-flash'), tools, seoTitle, ctx)
 
   return createAgentUIStreamResponse({
     agent,
