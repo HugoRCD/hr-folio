@@ -70,6 +70,7 @@ export default defineNuxtConfig({
     'evlog/nuxt',
     './modules/skills',
     './modules/screenshots',
+    './modules/fix-aliases',
   ],
 
   hub: {
@@ -150,18 +151,6 @@ Respect draft posts only when includeDrafts is true on content-list. Prefer raw 
           }
         }
       },
-    },
-  },
-
-  hooks: {
-    'nitro:config'(config) {
-      if (config.alias) {
-        for (const key in config.alias) {
-          if (config.alias[key] == null) {
-            delete config.alias[key]
-          }
-        }
-      }
     },
   },
 
