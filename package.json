@@ -14,7 +14,7 @@
     "db:generate": "nuxt db generate",
     "db:migrate": "nuxt db migrate"
   },
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.11.0",
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.88",
     "@ai-sdk/mcp": "^1.0.32",
