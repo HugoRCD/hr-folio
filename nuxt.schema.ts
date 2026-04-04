@@ -92,6 +92,20 @@ export default defineNuxtSchema({
           icon: 'lucide:linkedin',
           default: 'https://www.linkedin.com/in/myusername'
         }),
+        instagram: field({
+          type: 'string',
+          title: 'Instagram',
+          description: 'Your Instagram account.',
+          icon: 'lucide:instagram',
+          default: ''
+        }),
+        spotify: field({
+          type: 'string',
+          title: 'Spotify',
+          description: 'Your Spotify account.',
+          icon: 'lucide:music',
+          default: ''
+        }),
       }
     })
   }

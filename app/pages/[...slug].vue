@@ -10,6 +10,7 @@ const { seo, socials, profile } = useFolioConfig()
 const mdcVars = ref({ ...seo, ...profile, ...socials, date: page.value?.date })
 
 const isArticle = computed(() => route.path.includes('/writing/'))
+const isClipboard = computed(() => route.path.includes('/clipboard/'))
 
 useSeoPage(page.value, isArticle.value)
 
@@ -28,9 +29,14 @@ const readingTime = computed(() => {
       <span class="text-muted/20">&middot;</span>
       <span>{{ readingTime }} min read</span>
     </div>
+    <div v-if="isClipboard" class="mb-2 flex items-center gap-2 text-sm text-muted/50">
+      <span>{{ new Date(page.date!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</span>
+    </div>
     <ContentRenderer
       :value="page"
-      :class="isArticle ? 'mb-4 prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16'"
+      :class="[
+        isArticle ? 'mb-4 prose-breakout' : isClipboard ? 'mb-4 prose-compact prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16',
+      ]"
       :data="mdcVars"
     />
   </div>

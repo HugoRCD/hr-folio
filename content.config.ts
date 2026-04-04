@@ -31,6 +31,15 @@ export default defineContentConfig({
         rawbody: z.string(),
       })
     }),
+    clipboard: defineCollection({
+      type: 'page',
+      source: '3.clipboard/*.md',
+      schema: z.object({
+        title: z.string(),
+        date: z.string(),
+        rawbody: z.string(),
+      })
+    }),
     works: defineCollection({
       type: 'data',
       source: '1.works/*.json',

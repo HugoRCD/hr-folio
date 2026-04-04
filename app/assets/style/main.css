@@ -73,6 +73,31 @@
   }
 }
 
+.prose-compact :where(h1, h2, h3) {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-compact :where(p) {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-compact :where(ul, ol) {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-compact :where(li) {
+  margin-top: 0.125rem;
+  margin-bottom: 0.125rem;
+}
+
+.prose-compact :where(blockquote) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }

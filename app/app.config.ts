@@ -13,6 +13,8 @@ export default defineAppConfig({
     github: 'https://git.new/hugorcd',
     twitter: 'https://dub.sh/hrcd-x',
     linkedin: 'https://dub.sh/hrcd-linkedin',
+    instagram: 'https://dub.sh/hrcd-insta',
+    spotify: 'https://spti.fi/HugoRCD',
   },
   link: [
     {

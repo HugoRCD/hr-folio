@@ -31,7 +31,26 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/fonts', '@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'nuxt-studio', '@nuxt/hints', '@vercel/analytics', '@vercel/speed-insights'],
+  modules: ['@nuxt/fonts', '@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'nuxt-studio', '@nuxt/hints', '@vercel/analytics', '@vercel/speed-insights', '@nuxtjs/mcp-toolkit'],
+
+  mcp: {
+    name: 'Hugo Richard — Portfolio',
+    description: 'Read-only access to Hugo Richard’s portfolio content: pages, articles, clipboard notes, and project metadata from Nuxt Content.',
+    instructions: `This server exposes Hugo Richard’s public portfolio (hrcd.fr), built with Nuxt Content.
+
+Collections:
+- content: main site pages (Markdown/MDC).
+- writing: blog posts (title, description, date, tags, draft, body as raw markdown in rawbody).
+- clipboard: short dated notes.
+- works: project/work JSON (name, description, url, category, tags, stem — file stem is the stable id).
+
+Workflow for assistants:
+1. Call assistant-context once for a ready-made briefing (profile, socials, latest posts, works, clipboard, home excerpt + canonical URLs).
+2. Call content-list to discover paths, stems, and metadata; use the optional search string to narrow results.
+3. Call content-get with kind "page" and a path from the list, or kind "work" and a stem, to load full text or full project metadata.
+
+Respect draft posts only when includeDrafts is true on content-list. Prefer raw markdown (rawbody) over rendered AST for analysis.`,
+  },
 
   llms: {
     domain: 'https://hrcd.fr',
@@ -85,6 +104,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    experimental: {
+      asyncContext: true,
+    },
     prerender: {
       crawlLinks: true,
       routes: [
