@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/fonts', '@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'nuxt-studio', '@nuxt/hints', '@vercel/analytics', '@vercel/speed-insights', '@nuxtjs/mcp-toolkit'],
+  modules: ['@nuxt/fonts', '@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'nuxt-studio', '@nuxt/hints', '@vercel/analytics', '@vercel/speed-insights', '@nuxtjs/mcp-toolkit', './modules/skills'],
 
   mcp: {
     name: 'Hugo Richard — Portfolio',

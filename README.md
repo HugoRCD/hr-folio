@@ -78,6 +78,14 @@ The portfolio exposes a read-only MCP server at [`/mcp`](https://hrcd.fr/mcp) wi
 npx add-mcp https://hrcd.fr/mcp
 ```
 
+## Agent Skills
+
+Reusable skills for AI coding agents, discoverable via `/.well-known/skills/`. Install with the [skills CLI](https://github.com/vercel-labs/skill):
+
+```bash
+npx skills add https://hugorcd.com
+```
+
 ## Development
 
 ```bash

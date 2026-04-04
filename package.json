@@ -48,7 +48,8 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "automd": "^0.4.3",
-    "eslint": "^9.39.4"
+    "eslint": "^9.39.4",
+    "yaml": "^2.8.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
