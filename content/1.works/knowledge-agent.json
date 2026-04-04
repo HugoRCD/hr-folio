@@ -1,0 +1,9 @@
+{
+  "name": "Knowledge Agent",
+  "category": "ecosystem",
+  "description": "File-system based AI agent template",
+  "url": "https://chatsdk-knowledge-agent.vercel.app",
+  "github": "https://github.com/vercel-labs/knowledge-agent-template",
+  "date": "2026-01-20",
+  "tags": ["ai", "nuxt", "vercel", "open-source"]
+}

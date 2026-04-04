@@ -1,0 +1,9 @@
+{
+  "name": "Comark",
+  "category": "ecosystem",
+  "description": "Streaming markdown parser with component support",
+  "url": "https://comark.dev",
+  "github": "https://github.com/nuxtlabs/comark",
+  "date": "2026-01-22",
+  "tags": ["markdown", "vue", "react", "open-source"]
+}

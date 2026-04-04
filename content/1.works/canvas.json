@@ -3,8 +3,9 @@
   "category": "featured",
   "description": "Minimal portfolio template",
   "url": "https://canvas.hrcd.fr/",
+  "github": "https://github.com/HugoRCD/canvas",
   "screenshotUrl": "/works/canvas.png",
   "release": "2024",
-  "date": "2024-06-15",
+  "date": "2023-06-13",
   "tags": ["nuxt", "template", "design"]
 }

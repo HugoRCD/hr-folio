@@ -3,7 +3,8 @@
   "category": "personal",
   "description": "Better Auth demo for Nuxt",
   "url": "https://better-auth.hrcd.fr/",
+  "github": "https://github.com/HugoRCD/nuxt-better-auth",
   "release": "2025",
-  "date": "2025-05-16",
+  "date": "2024-10-23",
   "tags": ["nuxt", "auth"]
 }

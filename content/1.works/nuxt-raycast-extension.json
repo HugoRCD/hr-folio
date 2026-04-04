@@ -3,8 +3,9 @@
   "category": "personal",
   "description": "Raycast extension for Nuxt",
   "url": "https://www.raycast.com/hugorcd/nuxt-ui",
+  "github": "https://github.com/HugoRCD/nuxt-raycast-extension",
   "screenshotUrl": "/works/nuxt-raycast-extension.png",
   "release": "2025",
-  "date": "2025-02-13",
+  "date": "2025-02-12",
   "tags": ["nuxt", "devtools"]
 }

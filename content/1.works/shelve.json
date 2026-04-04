@@ -3,8 +3,9 @@
   "category": "featured",
   "description": "Environment variable manager",
   "url": "https://shelve.cloud/",
+  "github": "https://github.com/HugoRCD/shelve",
   "screenshotUrl": "/works/shelve.png",
   "release": "2024",
-  "date": "2025-11-01",
+  "date": "2024-02-27",
   "tags": ["typescript", "devtools", "open-source"]
 }

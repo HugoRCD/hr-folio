@@ -3,6 +3,7 @@
   "category": "personal",
   "description": "Email signature generator",
   "url": "https://inkly.email",
-  "date": "2024-05-20",
+  "github": "https://github.com/HugoRCD/inkly",
+  "date": "2024-08-28",
   "tags": ["nuxt", "design", "template"]
 }

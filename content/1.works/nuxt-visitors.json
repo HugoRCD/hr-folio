@@ -3,6 +3,7 @@
   "category": "personal",
   "description": "Visitor tracking for Nuxt",
   "url": "https://github.com/HugoRCD/nuxt-visitors",
-  "date": "2024-08-01",
+  "github": "https://github.com/HugoRCD/nuxt-visitors",
+  "date": "2025-01-28",
   "tags": ["nuxt", "analytics", "open-source"]
 }

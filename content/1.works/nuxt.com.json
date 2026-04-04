@@ -3,6 +3,7 @@
   "category": "ecosystem",
   "description": "The official Nuxt website",
   "url": "https://nuxt.com",
-  "date": "2025-03-15",
+  "github": "https://github.com/nuxt/nuxt.com",
+  "date": "2022-01-31",
   "tags": ["nuxt", "design", "open-source"]
 }

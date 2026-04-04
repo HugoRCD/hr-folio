@@ -3,6 +3,7 @@
   "category": "featured",
   "description": "AI SDK tools for GitHub",
   "url": "https://github-tools.com",
-  "date": "2025-10-01",
+  "github": "https://github.com/HugoRCD/github-tools",
+  "date": "2026-02-21",
   "tags": ["typescript", "ai", "open-source"]
 }

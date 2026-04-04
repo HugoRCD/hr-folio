@@ -3,6 +3,7 @@
   "category": "featured",
   "description": "Structured logging library for TypeScript",
   "url": "https://evlog.dev",
-  "date": "2026-01-27",
+  "github": "https://github.com/HugoRCD/evlog",
+  "date": "2026-01-24",
   "tags": ["typescript", "logging", "open-source"]
 }

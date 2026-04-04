@@ -1,0 +1,9 @@
+{
+  "name": "F1 League",
+  "category": "personal",
+  "description": "F1 prediction league with friends",
+  "url": "https://f1.hrcd.fr",
+  "github": "https://github.com/HugoRCD/f1-league",
+  "date": "2026-03-07",
+  "tags": ["nuxt", "nuxthub", "game"]
+}

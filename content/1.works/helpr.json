@@ -3,6 +3,7 @@
   "category": "personal",
   "description": "Automation tools for workflows",
   "url": "https://helpr.hrcd.fr",
-  "date": "2023-09-01",
+  "github": "https://github.com/HugoRCD/helpr",
+  "date": "2023-03-18",
   "tags": ["nuxt", "devtools"]
 }

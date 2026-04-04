@@ -3,6 +3,7 @@
   "category": "ecosystem",
   "description": "Documentation framework for Nuxt",
   "url": "https://docus.dev",
-  "date": "2025-06-01",
+  "github": "https://github.com/nuxt/docus",
+  "date": "2020-11-12",
   "tags": ["nuxt", "docs", "open-source"]
 }

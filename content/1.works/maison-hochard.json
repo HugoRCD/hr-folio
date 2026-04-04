@@ -3,8 +3,9 @@
   "category": "personal",
   "description": "Design & development agency",
   "url": "https://mh.hrcd.fr/",
+  "github": "https://github.com/HugoRCD/maison-hochard",
   "release": "2022",
-  "date": "2022-11-20",
+  "date": "2022-09-11",
   "screenshotOptions": {
     "delay": 5
   },

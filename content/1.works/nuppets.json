@@ -3,6 +3,7 @@
   "category": "personal",
   "description": "Nuxt & Vue snippets hub",
   "url": "https://nuppets.dev",
-  "date": "2024-07-10",
+  "github": "https://github.com/HugoRCD/nuppets",
+  "date": "2025-02-07",
   "tags": ["nuxt", "vue", "devtools"]
 }

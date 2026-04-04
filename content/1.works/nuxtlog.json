@@ -3,6 +3,7 @@
   "category": "personal",
   "description": "Changelog & blog template for Nuxt",
   "url": "https://nuxtlog.hrcd.fr",
-  "date": "2024-04-15",
+  "github": "https://github.com/HugoRCD/nuxtlog",
+  "date": "2024-01-18",
   "tags": ["nuxt", "template", "open-source"]
 }

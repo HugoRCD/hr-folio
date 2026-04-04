@@ -43,12 +43,22 @@ watch(searchQuery, (q) => {
 
 const { data: allProjects } = await useAsyncData('projects', () =>
   queryCollection('works')
-    .order('date', 'DESC')
     .all()
 )
 
 const featuredNames = ['Evlog', 'Shelve', 'Canvas', 'GitHub Tools']
-const featuredWorkNames = ['Nuxt MCP Toolkit', 'Docus', 'Nuxt.com', 'Nuxt UI']
+const featuredWorkNames = ['Nuxt MCP Toolkit', 'Docus', 'Nuxt.com', 'Nuxt UI', 'Knowledge Agent', 'Comark']
+
+function sortByOrder(items: typeof allProjects.value, order: string[]) {
+  return [...items!].sort((a, b) => {
+    const ai = order.indexOf(a.name)
+    const bi = order.indexOf(b.name)
+    if (ai !== -1 && bi !== -1) return ai - bi
+    if (ai !== -1) return -1
+    if (bi !== -1) return 1
+    return 0
+  })
+}
 
 const tabs: { key: Tab, label: string }[] = [
   { key: 'all', label: 'All' },
@@ -73,9 +83,10 @@ const displayedProjects = computed(() => {
   else if (activeTab.value === 'work') items = items.filter(p => p.category === 'ecosystem')
 
   if (featured) {
-    if (activeTab.value === 'projects') return items.filter(p => featuredNames.includes(p.name))
-    if (activeTab.value === 'work') return items.filter(p => featuredWorkNames.includes(p.name))
-    return items.filter(p => featuredNames.includes(p.name) || featuredWorkNames.includes(p.name))
+    if (activeTab.value === 'projects') return sortByOrder(items.filter(p => featuredNames.includes(p.name)), featuredNames)
+    if (activeTab.value === 'work') return sortByOrder(items.filter(p => featuredWorkNames.includes(p.name)), featuredWorkNames)
+    const allFeatured = [...featuredNames, ...featuredWorkNames]
+    return sortByOrder(items.filter(p => allFeatured.includes(p.name)), allFeatured)
   }
 
   if (searchQuery.value) {
@@ -93,7 +104,9 @@ const displayedProjects = computed(() => {
     )
   }
 
-  if (sortMode.value === 'a-z') {
+  if (sortMode.value === 'newest') {
+    items = [...items].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  } else if (sortMode.value === 'a-z') {
     items = [...items].sort((a, b) => a.name.localeCompare(b.name))
   }
 
@@ -105,9 +118,9 @@ const searchInputRef = computed(() => toolbarRef.value?.searchInput ?? null)
 
 const { highlightedIndex } = !featured
   ? useListNavigation(
-      computed(() => displayedProjects.value.map(p => ({ url: p.url }))),
+    computed(() => displayedProjects.value.map(p => ({ url: p.url }))),
       searchInputRef as Ref<HTMLInputElement | null>,
-    )
+  )
   : { highlightedIndex: ref(-1) }
 
 const hoveredProject = ref<string | null>(null)
@@ -177,7 +190,7 @@ onMounted(() => {
         :tags="allTags"
         :search="searchQuery"
         :sort="sortMode"
-        :selected-tags="selectedTags"
+        :selected-tags
         @update:search="searchQuery = $event"
         @update:sort="sortMode = $event"
         @update:selected-tags="selectedTags = $event"

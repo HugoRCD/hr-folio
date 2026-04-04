@@ -3,6 +3,7 @@
   "category": "ecosystem",
   "description": "UI library for Nuxt & Vue",
   "url": "https://ui.nuxt.com",
-  "date": "2025-01-06",
+  "github": "https://github.com/nuxt/ui",
+  "date": "2021-11-16",
   "tags": ["vue", "nuxt", "design-system"]
 }

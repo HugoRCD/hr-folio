@@ -3,6 +3,7 @@
   "category": "featured",
   "description": "My portfolio website",
   "url": "/",
+  "github": "https://github.com/HugoRCD/hr-folio",
   "release": "2024",
   "date": "2024-01-22",
   "tags": ["nuxt", "design", "open-source"]
