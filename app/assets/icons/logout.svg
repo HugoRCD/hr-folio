@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true" id="circle-arrow-out">
+  <title>circle-arrow-out</title>
+  <g fill="currentColor">
+    <path d="m15.745,14c-1.265,1.813-3.366,3-5.745,3-3.866,0-7-3.134-7-7s3.134-7,7-7c2.379,0,4.48,1.186,5.745,3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+    <polyline points="11 13 8 10 11 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline>
+    <line x1="17" y1="10" x2="8" y2="10" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
+  </g>
+</svg>

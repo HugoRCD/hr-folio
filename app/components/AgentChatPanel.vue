@@ -11,6 +11,41 @@ const route = useRoute()
 const router = useRouter()
 const { profile, seo } = useFolioConfig()
 const { messages } = useAgentChat()
+const { user, signOut, loggedIn } = useUserSession()
+
+const { data: folioAccess, refresh: refreshFolioAccess } = await useAsyncData(
+  'folio-chat-access',
+  () => $fetch<{
+    isOwner: boolean
+    signedIn: boolean
+    rateLimit: { max: number, used: number, remaining: number | null }
+  }>('/api/folio/access'),
+)
+
+watch(loggedIn, () => {
+  void refreshFolioAccess()
+})
+
+const isOwner = computed(() => folioAccess.value?.isOwner ?? false)
+const rateRemaining = computed(() => folioAccess.value?.rateLimit.remaining)
+const rateMax = computed(() => folioAccess.value?.rateLimit.max ?? 20)
+
+const sessionTooltipTitle = computed(() => {
+  const u = user.value
+  if (!u) return ''
+  const name = u.name?.trim()
+  if (name) return name
+  return u.email?.trim() || 'Account'
+})
+
+const sessionTooltipSubtitle = computed(() => {
+  const u = user.value
+  if (!u) return null
+  const name = u.name?.trim()
+  const email = u.email?.trim()
+  if (!email || !name || name === email) return null
+  return email
+})
 
 const sessionTitle = ref('')
 const titleStreaming = ref(false)
@@ -52,6 +87,12 @@ const chat = new Chat({
   transport: new DefaultChatTransport({
     api: '/api/chat',
   }),
+  sendAutomaticallyWhen: ({ messages: msgs }) => {
+    const last = msgs.at(-1)
+    if (!last || last.role !== 'assistant') return false
+    return last.parts.some(p => isToolUIPart(p) && p.state === 'approval-responded')
+      && !last.parts.some(p => isToolUIPart(p) && p.state === 'approval-requested')
+  },
   onError: (error) => {
     let { message } = error
     if (typeof message === 'string' && message[0] === '{') {
@@ -69,6 +110,7 @@ const chat = new Chat({
   onFinish: () => {
     _skipSync = true
     messages.value = chat.messages
+    void refreshFolioAccess()
     nextTick(() => {
       _skipSync = false
     })
@@ -164,11 +206,21 @@ function getToolMessage(state: ToolState, toolName: string, toolInput: Record<st
   const searchVerb = done ? 'Searched' : 'Searching'
   const readVerb = done ? 'Loaded' : 'Loading'
 
-  return {
+  const mcpLabel: Record<string, string> = {
     'assistant-context': `${done ? 'Loaded' : 'Loading'} context`,
     'content-list': `${searchVerb} site index`,
     'content-get': `${readVerb} ${toolInput.kind === 'work' ? `work “${toolInput.stem || ''}”` : `page ${toolInput.path || ''}`}`,
-  }[toolName] || `${done ? 'Ran' : 'Running'} ${toolName}`
+  }
+  if (mcpLabel[toolName]) return mcpLabel[toolName]
+
+  const ghMeta = GITHUB_TOOL_META[toolName]
+  if (ghMeta) {
+    if (state === 'approval-requested' || state === 'approval-responded')
+      return `Approve: ${ghMeta.labelActive.toLowerCase()}`
+    return done ? ghMeta.label : ghMeta.labelActive
+  }
+
+  return `${done ? 'Ran' : 'Running'} ${toolName}`
 }
 
 function getToolText(part: ToolPart) {
@@ -187,12 +239,90 @@ function getToolText(part: ToolPart) {
 
 function getToolIcon(part: ToolPart): string {
   const toolName = getToolName(part)
-  const iconMap: Record<string, string> = {
+  const mcpIcons: Record<string, string> = {
     'assistant-context': 'i-lucide-book-marked',
     'content-list': 'i-lucide-list-tree',
     'content-get': 'i-lucide-file-text',
   }
-  return iconMap[toolName] || 'i-lucide-wrench'
+  if (mcpIcons[toolName]) return mcpIcons[toolName]
+
+  const ghMeta = GITHUB_TOOL_META[toolName]
+  if (ghMeta) return ghMeta.icon
+
+  return 'i-lucide-wrench'
+}
+
+function isApprovalRequested(part: ToolPart): boolean {
+  return part.state === 'approval-requested' && !!('approval' in part && part.approval)
+}
+
+function isApprovalResponded(part: ToolPart): boolean {
+  return part.state === 'approval-responded' && !!('approval' in part && part.approval)
+}
+
+function respondToApproval(part: ToolPart, approved: boolean) {
+  if (!('approval' in part) || !part.approval || !('id' in part.approval)) return
+  chat.addToolApprovalResponse({ id: part.approval.id as string, approved })
+}
+
+function getApprovalTitle(part: ToolPart) {
+  const name = getToolName(part)
+  return GITHUB_TOOL_META[name]?.labelActive ?? `Run ${name}`
+}
+
+function githubRepoLineFromInput(input: unknown): string | null {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null
+  const { owner, repo } = input as Record<string, unknown>
+  if (typeof owner === 'string' && typeof repo === 'string' && owner && repo) return `${owner}/${repo}`
+  return null
+}
+
+const TOOL_INPUT_KEY_LABELS: Record<string, string> = {
+  owner: 'Owner',
+  repo: 'Repository',
+  title: 'Title',
+  body: 'Body',
+  path: 'Path',
+  branch: 'Branch',
+  head: 'Head',
+  base: 'Base',
+  state: 'State',
+  message: 'Message',
+  content: 'Content',
+  labels: 'Labels',
+  assignees: 'Assignees',
+  issue_number: 'Issue',
+  pull_number: 'Pull request',
+  query: 'Query',
+}
+
+function formatToolInputLabel(key: string) {
+  if (TOOL_INPUT_KEY_LABELS[key]) return TOOL_INPUT_KEY_LABELS[key]
+  return key
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/^\w/, c => c.toUpperCase())
+}
+
+function formatToolInputValue(value: unknown): string {
+  if (value === null || value === undefined) return ''
+  if (typeof value === 'string') return value
+  try {
+    return JSON.stringify(value, null, 2)
+  } catch {
+    return String(value)
+  }
+}
+
+function toolInputRows(part: ToolPart): { key: string, value: string }[] {
+  const raw = part.input
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return []
+  return Object.entries(raw as Record<string, unknown>)
+    .filter(([, v]) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === ''))
+    .map(([k, v]) => ({
+      key: formatToolInputLabel(k),
+      value: formatToolInputValue(v),
+    }))
 }
 
 function askQuestion(prompt: string) {
@@ -288,7 +418,84 @@ const suggestionPillClass =
             </p>
           </div>
 
-          <div class="flex min-w-0 shrink-0 items-center justify-end gap-1">
+          <div class="flex min-w-0 shrink-0 items-center justify-end gap-4 sm:gap-5">
+            <UPopover
+              v-if="!isOwner && rateRemaining != null"
+              :content="{ align: 'end', side: 'bottom', sideOffset: 6 }"
+            >
+              <UButton
+                icon="i-lucide-circle-help"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                square
+                class="text-muted/30 hover:text-muted/55"
+                aria-label="Usage limits"
+              />
+              <template #content>
+                <div class="w-[min(18rem,calc(100vw-2rem))] p-3 text-xs/5 text-muted">
+                  <p class="font-medium text-highlighted">
+                    Daily limit
+                  </p>
+                  <p class="mt-1.5">
+                    {{ rateRemaining }} / {{ rateMax }} messages left today (UTC). Resets at midnight UTC.
+                  </p>
+                  <p class="mt-2 text-dimmed">
+                    Without an account, usage is counted per IP. Signing in ties the quota to your account.
+                  </p>
+                </div>
+              </template>
+            </UPopover>
+
+            <template v-if="loggedIn">
+              <UTooltip
+                :delay-duration="0"
+                :content="{ side: 'top', align: 'center', sideOffset: 8 }"
+                :ui="{
+                  content:
+                    'h-auto min-h-0 flex-col items-stretch justify-start gap-1.5 py-2.5 px-3 w-max max-w-[min(18rem,calc(100vw-2rem))] text-left'
+                }"
+              >
+                <span class="inline-flex items-center gap-1.5">
+                  <UAvatar
+                    :src="user?.image ?? undefined"
+                    :alt="user?.name ?? 'Account'"
+                    size="3xs"
+                    class="opacity-70"
+                  />
+                  <UButton
+                    icon="custom:logout"
+                    size="xs"
+                    color="neutral"
+                    variant="ghost"
+                    class="min-h-0 min-w-0 px-0.5 text-muted/35 hover:text-muted/80"
+                    aria-label="Sign out"
+                    @click="signOut()"
+                  />
+                </span>
+                <template #content>
+                  <div class="flex min-w-0 flex-col gap-0.5">
+                    <span class="text-sm/5 font-medium text-highlighted">
+                      {{ sessionTooltipTitle }}
+                    </span>
+                    <span
+                      v-if="sessionTooltipSubtitle"
+                      class="wrap-break-word text-xs/4 text-dimmed"
+                    >
+                      {{ sessionTooltipSubtitle }}
+                    </span>
+                  </div>
+                </template>
+              </UTooltip>
+            </template>
+            <NuxtLink
+              v-else
+              to="/login?redirect=/chat"
+              class="font-mono text-[10px] text-muted/30 transition-colors hover:text-muted/60"
+            >
+              Sign in
+            </NuxtLink>
+
             <UTooltip v-if="canClear" text="New conversation">
               <UButton
                 icon="custom:msg-plus"
@@ -441,12 +648,96 @@ const suggestionPillClass =
                         </p>
                       </template>
 
-                      <UChatTool
-                        v-else-if="isToolUIPart(part)"
-                        :text="getToolText(part)"
-                        :icon="getToolIcon(part)"
-                        :streaming="isToolStreaming(part)"
-                      />
+                      <template v-else-if="isToolUIPart(part)">
+                        <div
+                          v-if="isApprovalRequested(part)"
+                          class="flex flex-col gap-3 rounded-lg border border-default ring-1 ring-default/40 bg-elevated/45 p-4"
+                        >
+                          <div class="flex gap-3">
+                            <div
+                              class="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted/25 ring-1 ring-default/30"
+                            >
+                              <UIcon
+                                :name="getToolIcon(part)"
+                                class="size-4 text-muted"
+                              />
+                            </div>
+                            <div class="flex min-w-0 flex-1 flex-col gap-3">
+                              <div>
+                                <p class="text-sm/5 font-medium text-highlighted">
+                                  {{ getApprovalTitle(part) }}
+                                </p>
+                                <p
+                                  v-if="githubRepoLineFromInput(part.input)"
+                                  class="mt-0.5 font-mono text-xs/4 text-muted"
+                                >
+                                  {{ githubRepoLineFromInput(part.input) }}
+                                </p>
+                                <p class="mt-1.5 text-xs/4 text-dimmed">
+                                  Review the payload below. Nothing is sent to GitHub until you approve.
+                                </p>
+                              </div>
+
+                              <div
+                                v-if="toolInputRows(part).length"
+                                class="flex flex-col gap-2 border-t border-default/70 pt-3"
+                              >
+                                <div
+                                  v-for="(row, rowIdx) in toolInputRows(part)"
+                                  :key="`${row.key}-${rowIdx}`"
+                                  class="grid gap-1 sm:grid-cols-[minmax(0,7.5rem)_minmax(0,1fr)] sm:gap-x-4"
+                                >
+                                  <div class="font-mono text-[10px]/4 uppercase tracking-wide text-muted">
+                                    {{ row.key }}
+                                  </div>
+                                  <div
+                                    class="max-h-40 min-w-0 wrap-break-word whitespace-pre-wrap font-mono text-xs/5 text-highlighted overflow-y-auto"
+                                  >
+                                    {{ row.value }}
+                                  </div>
+                                </div>
+                              </div>
+                              <p
+                                v-else
+                                class="border-t border-default/70 pt-3 text-xs/4 text-dimmed italic"
+                              >
+                                No parameters were included on this tool call.
+                              </p>
+
+                              <div class="flex flex-wrap items-center gap-2 border-t border-default/70 pt-3">
+                                <UButton
+                                  size="sm"
+                                  color="neutral"
+                                  variant="solid"
+                                  icon="i-lucide-check"
+                                  label="Approve"
+                                  @click="respondToApproval(part, true)"
+                                />
+                                <UButton
+                                  size="sm"
+                                  color="neutral"
+                                  variant="outline"
+                                  icon="i-lucide-x"
+                                  label="Deny"
+                                  @click="respondToApproval(part, false)"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <UChatTool
+                          v-else-if="isApprovalResponded(part)"
+                          :text="`${getToolText(part)} — ${'approval' in part && part.approval && 'approved' in part.approval && part.approval.approved ? 'Approved' : 'Denied'}`"
+                          :icon="'approval' in part && part.approval && 'approved' in part.approval && part.approval.approved ? 'i-lucide-check-circle' : 'i-lucide-x-circle'"
+                          :streaming="false"
+                        />
+                        <UChatTool
+                          v-else
+                          :text="getToolText(part)"
+                          :icon="getToolIcon(part)"
+                          :streaming="isToolStreaming(part)"
+                        />
+                      </template>
                     </template>
                   </template>
                 </UChatMessages>

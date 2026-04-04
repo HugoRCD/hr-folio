@@ -2,10 +2,18 @@ import { folioPublic } from './server/utils/folio-public'
 
 export default defineNuxtConfig({
   runtimeConfig: {
+    /** GitHub login allowed for chat / owner APIs. Default HugoRCD; set NUXT_FOLIO_OWNER_GITHUB_LOGIN for forks. */
+    folioOwnerGithubLogin: '',
+    /** Max assistant turns per visitor per UTC day for POST /api/chat (owners unlimited). NUXT_FOLIO_VISITOR_CHAT_DAILY_LIMIT */
+    folioVisitorChatDailyLimit: 20,
     folio: {
       profile: { ...folioPublic.profile },
       seo: { ...folioPublic.seo },
       socials: { ...folioPublic.socials },
+    },
+    github: {
+      clientId: '',
+      clientSecret: '',
     },
   },
 
@@ -44,6 +52,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@nuxthub/core',
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxtjs/seo',
@@ -57,10 +66,24 @@ export default defineNuxtConfig({
     '@vercel/analytics',
     '@vercel/speed-insights',
     '@nuxtjs/mcp-toolkit',
+    '@onmax/nuxt-better-auth',
     'evlog/nuxt',
     './modules/skills',
     './modules/screenshots',
   ],
+
+  hub: {
+    db: 'postgresql',
+    kv: true,
+  },
+
+  auth: {
+    hubSecondaryStorage: true,
+    redirects: {
+      login: '/login',
+      guest: '/',
+    },
+  },
 
   evlog: {
     env: { service: 'hr-folio' },
