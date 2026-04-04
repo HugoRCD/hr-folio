@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { createLogger } from 'evlog'
 import { defineNuxtModule } from '@nuxt/kit'
-import { join } from 'pathe'
 
 interface ContentFile {
   id?: string
@@ -18,6 +19,7 @@ interface TemplateItem {
 
 export default defineNuxtModule((_, nuxt) => {
   if (!nuxt.options.dev) return
+  const logger = createLogger({ tag: 'Screenshots' })
 
   nuxt.hook('content:file:afterParse', async ({ content: file }: { content: ContentFile }) => {
     if (file.id?.includes('works/')) {
@@ -32,14 +34,14 @@ export default defineNuxtModule((_, nuxt) => {
 
       try {
         const { default: captureWebsite } = await import('capture-website')
-        console.log(`Generating screenshot for ${template.name}...`)
+        logger.info(`Generating screenshot for ${template.name}...`)
         await captureWebsite.file(url, filename, {
           ...(template.screenshotOptions || { darkMode: true }),
           launchOptions: { headless: true },
         })
-        console.log(`Screenshot for ${template.name} generated`)
+        logger.info(`Screenshot for ${template.name} generated`)
       } catch (error) {
-        console.error(`Error generating screenshot for ${template.name}:`, error)
+        logger.error(`Error generating screenshot for ${template.name}: ${error}`)
       }
     }
   })

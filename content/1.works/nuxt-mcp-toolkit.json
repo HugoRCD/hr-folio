@@ -3,7 +3,7 @@
   "category": "ecosystem",
   "description": "MCP server toolkit for Nuxt",
   "url": "https://mcp-toolkit.nuxt.dev",
-  "github": "https://github.com/nuxt/mcp-toolkit",
-  "date": "2025-08-01",
+  "github": "https://github.com/nuxt-modules/mcp-toolkit",
+  "date": "2025-11-08",
   "tags": ["nuxt", "ai", "open-source"]
 }
