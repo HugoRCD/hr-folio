@@ -64,6 +64,7 @@
     "@hrcd/eslint-config": "^3.0.3",
     "@nuxt/kit": "^4.4.2",
     "@nuxtjs/mcp-toolkit": "^0.13.3",
+    "@resvg/resvg-js": "^2.6.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "automd": "^0.4.3",
