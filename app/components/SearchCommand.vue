@@ -14,6 +14,7 @@ const { data: projects } = await useAsyncData('cmd-works', () =>
 )
 
 const mcpUrl = 'https://hrcd.fr/mcp'
+const skillsCmd = 'npx skills add https://hugorcd.com'
 
 const groups = computed<CommandPaletteGroup[]>(() => [
   {
@@ -46,12 +47,13 @@ const groups = computed<CommandPaletteGroup[]>(() => [
     })),
   },
   {
-    id: 'mcp',
-    label: 'MCP Server',
+    id: 'ai',
+    label: 'AI & Agents',
     items: [
-      { label: 'Add to Cursor', icon: 'i-lucide-terminal', action: 'deeplink-cursor' },
-      { label: 'Add to VS Code', icon: 'i-lucide-code', action: 'deeplink-vscode' },
+      { label: 'Add MCP to Cursor', icon: 'i-lucide-terminal', action: 'deeplink-cursor' },
+      { label: 'Add MCP to VS Code', icon: 'i-lucide-code', action: 'deeplink-vscode' },
       { label: 'Copy MCP URL', icon: 'i-lucide-link', action: 'copy-mcp-url' },
+      { label: 'Copy skills install command', icon: 'i-lucide-sparkles', action: 'copy-skills-cmd', suffix: 'npx skills add' },
     ],
   },
 ])
@@ -70,6 +72,10 @@ function onSelect(item: any) {
   }
   if (item.action === 'copy-mcp-url') {
     copy(mcpUrl)
+    return
+  }
+  if (item.action === 'copy-skills-cmd') {
+    copy(skillsCmd)
     return
   }
 
