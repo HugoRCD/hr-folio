@@ -70,7 +70,6 @@ export default defineNuxtConfig({
     'evlog/nuxt',
     './modules/skills',
     './modules/screenshots',
-    './modules/fix-aliases',
   ],
 
   hub: {
@@ -140,6 +139,10 @@ Respect draft posts only when includeDrafts is true on content-list. Prefer raw 
   },
 
   content: {
+    database: {
+      type: 'sqlite',
+      filename: '/tmp/contents.sqlite',
+    },
     build: {
       markdown: {
         highlight: {
