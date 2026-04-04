@@ -20,6 +20,7 @@ export const folioPublic = {
     twitter: 'https://dub.sh/hrcd-x',
     linkedin: 'https://dub.sh/hrcd-linkedin',
     instagram: 'https://dub.sh/hrcd-insta',
+    cosmos: 'https://www.cosmos.so/hugorcd',
     spotify: 'https://spti.fi/HugoRCD',
   },
 } as const

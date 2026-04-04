@@ -99,6 +99,13 @@ export default defineNuxtSchema({
           icon: 'lucide:instagram',
           default: ''
         }),
+        cosmos: field({
+          type: 'string',
+          title: 'Cosmos',
+          description: 'Your Cosmos profile.',
+          icon: 'lucide:orbit',
+          default: ''
+        }),
         spotify: field({
           type: 'string',
           title: 'Spotify',

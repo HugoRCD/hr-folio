@@ -18,7 +18,14 @@ useSchemaOrg([
     image: profile?.picture,
     jobTitle: seo?.description,
     worksFor: { '@type': 'Organization', name: 'Vercel', url: 'https://vercel.com' },
-    sameAs: [socials?.github, socials?.twitter, socials?.linkedin].filter(Boolean),
+    sameAs: [
+      socials?.github,
+      socials?.twitter,
+      socials?.linkedin,
+      socials?.instagram,
+      socials?.cosmos,
+      socials?.spotify,
+    ].filter(Boolean),
   }),
 ])
 </script>

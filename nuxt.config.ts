@@ -43,7 +43,24 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/fonts', '@nuxt/ui', '@nuxtjs/seo', '@nuxt/content', '@nuxt/image', '@nuxt/scripts', '@vueuse/nuxt', 'nuxt-llms', 'nuxt-studio', '@nuxt/hints', '@vercel/analytics', '@vercel/speed-insights', '@nuxtjs/mcp-toolkit', 'evlog/nuxt', './modules/skills', './modules/screenshots'],
+  modules: [
+    '@nuxt/fonts',
+    '@nuxt/ui',
+    '@nuxtjs/seo',
+    '@nuxt/content',
+    '@nuxt/image',
+    '@nuxt/scripts',
+    '@vueuse/nuxt',
+    'nuxt-llms',
+    'nuxt-studio',
+    '@nuxt/hints',
+    '@vercel/analytics',
+    '@vercel/speed-insights',
+    '@nuxtjs/mcp-toolkit',
+    'evlog/nuxt',
+    './modules/skills',
+    './modules/screenshots',
+  ],
 
   evlog: {
     env: { service: 'hr-folio' },

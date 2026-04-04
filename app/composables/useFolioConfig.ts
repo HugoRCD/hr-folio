@@ -13,6 +13,9 @@ interface FolioConfig {
     github: string
     twitter: string
     linkedin: string
+    instagram: string
+    cosmos: string
+    spotify: string
   }
   link: Array<Record<string, string>>
 }

@@ -7,6 +7,7 @@ const links = computed(() => [
   { label: 'Twitter', href: socials.twitter },
   { label: 'LinkedIn', href: socials.linkedin },
   { label: 'Instagram', href: socials.instagram },
+  { label: 'Cosmos', href: socials.cosmos },
   { label: 'Spotify', href: socials.spotify },
 ])
 </script>
