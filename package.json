@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.33.0",
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/lucide": "^1.2.101",
@@ -20,7 +20,7 @@
     "@iconify-json/vscode-icons": "^1.2.45",
     "@nuxt/content": "^3.12.0",
     "@nuxt/fonts": "^0.14.0",
-    "@nuxt/hints": "1.0.0-alpha.3",
+    "@nuxt/hints": "1.0.3",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.2",
     "@nuxt/ui": "^4.6.1",
@@ -33,7 +33,7 @@
     "motion-v": "^1.10.3",
     "nuxt": "^4.4.2",
     "nuxt-llms": "^0.2.0",
-    "nuxt-studio": "1.2.0",
+    "nuxt-studio": "1.5.1",
     "resend": "^6.10.0",
     "satori": "^0.26.0",
     "tailwindcss": "^4.2.2",
