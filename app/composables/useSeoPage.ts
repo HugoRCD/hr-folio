@@ -35,8 +35,8 @@ export function useSeoPage(page: ContentCollectionItem, isWriting: boolean) {
     })
   } else {
     useSeoMeta({
-      ogImage: '/og/index.png',
-      twitterImage: '/og/index.png',
+      ogImage: '/og/index.jpg',
+      twitterImage: '/og/index.jpg',
     })
   }
 

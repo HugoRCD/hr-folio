@@ -97,12 +97,6 @@ Respect draft posts only when includeDrafts is true on content-list. Prefer raw 
     },
   },
 
-  runtimeConfig: {
-    private: {
-      resendApiKey: '',
-    },
-  },
-
   nitro: {
     experimental: {
       asyncContext: true,
