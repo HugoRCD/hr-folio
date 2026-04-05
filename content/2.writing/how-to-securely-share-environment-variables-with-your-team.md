@@ -13,7 +13,7 @@ Environment variables are the backbone of modern application configuration, cont
 
 ## The Hidden Dangers of Poor Environment Variable Management
 
-### Security Breaches Waiting to Happen 🚨
+### Security Breaches Waiting to Happen
 
 Have you ever:
 
@@ -24,7 +24,7 @@ Have you ever:
 
 These common practices are security breaches waiting to happen. In fact, a recent study found that exposed credentials are responsible for over 80% of security incidents in cloud environments.
 
-### The Real Cost of Weak Environment Management 💸
+### The Real Cost of Weak Environment Management
 
 Poor environment variable management leads to:
 
@@ -36,7 +36,7 @@ Poor environment variable management leads to:
 
 ## Best Practices for Secure Environment Management
 
-### Security Fundamentals 🔐
+### Security Fundamentals
 
 - Implement environment-specific variables
 - Use strong encryption for sensitive data
@@ -44,7 +44,7 @@ Poor environment variable management leads to:
 - Maintain strict access controls
 - Keep comprehensive audit logs
 
-### Version Control Guidelines 📝
+### Version Control Guidelines
 
 - Never commit real .env files to repositories
 - Maintain detailed .env.example files
@@ -55,7 +55,7 @@ Poor environment variable management leads to:
 
 Shelve is an open-source solution that transforms how teams handle environment variables. Here's what makes it special:
 
-### Security Without Compromise 🛡️
+### Security Without Compromise
 
 - End-to-end encryption for all sensitive data
 - OAuth-based authentication
@@ -63,7 +63,7 @@ Shelve is an open-source solution that transforms how teams handle environment v
 - Zero plain-text storage
 - Comprehensive audit logging
 
-### Developer Experience First ⚡
+### Developer Experience First
 
 - Powerful CLI for rapid workflows
 - Drag & drop .env support
@@ -71,7 +71,7 @@ Shelve is an open-source solution that transforms how teams handle environment v
 - Project templates for instant setup
 - Intuitive web interface
 
-### Built for Team Collaboration 👥
+### Built for Team Collaboration
 
 - Team-based access control
 - Secure variable sharing
@@ -79,7 +79,7 @@ Shelve is an open-source solution that transforms how teams handle environment v
 - Simple member management
 - Multi-environment support
 
-### True Open Source 🏠
+### True Open Source
 
 - 100% free and open source
 - Self-hostable
