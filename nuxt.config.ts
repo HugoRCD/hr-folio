@@ -68,6 +68,7 @@ export default defineNuxtConfig({
     '@nuxtjs/mcp-toolkit',
     '@onmax/nuxt-better-auth',
     'evlog/nuxt',
+    'workflow/nuxt',
     './modules/skills',
     './modules/screenshots',
   ],

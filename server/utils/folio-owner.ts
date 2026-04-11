@@ -73,3 +73,10 @@ export async function requireFolioOwnerSession(event: H3Event) {
     rule: ({ user }) => isFolioOwner(event, user),
   })
 }
+
+export async function requireIntelligenceAuth(event: H3Event) {
+  const bearer = getHeader(event, 'authorization')?.replace('Bearer ', '')
+  const secret = process.env.NUXT_INTELLIGENCE_SECRET
+  if (bearer && secret && bearer === secret) return
+  await requireFolioOwnerSession(event)
+}

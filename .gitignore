@@ -22,3 +22,6 @@ logs
 # Local env files
 .env
 .vercel
+
+.workflow-data/
+.env*.local
