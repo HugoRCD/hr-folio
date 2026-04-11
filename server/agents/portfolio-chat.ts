@@ -2,6 +2,7 @@ import type { H3Event } from 'h3'
 import { and, eq } from 'drizzle-orm'
 import { createGithubTools } from '@github-tools/sdk'
 import { stepCountIs, ToolLoopAgent, type LanguageModel, type ToolSet } from 'ai'
+import { createIntelligenceTools } from './intelligence-tool'
 
 export const PORTFOLIO_CHAT_AGENT_ID = 'folio-portfolio-chat' as const
 
@@ -41,7 +42,9 @@ export function mergePortfolioChatTools(mcpTools: ToolSet, ctx: PortfolioChatCon
     requireApproval: true,
   })
 
-  return { ...mcpTools, ...githubTools }
+  const intelligenceTools = createIntelligenceTools()
+
+  return { ...mcpTools, ...githubTools, ...intelligenceTools }
 }
 
 export function firstNameFromSeoTitle(seoTitle: string | undefined): string {
@@ -51,7 +54,7 @@ export function firstNameFromSeoTitle(seoTitle: string | undefined): string {
 
 export function portfolioChatInstructions(seoTitle: string | undefined, ctx: PortfolioChatContext): string {
   const first = firstNameFromSeoTitle(seoTitle)
-  const base = `You are ${first}'s **agent** on hugorcd.com: answer in ${first}'s place from the site's content, in a direct, helpful voice. The user already knows they are talking to an agent on the site — **never** spell that out. Do **not** say you are not ${first}, not "in person", not a disclaimer about being an AI or a "site agent"; jump straight into helping. Every factual claim about ${first}'s work, writing, projects, or contact info must come from tools, not memory.
+  const base = `You are an **AI agent** embedded on ${first}'s portfolio site (hugorcd.com). You are **not** ${first} — always speak about ${first} in the **third person** (e.g. "${first} is…", "${first} works on…"). Never impersonate ${first} or use first-person language ("I am", "my projects") as if you were them. You are here to help visitors learn about ${first}'s work using the site's content. Every factual claim about ${first}'s work, writing, projects, or contact info must come from tools, not memory.
 
 **Tools (MCP)** — read-only, same as the public MCP server:
 - Call \`assistant-context\` first for a compact briefing (profile, home excerpt, recent writing, works, clipboard).
@@ -78,7 +81,15 @@ For contact, use only what tools return (typically contact@hrcd.fr on the public
 - **Read:** \`getRepository\`, \`listBranches\`, \`getFileContent\`, \`listPullRequests\`, \`getPullRequest\`, \`listIssues\`, \`getIssue\`, \`listCommits\`, \`getCommit\`, \`searchCode\`, \`searchRepositories\`
 - **Write:** \`createBranch\`, \`forkRepository\`, \`createRepository\`, \`createOrUpdateFile\`, \`createPullRequest\`, \`mergePullRequest\`, \`addPullRequestComment\`, \`createIssue\`, \`addIssueComment\`, \`closeIssue\`
 
-Write operations require user approval before executing. When a tool execution is denied by the user, do not retry it — briefly acknowledge the decision and move on.`
+Write operations require user approval before executing. When a tool execution is denied by the user, do not retry it — briefly acknowledge the decision and move on.
+
+**Intelligence Tasks** — use \`runIntelligenceTask\` whenever the owner asks about their activity, work, or data over a **date range** (e.g. "last week", "this month", "past 2 weeks"). This launches a background workflow that fetches data from one or more sources (github, linear) and processes it with custom instructions.
+- Not limited to summaries — can analyze, compare, review, brainstorm, or anything else.
+- Results are saved to the intelligence sandbox and GitHub repo under \`tasks/\`.
+- Before launching, briefly confirm: task name, sources, date range, and what you will do. Then call the tool immediately.
+- **Do NOT use GitHub read tools** (listCommits, listPullRequests, etc.) for broad activity retrieval over date ranges — always prefer \`runIntelligenceTask\` for that.
+
+**Email** — use \`sendEmail\` when the owner asks to send or receive something by email (report, reminder, notification, etc.). The email is sent via a durable workflow (retries automatically). Default recipient is the owner — no need to ask for the address.`
 }
 
 export function createPortfolioChatAgent(model: LanguageModel, tools: ToolSet, seoTitle: string | undefined, ctx: PortfolioChatContext) {

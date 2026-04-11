@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { CommandPaletteGroup } from '@nuxt/ui'
-import type { FolioClipboardListItem, FolioWritingListItem } from '~/types/folio-lists'
+
+type PalettePage = 'home' | 'intelligence'
 
 const isOpen = ref(false)
 const paletteQuery = ref('')
+const page = ref<PalettePage>('home')
 const router = useRouter()
 const { copy } = useClipboard()
+const toast = useToast()
+const { isOwner } = useFolioOwner()
+
+const runningWorkflows = ref<Set<string>>(new Set())
 
 const { data: articles } = await useFetch<FolioWritingListItem[]>('/api/folio/writing', {
   key: 'folio-writing-cmd',
@@ -29,10 +35,74 @@ const { agentTitle, agentLabel } = useAgentBrand()
 function clampText(s: string, max: number) {
   const t = s.trim()
   if (t.length <= max) return t
-  return `${t.slice(0, max - 1)}…`
+  return `${t.slice(0, max - 1)}\u2026`
 }
 
-const groups = computed<CommandPaletteGroup[]>(() => {
+const intelligenceSources = [
+  { id: 'github', label: 'GitHub', icon: 'i-simple-icons-github', description: 'Commits, PRs, issues, reviews' },
+  { id: 'linear', label: 'Linear', icon: 'i-simple-icons-linear', description: 'Issues, cycles, progress' },
+] as const
+
+async function triggerWorkflow(sourceId: string) {
+  if (runningWorkflows.value.has(sourceId)) return
+  runningWorkflows.value.add(sourceId)
+  try {
+    const result = await $fetch<{ runId: string, source: string, date: string }>(
+      `/api/intelligence/${sourceId}`,
+      { method: 'POST', credentials: 'include' },
+    )
+    toast.add({
+      title: `${sourceId.charAt(0).toUpperCase() + sourceId.slice(1)} workflow started`,
+      description: `Run ${result.runId} for ${result.date}`,
+      icon: 'i-lucide-play',
+      color: 'success',
+    })
+  } catch (err: any) {
+    toast.add({
+      title: 'Workflow failed to start',
+      description: err?.data?.message || err?.message || 'Unknown error',
+      icon: 'i-lucide-alert-triangle',
+      color: 'error',
+    })
+  } finally {
+    runningWorkflows.value.delete(sourceId)
+  }
+}
+
+const intelligenceGroups = computed<CommandPaletteGroup[]>(() => [
+  {
+    id: 'intelligence-nav',
+    label: 'Navigation',
+    ignoreFilter: true,
+    items: [{ label: 'Back', icon: 'i-lucide-arrow-left', action: 'page-home' },],
+  },
+  {
+    id: 'intelligence-workflows',
+    label: 'Workflows',
+    items: [
+      {
+        label: 'Run all workflows',
+        icon: 'i-lucide-zap',
+        action: 'run-all-workflows',
+        description: 'Trigger every intelligence source at once',
+      },
+      ...intelligenceSources.map(s => ({
+        label: s.label,
+        icon: s.icon,
+        action: `run-workflow-${s.id}`,
+        description: s.description,
+        suffix: runningWorkflows.value.has(s.id) ? 'Running\u2026' : '',
+      })),
+    ],
+  },
+  {
+    id: 'intelligence-links',
+    label: 'Links',
+    items: [{ label: 'Intelligence repo', icon: 'i-simple-icons-github', to: 'https://github.com/HugoRCD/hr-intelligence', description: 'Daily summaries backup on GitHub' },],
+  },
+])
+
+const homeGroups = computed<CommandPaletteGroup[]>(() => {
   const q = paletteQuery.value.trim()
   const askInChat: CommandPaletteGroup[] = q
     ? [
@@ -42,13 +112,23 @@ const groups = computed<CommandPaletteGroup[]>(() => {
         ignoreFilter: true,
         items: [
           {
-            label: q.length > 88 ? `${q.slice(0, 87)}…` : q,
+            label: q.length > 88 ? `${q.slice(0, 87)}\u2026` : q,
             icon: 'custom:ai',
             description: 'Open in chat',
             action: 'open-chat-query',
-          }
+          },
         ],
-      }
+      },
+    ]
+    : []
+
+  const ownerGroups: CommandPaletteGroup[] = isOwner.value
+    ? [
+      {
+        id: 'owner',
+        label: 'Owner',
+        items: [{ label: 'Intelligence Workflows', icon: 'i-lucide-brain', action: 'page-intelligence', description: 'Launch daily intelligence workflows' },],
+      },
     ]
     : []
 
@@ -62,10 +142,11 @@ const groups = computed<CommandPaletteGroup[]>(() => {
           label: `Chat with ${agentLabel.value}`,
           icon: 'custom:ai',
           to: '/chat',
-          description: 'Grounded in this site’s pages, writing & works only.',
+          description: 'Grounded in this site\u2019s pages, writing & works only.',
         },
       ],
     },
+    ...ownerGroups,
     {
       id: 'pages',
       label: 'Pages',
@@ -85,7 +166,7 @@ const groups = computed<CommandPaletteGroup[]>(() => {
         suffix: [
           a.draft ? 'Draft' : '',
           new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
-        ].filter(Boolean).join(' · '),
+        ].filter(Boolean).join(' \u00B7 '),
       })),
     },
     {
@@ -98,7 +179,7 @@ const groups = computed<CommandPaletteGroup[]>(() => {
         suffix: [
           c.draft ? 'Draft' : '',
           new Date(c.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
-        ].filter(Boolean).join(' · '),
+        ].filter(Boolean).join(' \u00B7 '),
       })),
     },
     {
@@ -124,8 +205,36 @@ const groups = computed<CommandPaletteGroup[]>(() => {
   ]
 })
 
+const groups = computed<CommandPaletteGroup[]>(() =>
+  page.value === 'intelligence' ? intelligenceGroups.value : homeGroups.value,
+)
+
+const placeholder = computed(() =>
+  page.value === 'intelligence' ? 'Search workflows\u2026' : 'Search pages, writing, projects\u2026',
+)
+
 function onSelect(item: any) {
   if (!item) return
+
+  if (item.action === 'page-home') {
+    page.value = 'home'
+    paletteQuery.value = ''
+    return
+  }
+  if (item.action === 'page-intelligence') {
+    page.value = 'intelligence'
+    paletteQuery.value = ''
+    return
+  }
+
+  if (item.action === 'run-all-workflows') {
+    for (const s of intelligenceSources) triggerWorkflow(s.id)
+    return
+  }
+  if (item.action?.startsWith('run-workflow-')) {
+    triggerWorkflow(item.action.replace('run-workflow-', ''))
+    return
+  }
 
   if (item.action === 'open-chat-query') {
     const q = paletteQuery.value.trim()
@@ -168,7 +277,10 @@ defineShortcuts({
 })
 
 watch(isOpen, (open) => {
-  if (!open) paletteQuery.value = ''
+  if (!open) {
+    paletteQuery.value = ''
+    page.value = 'home'
+  }
 })
 </script>
 
@@ -183,7 +295,7 @@ watch(isOpen, (open) => {
     <template #content>
       <UCommandPalette
         v-model:search-term="paletteQuery"
-        placeholder="Search pages, writing, projects…"
+        :placeholder
         class="max-h-72 min-h-0 sm:max-h-[min(20rem,50vh)]"
         :groups
         size="sm"

@@ -1,6 +1,5 @@
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { createAgentUIStreamResponse, type ToolSet } from 'ai'
-import { experimental_createMCPClient } from '@ai-sdk/mcp'
+import { createMCPClient } from '@ai-sdk/mcp'
 import { createAILogger } from 'evlog/ai'
 import {
   createPortfolioChatAgent,
@@ -19,16 +18,15 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Invalid or missing messages array.' })
   }
 
-  let httpClient: Awaited<ReturnType<typeof experimental_createMCPClient>> | undefined
+  let mcpClient: Awaited<ReturnType<typeof createMCPClient>> | undefined
   let mcpTools: ToolSet
 
   try {
-    const mcpUrl = new URL('/mcp', getRequestURL(event).origin)
-    const httpTransport = new StreamableHTTPClientTransport(mcpUrl)
-    httpClient = await experimental_createMCPClient({
-      transport: httpTransport,
+    const mcpUrl = new URL('/mcp', getRequestURL(event).origin).toString()
+    mcpClient = await createMCPClient({
+      transport: { type: 'http', url: mcpUrl },
     })
-    mcpTools = (await httpClient.tools()) as ToolSet
+    mcpTools = (await mcpClient.tools()) as ToolSet
   } catch (error) {
     log.set({ chat: { mcp: 'client_init_failed' } })
     log.error(error instanceof Error ? error : new Error(String(error)))
@@ -49,12 +47,12 @@ export default defineEventHandler(async (event) => {
     agent,
     uiMessages: messages,
     onFinish: () => {
-      event.waitUntil(httpClient?.close())
+      event.waitUntil(mcpClient?.close())
     },
     onError: (error) => {
       log.set({ chat: { streamText: 'error' } })
       log.error(error instanceof Error ? error : new Error(String(error)))
-      event.waitUntil(httpClient?.close())
+      event.waitUntil(mcpClient?.close())
       return 'Something went wrong.'
     },
   })
