@@ -102,8 +102,8 @@ Collections:
 - works: project/work JSON (name, description, url, category, tags, stem — file stem is the stable id).
 
 Workflow for assistants:
-1. Call assistant-context once for a ready-made briefing (profile, socials, latest posts, works, clipboard, home excerpt + canonical URLs).
-2. Call content-list to discover paths, stems, and metadata; use the optional search string to narrow results.
+1. Call assistant-context once per task for a ready-made briefing (profile including email and socials, latest posts, works, clipboard, home excerpt + canonical URLs). If that answers the question, stop.
+2. Call content-list only when you need paths, search, or metadata not in the briefing.
 3. Call content-get with kind "page" and a path from the list, or kind "work" and a stem, to load full text or full project metadata.
 
 Respect draft writing and clipboard entries only when includeDrafts is true on content-list. Prefer raw markdown (rawbody) over rendered AST for analysis.`,
@@ -173,6 +173,12 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   nitro: {
     experimental: {
       asyncContext: true,
+    },
+    /** Long-lived MCP stream (SSE) + chat tool loops — avoid Vercel 504 on GET /mcp */
+    vercel: {
+      functions: {
+        maxDuration: 300,
+      },
     },
     prerender: {
       crawlLinks: true,
