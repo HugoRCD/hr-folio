@@ -103,7 +103,7 @@ export function createPortfolioChatAgent(model: LanguageModel, tools: ToolSet, s
     model,
     instructions: portfolioChatInstructions(seoTitle, ctx),
     tools,
-    stopWhen: stepCountIs(ctx.githubToken && ctx.isOwner ? 30 : 12),
+    stopWhen: stepCountIs(ctx.githubToken && ctx.isOwner ? 30 : 14),
     maxOutputTokens: ctx.githubToken && ctx.isOwner ? 10000 : 4096,
   })
 }

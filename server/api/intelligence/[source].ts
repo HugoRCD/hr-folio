@@ -1,4 +1,5 @@
 import { start } from 'workflow/api'
+import { getParisCalendarDateISO } from '../../utils/intelligence-date'
 import { githubWorkflow } from '../../workflows/intelligence/sources/github'
 import { linearWorkflow } from '../../workflows/intelligence/sources/linear'
 
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: `Unknown intelligence source: ${source}` })
   }
 
-  const date = new Date().toISOString().split('T')[0]!
+  const date = getParisCalendarDateISO()
   const run = await start(workflows[source]!, [date])
 
   return { runId: run.runId, source, date }

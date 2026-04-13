@@ -1,6 +1,6 @@
 {
   "crons": [
-    { "path": "/api/intelligence/github", "schedule": "0 6 * * *" },
-    { "path": "/api/intelligence/linear", "schedule": "5 6 * * *" }
+    { "path": "/api/intelligence/github", "schedule": "0 21 * * *" },
+    { "path": "/api/intelligence/linear", "schedule": "5 21 * * *" }
   ]
 }
