@@ -3,6 +3,7 @@ import {
   INTELLIGENCE_SOURCES,
   type IntelligenceSourceId,
   fetchSourceData,
+  getTypefullySocialScopeBlock,
   processReport,
   writeToSandbox,
   syncToGit,
@@ -23,9 +24,11 @@ export async function taskWorkflow(params: TaskParams) {
   for (const sourceId of params.sources) {
     const mcp = getMCPConfig(sourceId)
     const { label } = INTELLIGENCE_SOURCES[sourceId]
+    const scope = sourceId === 'typefully' ? `\n\n${getTypefullySocialScopeBlock()}` : ''
     const data = await fetchSourceData(
       mcp,
-      `Date range: ${params.dateRange}. ${params.instructions}`,
+      `Date range: ${params.dateRange}. ${params.instructions}${scope}`,
+      sourceId,
     )
     chunks.push(`## ${label}\n\n${data}`)
   }

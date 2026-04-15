@@ -1,0 +1,10 @@
+# Keep Cursor / VCS panels clean — same idea as .gitignore for tooling
+.pnpm-store/
+node_modules/
+.output/
+.nuxt/
+.swc/
+.cache/
+.data/
+.workflow-data/
+.evlog/

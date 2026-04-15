@@ -1,0 +1,144 @@
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index 872e44f469561fe5c9ff379a115670f2e8f394c3..293e12f68165c209045faa4c323a4885473619cf 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -256,6 +256,11 @@ type MCPTransportConfig = {
+      * @default globalThis.fetch
+      */
+     fetch?: FetchFunction;
++    /**
++     * MCP protocol version for the HTTP transport (`mcp-protocol-version` header and `initialize` handshake).
++     * Set when the server does not support the SDK default (`2025-11-25`).
++     */
++    protocolVersion?: string;
+ };
+ 
+ /** MCP tool metadata - keys should follow MCP _meta key format specification */
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 872e44f469561fe5c9ff379a115670f2e8f394c3..293e12f68165c209045faa4c323a4885473619cf 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -256,6 +256,11 @@ type MCPTransportConfig = {
+      * @default globalThis.fetch
+      */
+     fetch?: FetchFunction;
++    /**
++     * MCP protocol version for the HTTP transport (`mcp-protocol-version` header and `initialize` handshake).
++     * Set when the server does not support the SDK default (`2025-11-25`).
++     */
++    protocolVersion?: string;
+ };
+ 
+ /** MCP tool metadata - keys should follow MCP _meta key format specification */
+diff --git a/dist/index.js b/dist/index.js
+index 44228946660cd4d66d2c745b7317d5438e381d88..e4db4a5f7f87ca8eb7a3eebffa7ffb2576a51107 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -79,7 +79,8 @@ var SUPPORTED_PROTOCOL_VERSIONS = [
+   LATEST_PROTOCOL_VERSION,
+   "2025-06-18",
+   "2025-03-26",
+-  "2024-11-05"
++  "2024-11-05",
++  "2024-10-07"
+ ];
+ var ToolMetaSchema = import_v4.z.optional(import_v4.z.record(import_v4.z.string(), import_v4.z.unknown()));
+ var ClientOrServerImplementationSchema = import_v4.z.looseObject({
+@@ -1295,7 +1296,8 @@ var HttpMCPTransport = class {
+     headers,
+     authProvider,
+     redirect = "follow",
+-    fetch: fetchFn
++    fetch: fetchFn,
++    protocolVersion
+   }) {
+     this.inboundReconnectAttempts = 0;
+     this.reconnectionOptions = {
+@@ -1309,12 +1311,13 @@ var HttpMCPTransport = class {
+     this.authProvider = authProvider;
+     this.redirectMode = redirect;
+     this.fetchFn = fetchFn != null ? fetchFn : globalThis.fetch;
++    this.protocolVersion = protocolVersion != null ? protocolVersion : LATEST_PROTOCOL_VERSION;
+   }
+   async commonHeaders(base) {
+     const headers = {
+       ...this.headers,
+       ...base,
+-      "mcp-protocol-version": LATEST_PROTOCOL_VERSION
++      "mcp-protocol-version": this.protocolVersion
+     };
+     if (this.sessionId) {
+       headers["mcp-session-id"] = this.sessionId;
+@@ -1672,6 +1675,7 @@ var DefaultMCPClient = class {
+     this.isClosed = true;
+     this.onUncaughtError = onUncaughtError;
+     this.clientCapabilities = capabilities != null ? capabilities : {};
++    this.protocolVersion = !isCustomMcpTransport(transportConfig) && transportConfig.type === "http" && transportConfig.protocolVersion ? transportConfig.protocolVersion : LATEST_PROTOCOL_VERSION;
+     if (isCustomMcpTransport(transportConfig)) {
+       this.transport = transportConfig;
+     } else {
+@@ -1710,7 +1714,7 @@ var DefaultMCPClient = class {
+         request: {
+           method: "initialize",
+           params: {
+-            protocolVersion: LATEST_PROTOCOL_VERSION,
++            protocolVersion: this.protocolVersion,
+             capabilities: this.clientCapabilities,
+             clientInfo: this.clientInfo
+           }
+diff --git a/dist/index.mjs b/dist/index.mjs
+index b781835b37a1262510bdd66d8d3b399a076e9d68..f534882507d84c63deddab6914258ed68216a6ec 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -49,7 +49,8 @@ var SUPPORTED_PROTOCOL_VERSIONS = [
+   LATEST_PROTOCOL_VERSION,
+   "2025-06-18",
+   "2025-03-26",
+-  "2024-11-05"
++  "2024-11-05",
++  "2024-10-07"
+ ];
+ var ToolMetaSchema = z.optional(z.record(z.string(), z.unknown()));
+ var ClientOrServerImplementationSchema = z.looseObject({
+@@ -1269,7 +1270,8 @@ var HttpMCPTransport = class {
+     headers,
+     authProvider,
+     redirect = "follow",
+-    fetch: fetchFn
++    fetch: fetchFn,
++    protocolVersion
+   }) {
+     this.inboundReconnectAttempts = 0;
+     this.reconnectionOptions = {
+@@ -1283,12 +1285,13 @@ var HttpMCPTransport = class {
+     this.authProvider = authProvider;
+     this.redirectMode = redirect;
+     this.fetchFn = fetchFn != null ? fetchFn : globalThis.fetch;
++    this.protocolVersion = protocolVersion != null ? protocolVersion : LATEST_PROTOCOL_VERSION;
+   }
+   async commonHeaders(base) {
+     const headers = {
+       ...this.headers,
+       ...base,
+-      "mcp-protocol-version": LATEST_PROTOCOL_VERSION
++      "mcp-protocol-version": this.protocolVersion
+     };
+     if (this.sessionId) {
+       headers["mcp-session-id"] = this.sessionId;
+@@ -1646,6 +1649,7 @@ var DefaultMCPClient = class {
+     this.isClosed = true;
+     this.onUncaughtError = onUncaughtError;
+     this.clientCapabilities = capabilities != null ? capabilities : {};
++    this.protocolVersion = !isCustomMcpTransport(transportConfig) && transportConfig.type === "http" && transportConfig.protocolVersion ? transportConfig.protocolVersion : LATEST_PROTOCOL_VERSION;
+     if (isCustomMcpTransport(transportConfig)) {
+       this.transport = transportConfig;
+     } else {
+@@ -1684,7 +1688,7 @@ var DefaultMCPClient = class {
+         request: {
+           method: "initialize",
+           params: {
+-            protocolVersion: LATEST_PROTOCOL_VERSION,
++            protocolVersion: this.protocolVersion,
+             capabilities: this.clientCapabilities,
+             clientInfo: this.clientInfo
+           }

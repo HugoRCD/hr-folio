@@ -1,4 +1,14 @@
-import type { MCPConfig } from './mcp'
+import type { MCPConfig } from './mcp.ts'
+
+type IntelligenceSourceDef = {
+  label: string
+  /** Static MCP URL, or fallback when `urlEnv` is unset */
+  url: string
+  /** When set, `process.env[urlEnv]` overrides `url` (required in production for this source). */
+  urlEnv?: string
+  tokenEnv: string
+  template: string
+}
 
 export const INTELLIGENCE_SOURCES = {
   github: {
@@ -66,15 +76,51 @@ Current cycle status: name, progress percentage, start/end dates, and how many i
 
 Notable comments or status updates made today on any issues.`,
   },
-} as const
+  typefully: {
+    label: 'Typefully',
+    url: 'https://mcp.typefully.com/mcp',
+    urlEnv: 'TYPEFULLY_MCP_URL',
+    tokenEnv: 'TYPEFULLY_API_KEY',
+    template: `---
+title: Typefully Daily Summary
+date: {{date}}
+---
+
+## Social sets
+
+Only the personal account (Hugo / @hugorcd); omit team org accounts (Nuxt, etc.).
+
+## Drafts & scheduled
+
+Drafts and scheduled posts (titles, status, tags, scheduled times). Paginate as needed.
+
+## Queue & publishing
+
+Queue slots for the day when applicable (\`typefully_get_queue\`; range limits apply).
+
+## Published X (day)
+
+Posts with metrics for platform \`x\` for this calendar day (\`typefully_list_social_set_analytics_posts\`): impressions, engagement, notable posts; replies excluded unless relevant.
+
+## Themes & takeaways
+
+Recurring topics, tone, and what performed best vs weakest.
+
+## Ideas for next posts
+
+~10 short hooks or angles aligned with past themes or filling obvious gaps.`,
+  },
+} as const satisfies Record<string, IntelligenceSourceDef>
 
 export type IntelligenceSourceId = keyof typeof INTELLIGENCE_SOURCES
 
 export function getMCPConfig(source: IntelligenceSourceId): MCPConfig {
   const s = INTELLIGENCE_SOURCES[source]
   const token = process.env[s.tokenEnv]
+  const url =
+    'urlEnv' in s && s.urlEnv ? (process.env[s.urlEnv] ?? s.url) : s.url
   return {
-    url: s.url,
+    url,
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   }
 }

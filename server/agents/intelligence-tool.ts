@@ -10,9 +10,13 @@ export function createIntelligenceTools() {
       description: 'Launch a background intelligence task. Fetches data from one or more sources and processes it according to custom instructions. Can summarize, analyze, compare, brainstorm, or any other processing.',
       inputSchema: z.object({
         name: z.string().describe('Short descriptive name for the task (used as filename)'),
-        sources: z.array(z.enum(['github', 'linear'])).describe('Sources to fetch data from'),
+        sources: z.array(z.enum(['github', 'linear', 'typefully'])).describe('Sources to fetch data from'),
         dateRange: z.string().describe('Date range in natural language (e.g. "last 2 weeks", "March 2026")'),
-        instructions: z.string().describe('What to do with the data'),
+        instructions: z
+          .string()
+          .describe(
+            'What to do with the data. For Typefully: typical goals are list drafts and scheduled posts, summarize published activity, interpret X analytics for the range, and suggest ~10 post ideas or angles aligned with themes or gaps.',
+          ),
       }),
       execute: async ({ name, sources, dateRange, instructions }) => {
         const taskId = `task-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`
