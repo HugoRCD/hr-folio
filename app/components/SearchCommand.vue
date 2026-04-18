@@ -38,9 +38,17 @@ function clampText(s: string, max: number) {
   return `${t.slice(0, max - 1)}\u2026`
 }
 
+/** UCommandPalette passes link props to ULink — external URLs open in a new tab. */
+function externalLinkProps(to: string | undefined) {
+  if (!to || (!to.startsWith('http://') && !to.startsWith('https://'))) return {}
+  return { target: '_blank' as const, rel: 'noopener noreferrer' }
+}
+
 const intelligenceSources = [
   { id: 'github', label: 'GitHub', icon: 'i-simple-icons-github', description: 'Commits, PRs, issues, reviews' },
   { id: 'linear', label: 'Linear', icon: 'i-simple-icons-linear', description: 'Issues, cycles, progress' },
+  { id: 'typefully', label: 'Typefully', icon: 'i-lucide-calendar-clock', description: 'Drafts, queue, X analytics' },
+  { id: 'tweets', label: 'Tweets', icon: 'i-simple-icons-x', description: 'Generate tweet ideas from GitHub, Linear & Typefully' },
 ] as const
 
 async function triggerWorkflow(sourceId: string) {
@@ -98,7 +106,15 @@ const intelligenceGroups = computed<CommandPaletteGroup[]>(() => [
   {
     id: 'intelligence-links',
     label: 'Links',
-    items: [{ label: 'Intelligence repo', icon: 'i-simple-icons-github', to: 'https://github.com/HugoRCD/hr-intelligence', description: 'Daily summaries backup on GitHub' },],
+    items: [
+      {
+        label: 'Intelligence repo',
+        icon: 'i-simple-icons-github',
+        to: 'https://github.com/HugoRCD/hr-intelligence',
+        description: 'Daily summaries backup on GitHub',
+        ...externalLinkProps('https://github.com/HugoRCD/hr-intelligence'),
+      },
+    ],
   },
 ])
 
@@ -189,6 +205,7 @@ const homeGroups = computed<CommandPaletteGroup[]>(() => {
         label: p.name,
         icon: 'i-lucide-arrow-up-right',
         to: p.url,
+        ...externalLinkProps(p.url),
         ...(p.description ? { description: clampText(String(p.description), 96) } : {}),
       })),
     },
@@ -264,7 +281,8 @@ function onSelect(item: any) {
 
   if (!item.to) return
   if (item.to.startsWith('http')) {
-    window.open(item.to, '_blank')
+    // Items with `target` / `rel` are handled by UCommandPalette’s ULink (avoids double-opening).
+    if (!item.target) window.open(item.to, '_blank', 'noopener,noreferrer')
   } else {
     router.push(item.to)
   }

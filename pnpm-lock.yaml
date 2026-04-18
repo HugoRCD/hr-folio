@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@ai-sdk/mcp@1.0.36':
+    hash: c230e9a945c6c5d0c0fb17df22de96536039cb1626439f7a4d7d0350252d7232
+    path: patches/@ai-sdk__mcp@1.0.36.patch
+
 importers:
 
   .:
@@ -13,7 +18,7 @@ importers:
         version: 3.0.95(zod@4.3.6)
       '@ai-sdk/mcp':
         specifier: ^1.0.36
-        version: 1.0.36(zod@4.3.6)
+        version: 1.0.36(patch_hash=c230e9a945c6c5d0c0fb17df22de96536039cb1626439f7a4d7d0350252d7232)(zod@4.3.6)
       '@ai-sdk/vue':
         specifier: ^3.0.157
         version: 3.0.158(vue@3.5.32(typescript@5.9.3))(zod@4.3.6)
@@ -10773,7 +10778,7 @@ snapshots:
       '@vercel/oidc': 3.1.0
       zod: 4.3.6
 
-  '@ai-sdk/mcp@1.0.36(zod@4.3.6)':
+  '@ai-sdk/mcp@1.0.36(patch_hash=c230e9a945c6c5d0c0fb17df22de96536039cb1626439f7a4d7d0350252d7232)(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.23(zod@4.3.6)

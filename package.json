@@ -81,6 +81,9 @@
       "@parcel/watcher",
       "esbuild",
       "vue-demi"
-    ]
+    ],
+    "patchedDependencies": {
+      "@ai-sdk/mcp@1.0.36": "patches/@ai-sdk__mcp@1.0.36.patch"
+    }
   }
 }

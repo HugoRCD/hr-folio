@@ -2,10 +2,14 @@ import { start } from 'workflow/api'
 import { getParisCalendarDateISO } from '../../utils/intelligence-date'
 import { githubWorkflow } from '../../workflows/intelligence/sources/github'
 import { linearWorkflow } from '../../workflows/intelligence/sources/linear'
+import { typefullyWorkflow } from '../../workflows/intelligence/sources/typefully'
+import { tweetsWorkflow } from '../../workflows/intelligence/sources/tweets'
 
 const workflows: Record<string, (date: string) => Promise<void>> = {
   github: githubWorkflow,
   linear: linearWorkflow,
+  typefully: typefullyWorkflow,
+  tweets: tweetsWorkflow,
 }
 
 export default defineEventHandler(async (event) => {

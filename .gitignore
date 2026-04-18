@@ -5,9 +5,13 @@
 .nitro
 .cache
 dist
+.swc
 
 # Node dependencies
 node_modules
+
+# pnpm content-addressable store if created inside the repo (never commit)
+.pnpm-store/
 
 # Logs
 logs
