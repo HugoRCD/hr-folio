@@ -1,3 +1,4 @@
+import type { H3Event } from 'h3'
 import { createAgentUIStreamResponse, type ToolSet } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { createAILogger } from 'evlog/ai'
@@ -6,6 +7,21 @@ import {
   mergePortfolioChatTools,
   resolvePortfolioChatContext,
 } from '../agents/portfolio-chat'
+
+function createLocalFetch(event: H3Event): typeof fetch {
+  const { origin } = getRequestURL(event)
+  return (input, init) => {
+    const requestUrl = input instanceof URL
+      ? input
+      : typeof input === 'string'
+        ? new URL(input, origin)
+        : new URL(input.url)
+    const localPath = requestUrl.origin === origin
+      ? `${requestUrl.pathname}${requestUrl.search}`
+      : requestUrl.toString()
+    return event.fetch(localPath, init)
+  }
+}
 
 export default defineEventHandler(async (event) => {
   const log = useLogger(event)
@@ -24,7 +40,11 @@ export default defineEventHandler(async (event) => {
   try {
     const mcpUrl = new URL('/mcp', getRequestURL(event).origin).toString()
     mcpClient = await createMCPClient({
-      transport: { type: 'http', url: mcpUrl },
+      transport: {
+        type: 'http',
+        url: mcpUrl,
+        fetch: createLocalFetch(event),
+      },
     })
     mcpTools = (await mcpClient.tools()) as ToolSet
   } catch (error) {
