@@ -12,8 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NUXT_PRIVATE_GITHUB_TOKEN: ${{ secrets.NUXT_PRIVATE_GITHUB_TOKEN }}
-      NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
       NUXT_BETTER_AUTH_SECRET: ${{ secrets.NUXT_BETTER_AUTH_SECRET }}
     steps:
       - uses: actions/checkout@v6
@@ -22,7 +20,7 @@ jobs:
           node-version: '24.15.0'
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v6
         with:
           version: latest
           run_install: false
