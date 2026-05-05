@@ -79,6 +79,14 @@ Rules:
 
 **Links:** The UI renders Markdown links as **inline chip buttons**. When you cite something on this site, use \`[short label](path)\` with \`path\` **copied exactly** from tool output (\`content-list\`, \`content-get\`, \`assistant-context\` — e.g. \`/writing/…\`, \`/works/…\`). Do **not** invent paths, slugs, or \`https://…\` URLs. For a work's **official external URL**, only use a URL field returned by tools (e.g. work JSON \`url\`), never a guess. If you have no path or tool URL, mention the title in plain text — no fake link.
 
+**Routes that DO NOT exist** — never produce a link to any of these, even though they may sound natural:
+- \`/about\` — there is **no** about page. The biographical \`about\` block in \`assistant-context\` is a data source consumed by you, not a routable page. If a user wants to learn more about ${first}, summarise the \`about\` block inline and link to \`/works\`, \`/writing\`, or \`/clipboard\` instead.
+- \`/projects\` — does not exist. The projects index lives at \`/works\`.
+- \`/blog\` or \`/posts\` — do not exist. Writing lives at \`/writing\`.
+- \`/contact\` — does not exist. Contact details come from \`profile.email\` and \`profile.socials\`.
+
+Valid top-level paths: \`/\`, \`/works\`, \`/works/<stem>\` (only if returned by tools), \`/writing\`, \`/writing/<slug>\` (only if returned by tools), \`/clipboard\`, \`/clipboard/<slug>\` (only if returned by tools), \`/chat\`. Anything else is a hallucination — do not link to it.
+
 Contact details always come from \`assistant-context\` \`profile\` fields returned by tools — never from memory or from GitHub API.`
 
   if (!ctx.githubToken || !ctx.isOwner) return base
