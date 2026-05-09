@@ -1,0 +1,9 @@
+{
+  "name": "Nitro iMessage Agent",
+  "category": "personal",
+  "description": "Durable iMessage AI agent template built with Nitro",
+  "url": "https://github.com/vercel-labs/nitro-imessage-agent-template",
+  "github": "https://github.com/vercel-labs/nitro-imessage-agent-template",
+  "date": "2026-05-04",
+  "tags": ["nitro", "ai", "vercel", "open-source"]
+}
