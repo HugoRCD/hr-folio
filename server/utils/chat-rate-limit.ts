@@ -1,6 +1,11 @@
 import { createError, getRequestIP, type H3Event } from 'h3'
+import { useStorage } from 'nitropack/runtime'
 
 const KEY_PREFIX = 'folio:chat:daily'
+
+function rateStore() {
+  return useStorage('cache')
+}
 
 function utcDay(): string {
   return new Date().toISOString().slice(0, 10)
@@ -20,16 +25,16 @@ export function maxVisitorChatTurns(event: H3Event): number {
   return Math.min(500, Math.floor(n))
 }
 
-const TTL_SEC = 26 * 60 * 60
+const TTL_MS = 26 * 60 * 60 * 1000
 
 async function storageGetCount(key: string): Promise<number> {
-  return Number(await kv.get<number>(key) ?? 0)
+  return Number((await rateStore().getItem<number>(key)) ?? 0)
 }
 
 async function storageIncrCount(key: string): Promise<number> {
-  const cur = Number(await kv.get<number>(key) ?? 0)
+  const cur = Number((await rateStore().getItem<number>(key)) ?? 0)
   const next = cur + 1
-  await kv.set(key, next, { ttl: TTL_SEC })
+  await rateStore().setItem(key, next, { ttl: TTL_MS })
   return next
 }
 
