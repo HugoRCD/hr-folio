@@ -155,10 +155,6 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   content: {
-    database: {
-      type: 'sqlite',
-      filename: '/tmp/contents.sqlite',
-    },
     build: {
       markdown: {
         highlight: {
