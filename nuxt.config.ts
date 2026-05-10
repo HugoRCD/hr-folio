@@ -161,6 +161,14 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
     // modules (better-auth); Nuxt Content reads its prebundled SQLite
     // from build assets at runtime regardless.
     database: { type: 'sqlite' },
+    // Use Node's built-in `node:sqlite` (Node 22+) at runtime instead of
+    // the default `better-sqlite3`. The native connector loads the
+    // prebundled DB in-memory at cold start and never tries to write to
+    // disk — `better-sqlite3` does, and Vercel Functions have a
+    // read-only `/var/task` so it crashes with
+    // `ENOENT: mkdir '/var/task/.data'` on every query. Same pattern
+    // Docus uses (layer/nuxt.config.ts).
+    experimental: { sqliteConnector: 'native' },
     build: {
       markdown: {
         highlight: {
