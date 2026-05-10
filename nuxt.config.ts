@@ -155,20 +155,20 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   content: {
-    // Pin the build-time DB to sqlite so the NuxtHub preset's auto-derive
-    // (driven by `hub.db`) doesn't leak an unrecognized `type` into
-    // `#content/adapter` on Vercel. Hub Postgres is still used by other
-    // modules (better-auth); Nuxt Content reads its prebundled SQLite
-    // from build assets at runtime regardless.
-    database: { type: 'sqlite' },
-    // Use Node's built-in `node:sqlite` (Node 22+) at runtime instead of
-    // the default `better-sqlite3`. The native connector loads the
-    // prebundled DB in-memory at cold start and never tries to write to
-    // disk — `better-sqlite3` does, and Vercel Functions have a
-    // read-only `/var/task` so it crashes with
-    // `ENOENT: mkdir '/var/task/.data'` on every query. Same pattern
-    // Docus uses (layer/nuxt.config.ts).
-    experimental: { sqliteConnector: 'native' },
+    // PGlite (Postgres in WASM, in-memory) instead of SQLite to dodge
+    // both Vercel runtime traps:
+    //   - the NuxtHub preset's auto-derive (driven by `hub.db`) leaking
+    //     an unrecognized type into `#content/adapter` at build, and
+    //   - `better-sqlite3` (the default sqlite connector) trying to
+    //     `mkdir '/var/task/.data'` at runtime on Vercel Lambda where
+    //     `/var/task` is read-only.
+    //
+    // PGlite ships as `@electric-sql/pglite` (already a dep), runs
+    // entirely in WASM with no disk writes, and is supported by Nuxt
+    // Content's `db0/connectors/pglite` adapter. Hub Postgres remains
+    // wired for other modules (better-auth); only the Nuxt Content
+    // build/runtime DB is pinned here.
+    database: { type: 'pglite' },
     build: {
       markdown: {
         highlight: {
