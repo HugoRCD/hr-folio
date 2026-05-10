@@ -155,10 +155,12 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   content: {
-    database: {
-      type: 'sqlite',
-      filename: '/tmp/contents.sqlite',
-    },
+    // Pin the build-time DB to sqlite so the NuxtHub preset's auto-derive
+    // (driven by `hub.db`) doesn't leak an unrecognized `type` into
+    // `#content/adapter` on Vercel. Hub Postgres is still used by other
+    // modules (better-auth); Nuxt Content reads its prebundled SQLite
+    // from build assets at runtime regardless.
+    database: { type: 'sqlite' },
     build: {
       markdown: {
         highlight: {
