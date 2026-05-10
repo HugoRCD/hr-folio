@@ -52,7 +52,6 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    '@nuxthub/core',
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxtjs/seo',
@@ -73,13 +72,7 @@ export default defineNuxtConfig({
     './modules/screenshots',
   ],
 
-  hub: {
-    db: 'postgresql',
-    kv: true,
-  },
-
   auth: {
-    hubSecondaryStorage: true,
     redirects: {
       login: '/login',
       guest: '/',
@@ -155,7 +148,7 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   content: {
-    database: { type: 'pglite' },
+    experimental: { sqliteConnector: 'native' },
     build: {
       markdown: {
         highlight: {
