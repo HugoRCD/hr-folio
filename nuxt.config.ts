@@ -61,7 +61,6 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-llms',
     'nuxt-studio',
-    '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
     '@nuxtjs/mcp-toolkit',

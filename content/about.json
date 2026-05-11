@@ -7,13 +7,13 @@
     "country": "United Kingdom"
   },
   "languages": ["French (native)", "English (fluent)"],
-  "bio": "Hugo Richard is a French software engineer and designer based in London, working at Vercel. He's a long-time core contributor and maintainer in the Vue and Nuxt ecosystems — touching Nuxt, Nitro, the official Nuxt website, Nuxt UI, Docus, Nuxt Hub, and now Vercel itself. He builds modular tools the *Nuxt-way*, ships in public, and runs a steady stream of open-source projects on top of his day job. His current focus is **AI and agentic experience around Nuxt — and beyond**: making frameworks and apps first-class citizens for AI agents through MCP, docs-as-AI-context, observability, and agent tooling. His biggest personal project is **evlog**, a structured logging library for TypeScript with first-class AI SDK telemetry; second is **Shelve**, an open-source environment variable manager. His communication style is technical and direct.",
+  "bio": "Hugo Richard is a French software engineer and designer based in London, working at Vercel. He's a long-time core contributor and maintainer in the Vue and Nuxt ecosystems — touching Nuxt core, Nitro, the official Nuxt website, Nuxt UI, and Docus. He builds modular tools the *Nuxt-way*, ships in public, and runs a steady stream of open-source projects on top of his day job. His current focus is **AI and agentic experience around Nuxt — and beyond**: making frameworks and apps first-class citizens for AI agents through MCP, docs-as-AI-context, observability, and agent tooling. His biggest personal project is **evlog**, a structured logging library for TypeScript with first-class AI SDK telemetry; second is **Shelve**, an open-source environment variable manager. His communication style is technical and direct.",
   "currentRole": {
     "company": "Vercel",
     "companyUrl": "https://vercel.com",
     "role": "Software Engineer & Designer",
     "since": "2025",
-    "focus": "Product engineering and design at Vercel, with a strong focus on AI and the agentic experience around Nuxt — and beyond: MCP server tooling for Nuxt, AI assistants and agent skills inside Docus, observability for AI workloads via evlog, AI SDK tools (e.g. github-tools). Continued core contributions to Nuxt Hub, Docus, and the broader Nuxt ecosystem."
+    "focus": "Product engineering and design at Vercel, with a strong focus on AI and the agentic experience around Nuxt — and beyond: MCP server tooling for Nuxt, AI assistants and agent skills inside Docus, observability for AI workloads via evlog, AI SDK tools (e.g. github-tools). Continued core contributions to Docus, Nuxt UI, and the broader Nuxt ecosystem."
   },
   "pastRoles": [
     {
@@ -21,7 +21,7 @@
       "companyUrl": "https://nuxtlabs.com",
       "role": "Software Engineer",
       "period": "2025",
-      "summary": "Engineering across the Nuxt ecosystem — contributed to Nuxt core, Nitro, the official Nuxt website, Nuxt UI (and the unification with UI Pro), Docus, and Nuxt Hub. Helped shape standardised documentation practices across the ecosystem. Continued at Vercel after NuxtLabs joined."
+      "summary": "Engineering across the Nuxt ecosystem — contributed to Nuxt core, Nitro, the official Nuxt website, Nuxt UI (and the unification with UI Pro), and Docus. Helped shape standardised documentation practices across the ecosystem. Continued at Vercel after NuxtLabs joined."
     },
     {
       "company": "Freelance",
@@ -93,12 +93,6 @@
       "url": "https://docus.dev"
     },
     {
-      "name": "Nuxt Hub",
-      "role": "Core contributor",
-      "description": "Core contributor to Nuxt Hub, the Nuxt-native platform for full-stack apps (database, KV, blob, cache, multi-cloud deploys).",
-      "url": "https://hub.nuxt.com"
-    },
-    {
       "name": "GitHub Tools",
       "role": "Creator",
       "description": "AI SDK tools for GitHub — drop-in tools for AI agents to read repos, PRs, issues, branches, and commits, and write with approval. Used by his own portfolio agent.",
@@ -153,7 +147,7 @@
     "Nuxt official website (nuxt.com) — design and engineering contributions.",
     "Nuxt UI — contributor; involved in the unification of Nuxt UI with UI Pro.",
     "Docus — core contributor; recently shipped an AI assistant for docs, MCP page tools, agent-skill discovery via `.well-known`, and observability hooks.",
-    "Nuxt Hub — core contributor.",
+    "Nuxt Hub — occasional contributor.",
     "@nuxtjs/mcp-toolkit — creator and maintainer; defines a Nuxt-native way to expose any Nuxt app as an MCP server (tools, resources, prompts, MCP apps, sessions, observability).",
     "Nuxt Better Auth — integration demo and contributions.",
     "Vercel AI SDK ecosystem — github-tools (AI SDK tools for GitHub), evlog AI SDK telemetry integration, knowledge-agent template for Vercel Labs.",

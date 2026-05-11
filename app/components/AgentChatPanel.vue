@@ -11,7 +11,7 @@ const route = useRoute()
 const router = useRouter()
 const { profile, seo } = useFolioConfig()
 const { messages } = useAgentChat()
-const { user, signOut, loggedIn } = useUserSession()
+const { user, signIn, signOut, loggedIn } = useUserSession()
 
 const { data: folioAccess, refresh: refreshFolioAccess } = await useAsyncData(
   'folio-chat-access',
@@ -386,7 +386,7 @@ const suggestionPillClass =
     >
       <template #header>
         <header
-          class="grid shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-default px-4 py-2.5 sm:px-6"
+          class="grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-2 border-b border-default px-4 py-2.5 sm:px-6"
         >
           <div class="flex min-w-0 justify-start">
             <UButton
@@ -394,21 +394,22 @@ const suggestionPillClass =
               color="neutral"
               variant="ghost"
               size="sm"
-              leading
               leading-icon="i-lucide-arrow-left"
-              label="Back to portfolio"
               class="-ml-1.5 text-muted hover:text-highlighted"
               :ui="{ leadingIcon: 'opacity-65' }"
-            />
+              aria-label="Back to portfolio"
+            >
+              <span class="hidden sm:inline">Back to portfolio</span>
+            </UButton>
           </div>
 
           <div
-            class="pointer-events-none min-w-0 max-w-[min(72vw,18rem)] text-center sm:max-w-xs md:max-w-md"
+            class="pointer-events-none min-w-0 text-center"
             aria-live="polite"
           >
             <p
               v-if="sessionTitle || titleStreaming"
-              class="truncate font-serif text-sm/6 font-medium tracking-tight text-highlighted"
+              class="truncate font-sans text-sm/6 font-medium tracking-tight text-highlighted"
             >
               {{ sessionTitle }}<span
                 v-if="titleStreaming"
@@ -418,7 +419,7 @@ const suggestionPillClass =
             </p>
           </div>
 
-          <div class="flex min-w-0 shrink-0 items-center justify-end gap-4 sm:gap-5">
+          <div class="flex items-center justify-end gap-2 sm:gap-3">
             <UPopover
               v-if="!isOwner && rateRemaining != null"
               :content="{ align: 'end', side: 'bottom', sideOffset: 6 }"
@@ -488,13 +489,18 @@ const suggestionPillClass =
                 </template>
               </UTooltip>
             </template>
-            <NuxtLink
+            <UButton
               v-else
-              to="/login?redirect=/chat"
-              class="font-mono text-[10px] text-muted/30 transition-colors hover:text-muted/60"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              icon="i-lucide-log-in"
+              class="text-muted/40 hover:text-muted/70"
+              aria-label="Sign in"
+              @click="signIn.social({ provider: 'github', callbackURL: '/chat' })"
             >
-              Sign in
-            </NuxtLink>
+              <span class="hidden sm:inline text-[10px] font-mono">Sign in</span>
+            </UButton>
 
             <UTooltip v-if="canClear" text="New conversation">
               <UButton
