@@ -40,6 +40,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': { isr: true },
+    '/login': { prerender: false },
   },
 
   studio: {

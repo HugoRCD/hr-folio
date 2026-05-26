@@ -90,9 +90,18 @@ date: {{date}}
 
 Only the personal account (Hugo / @hugorcd); omit team org accounts (Nuxt, etc.).
 
+## Published posts — last 30 days (full text)
+
+This section is the most important. For each post published in the last 30 days on platform \`x\`, include:
+- Date published
+- Full verbatim text of the post — every word, every line break, every emoji, exactly as published. Do not truncate, summarize, or paraphrase.
+- Impressions and engagement metrics if available
+
+Fetch as many pages as needed. The goal is a complete corpus of Hugo's actual published words so his voice can be studied accurately.
+
 ## Drafts & scheduled
 
-Drafts and scheduled posts (titles, status, tags, scheduled times). Paginate as needed.
+Drafts and scheduled posts for the personal account: title or opening line, status, scheduled time if any. Paginate as needed.
 
 ## Queue & publishing
 
@@ -100,15 +109,11 @@ Queue slots for the day when applicable (\`typefully_get_queue\`; range limits a
 
 ## Published X (day)
 
-Posts with metrics for platform \`x\` for this calendar day (\`typefully_list_social_set_analytics_posts\`): impressions, engagement, notable posts; replies excluded unless relevant.
+Posts published on platform \`x\` for this specific calendar day (\`typefully_list_social_set_analytics_posts\`): impressions, likes, retweets, replies. Flag what performed above or below average.
 
-## Themes & takeaways
+## Themes & patterns
 
-Recurring topics, tone, and what performed best vs weakest.
-
-## Ideas for next posts
-
-~10 short hooks or angles aligned with past themes or filling obvious gaps.`,
+Recurring topics across the last 30 days. What formats (threads, one-liners, announcements) does he use and in what proportion? What tone? What performs best?`,
   },
 } as const satisfies Record<string, IntelligenceSourceDef>
 

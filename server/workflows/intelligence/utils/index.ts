@@ -1,5 +1,5 @@
 export type { MCPConfig } from './mcp.ts'
-export { INTELLIGENCE_MODEL, INTELLIGENCE_MAX_STEPS } from './config.ts'
+export { INTELLIGENCE_MODEL, INTELLIGENCE_FAST_MODEL, INTELLIGENCE_MAX_STEPS } from './config.ts'
 export { getMCPConfig, INTELLIGENCE_SOURCES, type IntelligenceSourceId } from './sources.ts'
 export { fetchSourceData } from './fetch.ts'
 export { getTypefullySocialScopeBlock } from './typefully-scope.ts'

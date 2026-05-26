@@ -11,7 +11,9 @@ function safeCallbackPath(): string {
   return '/'
 }
 
-await signIn.social({ provider: 'github', callbackURL: safeCallbackPath() })
+onMounted(() => {
+  void signIn.social({ provider: 'github', callbackURL: safeCallbackPath() })
+})
 </script>
 
 <template>
