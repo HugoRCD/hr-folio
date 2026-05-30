@@ -25,3 +25,4 @@ minimumReleaseAgeExclude:
   - '@vercel/*'
   - '@ai-sdk/*'
   - 'ai'
+  - '@shelve/cli@5.1.0'

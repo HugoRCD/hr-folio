@@ -28,9 +28,8 @@ Rules:
 - Describe what the user is asking or exploring, not "Chat" or "Conversation".
 - Output nothing except those words.`,
     messages: [{ role: 'user', content: text }],
-    onError: (error) => {
+    onError: () => {
       log.set({ chat: { streamText: 'chat-title-error' } })
-      log.error(error instanceof Error ? error : new Error(String(error)))
     },
   })
 

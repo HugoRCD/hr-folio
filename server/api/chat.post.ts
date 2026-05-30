@@ -69,9 +69,8 @@ export default defineEventHandler(async (event) => {
     onFinish: () => {
       event.waitUntil(mcpClient?.close())
     },
-    onError: (error) => {
+    onError: () => {
       log.set({ chat: { streamText: 'error' } })
-      log.error(error instanceof Error ? error : new Error(String(error)))
       event.waitUntil(mcpClient?.close())
       return 'Something went wrong.'
     },
