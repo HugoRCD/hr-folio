@@ -207,6 +207,10 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   fonts: {
+    defaults: {
+      // Full variable axis — discrete weights from @nuxt/ui defaults render too thin on Chromium.
+      weights: ['100 900'],
+    },
     families: [
       {
         name: 'Redaction',
