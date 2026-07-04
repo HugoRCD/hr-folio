@@ -1,0 +1,10 @@
+{
+  "name": "Personal Agent Template",
+  "category": "ecosystem",
+  "description": "Open-source template for a durable personal AI agent — web chat, Slack, Linear, and long-term memory",
+  "url": "https://personal-agent-template.vercel.app",
+  "github": "https://github.com/vercel-labs/personal-agent-template",
+  "screenshotUrl": "/works/personal-agent-template.png",
+  "date": "2026-06-11",
+  "tags": ["ai", "nuxt", "vercel", "open-source", "eve"]
+}

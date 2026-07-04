@@ -1,48 +1,90 @@
-import { existsSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { createLogger } from 'evlog'
 import { defineNuxtModule } from '@nuxt/kit'
 
-interface ContentFile {
-  id?: string
-  body?: {
-    items: TemplateItem[]
-  }
-}
-
-interface TemplateItem {
+interface WorkEntry {
   name: string
   url?: string
   screenshotUrl?: string
-  screenshotOptions?: Record<string, any>
+  screenshotOptions?: Record<string, unknown>
+}
+
+function screenshotSlug(name: string) {
+  return name.toLowerCase().replace(/\s+/g, '-')
+}
+
+function resolveChromeExecutable() {
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    return process.env.PUPPETEER_EXECUTABLE_PATH
+  }
+
+  const cacheDir = join(homedir(), '.cache', 'puppeteer', 'chrome')
+  if (!existsSync(cacheDir)) return undefined
+
+  const versions = readdirSync(cacheDir)
+    .filter(name => name.startsWith('mac_'))
+    .sort()
+    .reverse()
+
+  for (const version of versions) {
+    const executable = join(
+      cacheDir,
+      version,
+      'chrome-mac-arm64',
+      'Google Chrome for Testing.app',
+      'Contents',
+      'MacOS',
+      'Google Chrome for Testing',
+    )
+    if (existsSync(executable)) return executable
+  }
+
+  return undefined
+}
+
+async function generateScreenshot(work: WorkEntry, logger: ReturnType<typeof createLogger>) {
+  if (work.screenshotUrl || !work.url) return
+
+  const outputDir = join(process.cwd(), 'public/works')
+  const filename = join(outputDir, `${screenshotSlug(work.name)}.png`)
+
+  if (existsSync(filename)) return
+
+  mkdirSync(outputDir, { recursive: true })
+
+  const chromeExecutable = resolveChromeExecutable()
+  if (!chromeExecutable) {
+    logger.warn(`Chrome for Testing not found — run pnpm screenshots:install`)
+    return
+  }
+
+  try {
+    const { default: captureWebsite } = await import('capture-website')
+    logger.info(`Generating screenshot for ${work.name}...`)
+    await captureWebsite.file(work.url, filename, {
+      ...(work.screenshotOptions || { darkMode: true }),
+      launchOptions: {
+        headless: true,
+        executablePath: chromeExecutable,
+      },
+    })
+    logger.info(`Screenshot for ${work.name} generated`)
+  } catch (error) {
+    logger.error(`Error generating screenshot for ${work.name}: ${error}`)
+  }
 }
 
 export default defineNuxtModule((_, nuxt) => {
   if (!nuxt.options.dev) return
+
+  process.env.PUPPETEER_CACHE_DIR = join(homedir(), '.cache', 'puppeteer')
+
   const logger = createLogger({ tag: 'Screenshots' })
 
-  nuxt.hook('content:file:afterParse', async ({ content: file }: { content: ContentFile }) => {
-    if (file.id?.includes('works/')) {
-      const template = file as TemplateItem
-      const url = template.screenshotUrl || template.url
-      if (!url || template.screenshotUrl) return
-
-      const name = template.name.toLowerCase().replace(/\s/g, '-')
-      const filename = join(process.cwd(), 'public/works', `${name}.png`)
-
-      if (existsSync(filename)) return
-
-      try {
-        const { default: captureWebsite } = await import('capture-website')
-        logger.info(`Generating screenshot for ${template.name}...`)
-        await captureWebsite.file(url, filename, {
-          ...(template.screenshotOptions || { darkMode: true }),
-          launchOptions: { headless: true },
-        })
-        logger.info(`Screenshot for ${template.name} generated`)
-      } catch (error) {
-        logger.error(`Error generating screenshot for ${template.name}: ${error}`)
-      }
-    }
+  nuxt.hook('content:file:afterParse', async ({ file, content }) => {
+    if (!file.id.includes('works/')) return
+    await generateScreenshot(content as WorkEntry, logger)
   })
 })

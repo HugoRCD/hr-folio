@@ -13,7 +13,9 @@
     "lint:fix": "eslint . --fix",
     "db:generate": "nuxt db generate",
     "db:migrate": "nuxt db migrate",
-    "workflow:web": "npx workflow web"
+    "workflow:web": "npx workflow web",
+    "screenshots": "node scripts/generate-screenshots.mjs",
+    "screenshots:install": "puppeteer browsers install chrome"
   },
   "packageManager": "pnpm@11.1.3",
   "dependencies": {

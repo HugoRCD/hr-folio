@@ -4,6 +4,7 @@
   "description": "AI SDK tools for GitHub",
   "url": "https://github-tools.com",
   "github": "https://github.com/HugoRCD/github-tools",
+  "screenshotUrl": "/works/github-tools.png",
   "date": "2026-02-21",
   "tags": ["typescript", "ai", "open-source"]
 }
