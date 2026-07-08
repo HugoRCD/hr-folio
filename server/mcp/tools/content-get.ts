@@ -31,41 +31,41 @@ export default defineMcpTool({
     { kind: 'work', stem: 'nuxt-mcp-toolkit' },
   ],
   handler: async ({ kind, path, stem }) => {
-    const event = useEvent()
-
     if (kind === 'page') {
       if (!path?.trim()) {
         throw createError({ statusCode: 400, message: 'path is required when kind is page' })
       }
       const p = normalizePath(path)
-      for (const col of ['writing', 'clipboard', 'content'] as const) {
-        const doc = await queryCollection(event, col).path(p).first()
-        if (!doc) continue
-        if (isDraftDoc(doc as { draft?: boolean })) {
-          throw createError({ statusCode: 404, message: `No page found for path ${p}` })
-        }
-        return {
-          collection: col,
-          path: doc.path,
-          title: doc.title,
-          description: doc.description,
-          date: doc.date,
-          seo: doc.seo,
-          ...('tags' in doc && doc.tags !== undefined ? { tags: doc.tags } : {}),
-          ...('draft' in doc && doc.draft !== undefined ? { draft: doc.draft } : {}),
-          rawbody: typeof doc.rawbody === 'string' ? doc.rawbody : undefined,
-        }
+      const page = await getPageByPath(p)
+      if (!page) {
+        throw createError({ statusCode: 404, message: `No page found for path ${p}` })
       }
-      throw createError({ statusCode: 404, message: `No page found for path ${p}` })
+      if (isDraftDoc(page)) {
+        throw createError({ statusCode: 404, message: `No page found for path ${p}` })
+      }
+
+      let collection: 'writing' | 'clipboard' | 'content' = 'content'
+      if (p.startsWith('/writing/')) collection = 'writing'
+      else if (p.startsWith('/clipboard/')) collection = 'clipboard'
+
+      return {
+        collection,
+        path: page.path,
+        title: page.title,
+        description: page.description,
+        date: page.date,
+        ...(page.tags ? { tags: page.tags } : {}),
+        ...(page.draft !== undefined ? { draft: page.draft } : {}),
+        rawbody: page.rawbody,
+      }
     }
 
     if (!stem?.trim()) {
       throw createError({ statusCode: 400, message: 'stem is required when kind is work' })
     }
-    const s = stem.trim()
-    const work = await queryCollection(event, 'works').where('stem', '=', s).first()
+    const work = await getWorkByStem(stem.trim())
     if (!work) {
-      throw createError({ statusCode: 404, message: `No work found for stem "${s}"` })
+      throw createError({ statusCode: 404, message: `No work found for stem "${stem}"` })
     }
     return {
       collection: 'works' as const,

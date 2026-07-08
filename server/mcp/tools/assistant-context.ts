@@ -35,28 +35,13 @@ export default defineMcpTool({
     const siteUrl = folio.seo.url.replace(/\/$/, '')
 
     const [writings, works, clipboards, home, about] = await Promise.all([
-      queryCollection(event, 'writing')
-        .order('date', 'DESC')
-        .limit(writingLimit + 8)
-        .all()
-        .then(rows => rows
-          .filter(p => !(p as { draft?: boolean }).draft)
-          .slice(0, writingLimit)),
-      queryCollection(event, 'works')
-        .order('date', 'DESC')
-        .limit(worksLimit)
-        .all(),
+      listWriting(false).then(rows => rows.slice(0, writingLimit)),
+      listWorks().then(rows => rows.slice(0, worksLimit)),
       clipboardLimit > 0
-        ? queryCollection(event, 'clipboard')
-          .order('date', 'DESC')
-          .limit(clipboardLimit + 8)
-          .all()
-          .then(rows => rows
-            .filter(c => !(c as { draft?: boolean }).draft)
-            .slice(0, clipboardLimit))
+        ? listClipboard(false).then(rows => rows.slice(0, clipboardLimit))
         : Promise.resolve([]),
-      queryCollection(event, 'content').path('/').first(),
-      queryCollection(event, 'about').first(),
+      getPageByPath('/'),
+      getAbout(),
     ])
 
     const absolute = (path: string) =>
@@ -110,7 +95,7 @@ export default defineMcpTool({
         title: p.title,
         description: p.description,
         date: p.date,
-        tags: 'tags' in p ? p.tags : undefined,
+        tags: p.tags,
         url: absolute(p.path),
       })),
       works: works.map(w => ({

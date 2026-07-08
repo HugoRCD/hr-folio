@@ -35,7 +35,6 @@ export default defineMcpTool({
   ],
   cache: '2m',
   handler: async ({ collections, search, includeDrafts, limitPerCollection }) => {
-    const event = useEvent()
     const want = collections ?? (['content', 'writing', 'clipboard', 'works'] as const)
     const q = search?.trim().toLowerCase() ?? ''
 
@@ -54,10 +53,7 @@ export default defineMcpTool({
 
     for (const col of want) {
       if (col === 'works') {
-        let rows = await queryCollection(event, 'works')
-          .order('date', 'DESC')
-          .limit(limitPerCollection)
-          .all()
+        let rows = (await listWorks()).slice(0, limitPerCollection)
         if (q) {
           rows = rows.filter(
             w =>
@@ -81,28 +77,34 @@ export default defineMcpTool({
         continue
       }
 
-      let rows = await queryCollection(event, col)
-        .order('date', 'DESC')
-        .limit(limitPerCollection)
-        .all()
+      const rows = col === 'writing'
+        ? await listWriting(includeDrafts)
+        : col === 'clipboard'
+          ? await listClipboard(includeDrafts)
+          : (await listContentPages()).slice(0, limitPerCollection).map(item => ({
+            path: item.path,
+            title: typeof item.data.title === 'string' ? item.data.title : undefined,
+            description: typeof item.data.description === 'string' ? item.data.description : undefined,
+            date: typeof item.data.date === 'string' ? item.data.date : undefined,
+            draft: Boolean(item.data.draft),
+            rawbody: '',
+          }))
 
-      if ((col === 'writing' || col === 'clipboard') && !includeDrafts) {
-        rows = rows.filter(r => !(r as { draft?: boolean }).draft)
-      }
+      let filtered = rows.slice(0, limitPerCollection)
 
       if (q) {
-        rows = rows.filter((r) => {
-          const raw = typeof r.rawbody === 'string' ? r.rawbody : ''
+        filtered = filtered.filter((r) => {
+          const raw = 'rawbody' in r && typeof r.rawbody === 'string' ? r.rawbody : ''
           return (
             match(r.title)
             || match(r.description)
-            || ('tags' in r && matchTags(r.tags))
+            || ('tags' in r && matchTags(r.tags as string[] | undefined))
             || match(raw.slice(0, 8000))
           )
         })
       }
 
-      out[col] = rows.map((r) => ({
+      out[col] = filtered.map((r) => ({
         path: r.path,
         title: r.title,
         description: r.description,

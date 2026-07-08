@@ -631,22 +631,20 @@ const suggestionPillClass =
                         :text="part.text"
                         :streaming="isPartStreaming(part)"
                       >
-                        <MDCCached
-                          :value="part.text"
-                          :cache-key="`reasoning-${message.id}-${index}`"
-                          :parser-options="{ highlight: false }"
+                        <Comark
+                          :markdown="part.text"
                           :components="mdcChatComponents"
+                          :streaming="isPartStreaming(part)"
                           class="*:first:mt-0 *:last:mb-0"
                         />
                       </UChatReasoning>
 
                       <template v-else-if="isTextUIPart(part) && part.text.length > 0">
-                        <MDCCached
+                        <Comark
                           v-if="message.role === 'assistant'"
-                          :value="part.text"
-                          :cache-key="`${message.id}-${index}`"
-                          :parser-options="{ highlight: false }"
+                          :markdown="part.text"
                           :components="mdcChatComponents"
+                          :streaming="isPartStreaming(part)"
                           class="*:first:mt-0 *:last:mb-0"
                         />
                         <p v-else-if="message.role === 'user'" class="whitespace-pre-wrap text-sm/6">

@@ -22,6 +22,7 @@ logs
 .DS_Store
 .fleet
 .idea
+comark-cms.d.ts
 
 # Local env files
 .env

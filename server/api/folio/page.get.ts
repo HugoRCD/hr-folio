@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid path' })
   }
 
-  const page = await queryCollection(event, 'content').path(path).first()
+  const page = await getPageByPath(path)
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
   }

@@ -1,5 +1,7 @@
 import type { H3Event } from 'h3'
 import type { FolioClipboardListItem, FolioWritingListItem } from '../../types/folio-lists'
+import { listClipboard, listWriting } from '../utils/folio-cms'
+import { readingMinutesFromMarkdown } from '../utils/reading-minutes'
 
 async function includeDraftsForRequest(event: H3Event): Promise<boolean> {
   const session = await getUserSession(event)
@@ -11,13 +13,7 @@ export type { FolioClipboardListItem, FolioWritingListItem }
 
 export async function getWritingListForRequest(event: H3Event): Promise<FolioWritingListItem[]> {
   const includeDrafts = await includeDraftsForRequest(event)
-  let rows = await queryCollection(event, 'writing')
-    .order('date', 'DESC')
-    .all()
-
-  if (!includeDrafts) {
-    rows = rows.filter(r => !r.draft)
-  }
+  const rows = await listWriting(includeDrafts)
 
   return rows.map(r => ({
     path: r.path,
@@ -26,19 +22,13 @@ export async function getWritingListForRequest(event: H3Event): Promise<FolioWri
     date: r.date,
     tags: r.tags,
     draft: Boolean(r.draft),
-    readingMinutes: readingMinutesFromMarkdown(typeof r.rawbody === 'string' ? r.rawbody : ''),
+    readingMinutes: readingMinutesFromMarkdown(r.rawbody ?? ''),
   }))
 }
 
 export async function getClipboardListForRequest(event: H3Event): Promise<FolioClipboardListItem[]> {
   const includeDrafts = await includeDraftsForRequest(event)
-  let rows = await queryCollection(event, 'clipboard')
-    .order('date', 'DESC')
-    .all()
-
-  if (!includeDrafts) {
-    rows = rows.filter(r => !r.draft)
-  }
+  const rows = await listClipboard(includeDrafts)
 
   return rows.map(r => ({
     path: r.path,

@@ -43,25 +43,14 @@ export default defineNuxtConfig({
     '/login': { prerender: false },
   },
 
-  studio: {
-    route: '/admin',
-    repository: {
-      provider: 'github',
-      owner: 'HugoRCD',
-      repo: 'hr-folio',
-    }
-  },
-
   modules: [
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxtjs/seo',
-    '@nuxt/content',
+    '@comark/nuxt',
     '@nuxt/image',
     '@nuxt/scripts',
     '@vueuse/nuxt',
-    'nuxt-llms',
-    'nuxt-studio',
     '@vercel/analytics',
     '@vercel/speed-insights',
     '@nuxtjs/mcp-toolkit',
@@ -85,8 +74,8 @@ export default defineNuxtConfig({
 
   mcp: {
     name: 'Hugo Richard — Portfolio',
-    description: 'Read-only access to Hugo Richard’s portfolio content: pages, articles, clipboard notes, and project metadata from Nuxt Content.',
-    instructions: `This server exposes Hugo Richard’s public portfolio (hugorcd.com), built with Nuxt Content.
+    description: 'Read-only access to Hugo Richard’s portfolio content: pages, articles, clipboard notes, and project metadata from Comark CMS.',
+    instructions: `This server exposes Hugo Richard’s public portfolio (hugorcd.com), built with Comark CMS.
 
 Collections:
 - content: main site pages (Markdown/MDC).
@@ -105,41 +94,8 @@ The \`about\` block is the single source of truth for any biographical or profes
 Respect draft writing and clipboard entries only when includeDrafts is true on content-list. Prefer raw markdown (rawbody) over rendered AST for analysis.`,
   },
 
-  llms: {
-    domain: 'https://hugorcd.com',
-    title: 'Hugo Richard Portfolio',
-    description: 'Software Engineer & Designer at Vercel, specializing in Vue.js and Nuxt ecosystem',
-    full: {
-      title: 'Hugo Richard Portfolio - Complete Content',
-      description: 'Comprehensive documentation of Hugo Richard\'s professional experience, projects, skills, and writings as a Software Engineer at Vercel.',
-    },
-    sections: [
-      {
-        title: 'Home',
-        description: 'Overview of Hugo Richard\'s professional profile and featured projects.',
-        contentCollection: 'content',
-        contentFilters: [{ field: 'path', operator: '=', value: '/' }]
-      },
-      {
-        title: 'Writings',
-        description: 'Technical articles, tutorials, and insights about frontend development, Vue.js, and the Nuxt ecosystem.',
-        contentCollection: 'writing',
-        contentFilters: [
-          { field: 'path', operator: 'LIKE', value: '/writing%' },
-          { field: 'draft', operator: '=', value: false as unknown as string },
-        ],
-      },
-      {
-        title: 'Clipboard',
-        description: 'Short notes, links, and weekly picks (published only).',
-        contentCollection: 'clipboard',
-        contentFilters: [
-          { field: 'path', operator: 'LIKE', value: '/clipboard%' },
-          { field: 'draft', operator: '=', value: false as unknown as string },
-        ],
-      },
-    ],
-    notes: ['Hugo Richard is a Software Engineer & Designer at Vercel, contributing to the Nuxt ecosystem. This portfolio showcases his professional work, technical writings, and projects.']
+  sitemap: {
+    sources: ['/api/__sitemap_urls__'],
   },
 
   colorMode: {
@@ -147,25 +103,23 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
     fallback: 'dark',
   },
 
-  content: {
-    experimental: { sqliteConnector: 'native' },
-    build: {
-      markdown: {
-        highlight: {
-          langs: ['ts', 'js', 'json', 'vue', 'dockerfile', 'docker', 'yaml', 'css'],
-          theme: {
-            light: 'github-light',
-            dark: 'github-dark',
-            default: 'github-dark'
-          }
-        }
+  components: {
+    dirs: [
+      '~/components',
+      {
+        path: '~/components/content',
+        pathPrefix: false,
+        global: true,
       },
-    },
+    ],
   },
 
   nitro: {
     experimental: {
       asyncContext: true,
+    },
+    externals: {
+      inline: ['@comark/cms', 'comark'],
     },
     /** Long-lived MCP stream (SSE) + chat tool loops — avoid Vercel 504 on GET /mcp */
     vercel: {
@@ -174,7 +128,7 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
       },
     },
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
       routes: [
         '/',
         '/llms.txt',
@@ -207,11 +161,9 @@ Respect draft writing and clipboard entries only when includeDrafts is true on c
   },
 
   fonts: {
-    defaults: {
-      // Full variable axis — discrete weights from @nuxt/ui defaults render too thin on Chromium.
-      weights: ['100 900'],
-    },
     families: [
+      { name: 'Geist', weights: ['100 900'], global: true },
+      { name: 'Geist Mono', weights: ['100 900'], global: true },
       {
         name: 'Redaction',
         src: '/fonts/Redaction-Regular.ttf',

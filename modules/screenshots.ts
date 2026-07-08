@@ -83,8 +83,14 @@ export default defineNuxtModule((_, nuxt) => {
 
   const logger = createLogger({ tag: 'Screenshots' })
 
-  nuxt.hook('content:file:afterParse', async ({ file, content }) => {
-    if (!file.id.includes('works/')) return
-    await generateScreenshot(content as WorkEntry, logger)
+  nuxt.hook('ready', async () => {
+    const { cms } = await import('../server/utils/cms')
+
+    cms.hooks.hook('watch:file:update', async (_source, key, file) => {
+      if (!key.includes('1.works/') || !key.endsWith('.json')) return
+      await generateScreenshot(file.data as WorkEntry, logger)
+    })
+
+    await cms.watch()
   })
 })

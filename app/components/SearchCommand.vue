@@ -23,9 +23,9 @@ const { data: clipboards } = await useFetch<FolioClipboardListItem[]>('/api/foli
   credentials: 'include',
 })
 
-const { data: projects } = await useAsyncData('cmd-works', () =>
-  queryCollection('works').order('date', 'DESC').all(),
-)
+const { data: projects } = await useFetch<FolioWork[]>('/api/folio/works', {
+  key: 'cmd-works',
+})
 
 const mcpUrl = 'https://hugorcd.com/mcp'
 const skillsCmd = 'npx skills add https://hugorcd.com'

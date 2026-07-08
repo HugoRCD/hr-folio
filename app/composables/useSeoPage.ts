@@ -1,6 +1,6 @@
-import type { ContentCollectionItem } from '@nuxt/content'
+import type { FolioPage } from '~/types/folio-page'
 
-export function useSeoPage(page: ContentCollectionItem, isWriting: boolean) {
+export function useSeoPage(page: FolioPage, isWriting: boolean) {
   const route = useRoute()
   const { seo, profile } = useFolioConfig()
 
