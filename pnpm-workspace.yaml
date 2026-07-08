@@ -25,3 +25,6 @@ minimumReleaseAgeExclude:
   - '@ai-sdk/*'
   - 'ai'
   - '@shelve/cli@5.1.0'
+  # Comark (preview tarball via pkg.pr.new — not on npm registry)
+  - '@comark/*'
+  - 'comark'
