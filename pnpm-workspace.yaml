@@ -26,3 +26,8 @@ minimumReleaseAgeExclude:
   - '@ai-sdk/*'
   - 'ai'
   - '@shelve/cli@5.1.0'
+  - '@iconify-json/simple-icons@1.2.91'
+  - '@unhead/bundler@3.2.1'
+  - nuxtseo-shared@5.3.3
+  - site-config-stack@4.1.2
+  - unhead@3.2.1
