@@ -17,7 +17,6 @@ const selectedTags = ref<string[]>([])
 
 const { data: allPosts } = await useFetch<FolioWritingListItem[]>('/api/folio/writing', {
   key: 'folio-writing-list',
-  credentials: 'include',
 })
 
 const allTags = computed(() => {
@@ -112,15 +111,6 @@ const { highlightedIndex } = isFullPage.value
       >
         <span class="flex min-w-0 items-center gap-2 font-medium text-highlighted decoration-primary group-hover:underline">
           <span class="truncate">{{ post.title }}</span>
-          <UBadge
-            v-if="post.draft"
-            size="xs"
-            color="warning"
-            variant="subtle"
-            class="shrink-0"
-          >
-            Draft
-          </UBadge>
         </span>
         <span class="flex shrink-0 items-baseline gap-2 text-sm text-muted/60">
           <span v-if="isFullPage && post.readingMinutes" class="text-muted/30">{{ post.readingMinutes }} min</span>

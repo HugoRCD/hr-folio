@@ -1,10 +1,6 @@
 import { defineCollection, defineContentConfig, z } from '@nuxt/content'
 import { defineSitemapSchema } from '@nuxtjs/sitemap/content'
 
-function publishedForSitemap(entry: { draft?: boolean }) {
-  return !entry.draft
-}
-
 export default defineContentConfig({
   collections: {
     content: defineCollection({
@@ -15,11 +11,9 @@ export default defineContentConfig({
         description: z.string().optional(),
         date: z.string().optional(),
         image: z.string().optional(),
-        draft: z.boolean().default(false),
         rawbody: z.string().optional(),
         sitemap: defineSitemapSchema({
           name: 'content',
-          filter: publishedForSitemap,
         }),
       }),
     }),
@@ -30,12 +24,10 @@ export default defineContentConfig({
         title: z.string(),
         description: z.string(),
         date: z.string(),
-        draft: z.boolean().default(false),
         tags: z.array(z.string()).optional(),
         rawbody: z.string(),
         sitemap: defineSitemapSchema({
           name: 'writing',
-          filter: publishedForSitemap,
         }),
       }),
     }),
@@ -45,11 +37,9 @@ export default defineContentConfig({
       schema: z.object({
         title: z.string(),
         date: z.string(),
-        draft: z.boolean().default(false),
         rawbody: z.string(),
         sitemap: defineSitemapSchema({
           name: 'clipboard',
-          filter: publishedForSitemap,
         }),
       }),
     }),
