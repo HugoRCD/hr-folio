@@ -41,6 +41,7 @@ const groups = computed<CommandPaletteGroup[]>(() => [
       { label: 'Home', icon: 'i-lucide-home', to: '/' },
       { label: 'Writing', icon: 'i-lucide-pen-line', to: '/writing' },
       { label: 'Works', icon: 'i-lucide-layers', to: '/works' },
+      { label: 'Chat', icon: 'i-lucide-bot', to: '/chat' },
     ],
   },
   {

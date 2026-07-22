@@ -7,6 +7,9 @@
 dist
 .swc
 
+# eve agent build/dev artifacts
+.eve
+
 # Node dependencies
 node_modules
 

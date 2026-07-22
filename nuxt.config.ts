@@ -57,12 +57,21 @@ export default defineNuxtConfig({
     '@vercel/speed-insights',
     '@nuxtjs/mcp-toolkit',
     'evlog/nuxt',
+    'eve/nuxt',
     './modules/skills',
     './modules/screenshots',
   ],
 
   evlog: {
     env: { service: 'hr-folio' },
+  },
+
+  // vercel.json is hand-maintained (see file) with the stable `services` /
+  // `rewrites` schema. The installed eve/nuxt version still defaults to
+  // writing the legacy `experimentalServices` field, which Vercel no longer
+  // routes — disable that so it doesn't clobber the file on every boot.
+  eve: {
+    configureVercelJson: false,
   },
 
   mcp: {
