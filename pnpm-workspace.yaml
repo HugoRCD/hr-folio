@@ -29,5 +29,9 @@ minimumReleaseAgeExclude:
   - '@iconify-json/simple-icons@1.2.91'
   - '@unhead/bundler@3.2.1'
   - nuxtseo-shared@5.3.3
+  - nuxtseo-shared@5.3.6
   - site-config-stack@4.1.2
   - unhead@3.2.1
+  - '@github-tools/sdk@1.8.1'
+  - evlog@2.22.3
+  - satori@0.28.2
