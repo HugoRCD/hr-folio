@@ -2,6 +2,9 @@
   "name": "hr-folio",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "automd": "automd",
     "build": "nuxt build",
@@ -11,11 +14,13 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "agent": "eve dev",
     "screenshots": "node scripts/generate-screenshots.mjs",
     "screenshots:install": "puppeteer browsers install chrome"
   },
   "packageManager": "pnpm@11.15.1",
   "dependencies": {
+    "@github-tools/sdk": "^1.8.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/lucide": "^1.2.118",
     "@iconify-json/simple-icons": "^1.2.91",
@@ -29,8 +34,11 @@
     "@nuxtjs/sitemap": "^8.3.0",
     "@shelve/cli": "^5.2.0",
     "@upstash/redis": "^1.38.0",
+    "@vercel/connect": "^0.4.2",
     "@vueuse/nuxt": "^14.3.0",
+    "ai": "^7.0.31",
     "capture-website": "^5.1.0",
+    "eve": "^0.26.0",
     "evlog": "^2.22.3",
     "motion-plus-vue": "^1.8.1",
     "motion-v": "^2.3.0",
