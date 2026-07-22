@@ -8,14 +8,11 @@ export default defineNitroPlugin((nitroApp) => {
     const abs = (path: string) =>
       path.startsWith('http') ? path : `${domain}${path.startsWith('/') ? path : `/${path}`}`
 
-    const [writingRows, clipboardRows, workRows] = await Promise.all([
+    const [writing, clipboard, workRows] = await Promise.all([
       queryCollection(event, 'writing').where('path', 'LIKE', '/writing/%').order('date', 'DESC').all(),
       queryCollection(event, 'clipboard').where('path', 'LIKE', '/clipboard/%').order('date', 'DESC').all(),
       queryCollection(event, 'works').order('date', 'DESC').all(),
     ])
-
-    const writing = writingRows.filter(r => !(r as { draft?: boolean }).draft)
-    const clipboard = clipboardRows.filter(r => !(r as { draft?: boolean }).draft)
 
     const lines = [
       '',
@@ -23,7 +20,7 @@ export default defineNitroPlugin((nitroApp) => {
       '',
       '# Plain site index (for LLMs)',
       '',
-      'Sections above may still contain MDC shortcuts (`::writing-list`, `::projects`, `:contact-links`). The lists below duplicate **published** URLs and metadata in plain Markdown.',
+      'Sections above may still contain MDC shortcuts (`::writing-list`, `::projects`, `:contact-links`). The lists below duplicate URLs and metadata in plain Markdown.',
       '',
       '## Writing',
       '',

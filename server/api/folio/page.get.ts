@@ -10,6 +10,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
   }
 
-  await assertPublishedOrOwner(event, page)
   return page
 })

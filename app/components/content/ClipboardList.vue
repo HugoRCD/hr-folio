@@ -9,7 +9,6 @@ const isFullPage = computed(() => limit === 0)
 
 const { data: allPosts } = await useFetch<FolioClipboardListItem[]>('/api/folio/clipboard', {
   key: 'folio-clipboard-list',
-  credentials: 'include',
 })
 
 const posts = computed(() => {
@@ -36,15 +35,6 @@ const showViewAll = computed(() => limit > 0)
       >
         <span class="flex min-w-0 items-center gap-2 font-medium text-highlighted decoration-primary group-hover:underline">
           <span class="truncate">{{ post.title }}</span>
-          <UBadge
-            v-if="post.draft"
-            size="xs"
-            color="warning"
-            variant="subtle"
-            class="shrink-0"
-          >
-            Draft
-          </UBadge>
         </span>
         <span class="shrink-0 text-sm text-muted/60">
           {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) }}

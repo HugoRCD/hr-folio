@@ -41,9 +41,6 @@ export default defineMcpTool({
       for (const col of ['writing', 'clipboard', 'content'] as const) {
         const doc = await queryCollection(event, col).path(p).first()
         if (!doc) continue
-        if (isDraftDoc(doc as { draft?: boolean })) {
-          throw createError({ statusCode: 404, message: `No page found for path ${p}` })
-        }
         return {
           collection: col,
           path: doc.path,
@@ -52,7 +49,6 @@ export default defineMcpTool({
           date: doc.date,
           seo: doc.seo,
           ...('tags' in doc && doc.tags !== undefined ? { tags: doc.tags } : {}),
-          ...('draft' in doc && doc.draft !== undefined ? { draft: doc.draft } : {}),
           rawbody: typeof doc.rawbody === 'string' ? doc.rawbody : undefined,
         }
       }

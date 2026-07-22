@@ -37,11 +37,8 @@ export default defineMcpTool({
     const [writings, works, clipboards, home, about] = await Promise.all([
       queryCollection(event, 'writing')
         .order('date', 'DESC')
-        .limit(writingLimit + 8)
-        .all()
-        .then(rows => rows
-          .filter(p => !(p as { draft?: boolean }).draft)
-          .slice(0, writingLimit)),
+        .limit(writingLimit)
+        .all(),
       queryCollection(event, 'works')
         .order('date', 'DESC')
         .limit(worksLimit)
@@ -49,11 +46,8 @@ export default defineMcpTool({
       clipboardLimit > 0
         ? queryCollection(event, 'clipboard')
           .order('date', 'DESC')
-          .limit(clipboardLimit + 8)
+          .limit(clipboardLimit)
           .all()
-          .then(rows => rows
-            .filter(c => !(c as { draft?: boolean }).draft)
-            .slice(0, clipboardLimit))
         : Promise.resolve([]),
       queryCollection(event, 'content').path('/').first(),
       queryCollection(event, 'about').first(),
@@ -132,7 +126,7 @@ export default defineMcpTool({
         writingIndex: absolute('/writing'),
         worksIndex: absolute('/works'),
         clipboardIndex: absolute('/clipboard'),
-        deeperQueries: 'Use content-list and content-get for full text, search, and drafts.',
+        deeperQueries: 'Use content-list and content-get for full text and search.',
       },
     }
   },

@@ -18,10 +18,6 @@ export default defineMcpTool({
       .string()
       .optional()
       .describe('Case-insensitive filter on titles, descriptions, names, URLs, tags, category, and a prefix of markdown body.'),
-    includeDrafts: z
-      .boolean()
-      .default(false)
-      .describe('When true, include writing and clipboard entries marked draft.'),
     limitPerCollection: z
       .number()
       .min(1)
@@ -30,11 +26,11 @@ export default defineMcpTool({
       .describe('Maximum rows per collection before search filtering.'),
   },
   inputExamples: [
-    { includeDrafts: false, limitPerCollection: 80 },
-    { collections: ['writing', 'works'], search: 'nuxt', includeDrafts: false },
+    { limitPerCollection: 80 },
+    { collections: ['writing', 'works'], search: 'nuxt' },
   ],
   cache: '2m',
-  handler: async ({ collections, search, includeDrafts, limitPerCollection }) => {
+  handler: async ({ collections, search, limitPerCollection }) => {
     const event = useEvent()
     const want = collections ?? (['content', 'writing', 'clipboard', 'works'] as const)
     const q = search?.trim().toLowerCase() ?? ''
@@ -86,10 +82,6 @@ export default defineMcpTool({
         .limit(limitPerCollection)
         .all()
 
-      if ((col === 'writing' || col === 'clipboard') && !includeDrafts) {
-        rows = rows.filter(r => !(r as { draft?: boolean }).draft)
-      }
-
       if (q) {
         rows = rows.filter((r) => {
           const raw = typeof r.rawbody === 'string' ? r.rawbody : ''
@@ -108,9 +100,6 @@ export default defineMcpTool({
         description: r.description,
         date: r.date,
         ...('tags' in r && r.tags ? { tags: r.tags } : {}),
-        ...((col === 'writing' || col === 'clipboard')
-          ? { draft: Boolean((r as { draft?: boolean }).draft) }
-          : {}),
       }))
     }
 
