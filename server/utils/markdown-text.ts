@@ -1,23 +1,16 @@
-const WORDS_PER_MINUTE = 200
-
 /** Comark nodes are compact tuples `[tag, props, ...children]`, text leaves are plain strings. */
 type MarkdownNode = string | [string, Record<string, unknown>, ...unknown[]]
 
-function collectText(nodes: unknown[] | undefined): string {
+/** Flattens parsed Comark `nodes` into a plain-text string, for search/preview purposes. */
+export function plainTextFromNodes(nodes: unknown[] | undefined): string {
   if (!nodes?.length) return ''
   let text = ''
   for (const node of nodes as MarkdownNode[]) {
     if (typeof node === 'string') {
       text += `${node} `
     } else if (Array.isArray(node)) {
-      text += collectText(node.slice(2))
+      text += plainTextFromNodes(node.slice(2))
     }
   }
-  return text
-}
-
-export function useReadingTime(nodes: unknown[] | undefined): number {
-  const words = collectText(nodes).split(/\s+/).filter(Boolean).length
-  if (!words) return 0
-  return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE))
+  return text.trim()
 }

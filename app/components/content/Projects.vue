@@ -42,10 +42,10 @@ watch(searchQuery, (q) => {
   }
 })
 
-const { data: allProjects } = await useAsyncData('projects', () =>
-  queryCollection('works')
-    .all()
-)
+const { data: allProjects } = await useAsyncData('projects', async () => {
+  const items = await useCms().list(['works'])
+  return items.map(item => item.data as WorkData)
+})
 
 const featuredNames = ['Evlog', 'Shelve', 'Canvas', 'GitHub Tools']
 const featuredWorkNames = ['Nuxt MCP Toolkit', 'Docus', 'Nuxt.com', 'Nuxt UI', 'Knowledge Agent', 'Comark']

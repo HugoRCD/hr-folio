@@ -14,9 +14,12 @@ const { data: clipboards } = await useFetch<FolioClipboardListItem[]>('/api/foli
   key: 'folio-clipboard-cmd',
 })
 
-const { data: projects } = await useAsyncData('cmd-works', () =>
-  queryCollection('works').order('date', 'DESC').all(),
-)
+const { data: projects } = await useAsyncData('cmd-works', async () => {
+  const items = await useCms().list(['works'])
+  return items
+    .map(item => item.data as WorkData)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+})
 
 const mcpUrl = 'https://hugorcd.com/mcp'
 const skillsCmd = 'npx skills add https://hugorcd.com'
