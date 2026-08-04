@@ -160,6 +160,7 @@ Prefer raw markdown (rendered from the parsed body) over the AST for analysis.`,
         weights: [400],
         global: true,
       },
+      { name: 'Geist', provider: 'npm' }
     ]
   },
 })
