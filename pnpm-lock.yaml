@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@comark/cms':
-        specifier: ^0.1.0
-        version: 0.1.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1)
       '@comark/nuxt':
         specifier: ^0.6.0
         version: 0.6.0(25a5c448473c6ac56ac3920cc047cba1)
@@ -62,6 +59,9 @@ importers:
       comark:
         specifier: ^0.6.0
         version: 0.6.0(shiki@4.4.1)
+      comark-content:
+        specifier: ^0.2.0
+        version: 0.2.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1)
       evlog:
         specifier: ^2.24.0
         version: 2.24.0(@nuxt/kit@4.5.1(magic-string@1.0.0)(magicast@0.5.4)(oxc-parser@0.140.0)(rolldown@1.2.0)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.0)(rollup@4.62.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))))(ai@6.0.230(zod@4.4.3))(express@5.2.1(supports-color@10.2.2))(h3@1.15.11)(hono@4.12.31)(nitropack@2.13.4(@parcel/watcher@2.6.0)(@upstash/redis@1.38.1)(oxc-parser@0.140.0)(rolldown@1.2.0)(srvx@0.11.22)(supports-color@10.2.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))(ofetch@1.5.1)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))
@@ -341,10 +341,6 @@ packages:
 
   '@colordx/core@5.5.0':
     resolution: {integrity: sha512-3PxTH8itZzltK0U9jTwVVnjLXvnDYuq3m+QXsHkENxWiPRh4WaoLcs1SQjqgZ55kS+QyirpH5BVwzP2gMVG6EQ==}
-
-  '@comark/cms@0.1.0':
-    resolution: {integrity: sha512-coL1CcYkrhXRxLbTkPp8baAIy6EySWl9cVac/VKU6lQio+P4o8vW9gWodgbM2R3A+CpbfWJ+SNSg94/uuihftQ==}
-    hasBin: true
 
   '@comark/nuxt@0.6.0':
     resolution: {integrity: sha512-oyNlqqOSsvxYW1ObZvloXUfADupjYfbxhhqc/I9MWweboC+/HsEXDB341TKXyTkwUISIOvpTcChP8tWjfrB/ww==}
@@ -4033,19 +4029,9 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark@0.5.1:
-    resolution: {integrity: sha512-RRRmUaEc6tokYJhgIGHrl8+pUt3kY1BxMnbRrxMxkCk2RcPcrilq9OmmPWIO7zuUIF7qLLRCCQz+wPuMg7Vz9w==}
-    peerDependencies:
-      beautiful-mermaid: ^1.1.3
-      katex: ^0.17.0
-      shiki: ^4.3.1
-    peerDependenciesMeta:
-      beautiful-mermaid:
-        optional: true
-      katex:
-        optional: true
-      shiki:
-        optional: true
+  comark-content@0.2.0:
+    resolution: {integrity: sha512-DI/ppr8rnAA86IKNv/qNeiApRtsDtKP1XXPGMVzBzbTaLeaTt2O+8tgwcerUyJmC0gWJp6KKvV8bG1/9L0O45Q==}
+    hasBin: true
 
   comark@0.6.0:
     resolution: {integrity: sha512-+0TRU6agbL0qadduzT9FnTSkvukHA3+B2p4rbu/xlfwRLL1LrJVtUS/NVF5OYetrCpRhOL9/Zgu/7fuqIqXyZg==}
@@ -8551,42 +8537,6 @@ snapshots:
 
   '@colordx/core@5.5.0': {}
 
-  '@comark/cms@0.1.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1)':
-    dependencies:
-      citty: 0.2.2
-      comark: 0.5.1(shiki@4.4.1)
-      hookable: 6.1.1
-      jiti: 2.7.0
-      ofetch: 1.5.1
-      pathe: 2.0.3
-      picomatch: 4.0.5
-      slugify: 1.6.9
-      ufo: 1.6.4
-      unstorage: 1.17.5(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@deno/kv'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@upstash/redis'
-      - '@vercel/blob'
-      - '@vercel/functions'
-      - '@vercel/kv'
-      - aws4fetch
-      - beautiful-mermaid
-      - db0
-      - idb-keyval
-      - ioredis
-      - katex
-      - shiki
-      - uploadthing
-
   '@comark/nuxt@0.6.0(25a5c448473c6ac56ac3920cc047cba1)':
     dependencies:
       '@comark/vue': 0.6.0(shiki@4.4.1)(vue@3.5.40(typescript@5.9.3))
@@ -12644,14 +12594,41 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark@0.5.1(shiki@4.4.1):
+  comark-content@0.2.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1):
     dependencies:
-      entities: 8.0.0
-      htmlparser2: 12.0.0
-      js-yaml: 5.2.3
-      markdown-exit: 1.1.0-beta.2
-    optionalDependencies:
-      shiki: 4.4.1
+      citty: 0.2.2
+      comark: 0.6.0(shiki@4.4.1)
+      hookable: 6.1.1
+      jiti: 2.7.0
+      ofetch: 1.5.1
+      pathe: 2.0.3
+      picomatch: 4.0.5
+      slugify: 1.6.9
+      ufo: 1.6.4
+      unstorage: 1.17.5(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@netlify/blobs'
+      - '@planetscale/database'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/functions'
+      - '@vercel/kv'
+      - aws4fetch
+      - beautiful-mermaid
+      - db0
+      - idb-keyval
+      - ioredis
+      - katex
+      - shiki
+      - uploadthing
 
   comark@0.6.0(shiki@4.4.1):
     dependencies:

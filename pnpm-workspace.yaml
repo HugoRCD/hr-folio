@@ -32,3 +32,4 @@ minimumReleaseAgeExclude:
   - satori
   - '@comark/*'
   - comark
+  - comark-content

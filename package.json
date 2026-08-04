@@ -16,7 +16,6 @@
   },
   "packageManager": "pnpm@11.19.0",
   "dependencies": {
-    "@comark/cms": "^0.1.0",
     "@comark/nuxt": "^0.6.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/lucide": "^1.2.121",
@@ -34,6 +33,7 @@
     "@vueuse/nuxt": "^14.4.0",
     "capture-website": "^5.1.0",
     "comark": "^0.6.0",
+    "comark-content": "^0.2.0",
     "evlog": "^2.24.0",
     "motion-plus-vue": "^1.8.1",
     "motion-v": "^2.3.0",
