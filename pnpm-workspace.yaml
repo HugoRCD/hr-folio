@@ -21,14 +21,12 @@ minimumReleaseAgeExclude:
   - '@nuxtjs/*'
   - 'nuxt'
   - 'nuxt-*'
-  # Vercel
   - '@vercel/*'
-  - '@shelve/cli@5.1.0'
-  - '@iconify-json/simple-icons@1.2.91'
-  - '@unhead/bundler@3.2.1'
-  - nuxtseo-shared@5.3.3
-  - nuxtseo-shared@5.3.6
-  - site-config-stack@4.1.2
-  - unhead@3.2.1
-  - evlog@2.22.3
-  - satori@0.28.2
+  - '@shelve/cli'
+  - '@iconify-json/simple-icons'
+  - '@unhead/bundler'
+  - nuxtseo-shared
+  - site-config-stack
+  - unhead
+  - evlog
+  - satori
