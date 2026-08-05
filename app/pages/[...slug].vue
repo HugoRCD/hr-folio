@@ -3,11 +3,17 @@ type TocLink = { id: string, text: string, depth: number, children?: TocLink[] }
 type FolioPage = { path: string, data: PageData, meta: { toc?: { links: TocLink[] } }, nodes: unknown[] }
 
 const route = useRoute()
-const requestFetch = useRequestFetch()
 
-const { data: page, error: pageError } = await useAsyncData<FolioPage>(
+// `useContent()` calls straight into `content.handler()` — during SSR its
+// `fetch` is Nuxt's `$fetch`, an in-process call with no network hop, and the
+// resulting payload is hydrated on the client with no refetch. Going through
+// `useContent()` directly (instead of a bespoke `/api/folio/page` proxy) also
+// means client-side navigations hit `/api/content/get/**`, which is cacheable
+// (unlike the old proxy's `no-store` header), rather than always paying a full
+// server round trip on every article click.
+const { data: page, error: pageError } = await useAsyncData<FolioPage | null>(
   () => `folio-page:${route.path}`,
-  () => requestFetch<FolioPage>('/api/folio/page', { query: { path: route.path } }),
+  () => useContent().get<PageData>(route.path) as Promise<FolioPage | null>,
   { watch: [() => route.path] },
 )
 

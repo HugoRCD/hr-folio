@@ -42,6 +42,11 @@ export default defineNuxtConfig({
     '/writing/**': { isr: true },
     '/works/**': { isr: true },
     '/clipboard/**': { isr: true },
+    // Client-side navigation reads content through this endpoint (see
+    // `useContent()`); without caching it, every article click pays a full
+    // server round trip even though the underlying files only change on
+    // redeploy, which is what made in-app navigation feel sluggish.
+    '/api/content/**': { swr: true },
   },
 
   /**
