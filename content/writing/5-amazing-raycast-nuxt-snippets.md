@@ -117,7 +117,7 @@ The `!fcomp` snippet is designed for fetching data using Vue's Composition API. 
     watch: false,
   });
 
-  function loadData() {
+  async function loadData() {
     await refresh();
   }
 </script>

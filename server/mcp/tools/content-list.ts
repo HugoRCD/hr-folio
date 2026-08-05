@@ -27,7 +27,7 @@ export default defineMcpTool({
       .min(1)
       .max(200)
       .default(120)
-      .describe('Maximum rows per collection before search filtering.'),
+      .describe('Maximum rows per collection, applied after search filtering.'),
   },
   inputExamples: [
     { limitPerCollection: 80 },
@@ -49,7 +49,7 @@ export default defineMcpTool({
       return tags.some(t => t.toLowerCase().includes(q))
     }
 
-    const pages = await cms.list(['pages'])
+    const pages = await content.list(['pages'])
     const byPrefix = (prefix: string) =>
       pages.filter(p => p.path.startsWith(prefix)).sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData))
 
@@ -57,16 +57,15 @@ export default defineMcpTool({
 
     for (const col of want) {
       if (col === 'works') {
-        let rows = (await cms.list(['works']))
+        let rows = (await content.list(['works']))
           .sort((a, b) => byDateDesc(a.data as WorkData, b.data as WorkData))
-          .slice(0, limitPerCollection)
         if (q) {
           rows = rows.filter((item) => {
             const w = item.data as WorkData
             return match(w.name) || match(w.description) || match(w.url) || match(w.category) || matchTags(w.tags)
           })
         }
-        out.works = rows.map((item) => {
+        out.works = rows.slice(0, limitPerCollection).map((item) => {
           const w = item.data as WorkData
           return {
             stem: item.meta.stem,
@@ -83,17 +82,17 @@ export default defineMcpTool({
       }
 
       const rows = col === 'content'
-        ? pages.sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData)).slice(0, limitPerCollection)
-        : byPrefix(`/${col}/`).slice(0, limitPerCollection)
+        ? pages.sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData))
+        : byPrefix(`/${col}/`)
 
-      const filtered = q
+      const filtered = (q
         ? await Promise.all(rows.map(async (r) => {
           const data = r.data as PageData
           if (match(data.title) || match(data.description) || matchTags(data.tags)) return r
-          const full = await cms.get(r.path)
+          const full = await content.get(r.path)
           return plainTextFromNodes(full?.nodes).slice(0, 8000).toLowerCase().includes(q) ? r : null
         })).then(rows => rows.filter((r): r is NonNullable<typeof r> => r !== null))
-        : rows
+        : rows).slice(0, limitPerCollection)
 
       // The `content` collection id must not become the output key: a top-level
       // `content` array makes the MCP toolkit mistake this object for an

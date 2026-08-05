@@ -1,5 +1,5 @@
 import { folioPublic } from './server/utils/folio-public'
-import { cms } from './server/utils/cms'
+import { content } from './server/utils/content'
 
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -31,8 +31,17 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2025-12-13',
 
+  /**
+   * ISR everywhere content is rendered from Comark Content: pages are cheap to
+   * regenerate (parsed from the local filesystem, no external fetch), and
+   * content only changes on a redeploy, so `isr: true` serves the version
+   * built at deploy time and is never invalidated mid-deploy.
+   */
   routeRules: {
     '/': { isr: true },
+    '/writing/**': { isr: true },
+    '/works/**': { isr: true },
+    '/clipboard/**': { isr: true },
   },
 
   /**
@@ -72,8 +81,8 @@ export default defineNuxtConfig({
 
   mcp: {
     name: 'Hugo Richard — Portfolio',
-    description: 'Read-only access to Hugo Richard’s portfolio content: pages, articles, clipboard notes, and project metadata from Comark CMS.',
-    instructions: `This server exposes Hugo Richard’s public portfolio (hugorcd.com), built with Comark CMS.
+    description: 'Read-only access to Hugo Richard’s portfolio content: pages, articles, clipboard notes, and project metadata from Comark Content.',
+    instructions: `This server exposes Hugo Richard’s public portfolio (hugorcd.com), built with Comark Content.
 
 Sources:
 - pages: every Markdown page (home, listings, articles, clipboard notes), addressed by site path.
@@ -95,10 +104,24 @@ Prefer raw markdown (rendered from the parsed body) over the AST for analysis.`,
     fallback: 'dark',
   },
 
+  /**
+   * `content.list()` (not `crawlLinks`) is the docs-recommended way to guarantee
+   * every content page is prerendered: crawling only discovers pages that are
+   * actually linked from `/`, which would silently miss e.g. `/works/<stem>`
+   * detail pages that are only ever deep-linked from their card's "url" field.
+   * https://content.comark.dev/integrations/nuxt#prerender-content-pages
+   */
+  hooks: {
+    'prerender:routes': async (ctx) => {
+      const pages = await content.list(['pages', 'works'])
+      for (const page of pages) ctx.routes.add(page.path)
+    },
+  },
+
   sitemap: {
     urls: async () => {
-      const pages = await cms.list(['pages'])
-      return pages.map(page => ({
+      const [pages, works] = await Promise.all([content.list(['pages']), content.list(['works'])])
+      return [...pages, ...works].map(page => ({
         loc: page.path,
         lastmod: (page.data as { date?: string }).date,
       }))

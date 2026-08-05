@@ -37,7 +37,7 @@ export default defineMcpTool({
         throw createError({ statusCode: 400, message: 'path is required when kind is page' })
       }
       const p = normalizePath(path)
-      const doc = await cms.get(p)
+      const doc = await content.get(p)
       if (!doc) {
         throw createError({ statusCode: 404, message: `No page found for path ${p}` })
       }
@@ -57,7 +57,7 @@ export default defineMcpTool({
       throw createError({ statusCode: 400, message: 'stem is required when kind is work' })
     }
     const s = stem.trim()
-    const works = await cms.list(['works'])
+    const works = await content.list(['works'])
     const work = works.find(w => w.meta.stem === s)
     if (!work) {
       throw createError({ statusCode: 404, message: `No work found for stem "${s}"` })

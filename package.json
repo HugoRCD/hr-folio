@@ -34,7 +34,7 @@
     "@vueuse/nuxt": "^14.4.0",
     "capture-website": "^5.1.0",
     "comark": "^0.6.0",
-    "comark-content": "^0.2.0",
+    "comark-content": "^0.3.0",
     "evlog": "^2.24.0",
     "motion-plus-vue": "^1.8.1",
     "motion-v": "^2.3.0",

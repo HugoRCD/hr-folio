@@ -20,4 +20,4 @@ Remember, **every creation is a rehearsal for the next**. There's no grand final
 
 And in this showroom, you're not alone. Backstage, you'll find plenty of mentors, peers and admirers. They're there to encourage you, to guide you, to applaud your successes and support you in your doubts. This community is your chorus of support, turning fearful solos into courageous duets.
 
-In the end, every curtain raised, every light turned on, is a step closer to accepting your own talent. The feeling of imposture dissipates not when you compare yourself to others, but when you recognize the unique beauty of your own performance. In this room, success is measured not just by the applause at the end, but by the courage to get up on stage and say: _**"Here's my story, listen to it"**_.
+In the end, every curtain raised, every light turned on, is a step closer to accepting your own talent. Impostor feelings dissipate not when you compare yourself to others, but when you recognize the unique beauty of your own performance. In this room, success is measured not just by the applause at the end, but by the courage to get up on stage and say: _**"Here's my story, listen to it"**_.

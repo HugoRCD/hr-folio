@@ -12,8 +12,8 @@ export default defineEventHandler(async (event) => {
   const abs = (path: string) => (path.startsWith('http') ? path : `${domain}${path}`)
 
   const [pages, works] = await Promise.all([
-    cms.list(['pages']),
-    cms.list(['works']),
+    content.list(['pages']),
+    content.list(['works']),
   ])
 
   const writing = pages
@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     .sort((a, b) => new Date((b.data as PageData).date!).getTime() - new Date((a.data as PageData).date!).getTime())
 
   const writingBodies = await Promise.all(writing.map(async (item) => {
-    const full = await cms.get(item.path)
+    const full = await content.get(item.path)
     const data = item.data as PageData
     if (!full) return ''
     const markdown = await renderMarkdown({ frontmatter: full.data, meta: full.meta, nodes: full.nodes })

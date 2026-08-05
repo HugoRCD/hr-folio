@@ -9,7 +9,7 @@ export function plainTextFromNodes(nodes: unknown[] | undefined): string {
     if (typeof node === 'string') {
       text += `${node} `
     } else if (Array.isArray(node)) {
-      text += plainTextFromNodes(node.slice(2))
+      text += `${plainTextFromNodes(node.slice(2))} `
     }
   }
   return text.trim()

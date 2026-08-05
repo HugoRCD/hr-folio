@@ -6,8 +6,8 @@ export default defineEventHandler(async (event) => {
   const abs = (path: string) => (path.startsWith('http') ? path : `${domain}${path}`)
 
   const [pages, works] = await Promise.all([
-    cms.list(['pages']),
-    cms.list(['works']),
+    content.list(['pages']),
+    content.list(['works']),
   ])
 
   const writing = pages

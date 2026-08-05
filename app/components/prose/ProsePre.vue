@@ -44,13 +44,19 @@ const isLong = computed(() => lines.value > COLLAPSE_THRESHOLD)
 const isCollapsed = ref(true)
 const showCollapse = computed(() => isLong.value && isCollapsed.value)
 
-onMounted(() => {
+function measure() {
   if (!preEl.value) return
   const lineEls = preEl.value.querySelectorAll('.line')
   const text = preEl.value.textContent || ''
   lines.value = lineEls.length || text.split('\n').length
   rawCode.value = text
-})
+}
+
+// Vue can reuse this component instance across content changes (e.g. `MarkdownDocument`
+// re-rendering the same `pre` slot position with different code) without unmounting it,
+// so `onMounted` alone would leave `lines`/`rawCode` stale. Re-measure after every DOM patch too.
+onMounted(measure)
+onUpdated(measure)
 </script>
 
 <template>

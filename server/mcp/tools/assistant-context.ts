@@ -40,10 +40,10 @@ export default defineMcpTool({
     const siteUrl = folio.seo.url.replace(/\/$/, '')
 
     const [pages, works, home, about] = await Promise.all([
-      cms.list(['pages']),
-      cms.list(['works']),
-      cms.get('/'),
-      cms.get('/about'),
+      content.list(['pages']),
+      content.list(['works']),
+      content.get('/'),
+      content.get('/about'),
     ])
 
     const writings = pages

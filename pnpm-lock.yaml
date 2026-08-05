@@ -63,8 +63,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0(shiki@4.4.1)
       comark-content:
-        specifier: ^0.2.0
-        version: 0.2.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1)
+        specifier: ^0.3.0
+        version: 0.3.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1)
       evlog:
         specifier: ^2.24.0
         version: 2.24.0(@nuxt/kit@4.5.1(magic-string@1.0.0)(magicast@0.5.4)(oxc-parser@0.140.0)(rolldown@1.2.0)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.0)(rollup@4.62.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))))(ai@6.0.230(zod@4.4.3))(express@5.2.1(supports-color@10.2.2))(h3@1.15.11)(hono@4.12.31)(nitropack@2.13.4(@parcel/watcher@2.6.0)(@upstash/redis@1.38.1)(oxc-parser@0.140.0)(rolldown@1.2.0)(srvx@0.11.22)(supports-color@10.2.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))(ofetch@1.5.1)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))
@@ -4035,8 +4035,8 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark-content@0.2.0:
-    resolution: {integrity: sha512-DI/ppr8rnAA86IKNv/qNeiApRtsDtKP1XXPGMVzBzbTaLeaTt2O+8tgwcerUyJmC0gWJp6KKvV8bG1/9L0O45Q==}
+  comark-content@0.3.0:
+    resolution: {integrity: sha512-t+gq902R8AorpCqAAa3TgDpFc+cimeNt4z41KcKWTReY7IU4ezkPeUaeGHRzS9f0jmBTtQOPSbhx0CzcddjfIQ==}
     hasBin: true
 
   comark@0.6.0:
@@ -12602,7 +12602,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark-content@0.2.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1):
+  comark-content@0.3.0(@upstash/redis@1.38.1)(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.4.1):
     dependencies:
       citty: 0.2.2
       comark: 0.6.0(shiki@4.4.1)

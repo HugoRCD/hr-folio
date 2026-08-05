@@ -22,7 +22,7 @@ Have you ever:
 - Used the same API keys across all environments?
 - Stored passwords in plain text documents?
 
-These common practices are security breaches waiting to happen. In fact, a recent study found that exposed credentials are responsible for over 80% of security incidents in cloud environments.
+These common practices are security breaches waiting to happen. Exposed credentials remain one of the leading contributors to security incidents in cloud environments.
 
 ### The Real Cost of Weak Environment Management
 

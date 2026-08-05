@@ -7,12 +7,12 @@ function byDateDesc(a: { date: string }, b: { date: string }) {
 }
 
 export async function getWritingListForRequest(): Promise<FolioWritingListItem[]> {
-  const items = await cms.list(['pages'])
+  const items = await content.list(['pages'])
   const posts = items.filter(item => item.path.startsWith('/writing/'))
 
   const list = await Promise.all(posts.map(async (item) => {
     const data = item.data as PageData
-    const full = await cms.get(item.path)
+    const full = await content.get(item.path)
     return {
       path: item.path,
       title: data.title!,
@@ -27,7 +27,7 @@ export async function getWritingListForRequest(): Promise<FolioWritingListItem[]
 }
 
 export async function getClipboardListForRequest(): Promise<FolioClipboardListItem[]> {
-  const items = await cms.list(['pages'])
+  const items = await content.list(['pages'])
 
   return items
     .filter(item => item.path.startsWith('/clipboard/'))

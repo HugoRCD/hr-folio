@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid path' })
   }
 
-  const page = await cms.get(path)
+  const page = await content.get(path)
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
   }

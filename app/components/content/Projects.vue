@@ -43,7 +43,7 @@ watch(searchQuery, (q) => {
 })
 
 const { data: allProjects } = await useAsyncData('projects', async () => {
-  const items = await useCms().list(['works'])
+  const items = await useContent().list(['works'])
   return items.map(item => item.data as WorkData)
 })
 
