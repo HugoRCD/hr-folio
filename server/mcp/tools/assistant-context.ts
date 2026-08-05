@@ -1,10 +1,6 @@
 import { z } from 'zod'
 import { renderMarkdown } from 'comark/render'
 
-function byDateDesc(a: { date?: string }, b: { date?: string }) {
-  return new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime()
-}
-
 export default defineMcpTool({
   name: 'assistant-context',
   title: 'Assistant context pack',
@@ -48,23 +44,23 @@ export default defineMcpTool({
 
     const writings = pages
       .filter(p => p.path.startsWith('/writing/'))
-      .sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData))
+      .sort((a, b) => byDateDesc(a.data, b.data))
       .slice(0, writingLimit)
     const clipboards = clipboardLimit > 0
       ? pages
         .filter(p => p.path.startsWith('/clipboard/'))
-        .sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData))
+        .sort((a, b) => byDateDesc(a.data, b.data))
         .slice(0, clipboardLimit)
       : []
     const worksSorted = works
-      .sort((a, b) => byDateDesc(a.data as WorkData, b.data as WorkData))
+      .sort((a, b) => byDateDesc(a.data, b.data))
       .slice(0, worksLimit)
 
     const absolute = (path: string) =>
       path.startsWith('http') ? path : `${siteUrl}${path.startsWith('/') ? path : `/${path}`}`
 
-    const aboutData = about?.data as AboutData | undefined
-    const homeData = home?.data as PageData | undefined
+    const aboutData = about?.data
+    const homeData = home?.data
 
     return {
       generatedFor: 'MCP clients — ground conversations about Hugo Richard and hugorcd.com',
@@ -108,7 +104,7 @@ export default defineMcpTool({
         }
         : null,
       writing: writings.map((p) => {
-        const data = p.data as PageData
+        const { data } = p
         return {
           path: p.path,
           title: data.title,
@@ -119,7 +115,7 @@ export default defineMcpTool({
         }
       }),
       works: worksSorted.map((w) => {
-        const data = w.data as WorkData
+        const { data } = w
         return {
           stem: w.meta.stem,
           name: data.name,
@@ -131,7 +127,7 @@ export default defineMcpTool({
         }
       }),
       clipboard: clipboards.map((c) => {
-        const data = c.data as PageData
+        const { data } = c
         return { path: c.path, title: data.title, date: data.date, url: absolute(c.path) }
       }),
       navigationHints: {

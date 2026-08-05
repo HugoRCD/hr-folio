@@ -8,13 +8,20 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "nuxt prepare && pnpm run content:types",
+    "predev": "pnpm run content:types",
+    "prebuild": "pnpm run content:types",
+    "pregenerate": "pnpm run content:types",
+    "content:types": "comark-content prepare -o shared/comark-content.d.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "screenshots": "node scripts/generate-screenshots.mjs",
     "screenshots:install": "puppeteer browsers install chrome"
   },
   "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "dependencies": {
     "@comark/nuxt": "^0.6.0",
     "@fontsource/geist": "^5.3.0",

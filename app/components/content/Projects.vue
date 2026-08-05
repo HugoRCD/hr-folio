@@ -43,8 +43,8 @@ watch(searchQuery, (q) => {
 })
 
 const { data: allProjects } = await useAsyncData('projects', async () => {
-  const items = await useContent().list(['works'])
-  return items.map(item => item.data as WorkData)
+  const items = await clientContent.list(['works'])
+  return items.map(item => item.data)
 })
 
 const featuredNames = ['Evlog', 'Shelve', 'Canvas', 'GitHub Tools']

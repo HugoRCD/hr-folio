@@ -12,10 +12,10 @@ export default defineEventHandler(async (event) => {
 
   const writing = pages
     .filter(p => p.path.startsWith('/writing/'))
-    .sort((a, b) => new Date((b.data as PageData).date!).getTime() - new Date((a.data as PageData).date!).getTime())
+    .sort((a, b) => byDateDesc(a.data, b.data))
   const clipboard = pages
     .filter(p => p.path.startsWith('/clipboard/'))
-    .sort((a, b) => new Date((b.data as PageData).date!).getTime() - new Date((a.data as PageData).date!).getTime())
+    .sort((a, b) => byDateDesc(a.data, b.data))
 
   const lines = [
     `# ${folio.seo.title} Portfolio`,
@@ -33,21 +33,21 @@ export default defineEventHandler(async (event) => {
     '## Writing',
     '',
     ...writing.map((w) => {
-      const data = w.data as PageData
+      const { data } = w
       return `- [${data.title}](${abs(w.path)}): ${data.description ?? ''}`
     }),
     '',
     '## Clipboard',
     '',
     ...clipboard.map((c) => {
-      const data = c.data as PageData
+      const { data } = c
       return `- [${data.title}](${abs(c.path)})`
     }),
     '',
     '## Works / projects',
     '',
     ...works.map((w) => {
-      const data = w.data as WorkData
+      const { data } = w
       return `- **${data.name}** (${data.category}): ${data.description} — ${data.url}`
     }),
     '',

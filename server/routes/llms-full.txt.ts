@@ -18,14 +18,14 @@ export default defineEventHandler(async (event) => {
 
   const writing = pages
     .filter(p => p.path.startsWith('/writing/'))
-    .sort((a, b) => new Date((b.data as PageData).date!).getTime() - new Date((a.data as PageData).date!).getTime())
+    .sort((a, b) => byDateDesc(a.data, b.data))
   const clipboard = pages
     .filter(p => p.path.startsWith('/clipboard/'))
-    .sort((a, b) => new Date((b.data as PageData).date!).getTime() - new Date((a.data as PageData).date!).getTime())
+    .sort((a, b) => byDateDesc(a.data, b.data))
 
   const writingBodies = await Promise.all(writing.map(async (item) => {
     const full = await content.get(item.path)
-    const data = item.data as PageData
+    const { data } = item
     if (!full) return ''
     const markdown = await renderMarkdown({ frontmatter: full.data, meta: full.meta, nodes: full.nodes })
     return [`## ${data.title}`, '', `Source: ${abs(item.path)}`, '', markdown].join('\n')
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
     '# Clipboard',
     '',
     ...clipboard.map((c) => {
-      const data = c.data as PageData
+      const { data } = c
       return `- [${data.title}](${abs(c.path)})`
     }),
     '',
@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
     '# Works / projects',
     '',
     ...works.map((w) => {
-      const data = w.data as WorkData
+      const { data } = w
       return `- **${data.name}** (${data.category}): ${data.description} — ${data.url}`
     }),
     '',

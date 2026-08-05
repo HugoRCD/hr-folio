@@ -4,6 +4,11 @@
 // relevant in dev: on Vercel the filesystem is read-only and immutable per deploy.
 export default defineNitroPlugin(() => {
   if (import.meta.dev) {
+    // The FTS index (see `server/utils/content.ts`) is built lazily on first
+    // `content.search()` call and otherwise never refreshes — without this, editing
+    // a file's content in dev would leave search results stale until a restart.
+    content.hooks.hook('watch:file:update', () => content.resetSearchIndex())
+    content.hooks.hook('watch:file:remove', () => content.resetSearchIndex())
     content.watch().catch(err => console.error('[content] watch failed', err))
   }
 })

@@ -4,30 +4,38 @@ type FolioPage = { path: string, data: PageData, meta: { toc?: { links: TocLink[
 
 const route = useRoute()
 
-// `useContent()` calls straight into `content.handler()` — during SSR its
+const isArticle = computed(() => route.path.includes('/writing/'))
+const isClipboard = computed(() => route.path.includes('/clipboard/'))
+
+// `clientContent` calls straight into `content.handler()` — during SSR its
 // `fetch` is Nuxt's `$fetch`, an in-process call with no network hop, and the
 // resulting payload is hydrated on the client with no refetch. Going through
-// `useContent()` directly (instead of a bespoke `/api/folio/page` proxy) also
+// `clientContent` directly (instead of a bespoke `/api/folio/page` proxy) also
 // means client-side navigations hit `/api/content/get/**`, which is cacheable
 // (unlike the old proxy's `no-store` header), rather than always paying a full
 // server round trip on every article click.
-const { data: page, error: pageError } = await useAsyncData<FolioPage | null>(
+const asyncPage = useAsyncData<FolioPage | null>(
   () => `folio-page:${route.path}`,
-  () => useContent().get<PageData>(route.path) as Promise<FolioPage | null>,
+  () => clientContent.get<PageData>(route.path) as Promise<FolioPage | null>,
   { watch: [() => route.path] },
 )
+const { data: page, error: pageError } = asyncPage
+
+// Registered *before* awaiting `asyncPage` below, on purpose: `useSeoPage` and
+// `useFolioConfig` (`useAppConfig` under the hood) need Vue's synchronous
+// component-setup context to inject into the right Nuxt app — see the comment in
+// `useSeoPage.ts`. `page.value` is still `undefined` at this point; `useSeoPage`
+// takes the ref itself and reads through it reactively once resolved.
+const { seo, socials, profile } = useFolioConfig()
+useSeoPage(computed(() => page.value?.data), isArticle.value)
+
+await asyncPage
 
 if (pageError.value || !page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 }
 
-const { seo, socials, profile } = useFolioConfig()
 const mdcVars = computed(() => ({ ...seo, ...profile, ...socials, date: page.value?.data.date }))
-
-const isArticle = computed(() => route.path.includes('/writing/'))
-const isClipboard = computed(() => route.path.includes('/clipboard/'))
-
-useSeoPage(page.value.data, isArticle.value)
 
 const readingTime = computed(() => {
   if (!isArticle.value) return 0

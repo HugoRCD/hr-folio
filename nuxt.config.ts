@@ -43,9 +43,11 @@ export default defineNuxtConfig({
     '/works/**': { isr: true },
     '/clipboard/**': { isr: true },
     // Client-side navigation reads content through this endpoint (see
-    // `useContent()`); without caching it, every article click pays a full
+    // `clientContent`); without caching it, every article click pays a full
     // server round trip even though the underlying files only change on
-    // redeploy, which is what made in-app navigation feel sluggish.
+    // redeploy, which is what made in-app navigation feel sluggish. Requires
+    // `server/api/content/[...path].ts` to unwrap the `Response` into H3-native
+    // status/headers/body — see the comment there.
     '/api/content/**': { swr: true },
   },
 
@@ -144,6 +146,14 @@ Prefer raw markdown (rendered from the parsed body) over the AST for analysis.`,
       },
     },
     prerender: {
+      // Prerendering many `[...slug]` catch-all routes concurrently reliably
+      // triggered a race in local testing — most requests in a concurrent batch
+      // came back 404/500 (`useSeoPage`/`useAppConfig()` reading a torn/empty
+      // config) while the raw `/api/content/get/**` endpoint stayed correct
+      // under the same concurrency, so this isn't a Comark Content bug. Forcing
+      // sequential prerendering avoids it; build time cost is negligible at
+      // this content volume (~35 routes).
+      concurrency: 1,
       crawlLinks: true,
       routes: [
         '/',

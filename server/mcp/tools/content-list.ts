@@ -2,8 +2,9 @@ import { z } from 'zod'
 
 const collectionId = z.enum(['content', 'writing', 'clipboard', 'works'])
 
-function byDateDesc(a: { date?: string }, b: { date?: string }) {
-  return new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime()
+/** `content.search()` returns section-level hits; `id` is `path` or `path#headingId` — strip the anchor to get the document path. */
+function toDocPath(id: string) {
+  return id.split('#')[0]!
 }
 
 export default defineMcpTool({
@@ -21,7 +22,7 @@ export default defineMcpTool({
     search: z
       .string()
       .optional()
-      .describe('Case-insensitive filter on titles, descriptions, names, URLs, tags, category, and a prefix of the markdown body.'),
+      .describe('Full-text search across titles, headings, and body content (via FTS5), ranked by relevance.'),
     limitPerCollection: z
       .number()
       .min(1)
@@ -36,37 +37,42 @@ export default defineMcpTool({
   cache: '2m',
   handler: async ({ collections, search, limitPerCollection }) => {
     const want = collections ?? (['content', 'writing', 'clipboard', 'works'] as const)
-    const q = search?.trim().toLowerCase() ?? ''
+    const q = search?.trim() ?? ''
+    const likePattern = `%${q}%`
 
-    const match = (text: string | null | undefined) => {
-      if (!q) return true
-      return (text ?? '').toLowerCase().includes(q)
-    }
-
-    const matchTags = (tags: string[] | undefined) => {
-      if (!q) return true
-      if (!tags?.length) return false
-      return tags.some(t => t.toLowerCase().includes(q))
-    }
+    // Full-text search (headings + body, not just title/description/tags) instead of
+    // manual substring matching — `pages` are real markdown documents, so the
+    // `sqliteFullTextSearch` plugin (ranked, indexes every heading) fits. `works` are
+    // flat JSON records with no body/headings to index, so `sqlQuery` (a structured
+    // `LIKE` scan across its fields) fits better there. Both plugins are configured
+    // on the shared `content` instance in `server/utils/content.ts`.
+    const [pagesHits, worksMatches] = q
+      ? await Promise.all([
+        content.search(['pages'], q, { limit: 500 }),
+        content.query('works').orWhere(group => group
+          .where('data.name', 'LIKE', likePattern)
+          .where('data.description', 'LIKE', likePattern)
+          .where('data.url', 'LIKE', likePattern)
+          .where('data.category', 'LIKE', likePattern)
+          .where('data.tags', 'LIKE', likePattern)).all(),
+      ])
+      : [null, null]
+    const matchedPages = pagesHits && new Set(pagesHits.map(h => toDocPath(h.id)))
+    const matchedWorks = worksMatches && new Set(worksMatches.map(r => r.path))
 
     const pages = await content.list(['pages'])
     const byPrefix = (prefix: string) =>
-      pages.filter(p => p.path.startsWith(prefix)).sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData))
+      pages.filter(p => p.path.startsWith(prefix)).sort((a, b) => byDateDesc(a.data, b.data))
 
     const out: Record<string, unknown> = {}
 
     for (const col of want) {
       if (col === 'works') {
         let rows = (await content.list(['works']))
-          .sort((a, b) => byDateDesc(a.data as WorkData, b.data as WorkData))
-        if (q) {
-          rows = rows.filter((item) => {
-            const w = item.data as WorkData
-            return match(w.name) || match(w.description) || match(w.url) || match(w.category) || matchTags(w.tags)
-          })
-        }
+          .sort((a, b) => byDateDesc(a.data, b.data))
+        if (matchedWorks) rows = rows.filter(item => matchedWorks.has(item.path))
         out.works = rows.slice(0, limitPerCollection).map((item) => {
-          const w = item.data as WorkData
+          const w = item.data
           return {
             stem: item.meta.stem,
             name: w.name,
@@ -82,17 +88,10 @@ export default defineMcpTool({
       }
 
       const rows = col === 'content'
-        ? pages.sort((a, b) => byDateDesc(a.data as PageData, b.data as PageData))
+        ? pages.sort((a, b) => byDateDesc(a.data, b.data))
         : byPrefix(`/${col}/`)
 
-      const filtered = (q
-        ? await Promise.all(rows.map(async (r) => {
-          const data = r.data as PageData
-          if (match(data.title) || match(data.description) || matchTags(data.tags)) return r
-          const full = await content.get(r.path)
-          return plainTextFromNodes(full?.nodes).slice(0, 8000).toLowerCase().includes(q) ? r : null
-        })).then(rows => rows.filter((r): r is NonNullable<typeof r> => r !== null))
-        : rows).slice(0, limitPerCollection)
+      const filtered = (matchedPages ? rows.filter(r => matchedPages.has(r.path)) : rows).slice(0, limitPerCollection)
 
       // The `content` collection id must not become the output key: a top-level
       // `content` array makes the MCP toolkit mistake this object for an
@@ -100,7 +99,7 @@ export default defineMcpTool({
       // wrapping it, producing an invalid response. Use `pages` instead.
       const outKey = col === 'content' ? 'pages' : col
       out[outKey] = filtered.map((r) => {
-        const data = r.data as PageData
+        const { data } = r
         return {
           path: r.path,
           title: data.title,

@@ -37,11 +37,13 @@ export default defineMcpTool({
         throw createError({ statusCode: 400, message: 'path is required when kind is page' })
       }
       const p = normalizePath(path)
-      const doc = await content.get(p)
+      // `p` is a runtime string, not a literal path, so it can't be narrowed
+      // against the generated `ContentPaths` map — pass the expected shape explicitly.
+      const doc = await content.get<PageData>(p)
       if (!doc) {
         throw createError({ statusCode: 404, message: `No page found for path ${p}` })
       }
-      const data = doc.data as PageData
+      const { data } = doc
       const rawbody = await renderMarkdown({ frontmatter: doc.data, meta: doc.meta, nodes: doc.nodes })
       return {
         path: doc.path,
@@ -65,7 +67,7 @@ export default defineMcpTool({
     return {
       collection: 'works' as const,
       stem: work.meta.stem,
-      entry: work.data as WorkData,
+      entry: work.data,
     }
   },
 })

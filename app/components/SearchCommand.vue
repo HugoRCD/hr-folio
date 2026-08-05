@@ -15,10 +15,10 @@ const { data: clipboards } = await useFetch<FolioClipboardListItem[]>('/api/foli
 })
 
 const { data: projects } = await useAsyncData('cmd-works', async () => {
-  const items = await useContent().list(['works'])
+  const items = await clientContent.list(['works'])
   return items
-    .map(item => item.data as WorkData)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .map(item => item.data)
+    .sort(byDateDesc)
 })
 
 const mcpUrl = 'https://hugorcd.com/mcp'
