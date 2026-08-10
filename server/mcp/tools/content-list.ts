@@ -48,7 +48,13 @@ export default defineMcpTool({
     // on the shared `content` instance in `server/utils/content.ts`.
     const [pagesHits, worksMatches] = q
       ? await Promise.all([
-        content.search(['pages'], q, { limit: 500 }),
+        // `sqliteFullTextSearch` has no offset/pagination — its `limit` binds
+        // straight into a SQL `LIMIT ?`, so a finite cap here would silently
+        // drop documents whose only matching section ranks below it. `-1` is
+        // SQLite's "no limit" sentinel: safe at this site's content volume
+        // (a few dozen pages), and `matchedPages`/`limitPerCollection` below
+        // still dedupe to documents and cap the final output.
+        content.search(['pages'], q, { limit: -1 }),
         content.query('works').orWhere(group => group
           .where('data.name', 'LIKE', likePattern)
           .where('data.description', 'LIKE', likePattern)

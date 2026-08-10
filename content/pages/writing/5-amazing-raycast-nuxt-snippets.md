@@ -63,7 +63,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
 State management is crucial in large-scale applications. The `!store` snippet utilizes Pinia, a Vue store, offering a structured template for managing application state. It includes a state definition, getters, and actions.
 
-**Usage Example:** Utilize `!store` for setting up store modules in your Nuxt/Vue app, managing state more effectively and cleanly. the { clipboard } while be replaced by your actual clipboard.
+**Usage Example:** Utilize `!store` for setting up store modules in your Nuxt/Vue app, managing state more effectively and cleanly. The `{clipboard}` placeholder is replaced with the name you copied to your clipboard before running the snippet.
 
 ```ts
 import { defineStore } from 'pinia';

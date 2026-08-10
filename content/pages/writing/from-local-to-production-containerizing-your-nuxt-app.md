@@ -87,7 +87,7 @@ services:
     ports:
       - "3000:3000"
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/hello" ]
+      test: [ "CMD", "wget", "-q", "-t", "1", "--spider", "http://localhost:3000/api/hello" ]
       interval: 30s
       timeout: 10s
     deploy:

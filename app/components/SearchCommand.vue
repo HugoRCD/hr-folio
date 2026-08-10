@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CommandPaletteGroup } from '@nuxt/ui'
+import { byDateDesc } from '#shared/utils/content-sort'
 
 const isOpen = ref(false)
 const paletteQuery = ref('')
