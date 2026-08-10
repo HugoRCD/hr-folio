@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { TocLink } from '@nuxt/content'
 import { AnimatePresence, motion } from 'motion-v'
+
+type TocLink = { id: string, text: string, depth: number, children?: TocLink[] }
 
 const { links = [] } = defineProps<{
   links: TocLink[]

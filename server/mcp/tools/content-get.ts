@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { renderMarkdown } from 'comark/render'
 
 function normalizePath(p: string) {
   const t = p.trim()
@@ -16,7 +17,7 @@ export default defineMcpTool({
   inputSchema: {
     kind: z
       .enum(['page', 'work'])
-      .describe('Use page for MD routes; use work for entries in the works JSON collection (identify by stem).'),
+      .describe('Use page for MD routes; use work for entries in the works source (identify by stem).'),
     path: z
       .string()
       .optional()
@@ -24,49 +25,49 @@ export default defineMcpTool({
     stem: z
       .string()
       .optional()
-      .describe('File stem when kind is work, e.g. hr-folio (matches 1.works/hr-folio.json).'),
+      .describe('File stem when kind is work, e.g. hr-folio (matches content/works/hr-folio.json).'),
   },
   inputExamples: [
     { kind: 'page', path: '/writing/not-an-impostor' },
     { kind: 'work', stem: 'nuxt-mcp-toolkit' },
   ],
   handler: async ({ kind, path, stem }) => {
-    const event = useEvent()
-
     if (kind === 'page') {
       if (!path?.trim()) {
         throw createError({ statusCode: 400, message: 'path is required when kind is page' })
       }
       const p = normalizePath(path)
-      for (const col of ['writing', 'clipboard', 'content'] as const) {
-        const doc = await queryCollection(event, col).path(p).first()
-        if (!doc) continue
-        return {
-          collection: col,
-          path: doc.path,
-          title: doc.title,
-          description: doc.description,
-          date: doc.date,
-          seo: doc.seo,
-          ...('tags' in doc && doc.tags !== undefined ? { tags: doc.tags } : {}),
-          rawbody: typeof doc.rawbody === 'string' ? doc.rawbody : undefined,
-        }
+      // `p` is a runtime string, not a literal path, so it can't be narrowed
+      // against the generated `ContentPaths` map — pass the expected shape explicitly.
+      const doc = await content.get<PageData>(p)
+      if (!doc) {
+        throw createError({ statusCode: 404, message: `No page found for path ${p}` })
       }
-      throw createError({ statusCode: 404, message: `No page found for path ${p}` })
+      const { data } = doc
+      const rawbody = await renderMarkdown({ frontmatter: doc.data, meta: doc.meta, nodes: doc.nodes })
+      return {
+        path: doc.path,
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        ...(data.tags !== undefined ? { tags: data.tags } : {}),
+        rawbody,
+      }
     }
 
     if (!stem?.trim()) {
       throw createError({ statusCode: 400, message: 'stem is required when kind is work' })
     }
     const s = stem.trim()
-    const work = await queryCollection(event, 'works').where('stem', '=', s).first()
+    const works = await content.list(['works'])
+    const work = works.find(w => w.meta.stem === s)
     if (!work) {
       throw createError({ statusCode: 404, message: `No work found for stem "${s}"` })
     }
     return {
       collection: 'works' as const,
-      stem: work.stem,
-      entry: work,
+      stem: work.meta.stem,
+      entry: work.data,
     }
   },
 })

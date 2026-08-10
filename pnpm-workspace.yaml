@@ -30,3 +30,6 @@ minimumReleaseAgeExclude:
   - unhead
   - evlog
   - satori
+  - '@comark/*'
+  - comark
+  - comark-content

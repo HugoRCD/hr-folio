@@ -28,7 +28,7 @@ const { profile } = useFolioConfig()
       </div>
     </div>
     <p class="max-w-prose text-pretty text-muted text-sm/6">
-      <slot mdc-unwrap="p" />
+      <slot unwrap="p" />
     </p>
   </div>
 </template>

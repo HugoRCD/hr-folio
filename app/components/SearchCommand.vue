@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CommandPaletteGroup } from '@nuxt/ui'
+import { byDateDesc } from '#shared/utils/content-sort'
 
 const isOpen = ref(false)
 const paletteQuery = ref('')
@@ -14,9 +15,12 @@ const { data: clipboards } = await useFetch<FolioClipboardListItem[]>('/api/foli
   key: 'folio-clipboard-cmd',
 })
 
-const { data: projects } = await useAsyncData('cmd-works', () =>
-  queryCollection('works').order('date', 'DESC').all(),
-)
+const { data: projects } = await useAsyncData('cmd-works', async () => {
+  const items = await clientContent.list(['works'])
+  return items
+    .map(item => item.data)
+    .sort(byDateDesc)
+})
 
 const mcpUrl = 'https://hugorcd.com/mcp'
 const skillsCmd = 'npx skills add https://hugorcd.com'

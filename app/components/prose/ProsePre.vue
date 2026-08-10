@@ -33,11 +33,30 @@ const resolvedIcon = computed(() => {
     ?? undefined
 })
 
+// Comark's `pre` node (unlike Nuxt Content's) doesn't expose the raw source as a
+// `code` prop — the text only exists as highlighted `.line` spans in the default
+// slot. Measure it from the rendered DOM instead, once mounted.
 const COLLAPSE_THRESHOLD = 15
-const lines = computed(() => (props.code || '').split('\n').length)
+const preEl = ref<HTMLPreElement>()
+const lines = ref(1)
+const rawCode = ref(props.code || '')
 const isLong = computed(() => lines.value > COLLAPSE_THRESHOLD)
 const isCollapsed = ref(true)
 const showCollapse = computed(() => isLong.value && isCollapsed.value)
+
+function measure() {
+  if (!preEl.value) return
+  const lineEls = preEl.value.querySelectorAll('.line')
+  const text = preEl.value.textContent || ''
+  lines.value = lineEls.length || text.split('\n').length
+  rawCode.value = text
+}
+
+// Vue can reuse this component instance across content changes (e.g. `MarkdownDocument`
+// re-rendering the same `pre` slot position with different code) without unmounting it,
+// so `onMounted` alone would leave `lines`/`rawCode` stale. Re-measure after every DOM patch too.
+onMounted(measure)
+onUpdated(measure)
 </script>
 
 <template>
@@ -54,11 +73,12 @@ const showCollapse = computed(() => isLong.value && isCollapsed.value)
       size="xs"
       class="absolute right-2 top-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
       :aria-label="copied ? 'Copied' : 'Copy'"
-      @click="copy(props.code || '')"
+      @click="copy(rawCode)"
     />
 
     <div class="relative" :class="showCollapse && 'max-h-[360px] overflow-hidden'">
       <pre
+        ref="preEl"
         class="font-mono text-[13px]/6 px-5 py-4 overflow-x-auto focus:outline-none"
         :class="props.class"
         v-bind="$attrs"

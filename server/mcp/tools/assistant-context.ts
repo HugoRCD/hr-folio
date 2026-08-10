@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { renderMarkdown } from 'comark/render'
 
 export default defineMcpTool({
   name: 'assistant-context',
@@ -34,27 +35,32 @@ export default defineMcpTool({
     const { folio } = useRuntimeConfig(event)
     const siteUrl = folio.seo.url.replace(/\/$/, '')
 
-    const [writings, works, clipboards, home, about] = await Promise.all([
-      queryCollection(event, 'writing')
-        .order('date', 'DESC')
-        .limit(writingLimit)
-        .all(),
-      queryCollection(event, 'works')
-        .order('date', 'DESC')
-        .limit(worksLimit)
-        .all(),
-      clipboardLimit > 0
-        ? queryCollection(event, 'clipboard')
-          .order('date', 'DESC')
-          .limit(clipboardLimit)
-          .all()
-        : Promise.resolve([]),
-      queryCollection(event, 'content').path('/').first(),
-      queryCollection(event, 'about').first(),
+    const [pages, works, home, about] = await Promise.all([
+      content.list(['pages']),
+      content.list(['works']),
+      content.get('/'),
+      content.get('/about'),
     ])
+
+    const writings = pages
+      .filter(p => p.path.startsWith('/writing/'))
+      .sort((a, b) => byDateDesc(a.data, b.data))
+      .slice(0, writingLimit)
+    const clipboards = clipboardLimit > 0
+      ? pages
+        .filter(p => p.path.startsWith('/clipboard/'))
+        .sort((a, b) => byDateDesc(a.data, b.data))
+        .slice(0, clipboardLimit)
+      : []
+    const worksSorted = works
+      .sort((a, b) => byDateDesc(a.data, b.data))
+      .slice(0, worksLimit)
 
     const absolute = (path: string) =>
       path.startsWith('http') ? path : `${siteUrl}${path.startsWith('/') ? path : `/${path}`}`
+
+    const aboutData = about?.data
+    const homeData = home?.data
 
     return {
       generatedFor: 'MCP clients — ground conversations about Hugo Richard and hugorcd.com',
@@ -67,61 +73,63 @@ export default defineMcpTool({
         picture: folio.profile.picture,
         socials: folio.socials,
       },
-      about: about
+      about: aboutData
         ? {
-          fullName: about.fullName,
-          headline: about.headline,
-          pronouns: about.pronouns,
-          location: about.location,
-          languages: about.languages,
-          bio: about.bio,
-          currentRole: about.currentRole,
-          pastRoles: about.pastRoles,
-          expertise: about.expertise,
-          stack: about.stack,
-          interests: about.interests,
-          highlights: about.highlights,
-          ecosystemContributions: about.ecosystemContributions,
-          availability: about.availability,
-          funFacts: about.funFacts,
-          misconceptions: about.misconceptions,
+          fullName: aboutData.fullName,
+          headline: aboutData.headline,
+          pronouns: aboutData.pronouns,
+          location: aboutData.location,
+          languages: aboutData.languages,
+          bio: aboutData.bio,
+          currentRole: aboutData.currentRole,
+          pastRoles: aboutData.pastRoles,
+          expertise: aboutData.expertise,
+          stack: aboutData.stack,
+          interests: aboutData.interests,
+          highlights: aboutData.highlights,
+          ecosystemContributions: aboutData.ecosystemContributions,
+          availability: aboutData.availability,
+          funFacts: aboutData.funFacts,
+          misconceptions: aboutData.misconceptions,
           source: 'content/about.json — authoritative biographical source. Prefer this over memory for any personal/professional question.',
         }
         : null,
       home: home
         ? {
           path: home.path,
-          title: home.title,
-          description: home.description,
+          title: homeData?.title,
+          description: homeData?.description,
           url: absolute(home.path),
-          rawbodyPreview: typeof home.rawbody === 'string'
-            ? home.rawbody.slice(0, 2500)
-            : undefined,
+          rawbodyPreview: (await renderMarkdown({ frontmatter: home.data, meta: home.meta, nodes: home.nodes })).slice(0, 2500),
         }
         : null,
-      writing: writings.map(p => ({
-        path: p.path,
-        title: p.title,
-        description: p.description,
-        date: p.date,
-        tags: 'tags' in p ? p.tags : undefined,
-        url: absolute(p.path),
-      })),
-      works: works.map(w => ({
-        stem: w.stem,
-        name: w.name,
-        description: w.description,
-        category: w.category,
-        date: w.date,
-        url: w.url.startsWith('http') ? w.url : absolute(w.url),
-        tags: w.tags,
-      })),
-      clipboard: clipboards.map(c => ({
-        path: c.path,
-        title: c.title,
-        date: c.date,
-        url: absolute(c.path),
-      })),
+      writing: writings.map((p) => {
+        const { data } = p
+        return {
+          path: p.path,
+          title: data.title,
+          description: data.description,
+          date: data.date,
+          tags: data.tags,
+          url: absolute(p.path),
+        }
+      }),
+      works: worksSorted.map((w) => {
+        const { data } = w
+        return {
+          stem: w.meta.stem,
+          name: data.name,
+          description: data.description,
+          category: data.category,
+          date: data.date,
+          url: data.url.startsWith('http') ? data.url : absolute(data.url),
+          tags: data.tags,
+        }
+      }),
+      clipboard: clipboards.map((c) => {
+        const { data } = c
+        return { path: c.path, title: data.title, date: data.date, url: absolute(c.path) }
+      }),
       navigationHints: {
         writingIndex: absolute('/writing'),
         worksIndex: absolute('/works'),

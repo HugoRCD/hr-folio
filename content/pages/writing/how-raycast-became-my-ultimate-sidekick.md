@@ -47,31 +47,25 @@ Here is a "small" list of my favorite extensions and their installer links:
   :prose-a[Install Here]{href="https://www.raycast.com/linear/linear"}
 - **GitHub**: Create branches, manage pull requests, and navigate repositories seamlessly.
   :prose-a[Install here]{href="https://www.raycast.com/raycast/github"}
-  [](https://www.raycast.com/raycast/github)
-- **Dub.sh**: Shorten URLs instantly with Dub.sh. Simplify sharing and keep your messages clean and concise.
+- **Dub.sh**: Shorten URLs instantly. Simplify sharing and keep your messages clean and concise.
   :prose-a[Install here]{href="https://www.raycast.com/quuu/dub-link-shortener"}
 - **Arc Search**: Explore the web with Arc Search. Conduct searches directly through the Arc browser for quick and efficient browsing. I use the ⌘⌘ shortcut to quickly open arc search with my latest opened tabs.
   :prose-a[Install Here]{href="https://www.raycast.com/the-browser-company/arc"}
-- **Ray.so**: Turn code into images with Ray.so. Showcase your code snippets visually and add flair to your projects.
+- **Ray.so**: Turn code into images. Showcase your code snippets visually and add flair to your projects.
   :prose-a[Install Here]{href="https://www.raycast.com/garrett/ray-so"}
 - **Word Count**: Track document lengths with Word Count. Keep tabs on word counts for essays, reports, and more.
   :prose-a[Install Here]{href="https://www.raycast.com/itsmingjie/word-count"}
 - **Lorem Ipsum**: Generate placeholder text with Lorem Ipsum. Perfect for design mockups and content placeholders.
   :prose-a[Install Here]{href="https://www.raycast.com/AntonNiklasson/lorem-ipsum"}
-  [](https://www.raycast.com/AntonNiklasson/lorem-ipsum)
 - **Floating Notes**: Capture your ideas on the fly with the Floating Notes extension. Whether you're brainstorming or jotting down a quick reminder, this tool has got your back. (Built-in)
 - **Node version Manager**: Manage Node.js versions with Node Version Manager. Switch between versions seamlessly.
   :prose-a[Install Here]{href="https://www.raycast.com/andresmorelos/node-version-manager"}
-  [](https://www.raycast.com/andresmorelos/node-version-manager)
-- **Remove.bg**: Say goodbye to pesky backgrounds with the Remove.bg Background Remover extension. Clean up your images and let your subjects shine.
+- **Remove.bg**: Say goodbye to pesky backgrounds with this Background Remover extension. Clean up your images and let your subjects shine.
   :prose-a[Install Here]{href="https://www.raycast.com/maantje/remove-background"}
-  [](https://www.raycast.com/maantje/remove-background)
 - **ScreenOCR**: Extract text from images with ScreenOCR. Convert images to editable text quickly.
   :prose-a[Install Here]{href="https://www.raycast.com/huzef44/screenocr"}
-  [](https://www.raycast.com/huzef44/screenocr)
 - **Vercel**: Manage deployments effortlessly and keep an eye on them.
   :prose-a[Install Here]{href="https://www.raycast.com/vercel/vercast"}
-  [](https://www.raycast.com/vercel/vercast)
 - **Lucide / Heroicons**: Find icons with Lucide and Heroicons. Perfect for web and app design.
   :prose-a[Install Lucide Here]{href="https://www.raycast.com/Sn0wye/lucide-icons"}
   /
@@ -80,7 +74,6 @@ Here is a "small" list of my favorite extensions and their installer links:
   :prose-a[Install Here]{href="https://www.raycast.com/iKasch/summarize-youtube-video-with-ai"}
 - **Kill Process**: Say goodbye to frozen programs
   :prose-a[Install Here]{href="https://www.raycast.com/rolandleth/kill-process"}
-  [](https://www.raycast.com/rolandleth/kill-process)
 
 :br
 

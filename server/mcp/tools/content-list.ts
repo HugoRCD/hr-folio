@@ -2,6 +2,11 @@ import { z } from 'zod'
 
 const collectionId = z.enum(['content', 'writing', 'clipboard', 'works'])
 
+/** `content.search()` returns section-level hits; `id` is `path` or `path#headingId` — strip the anchor to get the document path. */
+function toDocPath(id: string) {
+  return id.split('#')[0]!
+}
+
 export default defineMcpTool({
   name: 'content-list',
   title: 'List content',
@@ -17,13 +22,13 @@ export default defineMcpTool({
     search: z
       .string()
       .optional()
-      .describe('Case-insensitive filter on titles, descriptions, names, URLs, tags, category, and a prefix of markdown body.'),
+      .describe('Full-text search across titles, headings, and body content (via FTS5), ranked by relevance.'),
     limitPerCollection: z
       .number()
       .min(1)
       .max(200)
       .default(120)
-      .describe('Maximum rows per collection before search filtering.'),
+      .describe('Maximum rows per collection, applied after search filtering.'),
   },
   inputExamples: [
     { limitPerCollection: 80 },
@@ -31,76 +36,84 @@ export default defineMcpTool({
   ],
   cache: '2m',
   handler: async ({ collections, search, limitPerCollection }) => {
-    const event = useEvent()
     const want = collections ?? (['content', 'writing', 'clipboard', 'works'] as const)
-    const q = search?.trim().toLowerCase() ?? ''
+    const q = search?.trim() ?? ''
+    const likePattern = `%${q}%`
 
-    const match = (text: string | null | undefined) => {
-      if (!q) return true
-      return (text ?? '').toLowerCase().includes(q)
-    }
+    // Full-text search (headings + body, not just title/description/tags) instead of
+    // manual substring matching — `pages` are real markdown documents, so the
+    // `sqliteFullTextSearch` plugin (ranked, indexes every heading) fits. `works` are
+    // flat JSON records with no body/headings to index, so `sqlQuery` (a structured
+    // `LIKE` scan across its fields) fits better there. Both plugins are configured
+    // on the shared `content` instance in `server/utils/content.ts`.
+    const [pagesHits, worksMatches] = q
+      ? await Promise.all([
+        // `sqliteFullTextSearch` has no offset/pagination — its `limit` binds
+        // straight into a SQL `LIMIT ?`, so a finite cap here would silently
+        // drop documents whose only matching section ranks below it. `-1` is
+        // SQLite's "no limit" sentinel: safe at this site's content volume
+        // (a few dozen pages), and `matchedPages`/`limitPerCollection` below
+        // still dedupe to documents and cap the final output.
+        content.search(['pages'], q, { limit: -1 }),
+        content.query('works').orWhere(group => group
+          .where('data.name', 'LIKE', likePattern)
+          .where('data.description', 'LIKE', likePattern)
+          .where('data.url', 'LIKE', likePattern)
+          .where('data.category', 'LIKE', likePattern)
+          .where('data.tags', 'LIKE', likePattern)).all(),
+      ])
+      : [null, null]
+    const matchedPages = pagesHits && new Set(pagesHits.map(h => toDocPath(h.id)))
+    const matchedWorks = worksMatches && new Set(worksMatches.map(r => r.path))
 
-    const matchTags = (tags: string[] | undefined) => {
-      if (!q) return true
-      if (!tags?.length) return false
-      return tags.some(t => t.toLowerCase().includes(q))
-    }
+    const pages = await content.list(['pages'])
+    const byPrefix = (prefix: string) =>
+      pages.filter(p => p.path.startsWith(prefix)).sort((a, b) => byDateDesc(a.data, b.data))
 
     const out: Record<string, unknown> = {}
 
     for (const col of want) {
       if (col === 'works') {
-        let rows = await queryCollection(event, 'works')
-          .order('date', 'DESC')
-          .limit(limitPerCollection)
-          .all()
-        if (q) {
-          rows = rows.filter(
-            w =>
-              match(w.name)
-              || match(w.description)
-              || match(w.url)
-              || match(w.category)
-              || matchTags(w.tags),
-          )
-        }
-        out.works = rows.map(w => ({
-          stem: w.stem,
-          name: w.name,
-          description: w.description,
-          category: w.category,
-          date: w.date,
-          url: w.url,
-          release: w.release,
-          tags: w.tags,
-        }))
+        let rows = (await content.list(['works']))
+          .sort((a, b) => byDateDesc(a.data, b.data))
+        if (matchedWorks) rows = rows.filter(item => matchedWorks.has(item.path))
+        out.works = rows.slice(0, limitPerCollection).map((item) => {
+          const w = item.data
+          return {
+            stem: item.meta.stem,
+            name: w.name,
+            description: w.description,
+            category: w.category,
+            date: w.date,
+            url: w.url,
+            release: w.release,
+            tags: w.tags,
+          }
+        })
         continue
       }
 
-      let rows = await queryCollection(event, col)
-        .order('date', 'DESC')
-        .limit(limitPerCollection)
-        .all()
+      const rows = col === 'content'
+        ? pages.sort((a, b) => byDateDesc(a.data, b.data))
+        : byPrefix(`/${col}/`)
 
-      if (q) {
-        rows = rows.filter((r) => {
-          const raw = typeof r.rawbody === 'string' ? r.rawbody : ''
-          return (
-            match(r.title)
-            || match(r.description)
-            || ('tags' in r && matchTags(r.tags))
-            || match(raw.slice(0, 8000))
-          )
-        })
-      }
+      const filtered = (matchedPages ? rows.filter(r => matchedPages.has(r.path)) : rows).slice(0, limitPerCollection)
 
-      out[col] = rows.map((r) => ({
-        path: r.path,
-        title: r.title,
-        description: r.description,
-        date: r.date,
-        ...('tags' in r && r.tags ? { tags: r.tags } : {}),
-      }))
+      // The `content` collection id must not become the output key: a top-level
+      // `content` array makes the MCP toolkit mistake this object for an
+      // already-built CallToolResult (which also has a `content` array) and skip
+      // wrapping it, producing an invalid response. Use `pages` instead.
+      const outKey = col === 'content' ? 'pages' : col
+      out[outKey] = filtered.map((r) => {
+        const { data } = r
+        return {
+          path: r.path,
+          title: data.title,
+          description: data.description,
+          date: data.date,
+          ...(data.tags ? { tags: data.tags } : {}),
+        }
+      })
     }
 
     return out

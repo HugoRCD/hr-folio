@@ -36,7 +36,7 @@ process.env.PUPPETEER_CACHE_DIR = join(homedir(), '.cache', 'puppeteer')
 const { default: captureWebsite } = await import('capture-website')
 
 const root = process.cwd()
-const worksDir = join(root, 'content/1.works')
+const worksDir = join(root, 'content/works')
 const outputDir = join(root, 'public/works')
 const chromeExecutable = resolveChromeExecutable()
 

@@ -15,7 +15,7 @@ The modern Nuxt stack is evolving rapidly, bringing exciting new features and im
 As of January 2025, we're working with some cutting-edge versions:
 
 - Nuxt UI v3.0.0-alpha.12 - A powerful component library revolutionizing UI development
-- Nuxt Content v3.0.0- Content management reimagined
+- Nuxt Content v3.0.0 - Content management reimagined
 - Nuxt v3.15.1 - The rock-solid foundation
 
 While these alpha versions are still evolving, they're stable enough for production use and offer significant improvements over their predecessors. Let's dive into containerizing this stack properly.
@@ -28,6 +28,9 @@ Before we start with Docker, ensure your Nuxt project is properly configured. He
 {
   "name": "nuxt-app",
   "private": true,
+  "scripts": {
+    "build": "nuxt build"
+  },
   "dependencies": {
     "@nuxt/content": "^3.0.0",
     "@nuxt/ui": "^3.0.0-alpha.12",
@@ -49,7 +52,7 @@ COPY pnpm-lock.yaml package.json ./
 
 # Enable corepack for pnpm support
 RUN corepack enable
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 RUN pnpm run build
@@ -84,7 +87,7 @@ services:
     ports:
       - "3000:3000"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000/api/hello" ]
+      test: [ "CMD", "wget", "-q", "-t", "1", "--spider", "http://localhost:3000/api/hello" ]
       interval: 30s
       timeout: 10s
     deploy:
@@ -97,7 +100,7 @@ services:
 
 - restart: always ensures your app recovers from crashes
 - The healthcheck endpoint verifies your application is truly running
-- Resource limits prevent container memory leaks
+- Resource limits cap how much memory the container can use, containing the blast radius of excessive memory use rather than fixing leaks
 - Port mapping allows direct access to your application
 
 The healthcheck ensures your application is responding properly. If you want to add custom health endpoints, create an API route in your Nuxt app:
@@ -199,7 +202,7 @@ With your Docker image automatically published to GitHub Registry, deploying wit
 
 1. Connect to your Coolify instance
 2. Create a new service using your container image
-3. Set `ghcr.io/yourusername/your-repo:latest` as the image source
+3. Set `ghcr.io/yourusername/your-repo:v1.0.0` (your published release tag — the workflow above only tags `latest` on default-branch pushes, not on release tags) as the image source
 4. Configure your environment variables
 5. Deploy!
 
