@@ -14,7 +14,7 @@
     "screenshots": "node scripts/generate-screenshots.mjs",
     "screenshots:install": "puppeteer browsers install chrome"
   },
-  "packageManager": "pnpm@11.23.0",
+  "packageManager": "pnpm@11.22.0",
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/lucide": "^1.2.125",

@@ -23,7 +23,9 @@ minimumReleaseAgeExclude:
   - 'nuxt-*'
   - '@vercel/*'
   - '@shelve/cli'
+  - '@iconify-json/lucide'
   - '@iconify-json/simple-icons'
+  - '@iconify-json/vscode-icons'
   - '@unhead/bundler'
   - nuxtseo-shared
   - site-config-stack
