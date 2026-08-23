@@ -6,7 +6,7 @@
  */
 export const folioPublic = {
   profile: {
-    email: 'contact@hrcd.fr',
+    email: 'contact@hugorcd.com',
     picture: 'https://avatars.githubusercontent.com/u/71938701?v=4',
   },
   seo: {

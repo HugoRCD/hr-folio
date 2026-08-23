@@ -7,6 +7,8 @@ description: Software Engineer & Designer at Vercel. Building with obsession. Op
 Building with obsession ▲ Open source by default, [Nuxt](https://nuxt.com) at heart.
 ::
 
+:contact-links
+
 ::experience
 ---
 items:
@@ -29,5 +31,3 @@ items:
 
 ::writing-list{:limit='5'}
 ::
-
-:contact-links

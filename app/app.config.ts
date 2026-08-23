@@ -4,6 +4,15 @@ export default defineAppConfig({
   profile: { ...folioPublic.profile },
   seo: { ...folioPublic.seo },
   socials: { ...folioPublic.socials },
+  icon: {
+    customize(content, _name, prefix) {
+      if (prefix !== 'nucleo') return content
+
+      return content
+        .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"')
+        .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"')
+    },
+  },
   link: [
     {
       rel: 'icon',

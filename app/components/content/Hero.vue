@@ -22,12 +22,12 @@ const { profile } = useFolioConfig()
         <h1 class="font-redaction text-lg">
           {{ title }}
         </h1>
-        <h2 class="font-serif text-primary text-xl font-medium">
+        <h2 class="font-serif text-xl font-medium text-primary">
           {{ subtitle }}
         </h2>
       </div>
     </div>
-    <p class="max-w-prose text-pretty text-muted text-sm/6">
+    <p class="max-w-prose text-pretty text-sm/6 text-muted">
       <slot mdc-unwrap="p" />
     </p>
   </div>

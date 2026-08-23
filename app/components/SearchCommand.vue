@@ -18,6 +18,8 @@ const { data: projects } = await useAsyncData('cmd-works', () =>
   queryCollection('works').order('date', 'DESC').all(),
 )
 
+const socials = useSocialLinks()
+
 const mcpUrl = 'https://hugorcd.com/mcp'
 const skillsCmd = 'npx skills add https://hugorcd.com'
 
@@ -42,6 +44,16 @@ const groups = computed<CommandPaletteGroup[]>(() => [
       { label: 'Writing', icon: 'i-lucide-pen-line', to: '/writing' },
       { label: 'Works', icon: 'i-lucide-layers', to: '/works' },
     ],
+  },
+  {
+    id: 'contact',
+    label: 'Contact',
+    items: socials.value.map(link => ({
+      label: link.label,
+      icon: link.icon,
+      to: link.href,
+      ...externalLinkProps(link.href),
+    })),
   },
   {
     id: 'writing',
@@ -86,7 +98,7 @@ const groups = computed<CommandPaletteGroup[]>(() => [
   },
 ])
 
-const placeholder = 'Search pages, writing, projects\u2026'
+const placeholder = 'Search pages, writing, projects, contact\u2026'
 
 function onSelect(item: any) {
   if (!item) return
@@ -110,6 +122,7 @@ function onSelect(item: any) {
   }
 
   if (!item.to) return
+  if (item.to.startsWith('mailto:')) return
   if (item.to.startsWith('http')) {
     // Items with `target` / `rel` are handled by UCommandPalette’s ULink (avoids double-opening).
     if (!item.target) window.open(item.to, '_blank', 'noopener,noreferrer')

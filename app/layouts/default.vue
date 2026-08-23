@@ -23,11 +23,9 @@ const isHome = computed(() => route.path === '/')
         <slot />
       </div>
 
-      <footer class="mt-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-sm text-muted/40">
+      <footer class="mt-16 flex items-center justify-between text-sm text-muted/40">
         <span>&copy; {{ new Date().getFullYear() }}</span>
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] text-muted/25">
-          <span>⌘K</span>
-        </div>
+        <span class="font-mono text-[10px] text-muted/25">⌘K</span>
       </footer>
     </main>
   </UApp>
