@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="my-6 border-l-2 border-primary/40 pl-5">
+  <div class="my-6 border-l-2 border-muted pl-5">
     <div class="font-serif text-lg/7 italic text-highlighted">
       <slot />
     </div>
