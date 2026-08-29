@@ -54,6 +54,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "automd": "^0.4.3",
     "eslint": "^9.39.5",
+    "nuxtseo-layer-devtools": "^5.3.14",
     "yaml": "^2.9.0"
   }
 }
