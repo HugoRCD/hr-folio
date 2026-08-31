@@ -3,7 +3,7 @@ title: How a Tweet Changed My Life
 description: From a layoff in Nice to Vercel in London, by way of Nuxt. The story
   of a tweet posted on a Tuesday morning in December, and of everything that
   made it work.
-date: 2026-08-29
+date: 2026-09-01
 tags: [career, personal, nuxt, open-source]
 ---
 
@@ -15,17 +15,13 @@ Nothing special. Three sentences, a sweating emoji, a green heart. I was looking
 
 Two weeks later, I was working on Nuxt. Six months later, I was joining Vercel. A year later, I was living in London.
 
-I've wanted to write this for a long time, and every time I try, I hit the same wall: told like that, it sounds scripted. A tweet, a DM, a call, a dream job. It reads like one of those LinkedIn stories you scroll past.
-
-But the tweet isn't the story. The tweet is the last line of a story that started fifteen years earlier. That's the one I want to tell, because it's the one that explains why the tweet worked.
-
 ## One week, at fourteen
 
 It starts with a work-experience week. In France, around fourteen, you spend a week shadowing an adult at their job. A family friend was a developer, so I spent mine with him. That's where I wrote my first HTML pages.
 
 I don't know how to explain what it does to you, at that age, to watch something appear on a screen that you built out of lines of text. You type, and something exists that didn't before. I never really stopped after that.
 
-As a teenager I touched a bit of everything. A lot of security at first, because it looked cool. Then, like a lot of people, I wanted to make some money. The year I turned eighteen, in 2019, I started building websites as a freelancer. WordPress first, then hand-coded sites, in almost pure HTML, with a bit of PHP for templating so I could reuse chunks of pages. I didn't have the word for it yet, but I was already looking for components.
+As a teenager I touched a bit of everything. A lot of cyber-security at first. Then, like a lot of people, I wanted to make some money. The year I turned eighteen, in 2019, I started building websites as a freelancer. WordPress first, then hand-coded sites, in almost pure HTML, with a bit of PHP for templating so I could reuse chunks of pages. I didn't have the word for it yet, but I was already looking for components.
 
 ## A coding school, a company, and Vue
 
@@ -61,7 +57,7 @@ It didn't work, and more importantly it wasn't what I wanted. I was getting clos
 
 I built my first modules. Then I built [Canvas](https://canvas.hrcd.fr), my first Nuxt portfolio template. It did well, it got listed on [nuxt.com](https://nuxt.com/templates) and then on [Nuxt Studio](https://nuxt.studio). And it's the first time [Sébastien](https://x.com/Atinux), the creator of Nuxt, sent me a DM.
 
-You have to understand where I was at that point. I was a fan. Not a casual one. And here was the person who built the thing I'd been obsessing over for two years, writing to me about something I'd made. I read that message more times than I'd like to admit.
+You have to understand where I was at that point. I was a fan. Not a casual one. And here was the person who built the thing I'd been obsessing over for two years, writing to me about something I'd made.
 
 It's only later that I understood what that moment really was: a foot in the door. The first time I felt like I was starting to belong to something. I think almost everyone in the Vue and Nuxt community has a version of that moment, and I don't think it's a coincidence.
 
@@ -71,7 +67,7 @@ Originally Shelve was tiny. [Vercel](https://vercel.com) was too expensive for m
 
 But every time I start something, I go too far. And this time, I went further than ever, because something else was happening at the same time.
 
-I was arriving on [Twitter](https://x.com/hugorcd). Not just to post, but to watch. I'd started following design Twitter, the people who ship screen recordings of a hover state, a transition, a loading animation, and get thousands of likes for it. [Fey](https://fey.com) was the one that stuck with me. The level of detail in that app was absurd, and I couldn't look away. [Linear](https://linear.app) was the other obvious one, the reference everyone was chasing for design. And [Raycast](https://www.raycast.com), for something different: not how it looked, but how it felt to use. The interactions, the speed, the DX. 
+I was arriving on [Twitter](https://x.com/hugorcd). Not just to post, but to watch. I'd started following design Twitter, the people who ship screen recordings of a hover state, a transition, a loading animation, and get thousands of likes for it. [Fey](https://fey.com) was the one that stuck with me. The level of detail in that app was absurd, and I couldn't look away. [Linear](https://linear.app) was the other obvious one, the reference everyone was chasing for design. And [Raycast](https://www.raycast.com), for something different: not how it looked, but how it felt to use. The interactions, the speed, the DX.
 
 That's the first time I understood the word *craft*. Until then, code was lines and ideas. Something works or it doesn't, and you move on. Suddenly it was closer to sculpture. You're carving something out of rock, and every detail counts, including the ones nobody will consciously notice.
 
@@ -147,9 +143,9 @@ And right there, two of those three branches had just merged. I was going to wor
 
 I'd already run out of the word "dream" in Amsterdam. I still don't have a better one for this.
 
-The months that followed were a lot. Contracts, visas, paperwork, and one decision bigger than the rest: joining Vercel meant leaving Nice for London. I'd wanted to live abroad for a long time, so it wasn't a sacrifice. It was the excuse I'd been waiting for. I don't regret it for a second.
+The months that followed were a lot. Contracts, visas, paperwork, and one decision bigger than the rest: joining Vercel meant leaving Nice and starting everything over in London. I'd wanted to live abroad for a long time, so it wasn't a sacrifice. It was the excuse I'd been waiting for. I don't regret it for a second.
 
-At the end of June, I graduate. The internship I'd been looking for in that tweet was, on paper, the last step of my degree. On July 8, 2025, ten days later, [the announcement goes public](https://vercel.com/blog/nuxtlabs-joins-vercel), and I walk into Vercel. I finished school one week and started at Vercel the next.
+At the end of June, I graduate. On July 8, 2025, ten days later, [the announcement goes public](https://vercel.com/blog/nuxtlabs-joins-vercel), and I walk into Vercel. I finished school one week and started at Vercel the next.
 
 ## Making your own luck
 
@@ -167,6 +163,6 @@ Luck surface area: the amount of luck you get is proportional to what you do, mu
 
 The December tweet didn't work because it was well written. It worked because Sébastien and Daniel were already following me. Because they'd seen Canvas, Shelve, the modules, the screenshots, the animations, the hundred posts with six likes. By the time I asked, the answer had been building for two years.
 
-You can be the best developer on the planet. If nobody sees your work, it doesn't exist. Not to the people who could change something for you.
+You can be the best developer on the planet (not saying I am, but you get the idea). If nobody sees your work, it doesn't exist. Not to the people who could change something for you.
 
 What happened after that deserves its own article. It's called *One year at Vercel*, and it's coming next.
