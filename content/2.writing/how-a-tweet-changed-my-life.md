@@ -3,7 +3,7 @@ title: How a Tweet Changed My Life
 description: From a layoff in Nice to Vercel in London, by way of Nuxt. The story
   of a tweet posted on a Tuesday morning in December, and of everything that
   made it work.
-date: 2026-09-01
+date: 2026-09-02
 tags: [career, personal, nuxt, open-source]
 ---
 
