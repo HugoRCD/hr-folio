@@ -1,4 +1,7 @@
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
+  const log = useLogger(event)
   setResponseHeader(event, 'Cache-Control', 'private, no-store')
-  return getWritingListForRequest(event)
+  const items = await getWritingListForRequest(event)
+  log.set({ writing: { count: items.length } })
+  return items
 })
