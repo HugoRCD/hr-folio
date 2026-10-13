@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    style="display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%; padding: 80px; background-color: #020202;"
+    style="display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%; box-sizing: border-box; padding: 80px; background-color: #020202;"
   >
     <div style="display: flex; align-items: center; gap: 16px;">
       <img
