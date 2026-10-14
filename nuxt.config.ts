@@ -160,6 +160,11 @@ Prefer raw markdown (rawbody) over rendered AST for analysis.`,
     },
   },
 
+  linkChecker: {
+    // Non-http deep links (e.g. raycast://) can't be resolved by the crawler
+    excludeLinks: [/^raycast:/],
+  },
+
   ogImage: {
     zeroRuntime: true,
   },
