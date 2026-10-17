@@ -30,9 +30,10 @@ const readingTime = computed(() => {
 </script>
 
 <template>
-  <div v-if="page">
+  <div v-if="page" class="relative">
     <Toc v-if="isArticle" :links="page.body.toc?.links!" />
-    <div v-if="isArticle && readingTime" class="mb-6 flex items-center gap-2 text-sm text-muted/50">
+    <TocMargin v-if="isArticle" :links="page.body.toc?.links ?? []" :date="page.date" :minutes="readingTime" />
+    <div v-if="isArticle && readingTime" class="mb-6 flex items-center gap-2 text-sm text-muted/50 lg:hidden">
       <span>{{ new Date(page.date!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</span>
       <span class="text-muted/20">&middot;</span>
       <span>{{ readingTime }} min read</span>
@@ -43,7 +44,7 @@ const readingTime = computed(() => {
     <ContentRenderer
       :value="page"
       :class="[
-        isArticle ? 'mb-4 prose-breakout' : isClipboard ? 'mb-4 prose-compact prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16',
+        isArticle ? 'mb-4 prose-breakout' : isClipboard ? 'mb-4 prose-compact prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16 lg:gap-24',
       ]"
       :data="mdcVars"
     />

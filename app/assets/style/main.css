@@ -6,14 +6,30 @@
 @theme {
   --font-serif: "Redaction", serif;
   --font-sans: "Geist", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
   --font-redaction: "Redaction", serif;
+  --font-signature: "Mrs Saint Delafield", cursive;
+}
+
+/* The italic ships in /fonts but was never registered, so italics were faked. */
+@font-face {
+  font-family: "Redaction";
+  src: url("/fonts/Redaction-Italic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+h1, h2, h3, .font-serif, .font-redaction {
+  font-synthesis: none;
 }
 
 :root {
   scrollbar-color: var(--ui-border) transparent;
   scrollbar-width: thin;
 
-  --ui-primary: rgb(40, 83, 255) !important;
+  /* One red, between Cartier and Ferrari. It never moves; the light around it does. */
+  --ui-primary: #CD1919 !important;
   --code-bg: #f6f6f6;
   --code-border: #e5e5e5;
 
@@ -21,7 +37,7 @@
 }
 
 .dark {
-  --ui-primary: rgb(8, 73, 236) !important;
+  --ui-primary: #E1342D !important;
   --ui-bg: rgb(2, 2, 2);
   --code-bg: #0a0a0a;
   --code-border: #1e1e1e;
@@ -36,6 +52,84 @@
   background: var(--code-bg);
   border: 1px solid var(--code-border);
   color: var(--ui-text-highlighted);
+}
+
+/*
+ * The sheet. From 1024px the page is a 976px plate read left to right:
+ * an index margin (section marks, the figure, contents), a gutter, the measure,
+ * a gutter, a note margin (the dateline, filters, dimensions).
+ * Anything placed with .in-index / .in-note hangs off its measure-wide parent.
+ */
+:root {
+  --sheet-index: 224px;
+  --sheet-gutter: 48px;
+  --sheet-measure: 528px;
+  --sheet-note: 176px;
+  --sheet-width: calc(var(--sheet-index) + var(--sheet-measure) + var(--sheet-note) + var(--sheet-gutter) * 2);
+}
+
+.sheet {
+  width: 100%;
+  max-width: var(--sheet-width);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.measure {
+  position: relative;
+  width: 100%;
+  max-width: var(--sheet-measure);
+  margin-inline: auto;
+}
+
+.in-index,
+.in-note {
+  position: static;
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    padding-inline: 0;
+  }
+  .measure {
+    margin-left: calc(var(--sheet-index) + var(--sheet-gutter));
+    margin-right: 0;
+  }
+  .in-index {
+    position: absolute;
+    right: calc(100% + var(--sheet-gutter));
+    width: var(--sheet-index);
+  }
+  .in-note {
+    position: absolute;
+    left: calc(100% + var(--sheet-gutter));
+    width: var(--sheet-note);
+  }
+  /* Entry numbers hang in the gutter, 12px clear of the text. They stay in the flow
+     (pulled out by a negative margin) so they share the entry's baseline. */
+  .in-gutter {
+    flex: none;
+    width: calc(var(--sheet-gutter) - 12px);
+    margin-left: calc(-1 * var(--sheet-gutter));
+    margin-right: 12px;
+    text-align: right;
+  }
+}
+
+@media (max-width: 1023px) {
+  .in-gutter {
+    display: none;
+  }
+}
+
+/* A ledger leader: the dotted line between an entry and its date. */
+.leader {
+  flex: 1 1 auto;
+  min-width: 16px;
+  align-self: baseline;
+  height: 0;
+  border-bottom: 1px dotted color-mix(in oklab, var(--ui-text) 22%, transparent);
+  transform: translateY(-0.28em);
 }
 
 @layer base {
@@ -76,6 +170,17 @@
   width: calc(100% + var(--breakout) * 2);
   max-width: calc(100% + var(--breakout) * 2);
   margin-inline: calc(var(--breakout) * -1);
+}
+
+/* On the sheet, plates break out asymmetrically: a little into the left gutter
+   (the contents live in the index margin), further into the empty note margin. */
+@media (min-width: 1024px) {
+  .prose-breakout :where(.prose-code-block, figure, video, iframe, .breakout, img:not(a img):not(p img)) {
+    width: calc(100% + 40px + 136px);
+    max-width: calc(100% + 40px + 136px);
+    margin-left: -40px;
+    margin-right: -136px;
+  }
 }
 
 @media (max-width: 639px) {

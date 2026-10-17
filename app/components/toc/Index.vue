@@ -58,12 +58,14 @@ const colorMode = useColorMode()
 const inactiveBarColor = computed(() =>
   colorMode.value === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
 )
+// the one red (see main.css); motion needs a literal colour to animate
+const activeBarColor = computed(() => (colorMode.value === 'dark' ? '#E1342D' : '#CD1919'))
 </script>
 
 <template>
   <div
     ref="target"
-    class="fixed right-4 top-1/2 z-50 -translate-y-1/2 cursor-pointer"
+    class="fixed right-4 top-1/2 z-50 -translate-y-1/2 cursor-pointer lg:hidden"
     @mouseenter="onEnter"
     @mouseleave="onLeave"
     @click="toggle"
@@ -118,7 +120,7 @@ const inactiveBarColor = computed(() =>
                   ? (link.depth === 3 ? '14px' : '24px')
                   : (link.depth === 3 ? '8px' : '16px'),
                 backgroundColor: activeHeadings.includes(link.id)
-                  ? 'rgb(40, 83, 255)'
+                  ? activeBarColor
                   : inactiveBarColor,
               }"
               :transition="barSpring"

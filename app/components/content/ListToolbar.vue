@@ -52,7 +52,7 @@ defineExpose({ searchInput })
 
 <template>
   <div class="flex items-center gap-2">
-    <span class="text-[11px] text-muted/50">{{ count }} {{ label }}</span>
+    <span class="font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50">{{ count }} {{ label }}</span>
     <UPopover v-model:open="isOpen" :content="{ align: 'end', side: 'bottom', sideOffset: 8 }">
       <button
         class="relative transition-colors"

@@ -36,7 +36,6 @@
     "motion-v": "^2.6.0",
     "nuxt": "^4.6.1",
     "nuxt-llms": "^0.2.0",
-    "nuxt-studio": "1.7.0",
     "satori": "^0.47.1",
     "tailwindcss": "^4.3.3",
     "unstorage": "^1.17.5",

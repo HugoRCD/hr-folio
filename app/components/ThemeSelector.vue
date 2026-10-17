@@ -8,6 +8,9 @@ const soundLabel = computed(() => (soundEnabled.value ? 'Disable sound' : 'Enabl
 const themeButton = useTemplateRef('themeButton')
 
 const switchTheme = () => {
+  // A manual choice outranks the daylight for the rest of the visit.
+  sessionStorage.setItem('folio-theme-manual', '1')
+  document.documentElement.style.removeProperty('--ui-bg')
   colorMode.preference = nextTheme.value
 }
 

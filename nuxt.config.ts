@@ -7,6 +7,10 @@ export default defineNuxtConfig({
       seo: { ...folioPublic.seo },
       socials: { ...folioPublic.socials },
     },
+    /** Bearer token for PUT /api/folio/whereabouts (NUXT_WHEREABOUTS_TOKEN) */
+    whereaboutsToken: '',
+    /** When this build was made, for the drawing's title block */
+    builtAt: new Date().toISOString(),
   },
 
   site: {
@@ -25,22 +29,17 @@ export default defineNuxtConfig({
   $production: {
     site: {
       url: 'https://hugorcd.com',
-    }
+    },
+    nitro: {
+      // reads UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN at runtime
+      storage: { whereabouts: { driver: 'upstash', base: 'folio' } },
+    },
   },
 
   compatibilityDate: '2025-12-13',
 
   routeRules: {
     '/': { isr: true },
-  },
-
-  studio: {
-    route: '/admin',
-    repository: {
-      provider: 'github',
-      owner: 'HugoRCD',
-      repo: 'hr-folio',
-    }
   },
 
   modules: [
@@ -52,7 +51,6 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@vueuse/nuxt',
     'nuxt-llms',
-    'nuxt-studio',
     '@vercel/analytics',
     '@vercel/speed-insights',
     '@nuxtjs/mcp-toolkit',
@@ -142,6 +140,9 @@ Prefer raw markdown (rawbody) over rendered AST for analysis.`,
   nitro: {
     experimental: {
       asyncContext: true,
+    },
+    devStorage: {
+      whereabouts: { driver: 'fs', base: './.data/whereabouts' },
     },
     /** Long-lived MCP stream (SSE) — avoid Vercel 504 on GET /mcp */
     vercel: {
