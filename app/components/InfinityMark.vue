@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { seenThisVisit } from '~/utils/once'
 // "Until further notice", drawn rather than typed: a lemniscate, slightly inclined like a hand
 // would write it, ruled once in the red when it comes into view. A glint then travels the
 // loop, slowly, without end.
@@ -19,14 +20,18 @@ const height = width * 0.42
 
 const root = useTemplateRef<SVGSVGElement>('root')
 const drawn = ref(false)
+const still = ref(false)
 onMounted(() => {
-  if (!root.value || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // drawn once per visit; afterwards it is there, with only the glint still travelling
+  if (!root.value || matchMedia('(prefers-reduced-motion: reduce)').matches || seenThisVisit('infinity')) {
+    still.value = true
     drawn.value = true
     return
   }
   const io = new IntersectionObserver(([e]) => {
     if (!e?.isIntersecting) return
     io.disconnect()
+    seenThisVisit('infinity', true)
     drawn.value = true
   }, { threshold: 1 })
   io.observe(root.value)
@@ -38,7 +43,7 @@ onMounted(() => {
     ref="root"
     class="infinity"
     data-construct="infinity"
-    :class="{ drawn }"
+    :class="{ drawn, still }"
     viewBox="-56 -21 112 42"
     :width
     :height
@@ -83,6 +88,13 @@ path {
 }
 :global(.light) .glint {
   stroke: color-mix(in oklab, white 55%, var(--ui-primary));
+}
+.still .ink {
+  transition: none;
+}
+.still.drawn .glint {
+  animation: travel 9s linear infinite;
+  opacity: 0.85;
 }
 @keyframes travel {
   to { stroke-dashoffset: 0; }

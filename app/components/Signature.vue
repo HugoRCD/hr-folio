@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { seenThisVisit } from '~/utils/once'
 // Signed once, at the end. The ink is revealed by a pen that follows the centreline of each
 // letter in writing order, so it reads as written rather than wiped in.
 import { signatureDuration, signatureOrigin, signatureOutline, signaturePen, signatureViewBox } from '~/utils/signature'
@@ -57,6 +58,7 @@ function write() {
       requestAnimationFrame(frame)
     } else {
       state.value = 'done'
+      seenThisVisit('signed', true)
       emit('done')
     }
   }
@@ -67,7 +69,8 @@ defineExpose({ write })
 
 onMounted(() => {
   const svg = root.value
-  if (!svg || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // written once per visit: on every later page or refresh the name is simply there
+  if (!svg || matchMedia('(prefers-reduced-motion: reduce)').matches || seenThisVisit('signed')) {
     state.value = 'done'
     return
   }

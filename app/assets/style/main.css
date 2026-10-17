@@ -116,9 +116,15 @@ h1, h2, h3, .font-serif, .font-redaction {
   }
 }
 
+/* on a phone the numbers hang in the 24px page margin, so every title keeps the same left edge */
 @media (max-width: 1023px) {
   .in-gutter {
-    display: none;
+    flex: none;
+    width: 12px;
+    margin-left: -18px;
+    margin-right: 6px;
+    text-align: right;
+    font-size: 9px;
   }
 }
 

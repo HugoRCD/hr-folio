@@ -23,7 +23,7 @@ const PINNED = 300 // pulled past this, the page stays where it was left
 
 const route = useRoute()
 const colorMode = useColorMode()
-const underside = useTemplateRef<{ build:() => void, rects: () => { id: string, rect: DOMRect }[] }>('underside')
+const underside = useTemplateRef<{ build:() => void, invalidate: () => void, rects: () => { id: string, rect: DOMRect }[] }>('underside')
 
 const mode = ref<Mode>('off')
 const corner = ref<Corner>(HOME)
@@ -137,11 +137,10 @@ watch([() => p.x, () => p.y, mode, corner], clipPaper, { flush: 'sync' })
 
 let boxes: { id: string, rect: DOMRect }[] = []
 const uncovered = ref<string[]>([])
+// Once an instrument has been uncovered it stays drawn for the rest of the visit: lifting the page
+// again shows it as it was, rather than drawing it all over again.
 function updateUncovered() {
-  if (mode.value !== 'lifted') {
-    if (uncovered.value.length) uncovered.value = []
-    return
-  }
+  if (mode.value !== 'lifted') return
   const { n, m, d } = fold()
   if (d < 1) return
   const side = (x: number, y: number) => (x - m.x) * n.x + (y - m.y) * n.y
@@ -192,8 +191,10 @@ function lift() {
   if (mode.value === 'lifted') return
   underside.value?.build()
   boxes = underside.value?.rects() ?? []
-  uncovered.value = []
   mode.value = 'lifted'
+  // the page is held: it does not scroll under the hand (the clip is in page coordinates, and a
+  // scroll would leave it a frame behind). Scrollbars are hidden site-wide, so nothing shifts.
+  document.documentElement.style.overflow = 'hidden'
   try {
     sessionStorage.setItem('folio-peeled', '1')
   } catch {
@@ -208,6 +209,7 @@ function rest() {
   settleTo(atLegs(k === HOME ? REST : 0.5), () => {
     if (open.value || dragging.value) return
     mode.value = 'rest'
+    document.documentElement.style.overflow = ''
     if (k !== HOME) home()
   })
 }
@@ -298,6 +300,7 @@ function enable() {
   if (!mq?.matches) {
     cancelAnimationFrame(raf)
     mode.value = 'off'
+    document.documentElement.style.overflow = ''
     return
   }
   measureView()
@@ -310,12 +313,15 @@ function enable() {
 
 function onResize() {
   measureView()
+  underside.value?.invalidate()
   if (mode.value === 'lifted') rest()
   else if (mode.value === 'rest') place(atLegs(corner.value === HOME ? REST : 0.5))
 }
-// holding the corner is holding the page: scrolling lets go of it
-function onScroll() {
-  if (mode.value === 'lifted' && !dragging.value) rest()
+// a wheel on a page that is held open lets go of it; while dragging, it is ignored
+function onWheel(e: WheelEvent) {
+  if (mode.value !== 'lifted') return
+  e.preventDefault()
+  if (!dragging.value) rest()
 }
 function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape' && mode.value === 'lifted') rest()
@@ -329,7 +335,7 @@ onMounted(() => {
   mq = matchMedia('(min-width: 1024px) and (pointer: fine)')
   mq.addEventListener('change', enable)
   window.addEventListener('resize', onResize)
-  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('wheel', onWheel, { passive: false })
   window.addEventListener('keydown', onKey)
   window.addEventListener('blur', onBlur)
   enable()
@@ -346,11 +352,12 @@ onBeforeUnmount(() => {
   stopNudges()
   mq?.removeEventListener('change', enable)
   window.removeEventListener('resize', onResize)
-  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('wheel', onWheel)
   window.removeEventListener('keydown', onKey)
   window.removeEventListener('blur', onBlur)
   const paper = document.querySelector<HTMLElement>('.paper')
   if (paper) paper.style.clipPath = ''
+  document.documentElement.style.overflow = ''
 })
 
 // another page, another drawing: let the corner fall back first

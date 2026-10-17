@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The path this page took to reach the visitor: their city, the Vercel edge that answered, the
-// region the function ran in. Each hop is the great-circle distance, and under it the least time a
-// round trip can take through fibre, where light goes at about two thirds of c: t ≥ 2d ⁄ (⅔c).
+// region the page was rendered in. Each hop is the great-circle distance, and under it the least
+// time a round trip can take through glass fibre, where light goes at about 200 000 km/s.
 type Place = { label: string, sub: string, lat: number, lon: number }
 type RequestInfo = {
   visitor: { city: string, country: string, lat: number, lon: number } | null
@@ -48,11 +48,11 @@ defineExpose({ total: computed(() => route.value?.total ?? 0) })
         <text :x="(x(i, route.stops.length) + x(i + 1, route.stops.length)) / 2" y="18" text-anchor="middle">{{ km(h.km) }}</text>
         <text :x="(x(i, route.stops.length) + x(i + 1, route.stops.length)) / 2" y="31" text-anchor="middle" class="dim">≥ {{ h.ms.toFixed(1) }} ms</text>
       </g>
-      <!-- a request goes out and comes back, for ever -->
+      <!-- a request goes out and comes back, once -->
       <circle class="packet" cy="22" r="1.6" :style="{ '--from': `${x(0, route.stops.length)}px`, '--to': `${x(route.stops.length - 1, route.stops.length)}px` }" />
     </svg>
     <p v-else class="local">
-      Served from this machine: no edge, no region.
+      Served from this computer, not from Vercel: there is no route to draw. Online, this shows your city, the Vercel edge that answered and where the page was rendered.
     </p>
   </div>
 </template>
@@ -106,7 +106,7 @@ circle {
   opacity: 0;
 }
 .shown .packet {
-  animation: there-and-back 3.2s cubic-bezier(0.45, 0, 0.55, 1) 1.4s infinite;
+  animation: there-and-back 3.2s cubic-bezier(0.45, 0, 0.55, 1) 1.4s 1 both;
 }
 @keyframes there-and-back {
   0% { transform: translateX(var(--from)); opacity: 0; }

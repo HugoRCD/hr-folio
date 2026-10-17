@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { seenThisVisit } from '~/utils/once'
 // The sheet's construction, drawn in its margins. It comes in levels of detail, set with the
 // Detail control in the colophon, each adding something of a different kind:
 //   1 Scale    the five column widths, once, above the letterhead
@@ -28,10 +29,13 @@ const crisp = (n: number) => Math.round(n) + 0.5
 function measure() {
   const main = document.querySelector<HTMLElement>('main.measure')
   const sheet = document.querySelector<HTMLElement>('.sheet')
-  if (!main || !sheet || window.innerWidth < 1024) {
+  if (!main || !sheet) {
     shapes.value = []
     return
   }
+  // On a phone the sheet is a single column between two 24px margins: the construction keeps to
+  // what fits there (its widths, its two edges, the rhythm down the right margin).
+  const narrow = window.innerWidth < 1024
   const css = getComputedStyle(document.documentElement)
   const v = (name: string) => Number.parseFloat(css.getPropertyValue(name))
   const index = v('--sheet-index')
@@ -77,15 +81,23 @@ function measure() {
     return true
   }
 
-  // 1 Scale: the five columns, dimensioned once at the top of the sheet.
+  // 1 Scale: the columns, dimensioned once at the top of the sheet.
   const header = document.querySelector('header')
   const top = crisp((header?.getBoundingClientRect().top ?? 40) + sy - 20)
-  const edges = [S0, crisp(S0 + index), L, crisp(L + measureW), crisp(L + measureW + gutter), S1]
-  path(1, `M${S0} ${top}L${S1} ${top}`, 'faint', 1.4)
-  edges.forEach(x => path(1, `M${x} ${top - 3}v6`))
-  const widths = [index, gutter, measureW, gutter, note]
-  for (let i = 0; i < edges.length - 1; i++) {
-    label(1, (edges[i]! + edges[i + 1]!) / 2, top - LABEL_GAP, `${widths[i]}`)
+  const W = size.value.w
+  const R = crisp(main.getBoundingClientRect().right + sx) // the measure's right edge
+  const edges = narrow ? [L, R] : [S0, crisp(S0 + index), L, crisp(L + measureW), crisp(L + measureW + gutter), S1]
+  if (narrow) {
+    path(1, `M0 ${top}H${W}`, 'faint', 1.4)
+    edges.forEach(x => path(1, `M${x} ${top - 3}v6`))
+    for (const [a, b] of [[0, L], [L, R], [R, W]] as const) label(1, (a + b) / 2, top - LABEL_GAP, `${Math.round(b - a)}`)
+  } else {
+    path(1, `M${S0} ${top}L${S1} ${top}`, 'faint', 1.4)
+    edges.forEach(x => path(1, `M${x} ${top - 3}v6`))
+    const widths = [index, gutter, measureW, gutter, note]
+    for (let i = 0; i < edges.length - 1; i++) {
+      label(1, (edges[i]! + edges[i + 1]!) / 2, top - LABEL_GAP, `${widths[i]}`)
+    }
   }
 
   // 2 Grid: the column edges, from the scale to the foot of the sheet. They break around every
@@ -113,16 +125,17 @@ function measure() {
   })
   const obstacles = [...plates, ...ink]
   const foot = Math.round(sheetBottom - 24)
+  const minRun = narrow ? 16 : 4 // on a phone the edges touch every line: only keep the real gaps
   edges.forEach((x) => {
     const cuts = obstacles.filter(o => x > o.left - 4 && x < o.right + 4).sort((a, b) => a.top - b.top)
     let y = top + CLEAR
     let d = ''
     for (const o of cuts) {
       const stop = Math.round(o.top - o.pad)
-      if (stop - y >= 4) d += `M${x} ${y}V${stop}`
+      if (stop - y >= minRun) d += `M${x} ${y}V${stop}`
       y = Math.max(y, Math.round(o.bottom + o.pad))
     }
-    if (foot - y >= 4) d += `M${x} ${y}V${foot}`
+    if (foot - y >= minRun) d += `M${x} ${y}V${foot}`
     if (d) path(2, d, 'guide', 2.4)
   })
 
@@ -132,7 +145,7 @@ function measure() {
     .filter(s => s.querySelector('[data-construct="mark"], [data-construct="figure"]') && s.offsetParent)
     .map(s => s.getBoundingClientRect())
     .sort((a, b) => a.top - b.top)
-  const rx = crisp(S1 - CLEAR) // inside the sheet's edge, clear of its guide
+  const rx = narrow ? crisp(W - 15) : crisp(S1 - CLEAR) // inside the sheet's edge, clear of its guide
   for (let i = 1; i < sections.length; i++) {
     const a = crisp(sections[i - 1]!.bottom + sy)
     const b = crisp(sections[i]!.top + sy)
@@ -140,7 +153,12 @@ function measure() {
     dimension(3, rx, a, rx, b)
     const gap = Math.round(b - a)
     // the rhythm, in lines of the 24px leading where it divides evenly
-    label(3, rx - LABEL_GAP, (a + b) / 2 + 3, gap % 24 ? `${gap}` : `${gap} = ${gap / 24} × 24`, 'end')
+    if (narrow) label(3, W - 6, (a + b) / 2, `${gap}`, 'middle', true)
+    else label(3, rx - LABEL_GAP, (a + b) / 2 + 3, gap % 24 ? `${gap}` : `${gap} = ${gap / 24} × 24`, 'end')
+  }
+  if (narrow) {
+    shapes.value = out
+    return
   }
 
   const fig = document.querySelector<HTMLElement>('[data-construct="figure"]')
@@ -256,22 +274,26 @@ async function redraw() {
   requestAnimationFrame(() => requestAnimationFrame(() => (ready.value = true)))
 }
 
+// Lines draw themselves on the first load of a visit and when a level is chosen. Otherwise (other
+// pages, later refreshes) the drawing is simply there, faded in with the page.
+const instant = ref(false)
+
 let ro: ResizeObserver | undefined
 onMounted(() => {
   window.addEventListener('resize', schedule)
   ro = new ResizeObserver(schedule)
   const main = document.querySelector('main')
   if (main) ro.observe(main)
-  document.fonts.ready.then(redraw)
+  document.fonts.ready.then(() => {
+    if (seenThisVisit('construction', true)) instant.value = true
+    redraw().then(() => setTimeout(() => (instant.value = false), 600))
+  })
 })
 onBeforeUnmount(() => {
   ro?.disconnect()
   window.removeEventListener('resize', schedule)
 })
 
-// Lines are drawn when a level is chosen, not on every page: moving between pages, the drawing
-// is simply there, faded in with the page.
-const instant = ref(false)
 watch(() => route.path, async () => {
   instant.value = true
   ready.value = false

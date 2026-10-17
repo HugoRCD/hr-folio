@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import { seenThisVisit } from '~/utils/once'
 // The close of the letter, set to the right as on a letter: a signing line is ruled across the
 // right half of the column, then the name is written above it. The line sits 12px below the
 // lowest ink (the tail of the g); "Signed" opens it, on the same line.
 const root = useTemplateRef<HTMLElement>('root')
 const ink = useTemplateRef<{ write:() => void }>('ink')
 const state = ref<'idle' | 'ruling' | 'signed'>('idle')
+const still = ref(false)
 
 const PEN_DELAY = 700 // ms: the line is ruled first, the pen lands as it nears the end
 
 onMounted(() => {
-  if (!root.value || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    state.value = 'signed' // the signature shows itself whole under reduced motion
+  if (!root.value || matchMedia('(prefers-reduced-motion: reduce)').matches || seenThisVisit('signed')) {
+    still.value = true // already signed in this visit, or reduced motion: no ruling, no pen
+    state.value = 'signed'
     return
   }
   const io = new IntersectionObserver(([entry]) => {
@@ -24,7 +27,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="root" class="sign-off" :data-state="state">
+  <div ref="root" class="sign-off" :class="{ still }" :data-state="state">
     <Signature ref="ink" manual align="end" @done="state = 'signed'" />
     <!-- the svg keeps 3px of padding under the ink: 9px more makes the 12px clearance -->
     <p class="label ml-auto mt-[9px] flex h-px w-1/2 items-center gap-3" aria-hidden="true">
@@ -53,6 +56,9 @@ onMounted(() => {
 }
 .sign-off:not([data-state="idle"]) .label > span {
   opacity: 1;
+}
+.still :is(.rule, .label > span) {
+  transition: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .rule, .label > span {

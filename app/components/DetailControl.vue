@@ -32,7 +32,7 @@ const at = (i: number) => `${(i / (LEVELS.length - 1)) * 100}%`
 </script>
 
 <template>
-  <div class="hidden items-center gap-2.5 lg:flex" :title="`Detail: ${LEVELS[detail]} (D)`">
+  <div class="flex items-center gap-2.5" :title="`Detail: ${LEVELS[detail]} (D)`">
     <div class="ruler" :style="{ '--at': at(detail) }">
       <span class="track" />
       <span v-for="(_, i) in LEVELS" :key="i" class="tick" :class="{ past: i <= detail }" :style="{ left: at(i) }" />

@@ -17,7 +17,7 @@ const hand = computed(() => {
 
 <template>
   <header class="relative mb-14 lg:mb-20">
-    <div class="measure flex min-h-11 items-start justify-between">
+    <div class="measure flex min-h-11 items-start gap-5">
       <!-- monogram: the H of the signature -->
       <NuxtLink to="/" aria-label="Hugo Richard, home" class="in-index top-0 flex lg:justify-start">
         <svg :viewBox="monogramViewBox" class="h-11 w-auto text-[#901112] dark:text-primary" aria-hidden="true">
@@ -32,10 +32,10 @@ const hand = computed(() => {
       >
         &larr; Index
       </NuxtLink>
-      <span v-else />
 
-      <!-- dateline, set against the sheet's right edge as on a letter; the controls live in the colophon -->
-      <div class="in-note top-0 flex justify-end">
+      <!-- dateline, against the sheet's right edge as on a letter. It is only known in the browser,
+           so its three lines (62px) are held from the start: nothing below moves when it arrives. -->
+      <div class="in-note top-0 ml-auto flex min-h-[62px] justify-end">
         <ClientOnly>
           <p v-if="daylight?.date" class="flex flex-col text-right" data-construct="dateline">
             <span class="font-redaction text-[15px] italic leading-5 text-highlighted">{{ daylight.place.city }},</span>

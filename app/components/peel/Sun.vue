@@ -162,7 +162,7 @@ text {
   stroke-width: 0.75;
   transform-box: fill-box;
   transform-origin: center;
-  animation: pulse 2.8s ease-out infinite;
+  animation: pulse 2.8s ease-out 1.6s 2 both;
 }
 .now text {
   fill: #fff;

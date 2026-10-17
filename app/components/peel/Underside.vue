@@ -1,9 +1,8 @@
 <script setup lang="ts">
-// What is under the page: the same sheet as a working drawing on the red, and in each corner of
-// the window an instrument showing something that actually drives the page, live. Each corner of
-// the paper can be lifted, so each corner has its own: the render, the sun, the movement, and the
-// drawing's title block. An instrument draws itself in when the fold first uncovers it, and only
-// runs while it can be seen.
+// What is under the page: the same sheet as a working drawing on the red, and three instruments
+// for what actually makes it: how it reached you (the request), what lights it (the sun), and what
+// it is (the drawing's title block). The fourth corner shows the drawing alone. Everything draws
+// itself once, the first time it is uncovered, and is simply there afterwards.
 const { uncovered = [], active = false } = defineProps<{ uncovered?: string[], active?: boolean }>()
 
 const route = useRoute()
@@ -32,11 +31,19 @@ const has = (id: string) => uncovered.includes(id)
 
 const PAD = 16 // copy text keeps this far from an instrument
 
+// The copy is made once per page, and again only if the window changes size.
+let builtFor = ''
+let drawnOnce = false
+function invalidate() {
+  builtFor = ''
+}
+
 function build() {
   loadRequest()
   const host = drawing.value
   const sheet = document.querySelector<HTMLElement>('.paper .sheet')
-  if (!host || !sheet) return
+  if (!host || !sheet || builtFor === route.path) return
+  builtFor = route.path
   host.replaceChildren()
   const construction = document.querySelector<SVGSVGElement>('.paper .construction')
   for (const src of [construction, sheet]) {
@@ -61,10 +68,15 @@ function build() {
     })
     host.append(copy)
   }
-  // the copy's construction draws itself again, line by line, as the page comes up
+  // the copy's construction draws itself line by line the first time; after that it is just there
   const lines = host.querySelectorAll('.construction :is(path, text)')
-  lines.forEach(el => el.classList.remove('on'))
-  requestAnimationFrame(() => requestAnimationFrame(() => lines.forEach(el => el.classList.add('on'))))
+  if (drawnOnce) {
+    lines.forEach(el => el.classList.add('on'))
+  } else {
+    drawnOnce = true
+    lines.forEach(el => el.classList.remove('on'))
+    requestAnimationFrame(() => requestAnimationFrame(() => lines.forEach(el => el.classList.add('on'))))
+  }
   clearAround()
 }
 
@@ -91,7 +103,7 @@ function rects() {
   return [...(root.value?.querySelectorAll<HTMLElement>('[data-instrument]') ?? [])].map(el => ({ id: el.dataset.instrument!, rect: el.getBoundingClientRect() }))
 }
 
-defineExpose({ build, rects })
+defineExpose({ build, invalidate, rects })
 
 // --- the title block --------------------------------------------------------------------------
 
@@ -138,9 +150,14 @@ const block = computed(() => {
         <div class="rule-between" />
         <PeelRender :shown="has('render')" />
       </div>
-      <p class="equation">
-        <i>t</i> ≥ 2<i>d</i> ⁄ ⅔<i>c</i><span>{{ route2?.total ? `≥ ${route2.total.toFixed(1)} ms there and back` : 'light in fibre' }}</span>
-      </p>
+      <div v-if="route2?.total" class="equation">
+        <p class="math">
+          <i>t</i> ≥ 2<i>d</i> ⁄ <i>v</i> = {{ route2.total.toFixed(1) }} ms
+        </p>
+        <p class="caption">
+          No answer can come back sooner: twice the distance <i>d</i>, at the speed of light in glass fibre, <i>v</i> ≈ 200 000 km/s.
+        </p>
+      </div>
     </section>
 
     <section class="instrument tr" data-instrument="sun" :class="{ shown: has('sun') }">
@@ -148,19 +165,14 @@ const block = computed(() => {
       <div class="body">
         <PeelSun :shown="has('sun')" />
       </div>
-      <p class="equation">
-        sin <i>h</i> = sin <i>φ</i> sin <i>δ</i> + cos <i>φ</i> cos <i>δ</i> cos <i>H</i><span>elevation</span>
-      </p>
-    </section>
-
-    <section class="instrument bl" data-instrument="movement" :class="{ shown: has('movement') }">
-      <header><span class="title">The movement</span><span>28 800 vph · Fig. 3</span></header>
-      <div class="body">
-        <PeelMovement :shown="has('movement')" :running="active && has('movement')" :time-zone="daylight?.place.timeZone" />
+      <div class="equation">
+        <p class="math">
+          sin <i>h</i> = sin <i>φ</i> sin <i>δ</i> + cos <i>φ</i> cos <i>δ</i> cos <i>H</i>
+        </p>
+        <p class="caption">
+          The sun's height <i>h</i>, from the latitude <i>φ</i>, the season <i>δ</i> and the hour <i>H</i>. It sets the light of the page.
+        </p>
       </div>
-      <p class="equation">
-        <sup>64</sup>⁄<sub>8</sub> · <sup>60</sup>⁄<sub>8</sub> · <sup>72</sup>⁄<sub>6</sub> = 720<span>escape turns an hour</span>
-      </p>
     </section>
 
     <dl class="instrument br title-block" data-instrument="block" :class="{ shown: has('block') }">
@@ -210,7 +222,6 @@ const block = computed(() => {
 }
 .tl { top: 20px; left: 20px; }
 .tr { top: 20px; right: 20px; }
-.bl { bottom: 20px; left: 20px; }
 .br { bottom: 20px; right: 20px; }
 .instrument header {
   display: flex;
@@ -242,43 +253,41 @@ const block = computed(() => {
   transition: clip-path 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .tr { clip-path: inset(0 0 100% 100%); }
-.bl { clip-path: inset(100% 100% 0 0); }
 .br { clip-path: inset(100% 0 0 100%); }
 .instrument.shown {
   clip-path: inset(0 0 0 0);
 }
 
-/* each instrument closes on the equation it runs on */
+/* each instrument closes on the equation it runs on, and what it means in words */
 .equation {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 5px 8px 6px;
+  padding: 7px 15px 9px;
   border-top: 1px solid rgb(235 235 235 / 0.3);
-  font-family: var(--font-redaction);
-  font-size: 13px;
-  letter-spacing: 0.01em;
-  line-height: 18px;
-  color: var(--bone);
-  white-space: nowrap;
   opacity: 0;
   transition: opacity 0.6s ease 1.4s;
 }
-.equation i {
-  font-style: italic;
+.equation .math {
+  font-family: var(--font-redaction);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--bone);
+  white-space: nowrap;
 }
-.equation sup,
-.equation sub {
-  font-size: 9px;
-  line-height: 0;
-}
-.equation span {
+.equation .caption {
+  margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 8.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgb(235 235 235 / 0.55);
+  font-size: 9px;
+  line-height: 13px;
+  letter-spacing: 0.02em;
+  color: rgb(235 235 235 / 0.62);
+}
+.equation i {
+  font-family: var(--font-redaction);
+  font-style: italic;
+  letter-spacing: 0;
+}
+.equation .caption i {
+  font-size: 11px;
+  color: var(--bone);
 }
 .shown .equation {
   opacity: 1;
@@ -326,6 +335,10 @@ const block = computed(() => {
   --ui-text-dimmed: rgb(235 235 235 / 0.5);
   --ui-primary: #ebebeb;
   --ui-border: rgb(235 235 235 / 0.3);
+}
+/* the copy is a drawing, not a second page: nothing in it moves, not even the ∞ glint */
+.drawing :deep(.glint) {
+  display: none;
 }
 .drawing :deep(*) {
   color: inherit;
