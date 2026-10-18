@@ -8,7 +8,9 @@ const { profile } = useFolioConfig()
 </script>
 
 <template>
-  <section class="relative flex items-start gap-4 lg:block">
+  <!-- on a phone the portrait stands above the name, so the name, the title and the line under
+       them keep the page's whole width and its left edge -->
+  <section class="relative flex flex-col items-start gap-4 sm:flex-row lg:block">
     <!-- the portrait is plate 1, hung in the index margin against the gutter -->
     <figure v-if="profile?.picture" class="in-index top-1 flex shrink-0 flex-col items-end gap-2">
       <NuxtImg
@@ -17,7 +19,7 @@ const { profile } = useFolioConfig()
         data-construct="figure"
         width="112"
         height="112"
-        class="size-14 rounded-[2px] object-cover lg:size-28"
+        class="size-16 rounded-[2px] object-cover sm:size-14 lg:size-28"
       />
       <figcaption class="hidden font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50 lg:block">
         Pl. 1
@@ -28,7 +30,9 @@ const { profile } = useFolioConfig()
         <h1 class="font-redaction text-lg">
           {{ title }}
         </h1>
-        <h2 class="font-serif text-xl font-medium text-primary">
+        <!-- two lines on a phone in Redaction, one in the font shown before it arrives: held at two,
+             so nothing below moves when it does -->
+        <h2 class="min-h-14 text-balance font-serif text-xl font-medium text-primary sm:min-h-0">
           {{ subtitle }}
         </h2>
       </div>
