@@ -232,11 +232,12 @@ function measure() {
     .filter(s => s.querySelector('[data-construct="mark"], [data-construct="figure"]') && s.offsetParent)
     .map(s => s.getBoundingClientRect())
     .sort((a, b) => a.top - b.top)
-  // inside the sheet's edge, clear of its guide. Narrow, in the margin right of the measure: in its
-  // middle where there is room (a tablet), against the edge only on a phone's thin margin
+  // inside the sheet's edge, clear of its guide. Narrow, in the middle of the margin right of the
+  // measure, where there is one wide enough (a tablet)
   const margin = W - R
-  const rx = narrow ? crisp(margin >= 48 ? R + margin / 2 : W - 21) : crisp(S1 - CLEAR)
-  for (let i = 1; i < sections.length; i++) {
+  const rx = narrow ? crisp(R + margin / 2) : crisp(S1 - CLEAR)
+  // a phone's 24px margin has no room for a dimension: it would sit against the screen's edge
+  for (let i = 1; i < (narrow && margin < 48 ? 0 : sections.length); i++) {
     const a = crisp(sections[i - 1]!.bottom + sy)
     const b = crisp(sections[i]!.top + sy)
     if (b - a < 16) continue

@@ -117,15 +117,43 @@ h1, h2, h3, .font-serif, .font-redaction {
   }
 }
 
-/* on a phone the numbers hang in the 24px page margin, so every title keeps the same left edge */
+/* Narrower, there is no gutter for the entry numbers: hung in the 24px page margin they sat
+   against the screen's edge. The order is in the list itself. */
 @media (max-width: 1023px) {
   .in-gutter {
-    flex: none;
-    width: 12px;
-    margin-left: -18px;
-    margin-right: 6px;
-    text-align: right;
-    font-size: 9px;
+    display: none;
+  }
+}
+
+/* On a phone an entry is two lines rather than one cut short: the title and its date, then what it
+   is, in full, underneath. No leader: there is no run of space left to lead across. */
+@media (max-width: 639px) {
+  .entry {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+  .entry > .leader {
+    display: none;
+  }
+  .entry > .entry-title {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+  .entry > .entry-title,
+  .entry > .entry-title > * {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  .entry > .entry-sub {
+    order: 3;
+    flex: 0 0 100%;
+    margin-left: 0;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 20px;
   }
 }
 
@@ -142,6 +170,9 @@ h1, h2, h3, .font-serif, .font-redaction {
 @layer base {
   :root {
     @apply selection:bg-primary selection:text-highlighted;
+    /* the ground on the html element itself, not only the body: the browser reads it for its bars
+       and shows it past the page's ends when it is pulled */
+    background-color: var(--ui-bg);
   }
 
   *:focus-visible {

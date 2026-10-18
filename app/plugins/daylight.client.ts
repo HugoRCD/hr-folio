@@ -17,6 +17,23 @@ function cached(): Whereabouts {
   return HOME_WHEREABOUTS
 }
 
+// The browser's own colour (the bar above the page, the ground past its ends) follows the paper's:
+// the html element carries the ground (main.css) and the theme colour is set to it, as rgb.
+function syncChrome() {
+  const ctx = document.createElement('canvas').getContext('2d')
+  if (!ctx) return
+  ctx.fillStyle = getComputedStyle(document.body).backgroundColor
+  ctx.fillRect(0, 0, 1, 1)
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+  let meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+  if (!meta) {
+    meta = document.createElement('meta')
+    meta.name = 'theme-color'
+    document.head.append(meta)
+  }
+  meta.content = `rgb(${r} ${g} ${b})`
+}
+
 export default defineNuxtPlugin(() => {
   const route = useRoute()
   const colorMode = useColorMode()
@@ -77,6 +94,7 @@ export default defineNuxtPlugin(() => {
         commit()
       }
     }
+    nextTick(() => requestAnimationFrame(syncChrome))
     Object.assign(state.value, {
       phase: light.phase,
       time: new Intl.DateTimeFormat('en-GB', { timeZone: where.timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(at),
@@ -134,6 +152,7 @@ export default defineNuxtPlugin(() => {
           for (const k of LIGHT_VARS) root.style.removeProperty(k)
           if (redHeld.value === null) root.style.removeProperty('--ui-primary')
           colorMode.preference = mode
+          nextTick(() => requestAnimationFrame(syncChrome))
         },
       },
     },

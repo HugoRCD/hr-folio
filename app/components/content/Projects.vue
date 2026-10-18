@@ -230,16 +230,16 @@ onBeforeUnmount(() => listObserver?.disconnect())
             :data-row="project.name"
             :to="project.url"
             target="_blank"
-            class="group relative flex items-baseline gap-4 py-2"
+            class="entry group relative flex items-baseline gap-4 py-2"
             :class="{ 'bg-muted/5': highlightedIndex === index }"
             :style="{ '--i': index }"
             @mouseenter="onProjectHover(project, $event)"
           >
-            <span class="flex shrink-0 items-baseline">
+            <span class="entry-title flex shrink-0 items-baseline">
               <span class="in-gutter font-mono text-[10px] tabular-nums text-muted/40" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
               <span class="font-medium text-highlighted decoration-primary underline-offset-4 group-hover:underline">{{ project.name }}</span>
             </span>
-            <span class="ml-auto truncate text-right text-sm text-muted">{{ project.description }}</span>
+            <span class="entry-sub ml-auto truncate text-right text-sm text-muted">{{ project.description }}</span>
           </NuxtLink>
         </TransitionGroup>
       </div>

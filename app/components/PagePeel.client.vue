@@ -21,6 +21,7 @@ const HOVER = 46
 const NUDGE = 40
 const OPEN = 520 // opened from the keyboard, if the data block cannot be measured
 const PINNED = 300 // pulled past this, the page stays where it was left
+const TURN = 40 // on a touch screen the sheet is turned over, like a page in a book: its edge rests here
 
 const route = useRoute()
 const colorMode = useColorMode()
@@ -141,7 +142,18 @@ const shape = computed(() => {
     : [['#c4c4c2', 0], ['#ffffff', 0.9], ['#d6d6d4', 3.5], ['#e9e9e7', d * 0.12], ['#f8f8f6', d * 0.24], ['#e6e6e4', d * 0.6]]
   // the flap casts its shadow away from the corner, onto the page
   const k = Math.min(1, d / 260)
+  // The corner's own box, with room for the shadow. The layers are drawn inside it rather than
+  // over the whole window: Safari tints its bars from fixed elements at the window's edge and
+  // ignores their clip, so a full-window flap at rest turned the top bar the white of its back.
+  const pts = [...lifted, ...flap]
+  const pad = 40
+  const x0 = Math.max(0, Math.floor(Math.min(...pts.map(q => q.x)) - pad))
+  const y0 = Math.max(0, Math.floor(Math.min(...pts.map(q => q.y)) - pad))
+  const x1 = Math.min(view.value.w, Math.ceil(Math.max(...pts.map(q => q.x)) + pad))
+  const y1 = Math.min(view.value.h, Math.ceil(Math.max(...pts.map(q => q.y)) + pad))
   return {
+    box: { left: `${x0}px`, top: `${y0}px`, width: `${x1 - x0}px`, height: `${y1 - y0}px` },
+    inner: { left: `${-x0}px`, top: `${-y0}px`, width: `${view.value.w}px`, height: `${view.value.h}px` },
     lifted: poly(lifted),
     flap: poly(flap),
     flapShade: along(back, m, paperBack),
@@ -335,7 +347,16 @@ function onPeekMove(e: PointerEvent) {
   if (!over && !onHour) rest()
 }
 
+// On a touch screen there is no hover and no room to pull a corner far: a tap, or any pull, turns
+// the whole sheet over from its right edge, as you would a page, and leaves it standing at the left.
+const turned = (): Pt => ({ x: 2 * TURN - view.value.w, y: view.value.h })
+function turnOver() {
+  open.value = true
+  settleTo(turned(), undefined, 0.86, 120)
+}
+
 let grab = { x: 0, y: 0 }
+let down = { x: 0, y: 0, t: 0, wasOpen: false }
 function onDown(e: PointerEvent, k: Corner = corner.value) {
   if (e.button !== 0) return
   e.preventDefault()
@@ -346,6 +367,7 @@ function onDown(e: PointerEvent, k: Corner = corner.value) {
     corner.value = k
     place(atLegs(REST))
   }
+  down = { x: e.clientX, y: e.clientY, t: performance.now(), wasOpen: open.value }
   dragging.value = true
   peeking = null // taken in hand: it is an ordinary lift from here
   clearTimeout(hold)
@@ -357,11 +379,17 @@ function onMove(e: PointerEvent) {
   const { w, h } = view.value
   place({ x: Math.min(w * 1.2, Math.max(-w * 0.2, e.clientX + grab.x)), y: Math.min(h * 1.2, Math.max(-h * 0.2, e.clientY + grab.y)) })
 }
-function onUp() {
+function onUp(e?: PointerEvent) {
   if (!dragging.value) return
   dragging.value = false
   const c = cornerPt(corner.value)
   const legs = Math.hypot(c.x - p.x, c.y - p.y) / Math.SQRT2
+  if (touch.value) {
+    const tap = e && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 10 && performance.now() - down.t < 400
+    if (tap ? down.wasOpen : legs < REST * 2) rest()
+    else turnOver()
+    return
+  }
   if (legs > PINNED) {
     open.value = true
     vel = { x: 0, y: 0 }
@@ -493,20 +521,22 @@ watch(() => route.path, () => {
     <PeelUnderside ref="underside" :uncovered :active="mode === 'lifted'" />
     <div v-if="shape && mode === 'lifted'" class="under-shade" :style="{ clipPath: shape.lifted, backgroundImage: shape.underShade }" />
 
-    <!-- at rest the uncovered corner is drawn on its own, so the paper needs no clip -->
-    <div v-if="shape && mode === 'rest'" class="corner-ground" :style="{ clipPath: shape.lifted }" />
+    <div v-if="shape" class="peel-box" :style="shape.box">
+      <!-- at rest the uncovered corner is drawn on its own, so the paper needs no clip -->
+      <div v-if="mode === 'rest'" class="corner-ground" :style="{ ...shape.inner, clipPath: shape.lifted }" />
 
-    <!-- the back of the lifted paper -->
-    <div v-if="shape" class="flap-shadow" :style="{ filter: shape.shadow }">
-      <div
-        class="flap"
-        :style="{ clipPath: shape.flap, backgroundImage: shape.flapShade }"
-        @pointerdown="onDown"
-        @pointermove="onMove"
-        @pointerup="onUp"
-        @pointercancel="onUp"
-        @lostpointercapture="onUp"
-      />
+      <!-- the back of the lifted paper -->
+      <div class="flap-shadow" :style="{ ...shape.inner, filter: shape.shadow }">
+        <div
+          class="flap"
+          :style="{ clipPath: shape.flap, backgroundImage: shape.flapShade }"
+          @pointerdown="onDown"
+          @pointermove="onMove"
+          @pointerup="onUp"
+          @pointercancel="onUp"
+          @lostpointercapture="onUp"
+        />
+      </div>
     </div>
 
     <template v-for="k in CORNERS" :key="k">
@@ -537,15 +567,23 @@ watch(() => route.path, () => {
 </template>
 
 <style scoped>
-.under-shade,
-.corner-ground {
+.under-shade {
   position: fixed;
   inset: 0;
   pointer-events: none;
 }
+.peel-box {
+  position: fixed;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+}
+.corner-ground {
+  position: absolute;
+  pointer-events: none;
+}
 /* the sliver of the drawing seen under the dog-ear: the same red and grid as underneath */
 .corner-ground {
-  z-index: 30;
   background-color: #901112;
   background-image:
     linear-gradient(rgb(235 235 235 / 0.08) 1px, transparent 1px),
@@ -554,9 +592,7 @@ watch(() => route.path, () => {
   background-attachment: fixed;
 }
 .flap-shadow {
-  position: fixed;
-  inset: 0;
-  z-index: 31;
+  position: absolute;
   pointer-events: none;
 }
 .flap {

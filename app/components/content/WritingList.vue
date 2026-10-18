@@ -102,16 +102,18 @@ const { highlightedIndex } = isFullPage.value
       <li v-for="(post, index) in posts" :key="post.path" class="relative">
         <NuxtLink
           :to="post.path"
-          class="group flex items-baseline gap-3 py-2"
+          class="entry group flex items-baseline gap-3 py-2"
           :class="{ 'bg-muted/5': highlightedIndex === index }"
         >
-          <span class="flex min-w-0 items-baseline">
+          <span class="entry-title flex min-w-0 items-baseline">
             <span class="in-gutter font-mono text-[10px] tabular-nums text-muted/40" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
             <span class="min-w-0 truncate font-medium text-highlighted decoration-primary underline-offset-4 group-hover:underline">{{ post.title }}</span>
           </span>
           <span class="leader" aria-hidden="true" />
-          <span v-if="isFullPage && post.readingMinutes" class="shrink-0 font-mono text-xs tabular-nums text-muted/40">{{ post.readingMinutes }} min</span>
-          <time :datetime="post.date" class="shrink-0 font-mono text-xs tabular-nums text-muted/70">{{ new Date(post.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) }}</time>
+          <span class="entry-sub flex shrink-0 items-baseline gap-3">
+            <span v-if="isFullPage && post.readingMinutes" class="font-mono text-xs tabular-nums text-muted/40">{{ post.readingMinutes }} min</span>
+            <time :datetime="post.date" class="font-mono text-xs tabular-nums text-muted/70">{{ new Date(post.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) }}</time>
+          </span>
         </NuxtLink>
       </li>
     </ol>

@@ -24,6 +24,7 @@ for(var k in v)el.style.setProperty(k,v[k]);
 el.style.setProperty('--ui-primary',r[8],'important');
 el.classList.remove(dark?'light':'dark');el.classList.add(dark?'dark':'light');
 try{localStorage.setItem('nuxt-color-mode',dark?'dark':'light')}catch(e){}
+var x2=document.createElement('canvas').getContext('2d');if(x2){x2.fillStyle=v['--ui-bg'];x2.fillRect(0,0,1,1);var px=x2.getImageData(0,0,1,1).data,m=document.createElement('meta');m.name='theme-color';m.content='rgb('+px[0]+' '+px[1]+' '+px[2]+')';document.head.appendChild(m)}
 }catch(e){}})()`
     nuxt.options.app.head.script ||= []
     nuxt.options.app.head.script.push({ key: 'first-light', innerHTML: script, tagPosition: 'head', tagPriority: 'critical' })

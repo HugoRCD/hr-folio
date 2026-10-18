@@ -211,6 +211,8 @@ onBeforeUnmount(() => clearInterval(tick))
 
 const onNotice = computed(() => route.path === '/notice')
 const deg = (v?: number, pos = 'N', neg = 'S') => (v === undefined ? '—' : `${Math.abs(v).toFixed(1)}° ${v >= 0 ? pos : neg}`)
+// what the block keeps on a phone, where it shares the turned page with the drawing
+const KEY_ROWS: string[] = ['Place', 'Local time', 'Sun', 'Revision']
 const block = computed(() => {
   const d = daylight.value
   const levels = ['Fair copy', 'Scale', 'Grid', 'Drawing']
@@ -280,7 +282,7 @@ const block = computed(() => {
         </div>
         <div class="col">
           <dl>
-            <div v-for="([k, v], i) in block" :key="k" class="tb-row" :style="{ '--i': i }">
+            <div v-for="([k, v], i) in block" :key="k" class="tb-row" :class="{ minor: !KEY_ROWS.includes(k) }" :style="{ '--i': i }">
               <dt>{{ k }}</dt>
               <dd>{{ v }}</dd>
             </div>
@@ -592,10 +594,24 @@ const block = computed(() => {
   text-decoration-color: currentColor;
 }
 
-/* on a phone the block takes the width there is, its figure set aside */
+/* on a touch screen the sheet is turned over and stands at the left edge: the block starts clear of it */
+@media (pointer: coarse) {
+  .data.bl {
+    left: 56px;
+  }
+}
+/* on a phone the block takes the width there is and only what matters on the spot (where, when,
+   the sun, the revision, the stamp), so the drawing and the mechanism above it can be seen */
 @media (max-width: 640px) {
   .data {
-    width: calc(100vw - 40px);
+    width: auto;
+    right: 12px;
+    bottom: 12px;
+  }
+  .tb-row.minor,
+  .revs-head,
+  .revs {
+    display: none;
   }
   .columns {
     grid-template-columns: 1fr;

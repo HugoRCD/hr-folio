@@ -22,10 +22,10 @@ defineProps<{
           :href="item.url"
           :target="item.url ? '_blank' : undefined"
           :rel="item.url ? 'noopener noreferrer' : undefined"
-          class="group flex items-baseline gap-3 py-2"
+          class="entry group flex items-baseline gap-3 py-2"
         >
-          <span class="shrink-0 font-medium text-highlighted decoration-primary underline-offset-4" :class="item.url && 'group-hover:underline'">{{ item.company }}</span>
-          <span class="truncate text-sm text-muted">{{ item.role }}</span>
+          <span class="entry-title shrink-0 font-medium text-highlighted decoration-primary underline-offset-4" :class="item.url && 'group-hover:underline'">{{ item.company }}</span>
+          <span class="entry-sub truncate text-sm text-muted">{{ item.role }}</span>
           <span class="leader" aria-hidden="true" />
           <span class="shrink-0 whitespace-nowrap font-mono text-xs tabular-nums text-muted/70">
             <!-- YAML reads a lone year as a number -->
