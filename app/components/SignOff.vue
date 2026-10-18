@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { seenSinceLoad } from '~/utils/once'
 // The close of the letter, set to the right as on a letter: a signing line is ruled across the
-// right half of the column, then the name is written above it. The line sits 12px below the
-// lowest ink (the tail of the g); "Signed" opens it, on the same line.
+// right half of the column, then the name is written on it. The line is the script's baseline:
+// the letters stand on it, the tail of the g and the swash of the H go through it, and the ink is
+// over the line, as a pen's is over a printed rule. "Signed" opens it, on the same line.
 const root = useTemplateRef<HTMLElement>('root')
 const ink = useTemplateRef<{ write:() => void }>('ink')
 const state = ref<'idle' | 'ruling' | 'signed'>('idle')
@@ -27,10 +28,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="root" class="sign-off" :class="{ still }" :data-state="state">
-    <Signature ref="ink" manual align="end" @done="state = 'signed'" />
-    <!-- the svg keeps 3px of padding under the ink: 9px more makes the 12px clearance -->
-    <p class="label ml-auto mt-[9px] flex h-px w-1/2 items-center gap-3" aria-hidden="true">
+  <div ref="root" class="sign-off" data-part="app/components/SignOff.vue" :class="{ still }" :data-state="state">
+    <Signature ref="ink" class="relative z-[1]" manual align="end" @done="state = 'signed'" />
+    <!-- at 64px the baseline is 466 units (29.8px) above the drawing's foot: the line goes up to 5px under it, so the name sits just above it -->
+    <p class="label relative ml-auto -mt-[25px] mb-[24px] flex h-px w-1/2 items-center gap-3" aria-hidden="true">
       <span class="-mt-px font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Signed</span>
       <span class="rule h-px flex-1" />
     </p>
