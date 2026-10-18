@@ -18,8 +18,9 @@ const reduced = import.meta.client && matchMedia('(prefers-reduced-motion: reduc
 const place = computed<Place>(() => daylight.value?.place ?? HOME_WHEREABOUTS)
 const midnight = computed(() => localInstant('0:00', place.value.timeZone).getTime())
 const at = (m: number) => new Date(midnight.value + m * 60000)
+const skew = useState<number>('daylight-skew', () => 0) // the page's clock, if ?hour= moved it
 const nowMinutes = () => {
-  const local = Date.now() + offsetMinutes(new Date(), place.value.timeZone) * 60000
+  const local = Date.now() + skew.value + offsetMinutes(new Date(), place.value.timeZone) * 60000
   return Math.floor((local % 86400000) / 60000)
 }
 
@@ -72,6 +73,12 @@ const away = computed(() => t.value !== now.value)
 // the page follows the needle; on the present hour, or on leaving, it goes back to the clock
 watch(t, (m) => {
   preview.value = m === now.value ? null : at(m).getTime()
+})
+// and follows the hour when something else sets it (the crown, in the article)
+watch(preview, (v) => {
+  if (running.value) return
+  const m = v === null ? now.value : Math.round((v - midnight.value) / 60000)
+  if (m !== t.value && m >= 0 && m < DAY) t.value = m
 })
 onBeforeUnmount(() => {
   stop()

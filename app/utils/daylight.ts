@@ -160,3 +160,20 @@ export function lightFor(elevation: number, morning: boolean, redT: number | nul
   vars['--ui-bg-inverted'] = css([tones.highlighted, 0, 0])
   return { dark, ground, hex, red, redT: t, phase: phaseOf(elevation, morning), vars }
 }
+
+// The sun beside the hour, in the letterhead: today's path over the horizon, small, and where it is
+// on it now. Shared with the mechanism under the page, which draws it again where it lies above.
+export const SUN_ICON = { w: 22, h: 16, horizon: 10 }
+export function sunIcon(place: { lat: number, lon: number, timeZone: string }, time: string, elevation: number) {
+  const { w, h: ih, horizon } = SUN_ICON
+  const midnight = localInstant('0:00', place.timeZone).getTime()
+  const els = Array.from({ length: 49 }, (_, i) => sunAt(new Date(midnight + i * 1800000), place).elevation)
+  const top = Math.max(10, ...els)
+  // above the horizon up to the day's highest sun; below it down to −18°, in less room
+  const y = (e: number) => e >= 0
+    ? horizon - (e / top) * (horizon - 2)
+    : horizon + Math.min(1, -e / 18) * (ih - 2 - horizon)
+  const pts = els.map((e, i) => `${((i / 48) * w).toFixed(2)} ${y(e).toFixed(2)}`)
+  const [h = 0, m = 0] = time.split(':').map(Number)
+  return { d: `M${pts.join('L')}`, x: ((h * 60 + m) / 1440) * w, y: y(elevation), up: elevation >= 0 }
+}

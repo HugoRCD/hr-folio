@@ -42,6 +42,9 @@ export default defineNuxtPlugin(() => {
   let start = route.query.hour ? localInstant(String(route.query.hour), where.timeZone) : new Date()
   let t0 = performance.now()
   const clockTime = () => new Date(start.getTime() + (performance.now() - t0) * speed)
+  // how far the page's clock is from the real one (?hour=), for the instruments that read it
+  const skew = useState<number>('daylight-skew', () => 0)
+  skew.value = start.getTime() - Date.now()
 
   function apply(fade = 0) {
     const at = preview.value === null ? clockTime() : new Date(preview.value)
@@ -108,6 +111,7 @@ export default defineNuxtPlugin(() => {
       if (zoneChanged && route.query.hour) {
         start = localInstant(String(route.query.hour), where.timeZone)
         t0 = performance.now()
+        skew.value = start.getTime() - Date.now()
       }
       apply(CROSSFADE.clock)
     } catch {

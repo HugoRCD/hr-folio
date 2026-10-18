@@ -11,9 +11,16 @@ const soundLabel = computed(() => (soundEnabled.value ? 'Disable sound' : 'Enabl
 
 const themeButton = useTemplateRef('themeButton')
 
+// the lever under the dot is what sets the light by hand: once the page has changed, its corner
+// lifts for a moment to show it thrown (see PagePeel)
+const peek = useState<string | null>('peel-peek', () => null)
+let showLever: ReturnType<typeof setTimeout> | undefined
 const switchTheme = () => {
   useNuxtApp().$daylight.byHand(manual.value ? null : nextTheme.value)
+  clearTimeout(showLever)
+  showLever = setTimeout(() => (peek.value = 'hand'), 700)
 }
+onBeforeUnmount(() => clearTimeout(showLever))
 
 const triggerTransition = (event?: MouseEvent) => {
   if (!document.startViewTransition) {
@@ -67,7 +74,7 @@ const triggerTransition = (event?: MouseEvent) => {
 
 <template>
   <div class="flex items-center gap-3.5">
-    <div class="size-3 flex items-center justify-center">
+    <div class="size-3 flex items-center justify-center" data-mech="by-hand">
       <UTooltip :text="themeLabel">
         <UButton
           ref="themeButton"

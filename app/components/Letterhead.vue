@@ -1,18 +1,33 @@
 <script setup lang="ts">
 // The head of the sheet, as on a letter: the monogram, and where and when it is written from.
 // The place is wherever Hugo is (see /api/folio/whereabouts); the date and hour are local to it.
+import { SUN_ICON, sunIcon } from '~/utils/daylight'
 import { monogramPath, monogramViewBox } from '~/utils/signature'
 
 const route = useRoute()
 const isHome = computed(() => route.path === '/')
-const daylight = useState<{ phase: string, time: string, date: string, elevation: number, place: { city: string, country: string } } | undefined>('daylight')
+const daylight = useState<{ phase: string, time: string, date: string, elevation: number, place: { city: string, country: string, timeZone: string, lat: number, lon: number } } | undefined>('daylight')
 
-// the sun's height as a small dial: a quarter arc, a hand at the elevation
-const hand = computed(() => {
-  const e = Math.max(-18, Math.min(90, daylight.value?.elevation ?? 0))
-  const a = (e * Math.PI) / 180
-  return { x: 2 + Math.cos(a) * 12, y: 14 - Math.sin(a) * 12, below: e < 0 }
+// Next to the hour, the sun: today's path over the horizon, small, and where it is on it now.
+// The same drawing as the sun viewer it leads to.
+const ICON = SUN_ICON
+const sunPath = computed(() => {
+  const d = daylight.value
+  return d?.place.timeZone ? sunIcon(d.place, d.time, d.elevation) : null
 })
+
+// Rested on, the hour has the page's corner lift and show what keeps it, right under it (see
+// PagePeel): after a moment, so that passing over it does nothing.
+const peek = useState<string | null>('peel-peek', () => null)
+let intent: ReturnType<typeof setTimeout> | undefined
+function enter() {
+  clearTimeout(intent)
+  intent = setTimeout(() => (peek.value = 'clock'), 320)
+}
+function leave() {
+  clearTimeout(intent)
+}
+onBeforeUnmount(() => clearTimeout(intent))
 </script>
 
 <template>
@@ -40,29 +55,68 @@ const hand = computed(() => {
           <p v-if="daylight?.date" class="flex flex-col text-right" data-construct="dateline">
             <span class="font-redaction text-[15px] italic leading-5 text-highlighted">{{ daylight.place.city }},</span>
             <span class="font-redaction text-[15px] italic leading-5 text-muted">{{ daylight.date }}</span>
-            <!-- the sun reading explains itself: it leads to the light, in the notice -->
-            <NuxtLink
-              to="/notice#light"
-              title="How the page is lit"
-              class="mt-1.5 flex items-center justify-end gap-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums tracking-[0.04em] text-muted/60 transition-colors hover:text-highlighted"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" class="shrink-0 overflow-visible" aria-hidden="true">
-                <path d="M2 14H15M2 14V2" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width=".75" />
-                <path
-                  d="M14 14A12 12 0 0 0 2 2"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-opacity=".25"
-                  stroke-width=".75"
-                  stroke-dasharray="1 2"
-                />
-                <path :d="`M2 14L${hand.x} ${hand.y}`" fill="none" class="stroke-primary" stroke-width="1" :stroke-opacity="hand.below ? .45 : 1" />
-              </svg>
-              {{ daylight.time }} · {{ daylight.phase }}
-            </NuxtLink>
+            <span class="hour mt-1.5 flex justify-end" @pointerenter="enter" @pointerleave="leave">
+              <!-- the sun reading explains itself: it leads to the light, in the notice -->
+              <NuxtLink
+                to="/notice#light"
+                title="How the page is lit"
+                class="flex items-center justify-end gap-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums tracking-[0.04em] text-muted/60 transition-colors hover:text-highlighted"
+              >
+                <svg
+                  v-if="sunPath"
+                  data-mech="sun"
+                  :width="ICON.w"
+                  :height="ICON.h"
+                  :viewBox="`0 0 ${ICON.w} ${ICON.h}`"
+                  class="shrink-0 overflow-visible"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <clipPath id="dateline-sky">
+                      <rect x="-1" y="-2" :width="ICON.w + 2" :height="ICON.horizon + 2" />
+                    </clipPath>
+                  </defs>
+                  <path :d="`M0 ${ICON.horizon}H${ICON.w}`" class="sun-horizon" />
+                  <path :d="sunPath.d" class="sun-night" />
+                  <path :d="sunPath.d" class="sun-day" clip-path="url(#dateline-sky)" />
+                  <circle :cx="sunPath.x" :cy="sunPath.y" r="1.9" class="sun-dot" :class="{ up: sunPath.up }" />
+                </svg>
+                <span data-mech="hour">{{ daylight.time }}</span> · {{ daylight.phase }}
+              </NuxtLink>
+            </span>
           </p>
         </ClientOnly>
       </div>
     </div>
   </header>
 </template>
+
+<style scoped>
+/* every line is mixed into the paper, so the day's path crossing the horizon never darkens */
+.sun-horizon {
+  fill: none;
+  stroke: color-mix(in oklab, currentColor 45%, var(--ui-bg));
+  stroke-width: 0.75;
+}
+.sun-night {
+  fill: none;
+  stroke: color-mix(in oklab, currentColor 30%, var(--ui-bg));
+  stroke-width: 0.75;
+  stroke-dasharray: 1 1.5;
+}
+.sun-day {
+  fill: none;
+  stroke: var(--ui-primary);
+  stroke-width: 1;
+}
+.sun-dot {
+  fill: var(--ui-bg);
+  stroke: color-mix(in oklab, currentColor 70%, var(--ui-bg));
+  stroke-width: 0.75;
+}
+.sun-dot.up {
+  fill: var(--ui-primary);
+  stroke: none;
+}
+
+</style>

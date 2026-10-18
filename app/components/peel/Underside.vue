@@ -1,16 +1,18 @@
 <script setup lang="ts">
-// What is under the page: the same sheet as a working drawing on the red, and three instruments
-// for what actually makes it: how it reached you (the request), what lights it (the sun), and what
-// it is (the drawing's title block). The fourth corner shows the drawing alone. Everything draws
-// itself once, the first time it is uncovered, and is simply there afterwards.
+// What is under the page: the same sheet as a working drawing on the red, the mechanism that
+// runs it (PeelMechanism, each part under what it moves), and in the bottom-left corner the
+// sheet's data: how it reached you (the request), what it is (the title block) and the list of
+// its parts. Everything draws itself once, the first time it is uncovered, and is simply there
+// afterwards.
 const { uncovered = [], active = false } = defineProps<{ uncovered?: string[], active?: boolean }>()
 
 const route = useRoute()
 const daylight = useState<{ phase: string, time: string, elevation: number, place: { city: string, lat?: number, lon?: number, timeZone?: string } } | undefined>('daylight')
-const detail = useState<number>('detail', () => 1)
+const detail = useState<number>('detail', () => 3)
 const nuxtVersion = useNuxtApp().versions?.nuxt
 
 const drawing = useTemplateRef<HTMLElement>('drawing')
+const mechanism = useTemplateRef<{ measure:(root: HTMLElement) => void, place: (root: HTMLElement) => void }>('mechanism')
 
 // what Vercel knows about this request (see /api/folio/request), fetched the first time the page is lifted
 type RequestInfo = { visitor: { city: string, country: string, lat: number, lon: number } | null, edge: string | null, fn: string | null, deployment: { env: string, sha: string | null, message: string | null, builtAt: string } }
@@ -77,7 +79,14 @@ function build() {
     lines.forEach(el => el.classList.remove('on'))
     requestAnimationFrame(() => requestAnimationFrame(() => lines.forEach(el => el.classList.add('on'))))
   }
-  clearAround()
+  // the mechanism is measured from the same page, then the copy is cleared around it
+  if (root.value) mechanism.value?.measure(root.value)
+  // the balloons go where they cover the least of what is left
+  nextTick(() => {
+    clearAround()
+    if (root.value) mechanism.value?.place(root.value)
+    nextTick(clearing)
+  })
 }
 
 // Nothing of the copy runs under an instrument: any line of text it would touch is left out
@@ -89,6 +98,8 @@ function clearAround() {
   const hits = (r: DOMRect) => boxes.some(b => r.right > b.left - PAD && r.left < b.right + PAD && r.bottom > b.top - PAD && r.top < b.bottom + PAD)
   const candidates = host.querySelectorAll<HTMLElement | SVGElement>('*')
   for (const el of candidates) {
+    // a block's dashed outline would run through the part: the block stays, its outline goes
+    if (el.matches(':is(h1, h2, h3, h4, p, li, pre, time)') && hits(el.getBoundingClientRect())) (el as HTMLElement).style.outline = 'none'
     const textual = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent?.trim())
     const leaf = el.matches('.plate, svg:not(.construction), .leader, .rule, .tick, .construction text')
     if (!textual && !leaf) continue
@@ -98,9 +109,35 @@ function clearAround() {
   }
 }
 
-/** The instruments' boxes in the window, for the fold to test. */
+// Around each part and its balloon the copy fades out, so the mechanism sits on the plain ground
+// rather than over the headings and outlines of the page: one clearing per part, all of them
+// kept at once (an intersection of masks).
+const FADE = 36
+function clearing() {
+  const host = drawing.value
+  if (!host || !root.value) return
+  const base = host.getBoundingClientRect()
+  const layers = [...root.value.querySelectorAll<HTMLElement | SVGElement>('.mechanism :is([data-instrument], .balloon)')]
+    .map(el => el.getBoundingClientRect())
+    .filter(r => r.width && r.height)
+    .map((r) => {
+      const cx = r.left - base.left + r.width / 2
+      const cy = r.top - base.top + r.height / 2
+      const rx = r.width / 2 * Math.SQRT2 + FADE
+      const ry = r.height / 2 * Math.SQRT2 + FADE
+      return `radial-gradient(${rx.toFixed(0)}px ${ry.toFixed(0)}px at ${cx.toFixed(0)}px ${cy.toFixed(0)}px, transparent ${(100 * (1 - FADE / Math.min(rx, ry))).toFixed(0)}%, #000 100%)`
+    })
+  host.style.maskImage = layers.join(', ')
+  host.style.maskComposite = layers.map(() => 'intersect').join(', ')
+}
+
+/** The instruments' boxes in the window, for the fold to test; `label` for the balloons naming them. */
 function rects() {
-  return [...(root.value?.querySelectorAll<HTMLElement>('[data-instrument]') ?? [])].map(el => ({ id: el.dataset.instrument!, rect: el.getBoundingClientRect() }))
+  return [...(root.value?.querySelectorAll<HTMLElement | SVGElement>('[data-instrument], [data-reveal]') ?? [])].map(el => ({
+    id: (el.dataset.instrument ?? el.dataset.reveal)!,
+    label: !el.dataset.instrument,
+    rect: el.getBoundingClientRect(),
+  }))
 }
 
 defineExpose({ build, invalidate, rects })
@@ -113,7 +150,7 @@ function setClock() {
   const tz = daylight.value?.place.timeZone ?? 'Europe/London'
   clock.value = new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date())
 }
-watch(() => active && has('block'), (on) => {
+watch(() => active && has('data'), (on) => {
   clearInterval(tick)
   if (!on) return
   setClock()
@@ -144,51 +181,46 @@ const block = computed(() => {
   <div ref="root" class="underside">
     <div ref="drawing" class="drawing" aria-hidden="true" inert />
 
-    <section class="instrument tl" data-instrument="render" :class="{ shown: has('render') }" aria-hidden="true" inert>
-      <header><span class="title">The request</span><span>Fig. 1</span></header>
-      <div class="body">
-        <PeelRoute ref="route2" :info="request" :shown="has('render')" />
-        <div class="rule-between" />
-        <PeelRender :shown="has('render')" />
-      </div>
-      <div v-if="route2?.total" class="equation">
-        <p class="math">
-          <i>t</i> ≥ 2<i>d</i> ⁄ <i>v</i> = {{ route2.total.toFixed(1) }} ms
-        </p>
-        <p class="caption">
-          No answer can come back sooner: twice the distance <i>d</i>, at the speed of light in glass fibre, <i>v</i> ≈ 200 000 km/s.
-        </p>
-      </div>
-    </section>
+    <PeelMechanism ref="mechanism" :uncovered :running="active" />
 
-    <section class="instrument tr" data-instrument="sun" :class="{ shown: has('sun') }" aria-hidden="true" inert>
-      <header><span class="title">The sun</span><span>{{ daylight?.place.city ?? '' }} · Fig. 2</span></header>
-      <div class="body">
-        <PeelSun :shown="has('sun')" />
-      </div>
-      <div class="equation">
-        <p class="math">
-          sin <i>h</i> = sin <i>φ</i> sin <i>δ</i> + cos <i>φ</i> cos <i>δ</i> cos <i>H</i>
-        </p>
-        <p class="caption">
-          The sun's height <i>h</i>, from the latitude <i>φ</i>, the season <i>δ</i> and the hour <i>H</i>. It sets the light of the page.
-        </p>
-      </div>
-    </section>
-
-    <!-- the one thing down here that answers the hand: the way to the other sheet -->
-    <dl class="instrument br title-block" data-instrument="block" :class="{ shown: has('block') }" :inert="!(active && has('block'))">
+    <!-- the sheet's data, in one place: the one thing down here that answers the hand is the way
+         to the other sheet -->
+    <section class="instrument bl data" data-instrument="data" :class="{ shown: has('data') }" :inert="!(active && has('data'))">
       <header>
         <span class="title">hugorcd.com</span>
         <NuxtLink :to="onNotice ? '/' : '/notice'" class="sheet-link">
           {{ onNotice ? '← Sheet 2 / 2' : 'Sheet 1 / 2 →' }}
         </NuxtLink>
       </header>
-      <div v-for="([k, v], i) in block" :key="k" class="tb-row" :style="{ '--i': i }">
-        <dt>{{ k }}</dt>
-        <dd>{{ v }}</dd>
+      <div class="columns">
+        <div class="col" aria-hidden="true">
+          <p class="sub">
+            <span>The request</span><span>Fig. 1</span>
+          </p>
+          <div class="body">
+            <PeelRoute ref="route2" :info="request" :shown="has('data')" />
+            <div class="rule-between" />
+            <PeelRender :shown="has('data')" />
+          </div>
+          <div v-if="route2?.total" class="equation">
+            <p class="math">
+              <i>t</i> ≥ 2<i>d</i> ⁄ <i>v</i> = {{ route2.total.toFixed(1) }} ms
+            </p>
+            <p class="caption">
+              No answer can come back sooner: twice the distance <i>d</i>, at the speed of light in glass fibre, <i>v</i> ≈ 200 000 km/s.
+            </p>
+          </div>
+        </div>
+        <div class="col">
+          <dl>
+            <div v-for="([k, v], i) in block" :key="k" class="tb-row" :style="{ '--i': i }">
+              <dt>{{ k }}</dt>
+              <dd>{{ v }}</dd>
+            </div>
+          </dl>
+        </div>
       </div>
-    </dl>
+    </section>
   </div>
 </template>
 
@@ -227,9 +259,30 @@ const block = computed(() => {
   line-height: 14px;
   color: rgb(235 235 235 / 0.9);
 }
-.tl { top: 20px; left: 20px; }
-.tr { top: 20px; right: 20px; }
-.br { bottom: 20px; right: 20px; }
+.bl { bottom: 20px; left: 20px; }
+.data {
+  width: 537px;
+}
+.columns {
+  display: grid;
+  grid-template-columns: 268px 268px;
+}
+.col + .col {
+  border-left: 1px solid rgb(235 235 235 / 0.3);
+}
+.sub {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-bottom: 1px solid rgb(235 235 235 / 0.3);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgb(235 235 235 / 0.65);
+}
+.sub > :first-child {
+  color: var(--bone);
+}
 .instrument header {
   display: flex;
   align-items: baseline;
@@ -273,8 +326,7 @@ const block = computed(() => {
   clip-path: inset(0 100% 100% 0);
   transition: clip-path 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.tr { clip-path: inset(0 0 100% 100%); }
-.br { clip-path: inset(100% 0 0 100%); }
+.bl { clip-path: inset(100% 100% 0 0); }
 .instrument.shown {
   clip-path: inset(0 0 0 0);
 }
