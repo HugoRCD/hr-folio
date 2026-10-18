@@ -257,6 +257,7 @@ function rest() {
   peek.value = null
   openOn.value = null
   open.value = false
+  settled.value = false
   const k = corner.value
   settleTo(atLegs(k === HOME ? REST : 0.5), () => {
     closing = false
@@ -350,9 +351,26 @@ function onPeekMove(e: PointerEvent) {
 // On a touch screen there is no hover and no room to pull a corner far: a tap, or any pull, turns
 // the whole sheet over from its right edge, as you would a page, and leaves it standing at the left.
 const turned = (): Pt => ({ x: 2 * TURN - view.value.w, y: view.value.h })
+// once it has turned, a tab stands out from the sheet's edge to bring it back: the edge alone sits
+// where the phone takes a swipe as "back"
+const settled = ref(false)
 function turnOver() {
   open.value = true
-  settleTo(turned(), undefined, 0.86, 120)
+  settleTo(turned(), () => (settled.value = open.value), 0.86, 120)
+}
+// or the page is pushed back the way it went, with a swipe to the right anywhere on what it uncovered
+let swipe: { x: number, y: number } | null = null
+function onTouchStart(e: TouchEvent) {
+  const [t] = e.touches
+  swipe = touch.value && settled.value && e.touches.length === 1 && t ? { x: t.clientX, y: t.clientY } : null
+}
+function onTouchEnd(e: TouchEvent) {
+  const [t] = e.changedTouches
+  if (!swipe || !t || !settled.value) return
+  const dx = t.clientX - swipe.x
+  const dy = t.clientY - swipe.y
+  swipe = null
+  if (dx > 56 && Math.abs(dx) > Math.abs(dy) * 1.5) rest()
 }
 
 let grab = { x: 0, y: 0 }
@@ -385,9 +403,16 @@ function onUp(e?: PointerEvent) {
   const c = cornerPt(corner.value)
   const legs = Math.hypot(c.x - p.x, c.y - p.y) / Math.SQRT2
   if (touch.value) {
-    const tap = e && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 10 && performance.now() - down.t < 400
-    if (tap ? down.wasOpen : legs < REST * 2) rest()
-    else turnOver()
+    // A tap turns the page, or turns it back. Otherwise only a deliberate pull does: to the left to
+    // turn it, to the right to bring it back. A thumb that only brushed the corner on its way down
+    // the page, scrolling, leaves it as it was.
+    const dx = e ? e.clientX - down.x : 0
+    const dy = e ? e.clientY - down.y : 0
+    const tap = e && Math.hypot(dx, dy) < 10 && performance.now() - down.t < 400
+    const pulled = Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)
+    const turn = tap ? !down.wasOpen : pulled ? dx < 0 : down.wasOpen
+    if (turn) turnOver()
+    else rest()
     return
   }
   if (legs > PINNED) {
@@ -484,6 +509,8 @@ onMounted(() => {
   window.addEventListener('blur', onBlur)
   window.addEventListener('pointermove', onPeekMove)
   window.addEventListener('pointerdown', onTapOff)
+  window.addEventListener('touchstart', onTouchStart, { passive: true })
+  window.addEventListener('touchend', onTouchEnd, { passive: true })
   enable()
   let seen = false
   try {
@@ -504,6 +531,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('blur', onBlur)
   window.removeEventListener('pointermove', onPeekMove)
   window.removeEventListener('pointerdown', onTapOff)
+  window.removeEventListener('touchstart', onTouchStart)
+  window.removeEventListener('touchend', onTouchEnd)
   const paper = document.querySelector<HTMLElement>('.paper')
   if (paper) paper.style.clipPath = ''
   document.documentElement.style.overflow = ''
@@ -560,7 +589,19 @@ watch(() => route.path, () => {
         @keydown.space.prevent="toggle"
       />
     </template>
-    <button v-if="open" type="button" class="sr-only" @click="rest()">
+    <Transition name="tab">
+      <button
+        v-if="touch && settled"
+        type="button"
+        class="turn-back"
+        :style="{ left: `${TURN}px` }"
+        aria-label="Turn the page back"
+        @click="rest()"
+      >
+        <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.2" /></svg>
+      </button>
+    </Transition>
+    <button v-if="open && !(touch && settled)" type="button" class="sr-only" @click="rest()">
       Lay the page back down
     </button>
   </template>
@@ -619,6 +660,38 @@ watch(() => route.path, () => {
 .dog-ear.bl { left: 0; bottom: 0; clip-path: polygon(0 0, 100% 100%, 0 100%); }
 .dog-ear.tr { right: 0; top: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
 .dog-ear.tl { left: 0; top: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+.turn-back {
+  position: fixed;
+  top: 50%;
+  z-index: 33;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 72px;
+  margin-top: -36px;
+  color: #6b6b69;
+  background: linear-gradient(90deg, #dcdcda, #f8f8f6 30%, #ececea);
+  border-radius: 0 6px 6px 0;
+  box-shadow: 2px 0 6px rgb(0 0 0 / 0.28), 1px 0 1px rgb(0 0 0 / 0.2);
+  touch-action: manipulation;
+}
+html.dark .turn-back {
+  color: #b5b5b5;
+  background: linear-gradient(90deg, #141414, #2a2a2a 30%, #1f1f1f);
+}
+.tab-enter-active {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
+}
+.tab-leave-active {
+  transition: opacity 0.12s ease;
+}
+.tab-enter-from {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.tab-leave-to {
+  opacity: 0;
+}
 .dog-ear:focus-visible {
   outline: 1px solid var(--ui-primary);
   outline-offset: -10px;
