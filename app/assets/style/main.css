@@ -28,7 +28,8 @@ h1, h2, h3, .font-serif, .font-redaction {
   scrollbar-color: var(--ui-border) transparent;
   scrollbar-width: thin;
 
-  /* One red, between Cartier and Ferrari. It never moves; the light around it does. */
+  /* One red, between Cartier and Ferrari: halfway by day and by night. Around sunset and sunrise
+     the daylight plugin slides it along that band so it keeps its contrast as the ground dims. */
   --ui-primary: #CD1919 !important;
   --code-bg: #f6f6f6;
   --code-border: #e5e5e5;

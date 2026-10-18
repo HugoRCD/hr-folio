@@ -2,6 +2,7 @@
 const route = useRoute()
 const isHome = computed(() => route.path === '/')
 const isArticle = computed(() => route.path.startsWith('/writing/'))
+const isNotice = computed(() => route.path === '/notice')
 </script>
 
 <template>
@@ -27,7 +28,14 @@ const isArticle = computed(() => route.path.startsWith('/writing/'))
 
           <!-- the colophon: how it is set, and the few controls the sheet has -->
           <footer class="measure mt-16 flex items-center justify-between gap-4 font-mono text-[10px] tracking-[0.04em] text-muted/45">
-            <span>&copy; {{ new Date().getFullYear() }}</span>
+            <span class="flex items-center gap-2">
+              &copy; {{ new Date().getFullYear() }}
+              <span aria-hidden="true">&middot;</span>
+              <!-- the sheet's number, as on any drawing: the second sheet is the notice -->
+              <NuxtLink :to="isNotice ? '/' : '/notice'" class="transition-colors hover:text-highlighted">
+                Sheet {{ isNotice ? 2 : 1 }} of 2
+              </NuxtLink>
+            </span>
             <span class="hidden text-muted/30 lg:inline">⌘K</span>
             <div class="in-note flex items-center justify-end gap-4 lg:top-1/2 lg:-translate-y-1/2">
               <DetailControl />

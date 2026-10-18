@@ -40,6 +40,8 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': { isr: true },
+    // sheet 2 is found from the sheet, not from search: kept out of the sitemap (the page sets its own noindex)
+    '/notice': { robots: false },
   },
 
   modules: [

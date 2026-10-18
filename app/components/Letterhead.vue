@@ -40,7 +40,12 @@ const hand = computed(() => {
           <p v-if="daylight?.date" class="flex flex-col text-right" data-construct="dateline">
             <span class="font-redaction text-[15px] italic leading-5 text-highlighted">{{ daylight.place.city }},</span>
             <span class="font-redaction text-[15px] italic leading-5 text-muted">{{ daylight.date }}</span>
-            <span class="mt-1.5 flex items-center justify-end gap-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums tracking-[0.04em] text-muted/60">
+            <!-- the sun reading explains itself: it leads to the light, in the notice -->
+            <NuxtLink
+              to="/notice#light"
+              title="How the page is lit"
+              class="mt-1.5 flex items-center justify-end gap-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums tracking-[0.04em] text-muted/60 transition-colors hover:text-highlighted"
+            >
               <svg width="16" height="16" viewBox="0 0 16 16" class="shrink-0 overflow-visible" aria-hidden="true">
                 <path d="M2 14H15M2 14V2" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width=".75" />
                 <path
@@ -54,7 +59,7 @@ const hand = computed(() => {
                 <path :d="`M2 14L${hand.x} ${hand.y}`" fill="none" class="stroke-primary" stroke-width="1" :stroke-opacity="hand.below ? .45 : 1" />
               </svg>
               {{ daylight.time }} · {{ daylight.phase }}
-            </span>
+            </NuxtLink>
           </p>
         </ClientOnly>
       </div>

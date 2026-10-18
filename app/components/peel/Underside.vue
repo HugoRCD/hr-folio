@@ -121,12 +121,13 @@ watch(() => active && has('block'), (on) => {
 }, { immediate: true })
 onBeforeUnmount(() => clearInterval(tick))
 
+const onNotice = computed(() => route.path === '/notice')
 const deg = (v?: number, pos = 'N', neg = 'S') => (v === undefined ? '—' : `${Math.abs(v).toFixed(1)}° ${v >= 0 ? pos : neg}`)
 const block = computed(() => {
   const d = daylight.value
   const levels = ['Fair copy', 'Scale', 'Grid', 'Drawing']
   return [
-    ['Sheet', route.path === '/' ? 'Index' : route.path],
+    ['Sheet', route.path === '/' ? 'Index' : onNotice.value ? 'Notice' : route.path],
     ['Drawn by', 'Hugo Richard'],
     ['Place', d ? `${d.place.city}, ${deg(d.place.lat)} ${deg(d.place.lon, 'E', 'W')}` : '—'],
     ['Local time', clock.value || d?.time || '—'],
@@ -140,10 +141,10 @@ const block = computed(() => {
 </script>
 
 <template>
-  <div ref="root" class="underside" aria-hidden="true" inert>
-    <div ref="drawing" class="drawing" />
+  <div ref="root" class="underside">
+    <div ref="drawing" class="drawing" aria-hidden="true" inert />
 
-    <section class="instrument tl" data-instrument="render" :class="{ shown: has('render') }">
+    <section class="instrument tl" data-instrument="render" :class="{ shown: has('render') }" aria-hidden="true" inert>
       <header><span class="title">The request</span><span>Fig. 1</span></header>
       <div class="body">
         <PeelRoute ref="route2" :info="request" :shown="has('render')" />
@@ -160,7 +161,7 @@ const block = computed(() => {
       </div>
     </section>
 
-    <section class="instrument tr" data-instrument="sun" :class="{ shown: has('sun') }">
+    <section class="instrument tr" data-instrument="sun" :class="{ shown: has('sun') }" aria-hidden="true" inert>
       <header><span class="title">The sun</span><span>{{ daylight?.place.city ?? '' }} · Fig. 2</span></header>
       <div class="body">
         <PeelSun :shown="has('sun')" />
@@ -175,8 +176,14 @@ const block = computed(() => {
       </div>
     </section>
 
-    <dl class="instrument br title-block" data-instrument="block" :class="{ shown: has('block') }">
-      <header><span class="title">hugorcd.com</span><span>Sheet 1 / 1</span></header>
+    <!-- the one thing down here that answers the hand: the way to the other sheet -->
+    <dl class="instrument br title-block" data-instrument="block" :class="{ shown: has('block') }" :inert="!(active && has('block'))">
+      <header>
+        <span class="title">hugorcd.com</span>
+        <NuxtLink :to="onNotice ? '/' : '/notice'" class="sheet-link">
+          {{ onNotice ? '← Sheet 2 / 2' : 'Sheet 1 / 2 →' }}
+        </NuxtLink>
+      </header>
       <div v-for="([k, v], i) in block" :key="k" class="tb-row" :style="{ '--i': i }">
         <dt>{{ k }}</dt>
         <dd>{{ v }}</dd>
@@ -238,11 +245,25 @@ const block = computed(() => {
   line-height: 18px;
   color: var(--bone);
 }
-.instrument header span:last-child {
+.instrument header > :last-child:not(.title) {
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: rgb(235 235 235 / 0.65);
+}
+/* the only live thing underneath: it takes the pointer, and underlines in bone like any link */
+.sheet-link {
+  pointer-events: auto;
+  text-decoration: underline;
+  text-decoration-color: rgb(235 235 235 / 0.3);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+.instrument header .sheet-link:hover,
+.instrument header .sheet-link:focus-visible {
+  color: var(--bone);
+  text-decoration-color: var(--bone);
+  outline: none;
 }
 .body {
   padding: 12px 15px 10px;
@@ -376,10 +397,6 @@ const block = computed(() => {
 }
 .drawing :deep(.construction text) {
   fill: rgb(235 235 235 / 0.75) !important;
-}
-.drawing :deep(.animate-in) {
-  animation: none !important;
-  opacity: 1 !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .instrument, .tb-row {

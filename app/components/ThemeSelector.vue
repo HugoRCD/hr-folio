@@ -2,16 +2,17 @@
 const colorMode = useColorMode()
 const { enabled: soundEnabled, toggle: toggleSound } = useHoverSound()
 
+// The page follows the sun. The dot sets the other mode by hand; pressed again, it gives the page
+// back to the sun. While the sun is in charge the dot wears a hairline ring.
+const manual = useState<boolean>('daylight-manual', () => false)
 const nextTheme = computed(() => (colorMode.value === 'dark' ? 'light' : 'dark'))
+const themeLabel = computed(() => (manual.value ? 'Follow the sun' : `Switch to ${nextTheme.value}`))
 const soundLabel = computed(() => (soundEnabled.value ? 'Disable sound' : 'Enable sound'))
 
 const themeButton = useTemplateRef('themeButton')
 
 const switchTheme = () => {
-  // A manual choice outranks the daylight for the rest of the visit.
-  sessionStorage.setItem('folio-theme-manual', '1')
-  document.documentElement.style.removeProperty('--ui-bg')
-  colorMode.preference = nextTheme.value
+  useNuxtApp().$daylight.byHand(manual.value ? null : nextTheme.value)
 }
 
 const triggerTransition = (event?: MouseEvent) => {
@@ -67,13 +68,14 @@ const triggerTransition = (event?: MouseEvent) => {
 <template>
   <div class="flex items-center gap-3.5">
     <div class="size-3 flex items-center justify-center">
-      <UTooltip text="Switch theme">
+      <UTooltip :text="themeLabel">
         <UButton
           ref="themeButton"
-          class="bg-inverted size-3 rounded-full"
+          class="bg-inverted size-3 rounded-full transition-shadow duration-500"
+          :class="manual ? '' : 'ring-1 ring-offset-2 ring-offset-(--ui-bg) ring-(--ui-text-muted)/60'"
           size="xs"
           variant="link"
-          :aria-label="`Switch to ${nextTheme} mode`"
+          :aria-label="manual ? 'Follow the sun' : `Switch to ${nextTheme} mode`"
           @click="triggerTransition"
         />
       </UTooltip>
