@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { seenThisVisit } from '~/utils/once'
+import { seenSinceLoad } from '~/utils/once'
 // The close of the letter, set to the right as on a letter: a signing line is ruled across the
 // right half of the column, then the name is written above it. The line sits 12px below the
 // lowest ink (the tail of the g); "Signed" opens it, on the same line.
@@ -11,8 +11,8 @@ const still = ref(false)
 const PEN_DELAY = 700 // ms: the line is ruled first, the pen lands as it nears the end
 
 onMounted(() => {
-  if (!root.value || matchMedia('(prefers-reduced-motion: reduce)').matches || seenThisVisit('signed')) {
-    still.value = true // already signed in this visit, or reduced motion: no ruling, no pen
+  if (!root.value || matchMedia('(prefers-reduced-motion: reduce)').matches || seenSinceLoad('signed')) {
+    still.value = true // already signed since the page loaded, or reduced motion: no ruling, no pen
     state.value = 'signed'
     return
   }

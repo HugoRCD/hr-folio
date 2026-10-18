@@ -1,30 +1,74 @@
 <script setup lang="ts">
-import { seenThisVisit } from '~/utils/once'
 // The sheet's construction, drawn in its margins. It comes in levels of detail, set with the
 // Detail control in the colophon, each adding something of a different kind:
 //   1 Scale    the five column widths, once, above the letterhead
 //   2 Grid     the column edges, full height, broken around text and plates
 //   3 Drawing  the working drawing: the space between sections, the portrait's side, the
 //              specification of each type style, crop marks on plates
-// Measured from the live layout. Rules: 12px clear of any text or image, labels 6px from
-// their line, a label that would overlap another is dropped.
+// Measured from the live layout. Rules: no line touches anything it does not belong to (text,
+// images, rules, borders, the drawing's own marks), labels 6px from their line, a label that
+// would overlap another is dropped. Every line is a solid colour, mixed into the paper, so where
+// two lines meet there is never a darker crossing.
+//
+// It is drawn once, when the page is first loaded, the way a draughtsman would: the scale is ruled
+// across the top, the column edges come down the sheet one after the other, and the measurements
+// are added as that pen passes them. Moving to another page, the drawing is simply there. At the
+// Drawing level the sheet is still being worked on: now and then, one measurement in view is
+// rubbed out and drawn again.
 
 type Level = 1 | 2 | 3
 type Tone = 'red' | 'faint' | 'guide'
-type Shape = { level: Level, seq: number, dur?: number } & (
-  | { kind: 'path', d: string, tone?: Tone }
+type Ease = 'rule' | 'pen' | 'linear'
+// `at`: seconds into its level's drawing; `dur`: how long the pen takes over it; `g`: the
+// measurement it belongs to, redrawn together (-1: none)
+type Shape = { level: Level, at: number, dur: number, g: number } & (
+  | { kind: 'path', d: string, tone?: Tone, ease: Ease }
   | { kind: 'text', x: number, y: number, text: string, anchor: 'start' | 'middle' | 'end', rotate?: boolean }
 )
 
+const PEN = 1400 // px/s, the pen's speed along a long rule
+const STAGE: Record<Level, number> = { 1: 0, 2: 0.55, 3: 0.95 } // s, when each level starts
+const EASE: Record<Ease, string> = {
+  rule: 'cubic-bezier(0.3, 0, 0.3, 1)', // a rule drawn against a straightedge: a start, an end
+  pen: 'cubic-bezier(0.45, 0, 0.35, 1)',
+  linear: 'linear', // one long line broken into pieces: the pen keeps its speed across the gaps
+}
+
 const route = useRoute()
-const detail = useState<number>('detail', () => 1)
+const detail = useState<number>('detail', () => 3)
 const shapes = ref<Shape[]>([])
 const size = ref({ w: 0, h: 0 })
 const ready = ref(false)
+// the lowest level being drawn now: the levels above it wait for it, as on the first drawing
+const base = ref<Level>(1)
+// A measurement worked on again: rubbed out (`resting`), then drawn again more slowly than the
+// first time (`replay`), in fresh red ink (`fresh`) that dries back to the drawing's grey.
+const resting = ref<number | null>(null)
+const replay = ref<{ g: number, from: number } | null>(null)
+const fresh = ref<number | null>(null)
+const SLOW = 3 // the redraw takes three times as long as the first drawing
+let groups = new Map<number, { y: number, from: number, to: number }>()
+
+function delay(s: Shape) {
+  if (replay.value?.g === s.g) return `${((s.at - replay.value.from) * SLOW).toFixed(3)}s`
+  return `${Math.max(0, s.at + STAGE[s.level] - STAGE[base.value]).toFixed(3)}s`
+}
+const dur = (s: Shape) => `${(replay.value?.g === s.g ? Math.max(0.7, s.dur * SLOW) : s.dur).toFixed(3)}s`
+const on = (s: Shape) => ready.value && s.level <= detail.value && (s.g < 0 || s.g !== resting.value)
+const state = (s: Shape) => ({
+  on: on(s),
+  erasing: s.g >= 0 && s.g === resting.value,
+  fresh: s.g >= 0 && s.g === fresh.value,
+})
 
 const CLEAR = 12
 const LABEL_GAP = 6
+const CROP = 8 // crop marks: 8px out from the plate, 8px long
 const crisp = (n: number) => Math.round(n) + 0.5
+// the pixel column or row an edge's last pixel is in, for the far side of a box
+const crispEnd = (n: number) => Math.round(n) - 0.5
+
+type Box = { left: number, right: number, top: number, bottom: number, pad: number }
 
 function measure() {
   const main = document.querySelector<HTMLElement>('main.measure')
@@ -54,22 +98,38 @@ function measure() {
 
   const out: Shape[] = []
   const taken: DOMRect[] = []
-  const seq = { 1: 0, 2: 0, 3: 0 }
-  const next = (level: Level) => seq[level]++
-  const path = (level: Level, d: string, tone?: Tone, dur?: number) => out.push({ kind: 'path', level, seq: next(level), d, tone, dur })
-  const line = (level: Level, x1: number, y1: number, x2: number, y2: number, tone?: Tone) => path(level, `M${x1} ${y1}L${x2} ${y2}`, tone)
-  // a dimension line drawn from its middle outward, with end ticks
-  const dimension = (level: Level, x1: number, y1: number, x2: number, y2: number) => {
+  const found = new Map<number, { y: number, from: number }>()
+  let g = -1
+  let nextGroup = 0
+  // one measurement: everything drawn inside belongs to it, and is redrawn with it
+  const group = (y: number, draw: () => void) => {
+    g = nextGroup++
+    const first = out.length
+    draw()
+    const mine = out.slice(first)
+    if (mine.length) found.set(g, { y, from: Math.min(...mine.map(s => s.at)), to: Math.max(...mine.map(s => s.at + s.dur)) })
+    g = -1
+  }
+  // when the pen coming down the sheet from the top of the window reaches y
+  const front = (y: number) => Math.max(0, y - sy) / PEN
+  const path = (level: Level, d: string, at: number, dur: number, tone?: Tone, ease: Ease = 'pen') =>
+    out.push({ kind: 'path', level, at, dur, d, tone, ease, g })
+  // a dimension line drawn from its middle outward, then its end ticks (unless extension lines
+  // close it instead); returns when it is done
+  const dimension = (level: Level, x1: number, y1: number, x2: number, y2: number, at: number, ticks = true) => {
     const mx = (x1 + x2) / 2
     const my = (y1 + y2) / 2
-    const s = next(level)
-    out.push({ kind: 'path', level, seq: s, d: `M${mx} ${my}L${x1} ${y1}` }, { kind: 'path', level, seq: s, d: `M${mx} ${my}L${x2} ${y2}` })
+    const dur = Math.max(0.3, Math.hypot(x2 - x1, y2 - y1) / 2 / 500)
+    path(level, `M${mx} ${my}L${x1} ${y1}`, at, dur)
+    path(level, `M${mx} ${my}L${x2} ${y2}`, at, dur)
+    if (!ticks) return at + dur
     const vertical = x1 === x2
     for (const [x, y] of [[x1, y1], [x2, y2]] as const) {
-      out.push({ kind: 'path', level, seq: s + 1, d: vertical ? `M${x - 3} ${y}h6` : `M${x} ${y - 3}v6` })
+      path(level, vertical ? `M${x - 3} ${y}h6` : `M${x} ${y - 3}v6`, at + dur, 0.15)
     }
+    return at + dur + 0.15
   }
-  const label = (level: Level, x: number, y: number, text: string, anchor: 'start' | 'middle' | 'end' = 'middle', rotate = false) => {
+  const label = (level: Level, x: number, y: number, text: string, at: number, anchor: 'start' | 'middle' | 'end' = 'middle', rotate = false) => {
     const w = text.length * 5.6 + 2
     const h = 10
     const bx = rotate ? x - h : anchor === 'start' ? x : anchor === 'end' ? x - w : x - w / 2
@@ -77,7 +137,7 @@ function measure() {
     const box = new DOMRect(bx, by, rotate ? h : w, rotate ? w : h)
     if (taken.some(t => box.left < t.right + 4 && box.right > t.left - 4 && box.top < t.bottom + 2 && box.bottom > t.top - 2)) return false
     taken.push(box)
-    out.push({ kind: 'text', level, seq: next(level), x, y, text, anchor, rotate })
+    out.push({ kind: 'text', level, at, dur: 0.5, x, y, text, anchor, rotate, g })
     return true
   }
 
@@ -87,60 +147,87 @@ function measure() {
   const W = size.value.w
   const R = crisp(main.getBoundingClientRect().right + sx) // the measure's right edge
   const edges = narrow ? [L, R] : [S0, crisp(S0 + index), L, crisp(L + measureW), crisp(L + measureW + gutter), S1]
-  if (narrow) {
-    path(1, `M0 ${top}H${W}`, 'faint', 1.4)
-    edges.forEach(x => path(1, `M${x} ${top - 3}v6`))
-    for (const [a, b] of [[0, L], [L, R], [R, W]] as const) label(1, (a + b) / 2, top - LABEL_GAP, `${Math.round(b - a)}`)
-  } else {
-    path(1, `M${S0} ${top}L${S1} ${top}`, 'faint', 1.4)
-    edges.forEach(x => path(1, `M${x} ${top - 3}v6`))
-    const widths = [index, gutter, measureW, gutter, note]
-    for (let i = 0; i < edges.length - 1; i++) {
-      label(1, (edges[i]! + edges[i + 1]!) / 2, top - LABEL_GAP, `${widths[i]}`)
-    }
-  }
+  // ruled left to right; each tick and width is set down as the pen passes it
+  const [r0, r1] = narrow ? [0, W] : [S0, S1]
+  const ruled = (r1 - r0) / PEN + 0.15
+  const passes = (x: number) => ((x - r0) / (r1 - r0)) * ruled
+  path(1, `M${r0} ${top}H${r1}`, 0, ruled, 'faint', 'rule')
+  edges.forEach(x => path(1, `M${x} ${top - 3}v6`, passes(x), 0.15))
+  const spans = narrow
+    ? [[0, L], [L, R], [R, W]] as const
+    : edges.slice(1).map((x, i) => [edges[i]!, x] as const)
+  const widths = narrow ? spans.map(([a, b]) => Math.round(b - a)) : [index, gutter, measureW, gutter, note]
+  spans.forEach(([a, b], i) => label(1, (a + b) / 2, top - LABEL_GAP, `${widths[i]}`, passes(b)))
 
-  // 2 Grid: the column edges, from the scale to the foot of the sheet. They break around every
-  // line of text and every image they would touch, like hidden lines on a drawing, and around
-  // plates with the full clearance.
-  type Box = { left: number, right: number, top: number, bottom: number, pad: number }
+  // What the column edges must not touch. Plates keep the whole of their crop marks clear; text,
+  // images, rules and borders keep 6px.
   const toBox = (r: DOMRect, pad: number): Box => ({ left: r.left + sx, right: r.right + sx, top: r.top + sy, bottom: r.bottom + sy, pad })
-  const plates = [...main.querySelectorAll<HTMLElement>('.code-block, .prose-breakout figure, .prose-breakout img, .prose-breakout video')]
-    .map(el => toBox(el.getBoundingClientRect(), CLEAR))
-  const ink: Box[] = []
+  // a plate is the outermost of these: an image inside a figure is the same plate, marked once
+  const PLATE = '.code-block, .prose-breakout figure, .prose-breakout img, .prose-breakout video'
+  const plates = [...main.querySelectorAll<HTMLElement>(PLATE)]
+    .filter(el => !el.parentElement?.closest(PLATE))
+    .map(el => toBox(el.getBoundingClientRect(), 0))
+  const obstacles: Box[] = plates.map(p => ({ ...p, pad: 2 * CROP + 6 }))
   const walker = document.createTreeWalker(sheet, NodeFilter.SHOW_TEXT)
   const range = document.createRange()
   for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-    if (!n.textContent?.trim()) continue
+    if (!n.textContent?.trim() || n.parentElement?.closest('[data-ignore]')) continue
     range.selectNodeContents(n)
-    for (const r of range.getClientRects()) ink.push(toBox(r, 6))
+    for (const r of range.getClientRects()) obstacles.push(toBox(r, 6))
   }
-  sheet.querySelectorAll('img, svg').forEach(el => ink.push(toBox(el.getBoundingClientRect(), 6)))
+  for (const el of sheet.querySelectorAll('*')) {
+    if (el.closest('[data-ignore]')) continue
+    const r = el.getBoundingClientRect()
+    if (el instanceof HTMLImageElement || el instanceof SVGSVGElement) {
+      obstacles.push(toBox(r, 6))
+      continue
+    }
+    if (el instanceof SVGElement || !r.width || !r.height) continue
+    // anything drawn as a line: each side's border, or a box a pixel or two thin with a fill
+    const cs = getComputedStyle(el)
+    for (const side of ['top', 'right', 'bottom', 'left'] as const) {
+      const bw = Number.parseFloat(cs.getPropertyValue(`border-${side}-width`))
+      if (!bw || cs.getPropertyValue(`border-${side}-style`) === 'none') continue
+      const b = toBox(r, 6)
+      if (side === 'top') b.bottom = b.top + bw
+      if (side === 'bottom') b.top = b.bottom - bw
+      if (side === 'left') b.right = b.left + bw
+      if (side === 'right') b.left = b.right - bw
+      obstacles.push(b)
+    }
+    if (Math.min(r.width, r.height) <= 2 && cs.backgroundColor !== 'rgba(0, 0, 0, 0)') obstacles.push(toBox(r, 6))
+  }
   // sticky blocks (the article contents) travel down their parent: keep that whole run clear
   sheet.querySelectorAll<HTMLElement>('.sticky').forEach((el) => {
     range.selectNodeContents(el)
     const r = range.getBoundingClientRect() // the extent of its text, not its box
     const run = el.parentElement!.getBoundingClientRect()
-    ink.push({ left: r.left + sx, right: r.right + sx, top: run.top + sy, bottom: run.bottom + sy, pad: 6 })
+    obstacles.push({ left: r.left + sx, right: r.right + sx, top: run.top + sy, bottom: run.bottom + sy, pad: 6 })
   })
-  const obstacles = [...plates, ...ink]
+  // the portrait's dimension, above it
+  const fig = narrow ? null : document.querySelector<HTMLElement>('[data-construct="figure"]')
+  const figure = fig && fig.offsetWidth > 60 ? fig.getBoundingClientRect() : null
+  if (figure) obstacles.push({ ...toBox(figure, 6), top: figure.top + sy - CLEAR - 18 })
+
+  // 2 Grid: the column edges, from the scale to the foot of the sheet, broken around all of the
+  // above like hidden lines on a drawing. Each edge comes down at the pen's speed, one just after
+  // the other, lifting over what it breaks around: every run is its own stroke.
   const foot = Math.round(sheetBottom - 24)
   const minRun = narrow ? 16 : 4 // on a phone the edges touch every line: only keep the real gaps
-  edges.forEach((x) => {
-    const cuts = obstacles.filter(o => x > o.left - 4 && x < o.right + 4).sort((a, b) => a.top - b.top)
+  edges.forEach((x, i) => {
+    const cuts = obstacles.filter(o => x > o.left - o.pad && x < o.right + o.pad).sort((a, b) => a.top - b.top)
+    const start = i * 0.08
+    const run = (from: number, to: number) => path(2, `M${x} ${from}V${to}`, start + front(from), (to - from) / PEN, 'guide', 'linear')
     let y = top + CLEAR
-    let d = ''
     for (const o of cuts) {
       const stop = Math.round(o.top - o.pad)
-      if (stop - y >= minRun) d += `M${x} ${y}V${stop}`
+      if (stop - y >= minRun) run(y, stop)
       y = Math.max(y, Math.round(o.bottom + o.pad))
     }
-    if (foot - y >= minRun) d += `M${x} ${y}V${foot}`
-    if (d) path(2, d, 'guide', 2.4)
+    if (foot - y >= minRun) run(y, foot)
   })
 
-  // 3 Drawing: the space between sections at the sheet's right edge, the same number every time;
-  // the portrait inscribed in a square and a circle, its side dimensioned.
+  // 3 Drawing: the space between sections at the sheet's right edge, the same number every time.
   const sections = [...main.querySelectorAll<HTMLElement>('section')]
     .filter(s => s.querySelector('[data-construct="mark"], [data-construct="figure"]') && s.offsetParent)
     .map(s => s.getBoundingClientRect())
@@ -150,49 +237,69 @@ function measure() {
     const a = crisp(sections[i - 1]!.bottom + sy)
     const b = crisp(sections[i]!.top + sy)
     if (b - a < 16) continue
-    dimension(3, rx, a, rx, b)
-    const gap = Math.round(b - a)
-    // the rhythm, in lines of the 24px leading where it divides evenly
-    if (narrow) label(3, W - 6, (a + b) / 2, `${gap}`, 'middle', true)
-    else label(3, rx - LABEL_GAP, (a + b) / 2 + 3, gap % 24 ? `${gap}` : `${gap} = ${gap / 24} × 24`, 'end')
+    group((a + b) / 2, () => {
+      const done = dimension(3, rx, a, rx, b, front((a + b) / 2))
+      const gap = Math.round(b - a)
+      // the rhythm, in lines of the 24px leading where it divides evenly
+      if (narrow) label(3, W - 6, (a + b) / 2, `${gap}`, done, 'middle', true)
+      else label(3, rx - LABEL_GAP, (a + b) / 2 + 3, gap % 24 ? `${gap}` : `${gap} = ${gap / 24} × 24`, done, 'end')
+    })
   }
   if (narrow) {
     shapes.value = out
+    groups = found
     return
   }
 
-  const fig = document.querySelector<HTMLElement>('[data-construct="figure"]')
-  if (fig && fig.offsetWidth > 60) {
-    // The portrait's side, dimensioned above it. Nothing else: no figure is drawn around a
-    // picture whose size was not set by that figure.
-    const r = fig.getBoundingClientRect()
-    const x = Math.round(r.left + sx)
-    const y = Math.round(r.top + sy)
-    const w = Math.round(r.width)
+  if (figure) {
+    // The portrait's side, dimensioned above it. Its extension lines run down the picture's
+    // first and last pixel columns, and close the dimension line themselves: one stroke each,
+    // no tick laid over them.
+    const x1 = crisp(figure.left + sx)
+    const x2 = crispEnd(figure.right + sx)
+    const y = Math.round(figure.top + sy)
     const yd = crisp(y - CLEAR)
-    dimension(3, x, yd, x + w, yd)
-    line(3, x + 0.5, yd + 3, x + 0.5, y - 3, 'faint')
-    line(3, x + w - 0.5, yd + 3, x + w - 0.5, y - 3, 'faint')
-    label(3, x + w / 2, yd - LABEL_GAP, `${w}`)
+    group(yd, () => {
+      const done = dimension(3, x1, yd, x2, yd, front(yd), false)
+      path(3, `M${x1} ${yd - 3}V${y - 3}`, done - 0.1, 0.2)
+      path(3, `M${x2} ${yd - 3}V${y - 3}`, done - 0.1, 0.2)
+      label(3, (x1 + x2) / 2, yd - LABEL_GAP, `${Math.round(figure.width)}`, done)
+    })
   }
 
-  // 3 Drawing: crop marks around plates, like a press sheet.
+  // 3 Drawing: crop marks around plates, like a press sheet, on the plate's own outer pixels.
   plates.forEach((p) => {
     const x1 = crisp(p.left)
     const y1 = crisp(p.top)
-    const x2 = crisp(p.right)
-    const y2 = crisp(p.bottom)
-    const m = 8
-    const k = 8
-    path(3, `M${x1 - m - k} ${y1}h${k}M${x1} ${y1 - m - k}v${k}M${x2 + m} ${y1}h${k}M${x2} ${y1 - m - k}v${k}M${x1 - m - k} ${y2}h${k}M${x1} ${y2 + m}v${k}M${x2 + m} ${y2}h${k}M${x2} ${y2 + m}v${k}`)
+    const x2 = crispEnd(p.right)
+    const y2 = crispEnd(p.bottom)
+    const m = CROP
+    const k = CROP
+    // where a column edge already runs along the plate's side, it is that side's mark: a vertical
+    // arm beside it would read as a second, misplaced line
+    const own = (x: number) => !edges.some(e => Math.abs(e - x) < 3)
+    const arms = (y: number, dy: number) => [
+      `M${x1 - m - k} ${y}h${k}`,
+      own(x1) ? `M${x1} ${y + dy}v${k}` : '',
+      `M${x2 + m} ${y}h${k}`,
+      own(x2) ? `M${x2} ${y + dy}v${k}` : '',
+    ].join('')
+    group((y1 + y2) / 2, () => {
+      path(3, arms(y1, -m - k), front(y1), 0.4)
+      path(3, arms(y2, m), front(y2), 0.4)
+    })
   })
 
-  // 3 Drawing: the type specification, once per style, in the note margin on the line it describes.
+  // 3 Drawing: the type specification, once per style, in the note margin on the line it
+  // describes. Its red mark stands off the column edge rather than touching it.
   sheet.querySelectorAll<HTMLElement>('.in-note').forEach((el) => {
     const r = el.getBoundingClientRect()
     if (r.height) taken.push(new DOMRect(r.left + sx - 4, r.top + sy - 4, r.width + 8, r.height + 8))
   })
-  const noteLeft = L + measureW + gutter
+  const noteLeft = crisp(L + measureW + gutter)
+  const spec = (y: number, text: string) => group(y, () => {
+    if (label(3, noteLeft + 12, y, text, front(y) + 0.25, 'start')) path(3, `M${noteLeft + 4} ${crisp(y - 3)}h4`, front(y), 0.25, 'red')
+  })
   const seen = new Set<string>()
   for (const el of main.querySelectorAll<HTMLElement>('h1, h2, h3, p, pre, li a .font-medium, time')) {
     if (seen.size >= 8 || el.closest('.in-index, .in-note') || !el.offsetParent) continue
@@ -205,22 +312,18 @@ function measure() {
     const fontSize = Math.round(Number.parseFloat(cs.fontSize))
     const leading = cs.lineHeight === 'normal' ? '' : `/${Math.round(Number.parseFloat(cs.lineHeight))}`
     const weight = cs.fontWeight === '400' ? '' : ` ${cs.fontWeight}`
-    const spec = `${family} ${fontSize}${leading}${weight}${cs.fontStyle === 'italic' ? ' it.' : ''}`
-    if (seen.has(spec)) continue
-    seen.add(spec)
-    const baseline = first.top + sy + (first.height + fontSize * 0.7) / 2
-    if (label(3, noteLeft + 12, baseline, spec, 'start')) path(3, `M${noteLeft} ${crisp(baseline - 3)}h6`, 'red', 0.5)
+    const name = `${family} ${fontSize}${leading}${weight}${cs.fontStyle === 'italic' ? ' it.' : ''}`
+    if (seen.has(name)) continue
+    seen.add(name)
+    spec(first.top + sy + (first.height + fontSize * 0.7) / 2, name)
   }
 
   // 3 Drawing: the ∞ is a lemniscate of Bernoulli, and is drawn from its equation
   const inf = main.querySelector<SVGElement>('[data-construct="infinity"]')
-  if (inf) {
-    const r = inf.getBoundingClientRect()
-    const y = r.bottom + sy + 14
-    if (label(3, noteLeft + 12, y, '(x² + y²)² = a²(x² − y²)', 'start')) path(3, `M${noteLeft} ${crisp(y - 3)}h6`, 'red', 0.5)
-  }
+  if (inf) spec(inf.getBoundingClientRect().bottom + sy + 14, '(x² + y²)² = a²(x² − y²)')
 
   shapes.value = out
+  groups = found
 }
 
 let raf = 0
@@ -229,50 +332,80 @@ const schedule = () => {
   raf = requestAnimationFrame(measure)
 }
 
-// entries slide in by a few pixels; measure once they have landed
-async function settled() {
-  const running = document.getAnimations().filter(a => a.effect?.getTiming().iterations !== Infinity)
-  await Promise.race([Promise.allSettled(running.map(a => a.finished)), new Promise(r => setTimeout(r, 1200))])
-}
+const frame = () => new Promise(r => requestAnimationFrame(r))
+const wait = (ms: number) => new Promise(r => setTimeout(r, ms))
 
-async function redraw() {
-  ready.value = false
-  await settled()
-  measure()
-  // two frames: the shapes mount at rest, then transition to the current level
-  requestAnimationFrame(() => requestAnimationFrame(() => (ready.value = true)))
-}
-
-// Lines draw themselves on the first load of a visit and when a level is chosen. Otherwise (other
-// pages, later refreshes) the drawing is simply there, faded in with the page.
+// Lines draw themselves when the page is loaded and when a level is chosen. On the pages visited
+// after that, the drawing is set down at once, already finished.
 const instant = ref(false)
+
+watch(detail, (now, was) => {
+  if (now > was) base.value = (was + 1) as Level
+})
+
+// At the Drawing level, every few seconds, one measurement in view is rubbed out and drawn again.
+let alive: ReturnType<typeof setTimeout> | undefined
+let reduced = false
+function breathe() {
+  alive = setTimeout(async () => {
+    if (detail.value === 3 && ready.value && !instant.value && !document.hidden && !reduced && !replay.value) {
+      const lo = scrollY + 48
+      const hi = scrollY + innerHeight - 48
+      const inView = [...groups].filter(([, m]) => m.y > lo && m.y < hi)
+      const pick = inView[Math.floor(Math.random() * inView.length)]
+      if (pick) {
+        const [g, m] = pick
+        resting.value = g // rubbed out, back along each line
+        await wait(1100)
+        fresh.value = g
+        replay.value = { g, from: m.from }
+        resting.value = null // drawn again, in fresh ink
+        await wait(((m.to - m.from) * SLOW + 0.9) * 1000)
+        fresh.value = null // the ink dries back to grey
+        await wait(2600)
+        if (replay.value?.g === g) replay.value = null
+      }
+    }
+    breathe()
+  }, 3500 + Math.random() * 3500)
+}
 
 let ro: ResizeObserver | undefined
 onMounted(() => {
+  reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
   window.addEventListener('resize', schedule)
   ro = new ResizeObserver(schedule)
   const main = document.querySelector('main')
   if (main) ro.observe(main)
-  document.fonts.ready.then(() => {
-    if (seenThisVisit('construction', true)) instant.value = true
-    redraw().then(() => setTimeout(() => (instant.value = false), 600))
+  document.fonts.ready.then(async () => {
+    measure()
+    base.value = 1
+    // two frames: the shapes mount at rest, then draw up to the current level
+    await frame()
+    await frame()
+    ready.value = true
   })
+  breathe()
 })
 onBeforeUnmount(() => {
   ro?.disconnect()
+  clearTimeout(alive)
   window.removeEventListener('resize', schedule)
 })
 
 watch(() => route.path, async () => {
   instant.value = true
   ready.value = false
+  replay.value = null
+  resting.value = null
+  fresh.value = null
   await nextTick()
-  await settled()
+  await frame()
   measure()
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    ready.value = true
-    setTimeout(() => (instant.value = false), 600)
-  }))
+  ready.value = true
+  await frame()
+  await frame()
+  instant.value = false
 })
 </script>
 
@@ -280,7 +413,7 @@ watch(() => route.path, async () => {
   <svg
     v-if="shapes.length"
     class="construction"
-    :class="{ instant, shown: ready }"
+    :class="{ instant }"
     :width="size.w"
     :height="size.h"
     :viewBox="`0 0 ${size.w} ${size.h}`"
@@ -291,8 +424,8 @@ watch(() => route.path, async () => {
         v-if="s.kind === 'path'"
         :d="s.d"
         pathLength="1"
-        :class="[s.tone, { on: ready && s.level <= detail }]"
-        :style="{ '--seq': s.seq, '--dur': `${s.dur ?? 1.1}s` }"
+        :class="[s.tone, state(s)]"
+        :style="{ '--delay': delay(s), '--dur': dur(s), '--ease': EASE[s.ease] }"
       />
       <text
         v-else
@@ -301,8 +434,8 @@ watch(() => route.path, async () => {
         :text-anchor="s.anchor"
         :transform="s.rotate ? `rotate(-90 ${s.x} ${s.y})` : undefined"
         :dominant-baseline="s.rotate ? 'middle' : undefined"
-        :class="{ on: ready && s.level <= detail }"
-        :style="{ '--seq': s.seq }"
+        :class="state(s)"
+        :style="{ '--delay': delay(s) }"
       >
         {{ s.text }}
       </text>
@@ -319,21 +452,15 @@ watch(() => route.path, async () => {
   z-index: 0;
   overflow: hidden;
 }
-.construction.instant {
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.construction.instant.shown {
-  opacity: 1;
-}
 .construction.instant :is(path, text) {
   transition: none !important;
 }
-/* Lines draw on along their own direction when their level comes in, staggered within the
-   level, and retract quickly and together when it goes. */
+/* Lines draw on along their own direction when their level comes in, each when the pen reaches
+   it, and retract quickly and together when it goes. Colours are mixed into the paper, never
+   made see-through: where two lines meet, nothing darkens. */
 path {
   fill: none;
-  stroke: color-mix(in oklab, var(--ui-text) 28%, transparent);
+  stroke: color-mix(in oklab, var(--ui-text) 28%, var(--ui-bg));
   stroke-width: 0.75;
   stroke-dasharray: 1 1;
   stroke-dashoffset: 1;
@@ -341,30 +468,44 @@ path {
 }
 path.on {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset var(--dur) cubic-bezier(0.65, 0, 0.35, 1);
-  transition-delay: min(calc(var(--seq) * 45ms), 900ms);
+  transition: stroke-dashoffset var(--dur) var(--ease) var(--delay), stroke 2.4s ease;
+}
+/* worked on again: rubbed out slowly, back along the line; redrawn in fresh ink, which then
+   dries back to the line's own colour */
+path.erasing {
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.45, 0, 0.55, 1);
+}
+path.on.fresh {
+  stroke: color-mix(in oklab, var(--ui-primary) 75%, var(--ui-bg));
+  transition: stroke-dashoffset var(--dur) var(--ease) var(--delay), stroke 0s;
 }
 path.faint {
-  stroke: color-mix(in oklab, var(--ui-text) 13%, transparent);
+  stroke: color-mix(in oklab, var(--ui-text) 13%, var(--ui-bg));
 }
 path.guide {
-  stroke: color-mix(in oklab, var(--ui-text) 7%, transparent);
+  stroke: color-mix(in oklab, var(--ui-text) 7%, var(--ui-bg));
 }
 path.red {
-  stroke: color-mix(in oklab, var(--ui-primary) 80%, transparent);
+  stroke: color-mix(in oklab, var(--ui-primary) 80%, var(--ui-bg));
 }
 text {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.04em;
-  fill: color-mix(in oklab, var(--ui-text) 42%, transparent);
+  fill: color-mix(in oklab, var(--ui-text) 42%, var(--ui-bg));
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 text.on {
   opacity: 1;
+  transition: opacity 0.5s ease var(--delay), fill 2.4s ease;
+}
+text.erasing {
   transition: opacity 0.6s ease;
-  transition-delay: calc(450ms + min(calc(var(--seq) * 45ms), 900ms));
+}
+text.on.fresh {
+  fill: color-mix(in oklab, var(--ui-primary) 75%, var(--ui-bg));
+  transition: opacity 0.6s ease var(--delay), fill 0s;
 }
 @media (prefers-reduced-motion: reduce) {
   path, path.on, text, text.on {
