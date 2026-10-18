@@ -19,6 +19,8 @@ const mdcVars = computed(() => ({ ...seo, ...profile, ...socials, date: page.val
 
 const isArticle = computed(() => route.path.includes('/writing/'))
 const isClipboard = computed(() => route.path.includes('/clipboard/'))
+// an article laid out as a sheet, like the notice: section marks take the index margin, so no contents
+const isSheet = computed(() => isArticle.value && Boolean((page.value as unknown as Record<string, unknown>)?.sheet))
 
 useSeoPage(page.value, isArticle.value)
 
@@ -31,9 +33,14 @@ const readingTime = computed(() => {
 
 <template>
   <div v-if="page" class="relative">
-    <Toc v-if="isArticle" :links="page.body.toc?.links!" />
-    <TocMargin v-if="isArticle" :links="page.body.toc?.links ?? []" :date="page.date" :minutes="readingTime" />
-    <div v-if="isArticle && readingTime" class="mb-6 flex items-center gap-2 text-sm text-muted/50 lg:hidden">
+    <Toc v-if="isArticle && !isSheet" :links="page.body.toc?.links!" />
+    <TocMargin v-if="isArticle && !isSheet" :links="page.body.toc?.links ?? []" :date="page.date" :minutes="readingTime" />
+    <div v-if="isSheet && readingTime" class="mb-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50">
+      <span>{{ new Date(page.date!).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }) }}</span>
+      <span class="text-muted/30">&middot;</span>
+      <span>{{ readingTime }} min read</span>
+    </div>
+    <div v-else-if="isArticle && readingTime" class="mb-6 flex items-center gap-2 text-sm text-muted/50 lg:hidden">
       <span>{{ new Date(page.date!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</span>
       <span class="text-muted/20">&middot;</span>
       <span>{{ readingTime }} min read</span>
@@ -44,7 +51,7 @@ const readingTime = computed(() => {
     <ContentRenderer
       :value="page"
       :class="[
-        isArticle ? 'mb-4 prose-breakout' : isClipboard ? 'mb-4 prose-compact prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16 lg:gap-24',
+        isSheet ? 'mb-4 flex flex-col gap-12 sm:gap-16 lg:gap-24' : isArticle ? 'mb-4 prose-breakout' : isClipboard ? 'mb-4 prose-compact prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16 lg:gap-24',
       ]"
       :data="mdcVars"
     />

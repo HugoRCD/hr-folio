@@ -31,23 +31,27 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
         </p>
       </div>
       <p class="copy">
-        Sheet 2 of the drawing: what each mark on the first sheet is, where it comes from, and why it is there.
+        Sheet 2 of the drawing: what each mark on the first sheet is, where it comes from, and why I put it there.
       </p>
       <p class="copy">
-        Hugo designs and he builds. The sheet borrows from two houses known for both: Cartier for the hand, the drawing and its restraint; Ferrari for the machine, its precision and measure.
-        Nothing is copied. What is taken is how each holds back, read from their own websites: Cartier's red is almost never text, it draws rules and underlines; Ferrari sets its type in two weights and spaces everything on one scale.
+        I design and I build. This site borrows from Cartier and Ferrari, who do both: Cartier for the hand, the drawing and its restraint; Ferrari for the machine, its precision and measure.
+        I didn't copy either. I took how each one holds back, read from their own websites: Cartier's red is almost never text, it draws rules and underlines; Ferrari sets its type in two weights and spaces everything on one scale.
       </p>
+      <!-- the notice lists; the article tells the story behind it -->
+      <NuxtLink to="/writing/how-i-redrew-my-portfolio" class="story">
+        The longer story: How I Redrew My Portfolio &rarr;
+      </NuxtLink>
     </header>
 
     <section id="red" class="relative">
       <SectionMark numeral="I" label="The red" />
       <p class="copy lead">
-        One red, made from both. Cartier's and Ferrari's share a hue and a chroma; only their lightness differs. Mixed in OKLab, halfway between them is the red of this site.
+        One red, made from both. Cartier's and Ferrari's share a hue and a chroma; only their lightness differs. I mixed them in OKLab and kept the point halfway.
       </p>
       <NoticeRed />
       <p class="copy mt-8">
-        Halfway passes AA on white and on black, and weighs what the blue it replaced weighed (OKLab L 0.54). Cartier's red alone falls short on black.
-        It is used as a line: a rule, an underline, a numeral, the ink of the signature. Never as a ground, except underneath the page.
+        Halfway passes AA on white and on black, and weighs what my old blue weighed (OKLab L 0.54). Cartier's red alone falls short on black.
+        I use it as a line: a rule, an underline, a numeral, a title, the ink of the signature. Never as a ground, except underneath the page.
       </p>
       <aside class="in-note note">
         <p>Drag the needle: the page's red follows.</p>
@@ -63,7 +67,7 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
           <dt class="font-redaction text-base text-highlighted">
             Redaction
           </dt>
-          <dd>Titles and numerals. Drawn for legal briefs, it gives the sheet a documentary voice.</dd>
+          <dd>Titles and numerals. It was drawn for legal briefs, and it gives these pages a documentary voice.</dd>
         </div>
         <div class="entry">
           <dt class="font-sans text-base text-highlighted">
@@ -81,7 +85,7 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
           <dt class="font-signature text-3xl leading-6 text-[#901112] dark:text-[#E1342D]">
             Hugo
           </dt>
-          <dd>Mrs Saint Delafield. The signature, once per page, at the close.</dd>
+          <dd>Mrs Saint Delafield. My signature, once per page, at the close.</dd>
         </div>
       </dl>
       <aside class="in-note note">
@@ -93,7 +97,7 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
     <section id="sheet" class="relative">
       <SectionMark numeral="III" label="The sheet" />
       <p class="copy lead">
-        A drawing plate in five columns: the index, a gutter, the measure, a gutter, the notes. Every page is laid on it.
+        A drawing plate in five columns: the index, a gutter, the measure, a gutter, the notes. Every page here is laid on it.
       </p>
       <figure class="plate" aria-label="The five columns of the sheet">
         <div class="dim">
@@ -121,7 +125,7 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
     <section id="light" class="relative">
       <SectionMark numeral="IV" label="The light" />
       <p class="copy lead">
-        A letter is written somewhere, at some hour. So is this sheet: it is lit by the sun over the place in its dateline.
+        A letter is written somewhere, at some hour. So is this page: it's lit by the sun over wherever I am.
         It dims as the sun goes down: through the afternoon the white turns to parchment, and after sunset the page is a violet dusk that deepens into black. Before sunrise the same in blue, the other way.
       </p>
       <ClientOnly>
@@ -167,7 +171,7 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
             London,
           </dt>
           <dd>
-            A letter opens with where and when it was written; the Gazette du Bon Ton put its date first. Here the line is true: the place is where Hugo is, set by him when he travels,
+            A letter opens with where and when it was written; the Gazette du Bon Ton put its date first. Here the line is true: the place is where I am (I set it when I travel),
             the date and hour are local to it, and the same place lights the page (IV).
           </dd>
         </div>
@@ -175,13 +179,13 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
           <dt class="font-signature text-2xl leading-6 text-primary">
             H
           </dt>
-          <dd>The H that opens the signature, used alone at the head of every sheet: a hand turned into a mark, as Ferrari's Dino badge was drawn from Alfredo Ferrari's signature.</dd>
+          <dd>The H that opens my signature, alone at the head of every page: a hand turned into a mark, as Ferrari's Dino badge was drawn from Alfredo Ferrari's signature.</dd>
         </div>
         <div class="entry">
           <dt class="flex items-center">
             <InfinityMark />
           </dt>
-          <dd>It stands where a role's end date would be: Hugo joined Vercel in 2025 and means to stay as long as he can. Redaction has no infinity sign, so this one is drawn, a lemniscate.</dd>
+          <dd>It stands where my role's end date would be. I joined Vercel in 2025 and I mean to stay as long as I can. Redaction has no infinity sign, so I drew this one: a lemniscate.</dd>
         </div>
       </dl>
       <aside class="in-note note">
@@ -225,6 +229,16 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
   font-size: 14px;
   line-height: 24px;
   color: var(--ui-text-muted);
+}
+/* the way to the article: a line of the text, underlined in the red like any link here */
+.story {
+  align-self: flex-start;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--ui-text-highlighted);
+  text-decoration: underline;
+  text-decoration-color: var(--ui-primary);
+  text-underline-offset: 4px;
 }
 /* a section that opens with prose starts where an entry would, level with its mark */
 .lead {
