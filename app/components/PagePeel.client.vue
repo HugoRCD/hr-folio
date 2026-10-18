@@ -400,6 +400,14 @@ function nudge() {
 // --- lifecycle ------------------------------------------------------------------------------
 
 let mq: MediaQueryList | undefined
+// on a phone, only the home corner turns up (the others sit over the letterhead), and a tap
+// anywhere off the paper lays it back down
+const touch = ref(false)
+function onTapOff(e: PointerEvent) {
+  if (e.pointerType === 'mouse' || mode.value !== 'lifted' || dragging.value) return
+  if ((e.target as Element | null)?.closest('.flap, .dog-ear, .data, .tag')) return
+  rest()
+}
 function measureView() {
   view.value = { w: document.documentElement.clientWidth, h: window.innerHeight }
 }
@@ -439,13 +447,15 @@ function onBlur() {
 
 onMounted(() => {
   reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-  mq = matchMedia('(min-width: 1024px) and (pointer: fine)')
+  mq = matchMedia('(min-width: 1024px) and (pointer: fine), (pointer: coarse)')
+  touch.value = matchMedia('(pointer: coarse)').matches
   mq.addEventListener('change', enable)
   window.addEventListener('resize', onResize)
   window.addEventListener('wheel', onWheel, { passive: false })
   window.addEventListener('keydown', onKey)
   window.addEventListener('blur', onBlur)
   window.addEventListener('pointermove', onPeekMove)
+  window.addEventListener('pointerdown', onTapOff)
   enable()
   let seen = false
   try {
@@ -465,6 +475,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKey)
   window.removeEventListener('blur', onBlur)
   window.removeEventListener('pointermove', onPeekMove)
+  window.removeEventListener('pointerdown', onTapOff)
   const paper = document.querySelector<HTMLElement>('.paper')
   if (paper) paper.style.clipPath = ''
   document.documentElement.style.overflow = ''
@@ -500,7 +511,7 @@ watch(() => route.path, () => {
 
     <template v-for="k in CORNERS" :key="k">
       <button
-        v-if="mode === 'rest' || (dragging && k === corner)"
+        v-if="(mode === 'rest' && (!touch || k === HOME)) || (dragging && k === corner)"
         type="button"
         class="dog-ear"
         :class="k"

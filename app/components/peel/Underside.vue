@@ -26,6 +26,53 @@ async function loadRequest() {
     // offline: the request instrument says so
   }
 }
+
+// --- the revisions, and the inspection stamp ----------------------------------------------------
+// As on a drawing: the revision block lists the sheet's last changes, the stamp says it passed
+// inspection before it left the workshop (modules/inspection, run at every build).
+type Revision = { n: number, sha: string, date: string, message: string }
+const revisions = ref<{ total: number | null, revisions: Revision[] } | null>(null)
+async function loadRevisions() {
+  if (revisions.value) return
+  try {
+    revisions.value = await $fetch('/api/folio/revisions')
+  } catch {
+    revisions.value = { total: null, revisions: [] }
+  }
+}
+const inspection = useRuntimeConfig().public.inspection as { at: string, sha: string | null, checked: number, red: { ratio: number, floor: number }, text: { ratio: number, floor: number } } | undefined
+const shortDate = (iso: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(new Date(iso))
+// the stamp's ring: a circle the inscription runs round, from the top, clockwise
+const RING = 27
+const ringPath = `M40 ${40 - RING}A${RING} ${RING} 0 1 1 ${(40 - 0.01).toFixed(2)} ${40 - RING}`
+
+// --- part numbers -------------------------------------------------------------------------------
+// Each block of the page carries the file that draws it (data-part). Underneath, the file's path
+// is written at the block's corner, and leads to that file as it is in this deployment.
+type Tag = { path: string, name: string, x: number, y: number, url: string }
+const tags = shallowRef<Tag[]>([])
+const REPO = 'https://github.com/HugoRCD/hr-folio/blob'
+function placeTags() {
+  if (!root.value) return
+  const base = root.value.getBoundingClientRect()
+  const version = request.value?.deployment.sha ?? 'main'
+  const taken = rects().map(b => b.rect)
+  const hits = (l: number, t: number, w: number, h: number) =>
+    taken.some(r => l < r.right && l + w > r.left && t < r.bottom && t + h > r.top)
+  const out: Tag[] = []
+  document.querySelectorAll<HTMLElement>('.paper [data-part]').forEach((el) => {
+    const r = el.getBoundingClientRect()
+    if (!r.width || !r.height) return
+    const path = el.dataset.part!
+    const name = path.split('/').at(-1)!
+    // just above the block's top-left corner, as a part number sits by its part
+    const x = r.left - base.left
+    const y = r.top - base.top - 15
+    if (hits(r.left, r.top - 15, name.length * 6 + 24, 14)) return
+    out.push({ path, name, x, y, url: `${REPO}/${version}/${path}` })
+  })
+  tags.value = out
+}
 const root = useTemplateRef<HTMLElement>('root')
 const has = (id: string) => uncovered.includes(id)
 
@@ -42,6 +89,7 @@ function invalidate() {
 
 function build() {
   loadRequest()
+  loadRevisions()
   const host = drawing.value
   const sheet = document.querySelector<HTMLElement>('.paper .sheet')
   if (!host || !sheet || builtFor === route.path) return
@@ -85,7 +133,10 @@ function build() {
   nextTick(() => {
     clearAround()
     if (root.value) mechanism.value?.place(root.value)
-    nextTick(clearing)
+    nextTick(() => {
+      clearing()
+      placeTags()
+    })
   })
 }
 
@@ -183,6 +234,22 @@ const block = computed(() => {
 
     <PeelMechanism ref="mechanism" :uncovered :running="active" />
 
+    <!-- part numbers: the file that draws each block, at its corner -->
+    <div class="tags" :class="{ live: active }">
+      <a
+        v-for="t in tags"
+        :key="t.path"
+        :href="t.url"
+        target="_blank"
+        rel="noopener"
+        class="tag"
+        :title="t.path"
+        :style="{ left: `${t.x}px`, top: `${t.y}px` }"
+      >
+        {{ t.name }} <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
     <!-- the sheet's data, in one place: the one thing down here that answers the hand is the way
          to the other sheet -->
     <section class="instrument bl data" data-instrument="data" :class="{ shown: has('data') }" :inert="!(active && has('data'))">
@@ -218,6 +285,41 @@ const block = computed(() => {
               <dd>{{ v }}</dd>
             </div>
           </dl>
+          <template v-if="revisions?.revisions.length">
+            <p class="sub revs-head">
+              <span>Revisions</span><span>{{ revisions.total }} so far</span>
+            </p>
+            <ol class="revs">
+              <li v-for="(r, i) in revisions.revisions" :key="r.sha" class="tb-row" :style="{ '--i': i + 10 }">
+                <span class="rev-n">{{ r.n }}</span>
+                <span class="rev-date">{{ shortDate(r.date) }}</span>
+                <span class="rev-msg" :title="r.message">{{ r.message }}</span>
+              </li>
+            </ol>
+          </template>
+          <!-- the inspection stamp, inked in once the block is uncovered -->
+          <div v-if="inspection" class="stamp-row">
+            <svg
+              class="stamp"
+              viewBox="0 0 80 80"
+              width="80"
+              height="80"
+              role="img"
+              :aria-label="`Inspected ${shortDate(inspection.at)}: the light checked at ${inspection.checked} sun heights`"
+            >
+              <defs>
+                <path id="stamp-ring" :d="ringPath" />
+              </defs>
+              <circle cx="40" cy="40" r="37" />
+              <circle cx="40" cy="40" r="22" />
+              <text class="ring"><textPath href="#stamp-ring" startOffset="0" :textLength="(2 * Math.PI * RING - 4).toFixed(1)" lengthAdjust="spacing">INSPECTED · {{ inspection.checked }} SUN HEIGHTS · </textPath></text>
+              <text x="40" y="38" text-anchor="middle" class="date">{{ shortDate(inspection.at).toUpperCase() }}</text>
+              <text x="40" y="47" text-anchor="middle" class="sha">{{ inspection.sha || 'local' }}</text>
+            </svg>
+            <p class="stamp-note">
+              Checked at build, at every height the sun takes: the red never under {{ inspection.red.ratio.toFixed(2) }}&nbsp;:&nbsp;1 (floor {{ inspection.red.floor }}), the text you read never under {{ inspection.text.ratio.toFixed(2) }}&nbsp;:&nbsp;1 (floor {{ inspection.text.floor }}). Below either, the site does not build.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -395,6 +497,115 @@ const block = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   font-variant-numeric: tabular-nums;
+}
+
+/* --- revisions and the stamp --- */
+.revs-head {
+  border-top: 1px solid rgb(235 235 235 / 0.3);
+}
+.revs li {
+  display: grid;
+  grid-template-columns: 30px 46px 1fr;
+  align-items: baseline;
+  padding: 3px 8px;
+}
+.rev-n {
+  font-variant-numeric: tabular-nums;
+}
+.rev-date {
+  color: rgb(235 235 235 / 0.6);
+}
+.rev-msg {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.stamp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-top: 1px solid rgb(235 235 235 / 0.3);
+}
+.stamp {
+  flex-shrink: 0;
+  transform: rotate(-8deg);
+  opacity: 0;
+  scale: 1.15;
+  transition: opacity 0.35s ease 1.4s, scale 0.35s cubic-bezier(0.3, 0, 0.2, 1) 1.4s;
+}
+.shown .stamp {
+  opacity: 0.92;
+  scale: 1;
+}
+.stamp circle {
+  fill: none;
+  stroke: var(--bone);
+  stroke-width: 1;
+}
+.stamp text {
+  fill: var(--bone);
+  font-family: var(--font-mono);
+}
+.stamp .ring {
+  font-size: 6.4px;
+  letter-spacing: 0.1em;
+}
+.stamp .date {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+.stamp .sha {
+  font-size: 6.5px;
+  fill: rgb(235 235 235 / 0.7);
+}
+.stamp-note {
+  font-size: 9px;
+  line-height: 13px;
+  color: rgb(235 235 235 / 0.72);
+}
+
+/* --- part numbers: the files, at the corners of what they draw --- */
+.tags {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+}
+.tag {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 14px;
+  letter-spacing: 0.04em;
+  color: rgb(235 235 235 / 0.75);
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: rgb(235 235 235 / 0.35);
+  text-underline-offset: 2px;
+  pointer-events: none;
+}
+.tags.live .tag {
+  pointer-events: auto;
+}
+.tag:hover {
+  color: #ffffff;
+  text-decoration-color: currentColor;
+}
+
+/* on a phone the block takes the width there is, its figure set aside */
+@media (max-width: 640px) {
+  .data {
+    width: calc(100vw - 40px);
+  }
+  .columns {
+    grid-template-columns: 1fr;
+  }
+  .columns > .col:first-child {
+    display: none;
+  }
+  .col + .col {
+    border-left: 0;
+  }
 }
 
 /* --- the copy of the sheet, recoloured as a drawing: bone line on red --- */

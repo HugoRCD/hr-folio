@@ -20,7 +20,7 @@ const SHEET = COLUMNS.reduce((sum, c) => sum + c.w, 0)
 </script>
 
 <template>
-  <div class="flex flex-col gap-12 sm:gap-16 lg:gap-24">
+  <div class="flex flex-col gap-12 sm:gap-16 lg:gap-24" data-part="app/pages/notice.vue">
     <header class="flex flex-col gap-4">
       <div class="flex flex-col gap-0.5">
         <h1 class="font-redaction text-lg">

@@ -17,6 +17,12 @@ if (pageError.value || !page.value) {
 const { seo, socials, profile } = useFolioConfig()
 const mdcVars = computed(() => ({ ...seo, ...profile, ...socials, date: page.value?.date }))
 
+// the file the words come from, for the part number underneath (PeelUnderside)
+const source = computed(() => {
+  const p = page.value as unknown as { stem?: string, extension?: string } | undefined
+  return p?.stem ? `content/${p.stem}.${p.extension ?? 'md'}` : undefined
+})
+
 const isArticle = computed(() => route.path.includes('/writing/'))
 const isClipboard = computed(() => route.path.includes('/clipboard/'))
 // an article laid out as a sheet, like the notice: section marks take the index margin, so no contents
@@ -54,6 +60,7 @@ const readingTime = computed(() => {
         isSheet ? 'mb-4 flex flex-col gap-12 sm:gap-16 lg:gap-24' : isArticle ? 'mb-4 prose-breakout' : isClipboard ? 'mb-4 prose-compact prose-breakout' : 'mb-4 flex flex-1 flex-col gap-12 sm:gap-16 lg:gap-24',
       ]"
       :data="mdcVars"
+      :data-part="source"
     />
   </div>
 </template>

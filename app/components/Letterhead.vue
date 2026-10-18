@@ -20,18 +20,29 @@ const sunPath = computed(() => {
 // PagePeel): after a moment, so that passing over it does nothing.
 const peek = useState<string | null>('peel-peek', () => null)
 let intent: ReturnType<typeof setTimeout> | undefined
-function enter() {
+// On a phone it is a long press: held, the corner lifts, and letting go does not follow the link.
+let peeked = false
+function enter(e: PointerEvent) {
   clearTimeout(intent)
-  intent = setTimeout(() => (peek.value = 'clock'), 320)
+  peeked = false
+  intent = setTimeout(() => {
+    peek.value = 'clock'
+    peeked = e.pointerType !== 'mouse'
+  }, e.pointerType === 'mouse' ? 320 : 450)
 }
 function leave() {
   clearTimeout(intent)
+}
+function follow(e: MouseEvent) {
+  if (!peeked) return
+  e.preventDefault()
+  peeked = false
 }
 onBeforeUnmount(() => clearTimeout(intent))
 </script>
 
 <template>
-  <header class="relative mb-14 lg:mb-20">
+  <header class="relative mb-14 lg:mb-20" data-part="app/components/Letterhead.vue">
     <div class="measure flex min-h-11 items-start gap-5">
       <!-- monogram: the H of the signature -->
       <NuxtLink to="/" aria-label="Hugo Richard, home" class="in-index top-0 flex lg:justify-start">
@@ -55,7 +66,7 @@ onBeforeUnmount(() => clearTimeout(intent))
           <p v-if="daylight?.date" class="flex flex-col text-right" data-construct="dateline">
             <span class="font-redaction text-[15px] italic leading-5 text-highlighted">{{ daylight.place.city }},</span>
             <span class="font-redaction text-[15px] italic leading-5 text-muted">{{ daylight.date }}</span>
-            <span class="hour mt-1.5 flex justify-end" @pointerenter="enter" @pointerleave="leave">
+            <span class="hour mt-1.5 flex justify-end" @pointerenter="enter" @pointerleave="leave" @pointerup="leave" @click.capture="follow">
               <!-- the sun reading explains itself: it leads to the light, in the notice -->
               <NuxtLink
                 to="/notice#light"
@@ -117,6 +128,11 @@ onBeforeUnmount(() => clearTimeout(intent))
 .sun-dot.up {
   fill: var(--ui-primary);
   stroke: none;
+}
+/* held on a phone, the hour lifts the page: no callout, no selection */
+.hour {
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 </style>

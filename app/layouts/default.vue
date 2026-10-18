@@ -27,7 +27,7 @@ const isNotice = computed(() => route.path === '/notice')
           </section>
 
           <!-- the colophon: how it is set, and the few controls the sheet has -->
-          <footer class="measure mt-16 flex items-center justify-between gap-4 font-mono text-[10px] tracking-[0.04em] text-muted/45">
+          <footer data-part="app/layouts/default.vue" class="measure mt-16 flex items-center justify-between gap-4 font-mono text-[10px] tracking-[0.04em] text-muted/45">
             <span class="flex items-center gap-2">
               &copy; {{ new Date().getFullYear() }}
               <span aria-hidden="true">&middot;</span>

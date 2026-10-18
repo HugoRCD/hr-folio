@@ -232,7 +232,10 @@ function measure() {
     .filter(s => s.querySelector('[data-construct="mark"], [data-construct="figure"]') && s.offsetParent)
     .map(s => s.getBoundingClientRect())
     .sort((a, b) => a.top - b.top)
-  const rx = narrow ? crisp(W - 15) : crisp(S1 - CLEAR) // inside the sheet's edge, clear of its guide
+  // inside the sheet's edge, clear of its guide. Narrow, in the margin right of the measure: in its
+  // middle where there is room (a tablet), against the edge only on a phone's thin margin
+  const margin = W - R
+  const rx = narrow ? crisp(margin >= 48 ? R + margin / 2 : W - 21) : crisp(S1 - CLEAR)
   for (let i = 1; i < sections.length; i++) {
     const a = crisp(sections[i - 1]!.bottom + sy)
     const b = crisp(sections[i]!.top + sy)
@@ -241,7 +244,7 @@ function measure() {
       const done = dimension(3, rx, a, rx, b, front((a + b) / 2))
       const gap = Math.round(b - a)
       // the rhythm, in lines of the 24px leading where it divides evenly
-      if (narrow) label(3, W - 6, (a + b) / 2, `${gap}`, done, 'middle', true)
+      if (narrow) label(3, rx + 9, (a + b) / 2, `${gap}`, done, 'middle', true)
       else label(3, rx - LABEL_GAP, (a + b) / 2 + 3, gap % 24 ? `${gap}` : `${gap} = ${gap / 24} × 24`, done, 'end')
     })
   }

@@ -188,6 +188,30 @@ export function firstLightTable() {
   }))
 }
 
+/** The floors the page keeps: the red against its ground, and the reading text (set in the muted tone, the lightest anything is read in) against its ground. */
+export const FLOORS = { red: MIN, text: 4.5 }
+
+/**
+ * The light checked at every sun height it can take, a quarter of a degree apart, morning and
+ * evening: the lowest contrast the red and the body text reach on the ground, and where. Run at
+ * every build (modules/inspection), which refuses to build if either floor is ever crossed.
+ */
+export function inspectLight(step = 0.25) {
+  let checked = 0
+  const low = { red: { ratio: Infinity, at: 0 }, text: { ratio: Infinity, at: 0 } }
+  for (const morning of [true, false]) {
+    for (let e = -90; e <= 90; e += step) {
+      const l = lightFor(e, morning)
+      const red = contrast(l.red, l.hex)
+      const text = contrast(l.muted, l.hex)
+      if (red < low.red.ratio) low.red = { ratio: red, at: e }
+      if (text < low.text.ratio) low.text = { ratio: text, at: e }
+      checked++
+    }
+  }
+  return { checked, red: low.red, text: low.text, pass: low.red.ratio >= FLOORS.red && low.text.ratio >= FLOORS.text }
+}
+
 // The sun beside the hour, in the letterhead: today's path over the horizon, small, and where it is
 // on it now. Shared with the mechanism under the page, which draws it again where it lies above.
 export const SUN_ICON = { w: 22, h: 16, horizon: 10 }
