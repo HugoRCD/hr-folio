@@ -134,18 +134,15 @@ function redFor(dark: boolean, ground: string) {
 
 export const LIGHT_VARS = ['--ui-bg', '--ui-bg-muted', '--ui-bg-elevated', '--ui-bg-inverted', '--ui-border', '--ui-border-muted', '--code-bg', '--code-border', '--sun-elevation', ...TONES.map(t => t === 'text' ? '--ui-text' : `--ui-text-${t}`)]
 
-/** The page's light for a sun height. `redT` overrides where the red sits on its band. */
-export function lightFor(elevation: number, morning: boolean, redT: number | null = null) {
-  const dark = elevation < 0
-  const k = dark ? smooth(clamp01(-elevation / SPAN.down)) : smooth(clamp01(elevation / SPAN.up))
-  const ground = dark
-    ? mixOklch(morning ? GROUND.blueMorning : GROUND.blueEvening, GROUND.night, k)
-    : mixOklch(morning ? GROUND.dawn : GROUND.golden, GROUND.day, k)
-  const hex = oklchToHex(ground)
-  const step = (d: number): Oklch => [ground[0] + (dark ? d : -d), ground[1] * (dark ? 1.2 : 1.6), ground[2]]
-  const tones = Object.fromEntries(TONES.map(t => [t, hold(TONE_L[dark ? 'dark' : 'light'][t], dark, hex, ground[0])])) as Record<typeof TONES[number], number>
-  const t = redT ?? redFor(dark, hex)
-  const red = redAt(t, dark)
+/**
+ * The page's CSS variables for a ground and its five text tones (highlighted, text, toned, muted,
+ * dimmed). Self-contained on purpose: the build serialises it into the script that lights the page
+ * before its first paint (modules/first-light), so both always draw the same light.
+ */
+export function varsFor(ground: [number, number, number], tones: number[], dark: boolean, elevation: number) {
+  const css = (o: number[]) => `oklch(${(o[0]! * 100).toFixed(2)}% ${o[1]!.toFixed(4)} ${o[2]!.toFixed(1)})`
+  const step = (d: number) => [ground[0] + (dark ? d : -d), ground[1] * (dark ? 1.2 : 1.6), ground[2]]
+  const names = ['--ui-text-highlighted', '--ui-text', '--ui-text-toned', '--ui-text-muted', '--ui-text-dimmed']
   const vars: Record<string, string> = {
     '--ui-bg': css(ground),
     '--ui-bg-muted': css(step(0.025)),
@@ -156,9 +153,39 @@ export function lightFor(elevation: number, morning: boolean, redT: number | nul
     '--code-border': css(step(0.08)),
     '--sun-elevation': elevation.toFixed(2),
   }
-  for (const tone of TONES) vars[tone === 'text' ? '--ui-text' : `--ui-text-${tone}`] = css([tones[tone], 0, 0])
-  vars['--ui-bg-inverted'] = css([tones.highlighted, 0, 0])
-  return { dark, ground, hex, red, redT: t, phase: phaseOf(elevation, morning), vars }
+  names.forEach((name, i) => (vars[name] = css([tones[i]!, 0, 0])))
+  vars['--ui-bg-inverted'] = css([tones[0]!, 0, 0])
+  return vars
+}
+
+/** The page's light for a sun height. `redT` overrides where the red sits on its band. */
+export function lightFor(elevation: number, morning: boolean, redT: number | null = null) {
+  const dark = elevation < 0
+  const k = dark ? smooth(clamp01(-elevation / SPAN.down)) : smooth(clamp01(elevation / SPAN.up))
+  const ground = dark
+    ? mixOklch(morning ? GROUND.blueMorning : GROUND.blueEvening, GROUND.night, k)
+    : mixOklch(morning ? GROUND.dawn : GROUND.golden, GROUND.day, k)
+  const hex = oklchToHex(ground)
+  const tones = Object.fromEntries(TONES.map(t => [t, hold(TONE_L[dark ? 'dark' : 'light'][t], dark, hex, ground[0])])) as Record<typeof TONES[number], number>
+  const t = redT ?? redFor(dark, hex)
+  const red = redAt(t, dark)
+  const vars = varsFor(ground, TONES.map(tone => tones[tone]), dark, elevation)
+  return { dark, ground, hex, red, redT: t, text: grey(tones.text), muted: grey(tones.muted), phase: phaseOf(elevation, morning), vars }
+}
+
+/**
+ * The light at half-degree sun heights from −18.5° to 18.5°, morning and evening, as compact rows
+ * (ground L C H, the five text tones, the red): beyond that range it no longer changes. The script
+ * that lights the page before its first paint picks the row for the sun's height and calls varsFor.
+ */
+export function firstLightTable() {
+  const r = (n: number, d = 4) => Number(n.toFixed(d))
+  return [true, false].map(morning => Array.from({ length: 38 }, (_, i) => {
+    const l = lightFor(-18.5 + i, morning)
+    const tones = ['--ui-text-highlighted', '--ui-text', '--ui-text-toned', '--ui-text-muted', '--ui-text-dimmed']
+      .map(k => Number(/oklch\(([\d.]+)%/.exec(l.vars[k]!)![1]) / 100)
+    return [r(l.ground[0]), r(l.ground[1]), r(l.ground[2], 1), ...tones.map(t => r(t)), l.red]
+  }))
 }
 
 // The sun beside the hour, in the letterhead: today's path over the horizon, small, and where it is

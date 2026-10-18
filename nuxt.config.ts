@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     'evlog/nuxt',
     './modules/skills',
     './modules/screenshots',
+    './modules/first-light',
   ],
 
   evlog: {
