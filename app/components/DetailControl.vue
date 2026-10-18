@@ -48,7 +48,7 @@ const at = (i: number) => `${(i / (LEVELS.length - 1)) * 100}%`
         :aria-valuetext="LEVELS[detail]"
       >
     </div>
-    <output :for="id" class="min-w-[9ch] font-mono text-[10px] uppercase tracking-[0.06em]">{{ LEVELS[detail] }}</output>
+    <output :for="id" class="w-[60px] font-mono text-[10px] uppercase tracking-[0.06em]">{{ LEVELS[detail] }}</output>
   </div>
 </template>
 

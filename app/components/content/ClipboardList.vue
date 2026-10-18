@@ -27,11 +27,10 @@ const showViewAll = computed(() => limit > 0)
 
     <div class="flex flex-col">
       <NuxtLink
-        v-for="(post, index) in posts"
+        v-for="post in posts"
         :key="post.path"
         :to="post.path"
-        class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
-        :style="{ animationDelay: `${index * 40}ms` }"
+        class="group flex items-baseline justify-between gap-4 py-2"
       >
         <span class="flex min-w-0 items-center gap-2 font-medium text-highlighted decoration-primary group-hover:underline">
           <span class="truncate">{{ post.title }}</span>

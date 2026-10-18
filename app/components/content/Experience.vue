@@ -14,10 +14,8 @@ defineProps<{
     <SectionMark numeral="II" label="Experience" as="h3" />
     <ol class="flex flex-col">
       <li
-        v-for="(item, index) in items"
+        v-for="item in items"
         :key="item.company"
-        class="animate-in opacity-0"
-        :style="{ animationDelay: `${index * 40}ms` }"
       >
         <component
           :is="item.url ? 'a' : 'div'"

@@ -52,7 +52,10 @@ function fold() {
   const c = cornerPt(corner.value)
   const vx = c.x - p.x
   const vy = c.y - p.y
-  const d = Math.hypot(vx, vy)
+  // a corner pushed back past itself (a spring overshooting) is simply flat: otherwise the fold
+  // turns around and takes the whole window with it
+  const inward = (corner.value[1] === 'r' ? vx : -vx) + (corner.value[0] === 'b' ? vy : -vy)
+  const d = inward > 0 ? Math.hypot(vx, vy) : 0
   const n = d ? { x: vx / d, y: vy / d } : { x: 0, y: 0 } // from the fold toward the corner
   const m = { x: (c.x + p.x) / 2, y: (c.y + p.y) / 2 }
   return { n, m, d }
@@ -155,7 +158,8 @@ watch([() => p.x, () => p.y, mode], updateUncovered)
 
 // --- motion -----------------------------------------------------------------------------------
 
-function settleTo(t: Pt, then?: () => void) {
+// `zeta` below 1 lets the paper settle with the smallest flop; laying it down uses 1 (no flop)
+function settleTo(t: Pt, then?: () => void, zeta = 0.78) {
   target = t
   cancelAnimationFrame(raf)
   if (reduced) {
@@ -167,9 +171,8 @@ function settleTo(t: Pt, then?: () => void) {
   const step = (now: number) => {
     const dt = Math.min(0.032, (now - last) / 1000)
     last = now
-    // a slightly underdamped spring: paper settles with the smallest flop
     const k = 210
-    const c = 2 * Math.sqrt(k) * 0.78
+    const c = 2 * Math.sqrt(k) * zeta
     for (const axis of ['x', 'y'] as const) {
       const a = -k * (p[axis] - target[axis]) - c * vel[axis]
       vel[axis] += a * dt
@@ -203,15 +206,19 @@ function lift() {
 }
 
 // lay the page down: the corner falls back, then the dog-ear returns to its home corner
+let closing = false
 function rest() {
+  if (closing) return // already on its way down: another wheel tick changes nothing
+  closing = true
   open.value = false
   const k = corner.value
   settleTo(atLegs(k === HOME ? REST : 0.5), () => {
+    closing = false
     if (open.value || dragging.value) return
     mode.value = 'rest'
     document.documentElement.style.overflow = ''
     if (k !== HOME) home()
-  })
+  }, 1)
 }
 
 function home() {
@@ -237,6 +244,7 @@ function onDown(e: PointerEvent, k: Corner = corner.value) {
   e.preventDefault()
   ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
   cancelAnimationFrame(raf)
+  closing = false
   if (k !== corner.value) {
     corner.value = k
     place(atLegs(REST))

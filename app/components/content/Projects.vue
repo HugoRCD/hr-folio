@@ -168,14 +168,11 @@ function pin(el: Element) {
 
 const listHeight = ref(0)
 let listObserver: ResizeObserver | undefined
-// the first paint uses the page's entrance; after that, the list's own transitions take over
-const settled = ref(false)
 
 onMounted(() => {
   displayedProjects.value.forEach((p) => {
     preloadImage(getScreenshot(p))
   })
-  setTimeout(() => (settled.value = true), 300 + displayedProjects.value.length * 40)
   const el = list.value?.$el
   if (!el) return
   listObserver = new ResizeObserver(() => (listHeight.value = el.offsetHeight))
@@ -234,8 +231,8 @@ onBeforeUnmount(() => listObserver?.disconnect())
             :to="project.url"
             target="_blank"
             class="group relative flex items-baseline gap-4 py-2"
-            :class="[{ 'bg-muted/5': highlightedIndex === index }, !settled && 'animate-in opacity-0']"
-            :style="{ '--i': index, 'animationDelay': settled ? undefined : `${index * 40}ms` }"
+            :class="{ 'bg-muted/5': highlightedIndex === index }"
+            :style="{ '--i': index }"
             @mouseenter="onProjectHover(project, $event)"
           >
             <span class="flex shrink-0 items-baseline">

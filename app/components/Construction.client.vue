@@ -4,8 +4,8 @@ import { seenThisVisit } from '~/utils/once'
 // Detail control in the colophon, each adding something of a different kind:
 //   1 Scale    the five column widths, once, above the letterhead
 //   2 Grid     the column edges, full height, broken around text and plates
-//   3 Drawing  the working drawing: the space between sections, the portrait in a square and
-//              a circle, the specification of each type style, crop marks on plates
+//   3 Drawing  the working drawing: the space between sections, the portrait's side, the
+//              specification of each type style, crop marks on plates
 // Measured from the live layout. Rules: 12px clear of any text or image, labels 6px from
 // their line, a label that would overlap another is dropped.
 
@@ -163,48 +163,17 @@ function measure() {
 
   const fig = document.querySelector<HTMLElement>('[data-construct="figure"]')
   if (fig && fig.offsetWidth > 60) {
-    // The portrait as the square of a golden rectangle, set 12px clear of the picture, with the
-    // rest of the rectangle divided into its squares and the spiral drawn through them, into the
-    // empty index margin and towards the face. Nothing crosses the picture or its caption.
+    // The portrait's side, dimensioned above it. Nothing else: no figure is drawn around a
+    // picture whose size was not set by that figure.
     const r = fig.getBoundingClientRect()
     const x = Math.round(r.left + sx)
     const y = Math.round(r.top + sy)
-    const s = Math.round(r.width)
-    const S = s + CLEAR * 2 // the square, around the picture
-    const X = crisp(x - CLEAR)
-    const Y = crisp(y - CLEAR)
-    // Fibonacci-sized squares: S = a + b, a = b + c, b = c + e (136 = 84 + 52, 52 + 32, 32 + 20)
-    const a = Math.round(S * 0.618)
-    const b = S - a
-    const c = a - b
-    const e = b - c
-    const left = X - a
-    // the bottom edge breaks around the caption, as the guides do around text
-    const cap = fig.parentElement?.querySelector('figcaption')?.getBoundingClientRect()
-    const bottom = Y + S
-    if (cap && cap.width && cap.top + sy < bottom + 6 && cap.bottom + sy > bottom - 6) {
-      const g0 = Math.round(cap.left + sx - 6)
-      const g1 = Math.round(cap.right + sx + 6)
-      path(3, `M${left} ${bottom}H${Math.max(left, g0)}${g1 < X + S ? `M${g1} ${bottom}H${X + S}` : ''}`, 'faint', 1.4)
-      path(3, `M${left} ${bottom}V${Y}H${X + S}V${bottom}`, 'faint', 1.6)
-    } else {
-      path(3, `M${left} ${Y}H${X + S}V${bottom}H${left}Z`, 'faint', 1.6)
-    }
-    // the divisions: the square, then each smaller square in turn
-    path(3, `M${X} ${Y}V${bottom}M${left} ${Y + b}H${X}M${left + b} ${Y}V${Y + b}M${X - c} ${Y + c}H${X}M${X - e} ${Y + c}V${Y + b}`, 'faint', 1.4)
-    // the spiral, one quarter per square, from the large square's corner to its eye
-    path(3, `M${X} ${bottom}A${a} ${a} 0 0 1 ${left} ${Y + b}A${b} ${b} 0 0 1 ${left + b} ${Y}A${c} ${c} 0 0 1 ${X} ${Y + c}A${e} ${e} 0 0 1 ${X - e} ${Y + b}`, undefined, 2.2)
-    // each square's side, and the series they make: each the sum of the next two, so the ratio
-    // between neighbours closes on φ (136/84 = 1.619, 84/52 = 1.615, 52/32 = 1.625 …)
-    label(3, X - 6, Y + b + 14, `${a}`, 'end')
-    label(3, left + b - 6, Y + b - 6, `${b}`, 'end')
-    label(3, left, bottom + 14, `${S} : ${a} : ${b} : ${c} → φ`, 'start')
-    // the picture's side, dimensioned above it
-    const yd = crisp(Y - CLEAR)
-    dimension(3, x, yd, x + s, yd)
-    line(3, x + 0.5, yd + 3, x + 0.5, Y - 3, 'faint')
-    line(3, x + s - 0.5, yd + 3, x + s - 0.5, Y - 3, 'faint')
-    label(3, x + s / 2, yd - LABEL_GAP, `${s}`)
+    const w = Math.round(r.width)
+    const yd = crisp(y - CLEAR)
+    dimension(3, x, yd, x + w, yd)
+    line(3, x + 0.5, yd + 3, x + 0.5, y - 3, 'faint')
+    line(3, x + w - 0.5, yd + 3, x + w - 0.5, y - 3, 'faint')
+    label(3, x + w / 2, yd - LABEL_GAP, `${w}`)
   }
 
   // 3 Drawing: crop marks around plates, like a press sheet.

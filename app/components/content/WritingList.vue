@@ -99,7 +99,7 @@ const { highlightedIndex } = isFullPage.value
     </div>
 
     <ol class="flex flex-col">
-      <li v-for="(post, index) in posts" :key="post.path" class="relative animate-in opacity-0" :style="{ animationDelay: `${index * 40}ms` }">
+      <li v-for="(post, index) in posts" :key="post.path" class="relative">
         <NuxtLink
           :to="post.path"
           class="group flex items-baseline gap-3 py-2"

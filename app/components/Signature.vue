@@ -132,7 +132,7 @@ onMounted(() => {
 .signature {
   color: #901112;
 }
-:global(.dark) .signature {
+html.dark .signature {
   color: var(--ui-primary);
 }
 </style>

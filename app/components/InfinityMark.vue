@@ -86,7 +86,9 @@ path {
 .drawn .glint {
   animation: travel 9s linear 2.2s infinite, glint-in 1.2s ease 2.2s forwards;
 }
-:global(.light) .glint {
+/* not `:global(.light) .glint`: Vue compiles that to `.light` alone, which matched <html> and
+   stroked every glyph of every SVG on the page in light mode */
+html.light .glint {
   stroke: color-mix(in oklab, white 55%, var(--ui-primary));
 }
 .still .ink {
