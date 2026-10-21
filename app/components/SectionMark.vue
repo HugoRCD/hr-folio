@@ -10,7 +10,7 @@ const { as = 'h2' } = defineProps<{
 
 <template>
   <component :is="as" class="section-mark in-index flex items-baseline gap-3" data-construct="mark">
-    <span class="numeral">{{ numeral }}</span>
+    <span class="numeral" aria-hidden="true">{{ numeral }}</span>
     <span class="label">{{ label }}</span>
     <span class="rule" aria-hidden="true" />
   </component>
@@ -36,6 +36,8 @@ const { as = 'h2' } = defineProps<{
   font-style: italic;
   font-size: 15px;
   color: var(--ui-primary);
+  /* a mark in the margin, not words: it is not picked up with the label */
+  user-select: none;
 }
 .label {
   font-family: var(--font-mono);
