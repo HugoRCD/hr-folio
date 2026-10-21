@@ -56,13 +56,23 @@ h1, h2, h3, .font-serif, .font-redaction {
 }
 
 /*
- * The sheet. From 1024px the page is a 976px plate read left to right:
+ * The sheet. From 1024px the page is a 1024px plate read left to right:
  * an index margin (section marks, the figure, contents), a gutter, the measure,
  * a gutter, a note margin (the dateline, filters, dimensions).
  * Anything placed with .in-index / .in-note hangs off its measure-wide parent.
+ * The plate always keeps 40px of page around it: in a window too narrow for that, the index
+ * margin gives up the difference (down to 144px at 1024). Registered as a length so it is
+ * computed in px, and read back as a number by the construction drawing.
  */
+@property --sheet-index {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 224px;
+}
 :root {
-  --sheet-index: 224px;
+  --sheet-margin: 40px;
+  /* 880 = the two margins, the two gutters, the measure and the note margin */
+  --sheet-index: min(224px, 100vw - 880px);
   --sheet-gutter: 48px;
   --sheet-measure: 528px;
   --sheet-note: 176px;
@@ -90,7 +100,8 @@ h1, h2, h3, .font-serif, .font-redaction {
 
 @media (min-width: 1024px) {
   .sheet {
-    padding-inline: 0;
+    max-width: calc(var(--sheet-width) + var(--sheet-margin) * 2);
+    padding-inline: var(--sheet-margin);
   }
   .measure {
     margin-left: calc(var(--sheet-index) + var(--sheet-gutter));
