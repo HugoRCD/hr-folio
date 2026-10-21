@@ -1,10 +1,14 @@
 ---
 title: Hugo Richard
-description: Software Engineer & Designer at Vercel. Building with obsession. Open source by default, Nuxt at heart.
+description: Software Engineer & Designer at Vercel. Working every day to make the world a little better, or at least a few people's lives a little simpler.
 ---
 
-::hero{subtitle="Software Engineer & Designer at Vercel" title="Hugo Richard"}
-Building with obsession ▲ Open source by default, [Nuxt](https://nuxt.com) at heart.
+::hero{title="Hugo Richard"}
+#subtitle
+Software Engineer & *Designer* at [Vercel](https://vercel.com)
+
+#default
+Working every day to make the world a little better, or at least a few people's lives a little simpler
 ::
 
 :contact-links

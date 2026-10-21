@@ -47,8 +47,10 @@ const { data: allProjects } = await useAsyncData('projects', () =>
     .all()
 )
 
-const featuredNames = ['Evlog', 'Shelve', 'Canvas', 'GitHub Tools']
-const featuredWorkNames = ['Nuxt MCP Toolkit', 'Docus', 'Nuxt.com', 'Nuxt UI', 'Knowledge Agent', 'Comark']
+// the landing page shows three: the two he made and keeps, and the framework he works on. The
+// rest are under All projects. On the right, his part in each.
+const featuredNames = ['Evlog', 'Shelve', 'Nuxt']
+const ROLE: Record<string, string> = { Evlog: 'Author', Shelve: 'Author', Nuxt: 'Team' }
 
 function sortByOrder(items: typeof allProjects.value, order: string[]) {
   return [...items!].sort((a, b) => {
@@ -83,12 +85,7 @@ const displayedProjects = computed(() => {
   if (activeTab.value === 'projects') items = items.filter(p => p.category !== 'ecosystem')
   else if (activeTab.value === 'work') items = items.filter(p => p.category === 'ecosystem')
 
-  if (featured) {
-    if (activeTab.value === 'projects') return sortByOrder(items.filter(p => featuredNames.includes(p.name)), featuredNames)
-    if (activeTab.value === 'work') return sortByOrder(items.filter(p => featuredWorkNames.includes(p.name)), featuredWorkNames)
-    const allFeatured = [...featuredNames, ...featuredWorkNames]
-    return sortByOrder(items.filter(p => allFeatured.includes(p.name)), allFeatured)
-  }
+  if (featured) return sortByOrder(allProjects.value.filter(p => featuredNames.includes(p.name)), featuredNames)
 
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase()
@@ -185,7 +182,7 @@ onBeforeUnmount(() => listObserver?.disconnect())
   <section class="relative flex flex-col">
     <SectionMark :numeral="featured ? 'III' : '§'" label="Projects" :as="featured ? 'h3' : 'h1'" />
     <!-- filters and search are notes in the right margin on wide screens, so the mark keeps the first entry's line -->
-    <div class="in-note top-2 mb-3 flex items-center gap-4 lg:mb-0 lg:flex-col lg:items-stretch lg:gap-0">
+    <div v-if="!featured" class="in-note top-2 mb-3 flex items-center gap-4 lg:mb-0 lg:flex-col lg:items-stretch lg:gap-0">
       <div class="flex gap-4 lg:flex-col lg:gap-0" role="tablist" aria-label="Filter projects">
         <button
           v-for="tab in tabs"
@@ -239,7 +236,12 @@ onBeforeUnmount(() => listObserver?.disconnect())
               <span class="in-gutter font-mono text-[10px] tabular-nums text-muted/40" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
               <span class="font-medium text-highlighted decoration-primary underline-offset-4 group-hover:underline">{{ project.name }}</span>
             </span>
-            <span class="entry-sub ml-auto truncate text-right text-sm text-muted">{{ project.description }}</span>
+            <template v-if="featured">
+              <span class="entry-sub truncate text-sm text-muted">{{ project.description }}</span>
+              <span class="leader" aria-hidden="true" />
+              <span class="shrink-0 font-mono text-xs text-muted/70">{{ ROLE[project.name] }}</span>
+            </template>
+            <span v-else class="entry-sub ml-auto truncate text-right text-sm text-muted">{{ project.description }}</span>
           </NuxtLink>
         </TransitionGroup>
       </div>
