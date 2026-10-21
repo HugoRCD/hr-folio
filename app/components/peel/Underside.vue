@@ -209,7 +209,8 @@ watch(() => active && has('data'), (on) => {
 }, { immediate: true })
 onBeforeUnmount(() => clearInterval(tick))
 
-const onNotice = computed(() => route.path === '/notice')
+const STORY = '/writing/how-i-redrew-my-portfolio'
+const onStory = computed(() => route.path === STORY)
 const deg = (v?: number, pos = 'N', neg = 'S') => (v === undefined ? '—' : `${Math.abs(v).toFixed(1)}° ${v >= 0 ? pos : neg}`)
 // what the block keeps on a phone, where it shares the turned page with the drawing
 const KEY_ROWS: string[] = ['Place', 'Local time', 'Sun', 'Revision']
@@ -217,7 +218,7 @@ const block = computed(() => {
   const d = daylight.value
   const levels = ['Fair copy', 'Scale', 'Grid', 'Drawing']
   return [
-    ['Sheet', route.path === '/' ? 'Index' : onNotice.value ? 'Notice' : route.path],
+    ['Sheet', route.path === '/' ? 'Index' : route.path],
     ['Drawn by', 'Hugo Richard'],
     ['Place', d ? `${d.place.city}, ${deg(d.place.lat)} ${deg(d.place.lon, 'E', 'W')}` : '—'],
     ['Local time', clock.value || d?.time || '—'],
@@ -257,8 +258,8 @@ const block = computed(() => {
     <section class="instrument bl data" data-instrument="data" :class="{ shown: has('data') }" :inert="!(active && has('data'))">
       <header>
         <span class="title">hugorcd.com</span>
-        <NuxtLink :to="onNotice ? '/' : '/notice'" class="sheet-link">
-          {{ onNotice ? '← Sheet 2 / 2' : 'Sheet 1 / 2 →' }}
+        <NuxtLink :to="onStory ? '/' : STORY" class="sheet-link">
+          {{ onStory ? '← Index' : 'How it was drawn →' }}
         </NuxtLink>
       </header>
       <div class="columns">

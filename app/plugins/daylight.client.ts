@@ -42,13 +42,13 @@ export default defineNuxtPlugin(() => {
     place: { city: HOME_WHEREABOUTS.city, country: HOME_WHEREABOUTS.country, timeZone: HOME_WHEREABOUTS.timeZone, lat: HOME_WHEREABOUTS.lat, lon: HOME_WHEREABOUTS.lon },
   }))
 
-  // An instant to show instead of the clock (the sun viewer on /notice). While it is set the page
+  // An instant to show instead of the clock (the sun viewer in the article). While it is set the page
   // takes its light even over a theme picked by hand; that choice comes back when it is cleared.
   const preview = useState<number | null>('daylight-at', () => null)
   let held: string | null = null
   // Light or dark picked by hand, for the rest of the visit, until the sun is followed again.
   const manual = useState<boolean>('daylight-manual', () => false)
-  // A point on the red's band chosen by hand (the red viewer on /notice), instead of the light's.
+  // A point on the red's band chosen by hand (the red viewer in the article), instead of the light's.
   const redHeld = useState<number | null>('red-at', () => null)
   let ready = false
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches

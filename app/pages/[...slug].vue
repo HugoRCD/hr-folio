@@ -25,7 +25,7 @@ const source = computed(() => {
 
 const isArticle = computed(() => route.path.includes('/writing/'))
 const isClipboard = computed(() => route.path.includes('/clipboard/'))
-// an article laid out as a sheet, like the notice: section marks take the index margin, so no contents
+// an article laid out as a sheet: section marks take the index margin, so no contents
 const isSheet = computed(() => isArticle.value && Boolean((page.value as unknown as Record<string, unknown>)?.sheet))
 
 useSeoPage(page.value, isArticle.value)

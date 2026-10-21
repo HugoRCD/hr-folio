@@ -45,7 +45,6 @@ const all = computed<CommandPaletteGroup[]>(() => [
       { label: 'Home', to: '/' },
       { label: 'Writing', to: '/writing' },
       { label: 'Works', to: '/works' },
-      { label: 'Notice', to: '/notice' },
     ],
   },
   {

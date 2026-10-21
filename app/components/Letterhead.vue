@@ -67,9 +67,9 @@ onBeforeUnmount(() => clearTimeout(intent))
             <span class="font-redaction text-[15px] italic leading-5 text-highlighted">{{ daylight.place.city }},</span>
             <span class="font-redaction text-[15px] italic leading-5 text-muted">{{ daylight.date }}</span>
             <span class="hour mt-1.5 flex justify-end" @pointerenter="enter" @pointerleave="leave" @pointerup="leave" @click.capture="follow">
-              <!-- the sun reading explains itself: it leads to the light, in the notice -->
+              <!-- the sun reading explains itself: it leads to the light, in the article on the site -->
               <NuxtLink
-                to="/notice#light"
+                to="/writing/how-i-redrew-my-portfolio#light"
                 title="How the page is lit"
                 class="flex items-center justify-end gap-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums tracking-[0.04em] text-muted/60 transition-colors hover:text-highlighted"
               >

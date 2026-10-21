@@ -1,5 +1,5 @@
 // Colour mixing in OKLab (Björn Ottosson, 2020), where equal steps look like equal steps,
-// and WCAG contrast. Used by the notice to show how the site's red is made.
+// and WCAG contrast. Used by the article to show how the site's red is made.
 
 type Lab = [number, number, number]
 

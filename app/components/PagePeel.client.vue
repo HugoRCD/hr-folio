@@ -30,7 +30,6 @@ const underside = useTemplateRef<{ build:() => void, invalidate: () => void, rec
 // which part a peek is for: the hour asks while it is rested on, the light dot and the detail
 // ruler when they are moved; and, once the corner has settled, which part is now in view
 const peek = useState<string | null>('peel-peek', () => null)
-const openOn = useState<{ part: string, at: number } | null>('peel-open-on', () => null)
 const mode = ref<Mode>('off')
 const corner = ref<Corner>(HOME)
 const open = ref(false)
@@ -253,9 +252,7 @@ function rest() {
   if (closing) return // already on its way down: another wheel tick changes nothing
   closing = true
   peeking = null
-  clearTimeout(hold)
   peek.value = null
-  openOn.value = null
   open.value = false
   settled.value = false
   const k = corner.value
@@ -288,20 +285,12 @@ async function toggle() {
 }
 
 // --- a part, looked at: the corner lifts just enough to show what is under it -----------------
-// The hour while it is rested on (top right); the lever and the Geneva wheel for a moment after
-// the light or the detail is changed by hand (bottom right), so the part is seen moving.
-const PEEK_CORNER: Record<string, Corner> = { clock: 'tr', hand: 'br', geneva: 'br' }
-const HOLD = 2400
+// Only the hour, while it is rested on (top right). Nothing else lifts the page by itself: the
+// controls at the bottom move their parts out of sight, and the reader lifts the corner.
+const PEEK_CORNER: Record<string, Corner> = { clock: 'tr' }
 let peeking: string | null = null
-let hold: ReturnType<typeof setTimeout> | undefined
 async function startPeek(part: string) {
-  if (peeking === part && part !== 'clock') {
-    // moved again while it is showing: show it a little longer
-    clearTimeout(hold)
-    openOn.value = { part, at: performance.now() }
-    hold = setTimeout(() => peeking === part && rest(), HOLD)
-    return
-  }
+  if (peeking === part) return
   if (mode.value !== 'rest' || dragging.value) {
     peek.value = null
     return
@@ -329,11 +318,7 @@ async function startPeek(part: string) {
   peeking = part
   // slower than a hand would pull it, and without a flop: it is the page showing, not thrown
   const r = { left: Math.max(0, all.left), top: Math.max(0, all.top), right: Math.min(w, all.right), bottom: Math.min(h, all.bottom) }
-  settleTo(reveal(k, r), () => {
-    if (peeking !== part) return
-    openOn.value = { part, at: performance.now() }
-    if (part !== 'clock') hold = setTimeout(() => peeking === part && rest(), HOLD)
-  }, 1, 55)
+  settleTo(reveal(k, r), undefined, 1, 55)
 }
 watch(peek, (part) => {
   if (part) startPeek(part)
@@ -388,7 +373,6 @@ function onDown(e: PointerEvent, k: Corner = corner.value) {
   down = { x: e.clientX, y: e.clientY, t: performance.now(), wasOpen: open.value }
   dragging.value = true
   peeking = null // taken in hand: it is an ordinary lift from here
-  clearTimeout(hold)
   grab = { x: p.x - e.clientX, y: p.y - e.clientY }
   lift()
 }
@@ -523,7 +507,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   cancelAnimationFrame(raf)
   stopNudges()
-  clearTimeout(hold)
   mq?.removeEventListener('change', enable)
   window.removeEventListener('resize', onResize)
   window.removeEventListener('wheel', onWheel)

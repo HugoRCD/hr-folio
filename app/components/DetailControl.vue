@@ -25,11 +25,8 @@ function onArrow(e: KeyboardEvent) {
   buttons[detail.value]?.focus()
 }
 
-// the Geneva wheel under the sheets turns a step a level: changed by hand, the page's corner lifts
-// for a moment to show it (see PagePeel). Not for the level restored on arrival.
-const peek = useState<string | null>('peel-peek', () => null)
-let ready = false
-let showWheel: ReturnType<typeof setTimeout> | undefined
+// the Geneva wheel under the sheets turns a step a level, out of sight: the page is not lifted
+// for it, it is there for whoever lifts the corner
 
 onMounted(() => {
   // nothing saved is not level 0: a first visit keeps the default
@@ -37,11 +34,9 @@ onMounted(() => {
   const saved = raw === null ? Number.NaN : Number(raw)
   if (Number.isInteger(saved) && saved >= 0 && saved < LEVELS.length) detail.value = saved
   window.addEventListener('keydown', onKey)
-  nextTick(() => (ready = true))
 })
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKey)
-  clearTimeout(showWheel)
 })
 watch(detail, (level) => {
   try {
@@ -49,9 +44,6 @@ watch(detail, (level) => {
   } catch {
     // private mode: the choice lasts for the visit
   }
-  if (!ready) return
-  clearTimeout(showWheel)
-  showWheel = setTimeout(() => (peek.value = 'geneva'), 450)
 })
 </script>
 

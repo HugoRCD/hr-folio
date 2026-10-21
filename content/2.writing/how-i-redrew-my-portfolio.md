@@ -203,7 +203,7 @@ The sun: today's curve, and where it is now.
 ::::
 
 ::::sheet-entry{term="Title block"}
-The sheet, the place, the revision. It leads to the [notice](/notice), the short version of this page.
+The sheet, the place, the revision.
 ::::
 
 ::::sheet-entry{term="The last corner"}

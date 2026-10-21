@@ -63,7 +63,7 @@ export default defineAppConfig({
         },
       },
       h1: {
-        // an article has one h1, its title: in the red, as the role line on the index and the notice
+        // an article has one h1, its title: in the red, as Designer on the index
         base: 'text-xl font-serif font-medium text-primary'
       },
       h2: {

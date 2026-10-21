@@ -27,29 +27,14 @@ const manual = useState<boolean>('daylight-manual', () => false)
 const detail = useState<number>('detail', () => 3)
 const colorMode = useColorMode()
 
-// The lever and the Geneva wheel are moved by hand, from the page above them, and the page's corner
-// lifts for a moment to show it (see PagePeel). So they move once they are in view, rather than
-// under the paper; if the corner never lifts (scrolled away), a moment later anyway.
-const openOn = useState<{ part: string, at: number } | null>('peel-open-on', () => null)
+// The lever and the Geneva wheel are moved by hand, from the page above them, out of sight: the page
+// is not lifted for them, they are in their new place for whoever lifts the corner
 const shown = reactive({ dark: colorMode.value === 'dark', manual: manual.value, detail: detail.value })
-const waiting = new Map<string, { apply:() => void, timer: ReturnType<typeof setTimeout> }>()
-function whenSeen(part: string, apply: () => void) {
-  clearTimeout(waiting.get(part)?.timer)
-  waiting.set(part, { apply, timer: setTimeout(() => (waiting.delete(part), apply()), 3200) })
-}
-watch(openOn, (o) => {
-  const w = o && waiting.get(o.part)
-  if (!w) return
-  clearTimeout(w.timer)
-  waiting.delete(o!.part)
-  setTimeout(w.apply, 220)
-})
-watch([() => colorMode.value, manual], ([mode, byHand]) => whenSeen('hand', () => {
+watch([() => colorMode.value, manual], ([mode, byHand]) => {
   shown.dark = mode === 'dark'
   shown.manual = byHand
-}))
-watch(detail, level => whenSeen('geneva', () => (shown.detail = level)))
-onBeforeUnmount(() => waiting.forEach(w => clearTimeout(w.timer)))
+})
+watch(detail, level => (shown.detail = level))
 
 const VB = VIEW.split(' ').map(Number) as [number, number, number, number]
 const CD = { x: D.x - C.x, y: D.y - C.y }
