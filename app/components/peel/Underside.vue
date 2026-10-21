@@ -308,19 +308,19 @@ const block = computed(() => {
               width="80"
               height="80"
               role="img"
-              :aria-label="`Inspected ${shortDate(inspection.at)}: the light checked at ${inspection.checked} sun heights`"
+              :aria-label="`Inspected and reviewed by Hugo, ${shortDate(inspection.at)}`"
             >
               <defs>
                 <path id="stamp-ring" :d="ringPath" />
               </defs>
               <circle cx="40" cy="40" r="37" />
               <circle cx="40" cy="40" r="22" />
-              <text class="ring"><textPath href="#stamp-ring" startOffset="0" :textLength="(2 * Math.PI * RING - 4).toFixed(1)" lengthAdjust="spacing">INSPECTED · {{ inspection.checked }} SUN HEIGHTS · </textPath></text>
+              <text class="ring"><textPath href="#stamp-ring" startOffset="0" :textLength="(2 * Math.PI * RING - 4).toFixed(1)" lengthAdjust="spacing">INSPECTED · REVIEWED BY HUGO · </textPath></text>
               <text x="40" y="38" text-anchor="middle" class="date">{{ shortDate(inspection.at).toUpperCase() }}</text>
               <text x="40" y="47" text-anchor="middle" class="sha">{{ inspection.sha || 'local' }}</text>
             </svg>
             <p class="stamp-note">
-              Checked at build, at every height the sun takes: the red never under {{ inspection.red.ratio.toFixed(2) }}&nbsp;:&nbsp;1 (floor {{ inspection.red.floor }}), the text you read never under {{ inspection.text.ratio.toFixed(2) }}&nbsp;:&nbsp;1 (floor {{ inspection.text.floor }}). Below either, the site does not build.
+              Every version is reviewed before it goes online. I put my name to it.
             </p>
           </div>
         </div>

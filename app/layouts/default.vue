@@ -38,7 +38,6 @@ const STORY = '/writing/how-i-redrew-my-portfolio'
                 </NuxtLink>
               </template>
             </span>
-            <span class="hidden text-muted/30 lg:inline">⌘K</span>
             <div class="in-note flex items-center justify-end gap-4 lg:top-1/2 lg:-translate-y-1/2">
               <DetailControl />
               <ThemeSelector />

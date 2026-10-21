@@ -11,8 +11,10 @@
 //     hand, the lever is thrown off the rod to day or night and held there by its jumper
 //   5 the Geneva wheel under the detail sheets: four slots, one level a step
 //   6 the barrel under the ∞: wound, and held by its click, so it only ever turns one way
-// Measured from the live page each time the
-// drawing underneath is made; the balloons are then placed where they cover the least.
+//   7 under the portrait, its negative: the same picture on film, light and dark swapped
+//   8 above the sound button, the chime: the button pushes its slide, and it strikes two notes
+// Measured from the live page each time the drawing underneath is made; the balloons are then
+// placed where they cover the least.
 import { localInstant, sunAt } from '~/utils/daylight'
 import { angles, C, circle, D, mesh, pitch, polar, toothed, VIEW } from '~/utils/movement'
 
@@ -71,6 +73,10 @@ type Layout = {
   hand: Pt | null
   geneva: Pt | null
   barrel: Pt | null
+  /** the portrait's negative, drawn where the portrait is above */
+  plate: (Pt & { w: number, h: number, src: string }) | null
+  /** the chime, above the sound button */
+  sound: Pt | null
 }
 const L = shallowRef<Layout | null>(null)
 
@@ -125,7 +131,92 @@ function measure(root: HTMLElement) {
     hand,
     geneva: find('[data-mech="detail"]'),
     barrel: find('main [data-construct="infinity"]'),
+    // under the photo: only on a wide sheet, where the plate is large
+    plate: (() => {
+      const f = local('[data-construct="figure"]')
+      const src = document.querySelector<HTMLImageElement>('img[data-construct="figure"]')?.currentSrc
+      return f && src && window.innerWidth >= 1024 ? { x: (f.l + f.r) / 2, y: (f.t + f.b) / 2, w: f.r - f.l, h: f.b - f.t, src } : null
+    })(),
+    sound: find('[data-mech="sound"]'),
   }
+}
+
+// --- the plate: the portrait's negative -------------------------------------------------------
+// The picture above as it sits on a square frame of roll film, seen on a light box: where the
+// photo is light the film is dense, where it is dark the film is clear. The film runs a little past
+// the frame either side, with its maker's line and the frame number printed in the edges.
+const REBATE = 12 // the film's edge above and below the frame
+const RUN = 18 // how far the strip runs past the frame before it was cut
+const neg = computed(() => {
+  const p = L.value?.plate
+  if (!p) return null
+  const fx = p.x - p.w / 2
+  const fy = p.y - p.h / 2
+  return { fx, fy, fw: p.w, fh: p.h, x: fx - RUN, y: fy - REBATE, w: p.w + RUN * 2, h: p.h + REBATE * 2 }
+})
+
+// --- the repeater, above the sound button ------------------------------------------------------
+// Drawn in the empty margin above the button, at a size it can be read. The button pushes a slide
+// up; the slide's rack turns the strike train, and as it runs back down the train lifts the
+// hammers onto two gongs, held to an even pace by the governor. In the repeater's own units, its
+// gongs' centre at 0 0, the button straight below at 24 118.
+const { enabled: soundOn } = useHoverSound()
+const repeater = useRepeater()
+const GONG_HIGH = 34
+const GONG_LOW = 39
+const HEEL = 64 // where both gongs are held, the bearing of the heel block
+const GAP = 40 // the gongs stop here, short of the heel, to let the slide in
+const SLIDE_X = 24
+const BUTTON_Y = 118
+const STROKE = 10 // how far the button pushes the slide
+const RP = 5 // the strike pinion the rack turns
+const PINION = { x: SLIDE_X - 2 - RP - 0.6, y: 8 }
+const GOV = polar(PINION, 11 + 3.2, 205) // the governor's arbor, off the strike wheel
+const gongArc = (r: number) => {
+  const a = polar({ x: 0, y: 0 }, r, HEEL)
+  const b = polar({ x: 0, y: 0 }, r, GAP)
+  return `M${a.x.toFixed(2)} ${a.y.toFixed(2)}A${r} ${r} 0 1 1 ${b.x.toFixed(2)} ${b.y.toFixed(2)}`
+}
+const heel = (() => {
+  const c = [GONG_HIGH - 2, GONG_LOW + 2].flatMap(r => [polar({ x: 0, y: 0 }, r, HEEL - 1), polar({ x: 0, y: 0 }, r, HEEL + 5)])
+  return `M${c[0]!.x.toFixed(2)} ${c[0]!.y.toFixed(2)}L${c[2]!.x.toFixed(2)} ${c[2]!.y.toFixed(2)}L${c[3]!.x.toFixed(2)} ${c[3]!.y.toFixed(2)}L${c[1]!.x.toFixed(2)} ${c[1]!.y.toFixed(2)}Z`
+})()
+// each hammer lies along its gong, pivoted behind its head, so a turn takes the head straight off
+// the wire; between blows it is held off by its spring
+const hammers = ([['low', GONG_LOW, 82, 108], ['high', GONG_HIGH, 104, 134]] as const).map(([gong, r, at, from]) => {
+  const head = polar({ x: 0, y: 0 }, r - 2.6, at)
+  const pivot = polar({ x: 0, y: 0 }, r - 7, from)
+  const v = { x: head.x - pivot.x, y: head.y - pivot.y }
+  // which way round the pivot takes the head towards the centre
+  const away = v.x * -head.y - v.y * -head.x > 0 ? 1 : -1
+  const spring = polar(pivot, 7, deg(Math.atan2(v.y, v.x)) + 180)
+  return { gong, pivot, v, rest: 11 * away, spring }
+})
+// the slide: pushed home quickly, then let run back over the whole strike
+const slide = reactive({ at: 0, s: 0.35, ease: 'cubic-bezier(0.2, 0.8, 0.2, 1)' })
+let release: ReturnType<typeof setTimeout> | undefined
+watch(repeater.striking, (on) => {
+  clearTimeout(release)
+  if (!on) {
+    Object.assign(slide, { at: 0, s: 0.4, ease: 'ease-out' })
+    return
+  }
+  Object.assign(slide, { at: STROKE, s: 0.35, ease: 'cubic-bezier(0.2, 0.8, 0.2, 1)' })
+  release = setTimeout(() => Object.assign(slide, { at: 0, s: repeater.length.value + 0.2, ease: 'linear' }), repeater.lead * 1000)
+})
+onBeforeUnmount(() => clearTimeout(release))
+const rep = computed(() => {
+  const s = L.value?.sound
+  if (!s) return null
+  // a little smaller on a phone, where the margin is narrow
+  const k = (L.value?.w ?? 1024) < 640 ? 0.85 : 1.25
+  return { k, o: { x: s.x - SLIDE_X * k, y: s.y - BUTTON_Y * k } }
+})
+const slideMove = computed(() => ({ transform: `translateY(${-slide.at}px)`, transition: `transform ${slide.s}s ${slide.ease}` }))
+const pinionTurn = computed(() => ({ transform: `translate(${PINION.x}px, ${PINION.y}px) rotate(${deg(-slide.at / RP).toFixed(2)}deg)`, transition: `transform ${slide.s}s ${slide.ease}` }))
+// pushed by hand under the page, it strikes too: heard if the sound is on, else only seen
+function pushSlide() {
+  repeater.chime(!soundOn.value)
 }
 
 // --- the hour, and today's sun ----------------------------------------------------------------
@@ -248,13 +339,98 @@ const at = (p: Pt, d: number, a: number) => polar(p, d, a)
 // what it does. Each is placed, once the parts are drawn, where it covers the least: not the
 // parts, not the copy of the page around them, not another balloon, and inside the window.
 const NAMES: Record<number, [string, string, string]> = {
-  1: ['Movement', 'keeps the hour', 'clock'],
-  2: ['Cam', 'cut to today\'s sun', 'clock'],
-  3: ['Sun\'s height', 'over the horizon', 'clock'],
-  4: ['Lever and disc', 'the light, by hand', 'hand'],
-  5: ['Geneva wheel', 'a step a level', 'geneva'],
-  6: ['Barrel', 'wound, turns one way', 'barrel'],
+  1: ['Movement', 'keeps the time', 'clock'],
+  2: ['Cam', 'today\'s sun', 'clock'],
+  3: ['Sun\'s height', 'lights the page', 'clock'],
+  4: ['Lever and disc', 'light or dark', 'hand'],
+  5: ['Geneva wheel', 'level of detail', 'geneva'],
+  6: ['Barrel', 'the mainspring', 'barrel'],
+  7: ['Plate 1', 'the negative', 'plate'],
+  8: ['Chime', 'two notes', 'sound'],
 }
+// Each balloon is also a pin: pointed at or tapped, it says in two plain sentences why the part
+// is there, and where to read more. Only under the sheet: the page above explains nothing.
+const STORY = '/writing/how-i-redrew-my-portfolio'
+const WHY: Record<number, [string, string]> = {
+  1: ['Keeps the time at the top of the page, at 21,600 beats an hour, like the Santos-Dumont I wear.', 'underneath'],
+  2: ['Its outline is today\'s sun where I am. The raised part is the daylight.', 'light'],
+  3: ['Reads how high the sun is from the cam. That sets how light or dark the page is.', 'light'],
+  4: ['Moved by the dot in the footer. It sets the page to light or dark, or back to following the sun.', 'light'],
+  5: ['Turned by the four sheets in the footer. Each level of detail moves it a quarter turn.', 'sheet'],
+  6: ['Holds the spring that drives the movement. Its click lets it turn one way only, so it sits under the ∞.', 'infinity'],
+  7: ['The portrait as it sits on film, before it is printed: what is light above is dark here.', 'light'],
+  8: ['Pushed by the sound button. It strikes two notes, then again every quarter hour while the sound is on.', 'underneath'],
+}
+const pinned = ref<number | null>(null)
+let unpin: ReturnType<typeof setTimeout> | undefined
+function pin(n: number | null) {
+  clearTimeout(unpin)
+  pinned.value = n
+}
+const leave = () => {
+  clearTimeout(unpin)
+  unpin = setTimeout(() => (pinned.value = null), 260)
+}
+watch(() => running, (on) => {
+  if (!on) pin(null)
+})
+// The note goes where it is wholly off the paper and inside the window, covering as few of the
+// parts as it can: below, above or beside its balloon, whichever does best.
+const fold = useState<{ m: Pt, n: Pt } | null>('peel-fold', () => null)
+const mroot = useTemplateRef<HTMLElement>('mroot')
+const W = 200
+// from the note's corner to the centre of its number, which sits on the balloon: close at the
+// side, so the note stops short of the balloon's own label
+const RX = 13
+const RY = 17
+const cardEl = useTemplateRef<HTMLElement>('cardEl')
+const cardH = ref(120)
+const card = computed(() => {
+  const b = spots.value.find(s => s.n === pinned.value)
+  const why = pinned.value === null ? undefined : WHY[pinned.value]
+  const root = mroot.value
+  if (!b || !why || !L.value || !root) return null
+  const base = root.getBoundingClientRect()
+  const parts = [...root.querySelectorAll<Element>('g.part:not(.balloon) > *, .movement-at')]
+    .map(el => el.getBoundingClientRect()).filter(r => r.width && r.height)
+  // the balloons' own words stay readable while a note is open: the note keeps off them
+  const words = [...root.querySelectorAll<Element>('.balloon :is(.name, .note)')]
+    .map(el => el.getBoundingClientRect()).filter(r => r.width && r.height)
+  const f = fold.value
+  const off = (x: number, y: number) => (f ? (x - f.m.x) * f.n.x + (y - f.m.y) * f.n.y : 1)
+  const H = cardH.value
+  const vw = document.documentElement.clientWidth
+  // it opens down and away from its label, so the label stays in view; else the other way, else up
+  const sides = b.anchor === 'start' ? ['l', 'r'] as const : ['r', 'l'] as const
+  const tries = (['d', 'u'] as const).flatMap(v => sides.map(h => ({ h, v })))
+  let best = { h: sides[0], v: 'd' as 'd' | 'u', left: 0, top: 0 }
+  let score = Infinity
+  tries.forEach(({ h, v }, i) => {
+    const left = h === 'r' ? b.x - RX : b.x - W + RX
+    const top = v === 'd' ? b.y - RY : b.y - H + RY
+    const x = base.left + left
+    const y = base.top + top
+    const corners = [[x, y], [x + W, y], [x, y + H], [x + W, y + H]] as const
+    const under = corners.reduce((sum, [cx, cy]) => sum + Math.max(0, 14 - off(cx, cy)), 0)
+    const outside = Math.max(0, 12 - x) + Math.max(0, x + W - vw + 12) + Math.max(0, 12 - y) + Math.max(0, y + H - innerHeight + 12)
+    const covers = parts.reduce((sum, r) => sum + Math.max(0, Math.min(x + W, r.right) - Math.max(x, r.left)) * Math.max(0, Math.min(y + H, r.bottom) - Math.max(y, r.top)), 0)
+    const hides = words.reduce((sum, r) => sum + Math.max(0, Math.min(x + W, r.right) - Math.max(x, r.left)) * Math.max(0, Math.min(y + H, r.bottom) - Math.max(y, r.top)), 0)
+    const s = (under + outside) * 1000 + hides * 40 + covers + i * 50
+    if (s < score) {
+      score = s
+      best = { h, v, left, top }
+    }
+  })
+  // and whatever happens, it is kept inside the window
+  best.left = Math.min(Math.max(best.left, 12 - base.left), vw - 12 - W - base.left)
+  best.top = Math.min(Math.max(best.top, 12 - base.top), innerHeight - 12 - H - base.top)
+  return { n: b.n, name: b.name, text: why[0], href: `${STORY}#${why[1]}`, ...best }
+})
+// the note's real height, once it is drawn, decides whether it fits below or has to open upwards
+watch(pinned, () => nextTick(() => {
+  if (cardEl.value) cardH.value = cardEl.value.offsetHeight
+}))
+
 type Box = { l: number, t: number, r: number, b: number }
 type Spot = { n: number, name: string, note: string, part: string, x: number, y: number, tx: number, anchor: 'start' | 'end', leader: string }
 const spots = shallowRef<Spot[]>([])
@@ -271,6 +447,8 @@ const anchors = computed(() => {
     lever.value && { n: 4, to: lever.value.pivot },
     l.geneva && { n: 5, to: { x: l.geneva.x - STAR * 0.6, y: l.geneva.y + STAR * 0.6 } },
     l.barrel && { n: 6, to: polar(l.barrel, 22, 225) },
+    l.plate && { n: 7, to: { x: l.plate.x - l.plate.w / 2, y: l.plate.y + l.plate.h / 4 } },
+    rep.value && { n: 8, to: polar(rep.value.o, GONG_LOW * rep.value.k, 205) },
   ].filter(Boolean) as { n: number, to: Pt }[]
 })
 
@@ -290,7 +468,7 @@ function place(root: HTMLElement) {
   const grow = (b: Box, g: number): Box => ({ l: b.l - g, t: b.t - g, r: b.r + g, b: b.b + g })
   const parts: Box[] = []
   root.querySelectorAll('.mechanism :is(path, circle, text, rect)').forEach((el) => {
-    if (el.closest('.balloon')) return
+    if (el.closest('.balloon') || el.classList.contains('push')) return
     const r = el.getBoundingClientRect()
     if (r.width || r.height) parts.push(grow(box(r), el.tagName === 'text' ? 3 : 1.5))
   })
@@ -439,12 +617,13 @@ defineExpose({ measure, place })
 </script>
 
 <template>
-  <div v-if="L" class="mechanism" aria-hidden="true">
+  <div v-if="L" ref="mroot" class="mechanism">
     <!-- 1 the movement, turned so its hands are under the figures of the hour -->
     <div
       v-if="L.clock"
       class="movement-at"
       data-instrument="clock"
+      aria-hidden="true"
       :style="{
         left: `${L.clock.hour.x - L.clock.origin.x}px`,
         top: `${L.clock.hour.y - L.clock.origin.y}px`,
@@ -464,7 +643,7 @@ defineExpose({ measure, place })
 
     <svg :width="L.w" :height="L.h" :viewBox="`0 0 ${L.w} ${L.h}`" class="parts">
       <!-- 2, 3: the cam and its rack, and the sun's dial -->
-      <g v-if="L.clock && state" data-instrument="clock" class="part" :class="{ shown: has('clock') }">
+      <g v-if="L.clock && state" data-instrument="clock" aria-hidden="true" class="part" :class="{ shown: has('clock') }">
         <g class="moving" :style="tf(L.clock.idler, deg(state.iAngle), L.clock.k)">
           <path class="draw" :d="toothed(30, 'wheel')" pathLength="1" :style="{ strokeWidth: 0.6 / L.clock.k }" />
           <path class="draw thin" :d="circle(2.4)" pathLength="1" :style="{ strokeWidth: 0.6 / L.clock.k }" />
@@ -532,7 +711,7 @@ defineExpose({ measure, place })
           <path class="thin" :d="`M${L.rodX - 4} ${(L.clock.wheel.y + R_MIN + RR + RACK + L.hand.y) / 2 - 6}l3 -3l3 3l3 -3M${L.rodX - 4} ${(L.clock.wheel.y + R_MIN + RR + RACK + L.hand.y) / 2 + 9}l3 -3l3 3l3 -3`" />
         </g>
       </g>
-      <g v-if="L.rodX && L.hand && lever" data-instrument="hand" class="part" :class="{ shown: has('hand') }">
+      <g v-if="L.rodX && L.hand && lever" data-instrument="hand" aria-hidden="true" class="part" :class="{ shown: has('hand') }">
         <!-- the rod's pin, where the lever rides while the sun is in charge -->
         <circle :cx="lever.pin.x" :cy="lever.pin.y" r="1.6" class="pivot" />
         <!-- the disc under the dot: day up, or night up -->
@@ -554,7 +733,7 @@ defineExpose({ measure, place })
       </g>
 
       <!-- 5 the Geneva wheel under the detail sheets -->
-      <g v-if="L.geneva" data-instrument="geneva" class="part" :class="{ shown: has('geneva') }">
+      <g v-if="L.geneva" data-instrument="geneva" aria-hidden="true" class="part" :class="{ shown: has('geneva') }">
         <g class="moving slow" :style="tf(L.geneva, -shown.detail * 90)">
           <path class="draw" :d="star" pathLength="1" />
           <circle r="1.6" class="dot" />
@@ -568,7 +747,7 @@ defineExpose({ measure, place })
       </g>
 
       <!-- 6 the barrel under the ∞ -->
-      <g v-if="L.barrel" data-instrument="barrel" class="part" :class="{ shown: has('barrel') }">
+      <g v-if="L.barrel" data-instrument="barrel" aria-hidden="true" class="part" :class="{ shown: has('barrel') }">
         <g :style="tf(L.barrel)">
           <path class="draw" :d="toothed(75, 'wheel', 30)" pathLength="1" />
           <path class="draw thin" :d="circle(26)" pathLength="1" />
@@ -581,6 +760,109 @@ defineExpose({ measure, place })
         </g>
       </g>
 
+      <!-- 7 the plate: the portrait's negative, under the portrait -->
+      <g v-if="L.plate && neg" data-instrument="plate" aria-hidden="true" class="part" :class="{ shown: has('plate') }">
+        <defs>
+          <!-- density: the film darkens as the photo is light, and stays clear where it is dark -->
+          <filter
+            id="negative-density"
+            color-interpolation-filters="sRGB"
+            x="0"
+            y="0"
+            width="1"
+            height="1"
+          >
+            <feColorMatrix type="matrix" values="0 0 0 0 0.07  0 0 0 0 0.03  0 0 0 0 0.03  0.3 0.6 0.1 0 0" />
+            <!-- as film answers light: the shadows still lay down some density, the highlights a lot -->
+            <feComponentTransfer>
+              <feFuncA type="gamma" amplitude="1.2" exponent="0.72" offset="0" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+        <rect class="film" :x="neg.x" :y="neg.y" :width="neg.w" :height="neg.h" />
+        <rect
+          class="fog"
+          :x="neg.fx"
+          :y="neg.fy"
+          :width="neg.fw"
+          :height="neg.fh"
+          rx="1.5"
+        />
+        <image
+          class="density"
+          :href="L.plate.src"
+          :x="neg.fx"
+          :y="neg.fy"
+          :width="neg.fw"
+          :height="neg.fh"
+          preserveAspectRatio="xMidYMid slice"
+          filter="url(#negative-density)"
+        />
+        <!-- the strip's edges, cut square at both ends -->
+        <path class="draw thin" :d="`M${neg.x} ${neg.y}h${neg.w}v${neg.h}h${-neg.w}Z`" pathLength="1" />
+        <!-- printed in the edges: the film, and the frame number -->
+        <text class="edge" :x="neg.fx" :y="neg.fy - 4">HR 400</text>
+        <text class="edge" :x="neg.fx + neg.fw / 2" :y="neg.fy + neg.fh + 8.5" text-anchor="middle">1</text>
+        <text class="edge" :x="neg.fx + neg.fw" :y="neg.fy + neg.fh + 8.5" text-anchor="end">▸</text>
+      </g>
+
+      <!-- 8 the chime above the sound button: its gongs, hammers, strike train and slide -->
+      <g v-if="rep" data-instrument="sound" aria-hidden="true" class="part" :class="{ shown: has('sound') }">
+        <g :style="tf(rep.o, 0, rep.k)">
+          <!-- the gongs: two wires round the works, both held in the heel -->
+          <path class="draw gong" :class="{ ring: repeater.hammer.value === 'low' }" :d="gongArc(GONG_LOW)" pathLength="1" />
+          <path class="draw gong" :class="{ ring: repeater.hammer.value === 'high' }" :d="gongArc(GONG_HIGH)" pathLength="1" />
+          <path class="draw" :d="heel" pathLength="1" />
+          <!-- the hammers, each on its pivot with the spring that holds it off the wire -->
+          <g v-for="h in hammers" :key="h.gong">
+            <path class="thin" :d="`M${h.pivot.x.toFixed(2)} ${h.pivot.y.toFixed(2)}Q${((h.pivot.x + h.spring.x) / 2 + 2).toFixed(2)} ${((h.pivot.y + h.spring.y) / 2 - 2).toFixed(2)} ${h.spring.x.toFixed(2)} ${h.spring.y.toFixed(2)}`" />
+            <g class="hammer" :class="{ down: repeater.hammer.value === h.gong }" :style="tf(h.pivot, repeater.hammer.value === h.gong ? 0 : h.rest)">
+              <path class="draw arm" :d="`M0 0L${h.v.x.toFixed(2)} ${h.v.y.toFixed(2)}`" pathLength="1" />
+              <circle :cx="h.v.x" :cy="h.v.y" r="2.6" class="dot" />
+            </g>
+            <circle :cx="h.pivot.x" :cy="h.pivot.y" r="1.5" class="pivot" />
+          </g>
+          <!-- the strike train: the pinion the rack turns, its wheel, and the governor that keeps the pace -->
+          <g :style="pinionTurn">
+            <path class="draw" :d="toothed(12, 'pinion', RP)" pathLength="1" />
+            <path class="draw thin" :d="toothed(36, 'wheel', 11)" pathLength="1" />
+            <circle r="1.2" class="dot" />
+          </g>
+          <g :style="tf(GOV)">
+            <g class="governor" :class="{ spin: repeater.striking.value }">
+              <path class="draw thin" :d="toothed(8, 'pinion', 3.2)" pathLength="1" />
+              <path class="draw" d="M-8 -1.2h16v2.4h-16z" pathLength="1" />
+            </g>
+            <circle r="1" class="dot" />
+          </g>
+          <!-- the slide, from the button: a rack at its top, a slot on two screws, its foot under the button -->
+          <g :style="slideMove">
+            <path class="draw" :d="`M${SLIDE_X - 2} -4H${SLIDE_X + 2}V${BUTTON_Y - 10}H${SLIDE_X - 2}Z`" pathLength="1" />
+            <path class="thin" :d="Array.from({ length: 12 }, (_, i) => `M${SLIDE_X - 2} ${-1 + i * 1.9}h-1.3`).join('')" />
+            <path class="draw thin" :d="`M${SLIDE_X - 0.8} 64V90a0.8 0.8 0 0 0 1.6 0V64a0.8 0.8 0 0 0 -1.6 0`" pathLength="1" />
+            <path class="draw" :d="`M${SLIDE_X - 4} ${BUTTON_Y - 16}h8v6h-8z`" pathLength="1" />
+          </g>
+          <circle
+            v-for="y in [68, 78]"
+            :key="y"
+            :cx="SLIDE_X"
+            :cy="y"
+            r="1.3"
+            class="pivot"
+          />
+          <!-- under the page, the slide can be pushed by hand -->
+          <rect
+            :x="SLIDE_X - 46"
+            y="-46"
+            width="92"
+            :height="BUTTON_Y + 36"
+            class="push"
+            :class="{ live: running && has('sound') }"
+            @click="pushSlide"
+          />
+        </g>
+      </g>
+
       <!-- the balloons, each with what its part is and does, placed where they cover the least -->
       <g
         v-for="(b, i) in spots"
@@ -588,10 +870,22 @@ defineExpose({ measure, place })
         :style="{ '--i': i }"
         class="part balloon"
         :data-reveal="b.part"
-        :class="{ shown: has(b.part) }"
+        :class="{ shown: has(b.part), live: running && has(b.part), on: pinned === b.n }"
+        :tabindex="running && has(b.part) && WHY[b.n] ? 0 : undefined"
+        role="button"
+        :aria-label="`${b.name}: why it is there`"
+        :aria-expanded="pinned === b.n"
+        @pointerenter="$event.pointerType === 'mouse' && pin(b.n)"
+        @pointerleave="$event.pointerType === 'mouse' && leave()"
+        @click="pin(pinned === b.n ? null : b.n)"
+        @focus="pin(b.n)"
+        @blur="leave"
+        @keydown.escape="pin(null)"
       >
         <path :d="b.leader" />
         <template v-if="b.n">
+          <!-- a larger, invisible target than the 6px circle, for a finger -->
+          <circle :cx="b.x" :cy="b.y" r="13" class="hit" />
           <circle :cx="b.x" :cy="b.y" r="6" />
           <text :x="b.x" :y="b.y + 2.6" text-anchor="middle">{{ b.n }}</text>
         </template>
@@ -599,6 +893,33 @@ defineExpose({ measure, place })
         <text :x="b.tx" :y="b.y + 7.5" :text-anchor="b.anchor" class="note">{{ b.note }}</text>
       </g>
     </svg>
+
+    <!-- the pin's note opens out of its balloon: its number is drawn on the balloon's own circle -->
+    <Transition name="pin">
+      <div
+        v-if="card"
+        ref="cardEl"
+        class="pin-card"
+        :class="[`h-${card.h}`, `v-${card.v}`]"
+        :style="{ left: `${card.left}px`, top: `${card.top}px`, width: `${W}px` }"
+        @pointerenter="pin(card.n)"
+        @pointerleave="leave"
+      >
+        <p class="pin-head">
+          <svg class="pin-n" width="14" height="14" viewBox="-7 -7 14 14" aria-hidden="true">
+            <circle r="6" />
+            <text y="2.6" text-anchor="middle">{{ card.n }}</text>
+          </svg>
+          <span>{{ card.name }}</span>
+        </p>
+        <p class="pin-text">
+          {{ card.text }}
+        </p>
+        <NuxtLink :to="card.href" class="pin-more">
+          Read more &rarr;
+        </NuxtLink>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -636,6 +957,18 @@ path {
 .plate {
   fill: color-mix(in oklab, #ebebeb 9%, #901112);
   stroke: none;
+}
+/* the negative, as on a light box: clear film is bone, the image and the edge print are density */
+.film {
+  fill: #f3f2ee;
+}
+.fog {
+  fill: #e6e4de;
+}
+.edge {
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  fill: rgb(18 8 8 / 0.7);
 }
 .night {
   fill: var(--thin);
@@ -687,6 +1020,96 @@ text {
 .part.balloon :is(text, circle, path) {
   transition-delay: calc(1.3s + var(--i, 0) * 0.18s);
 }
+.balloon.live {
+  pointer-events: auto;
+  cursor: help;
+  outline: none;
+}
+.balloon .hit {
+  fill: transparent;
+  stroke: none;
+}
+.balloon.live.on circle:not(.hit),
+.balloon.live:focus-visible circle:not(.hit) {
+  fill: var(--ink);
+}
+.balloon.live.on text:not(.name):not(.note),
+.balloon.live:focus-visible text:not(.name):not(.note) {
+  fill: #901112;
+}
+.pin-card {
+  position: absolute;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: auto;
+  padding: 10px;
+  background: #901112;
+  border: 1px solid rgb(235 235 235 / 0.55);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.01em;
+  color: rgb(235 235 235 / 0.92);
+}
+/* opening upwards, the head stays by the balloon, at the bottom */
+.pin-card.v-u {
+  flex-direction: column-reverse;
+}
+.pin-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 14px;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+.pin-card.h-l .pin-head {
+  flex-direction: row-reverse;
+}
+.pin-n {
+  flex: none;
+  overflow: visible;
+}
+.pin-card.h-r .pin-n {
+  margin-left: -4px;
+}
+.pin-card.h-l .pin-n {
+  margin-right: -4px;
+}
+.pin-n circle {
+  fill: #ebebeb;
+  stroke: #ebebeb;
+  stroke-width: 0.6;
+}
+.pin-n text {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  fill: #901112;
+}
+.pin-more {
+  align-self: flex-start;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(235 235 235 / 0.7);
+  transition: color 0.2s ease;
+}
+.pin-more:hover {
+  color: #ffffff;
+}
+.pin-enter-active,
+.pin-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.pin-enter-from,
+.pin-leave-to {
+  opacity: 0;
+  transform: translateY(-3px);
+}
 .balloon circle {
   fill: #901112;
   stroke: var(--ink);
@@ -718,11 +1141,11 @@ text {
 .shown .draw {
   stroke-dashoffset: 0;
 }
-.part :is(text, circle, rect, .hand, path:not(.draw)) {
+.part :is(text, circle, rect, image, .hand, path:not(.draw)) {
   opacity: 0;
   transition: opacity 0.6s ease 0.9s;
 }
-.part.shown :is(text, circle, rect, .hand, path:not(.draw)) {
+.part.shown :is(text, circle, rect, image, .hand, path:not(.draw)) {
   opacity: 1;
 }
 /* the parts move as the page's hour does: the cam with the crown, the star a level at a time */
@@ -732,7 +1155,46 @@ text {
 .moving.slow {
   transition-duration: 1.1s;
 }
+/* the chime: the wire flashes as it is struck, the hammers fall fast and come back slower */
+.gong {
+  stroke-width: 0.8;
+  transition: stroke-dashoffset 1.3s cubic-bezier(0.65, 0, 0.35, 1) 0.15s, stroke 0.7s ease-out;
+}
+.gong.ring {
+  stroke: #ffffff;
+  transition-duration: 1.3s, 0s;
+}
+.arm {
+  stroke-width: 1;
+}
+.hammer {
+  transition: transform 0.16s ease-out;
+}
+.hammer.down {
+  transition-duration: 0.05s;
+  transition-timing-function: ease-in;
+}
+.governor.spin {
+  animation: govern 0.3s linear infinite;
+}
+@keyframes govern {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.push {
+  fill: transparent;
+  stroke: none;
+  pointer-events: none;
+}
+.push.live {
+  pointer-events: auto;
+  cursor: pointer;
+}
 @media (prefers-reduced-motion: reduce) {
+  .governor.spin {
+    animation: none;
+  }
   .draw, .moving, .part :is(text, circle, .hand, path:not(.draw)) {
     transition: none;
   }

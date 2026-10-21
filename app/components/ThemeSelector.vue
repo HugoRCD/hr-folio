@@ -83,6 +83,7 @@ const triggerTransition = (event?: MouseEvent) => {
 
     <UTooltip :text="soundLabel">
       <UButton
+        data-mech="sound"
         class="rounded-full"
         size="xs"
         color="neutral"

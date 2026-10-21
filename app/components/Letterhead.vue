@@ -64,7 +64,7 @@ onBeforeUnmount(() => clearTimeout(intent))
       <div class="in-note top-0 ml-auto flex min-h-[62px] justify-end">
         <ClientOnly>
           <p v-if="daylight?.date" class="flex flex-col text-right" data-construct="dateline">
-            <span class="font-redaction text-[15px] italic leading-5 text-highlighted">{{ daylight.place.city }},</span>
+            <span class="font-redaction text-[15px] italic leading-5 text-highlighted">From {{ daylight.place.city }},</span>
             <span class="font-redaction text-[15px] italic leading-5 text-muted">{{ daylight.date }}</span>
             <span class="hour mt-1.5 flex justify-end" @pointerenter="enter" @pointerleave="leave" @pointerup="leave" @click.capture="follow">
               <!-- the sun reading explains itself: it leads to the light, in the article on the site -->

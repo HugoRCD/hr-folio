@@ -163,6 +163,11 @@ const shape = computed(() => {
   }
 })
 
+// the fold, in window coordinates, for what is drawn underneath and has to stay off the paper
+// (the pins' notes): a point q is uncovered where (q − m)·n > 0
+const foldLine = useState<{ m: Pt, n: Pt } | null>('peel-fold', () => null)
+watch(() => shape.value && mode.value === 'lifted' ? { m: shape.value.m, n: shape.value.n } : null, f => (foldLine.value = f))
+
 // The paper itself is clipped only while lifted, in its own (document) coordinates. Set on every
 // change rather than on the next frame, so it can never be left behind by a fold that has gone.
 function clipPaper() {
@@ -442,7 +447,7 @@ let mq: MediaQueryList | undefined
 const touch = ref(false)
 function onTapOff(e: PointerEvent) {
   if (e.pointerType === 'mouse' || mode.value !== 'lifted' || dragging.value) return
-  if ((e.target as Element | null)?.closest('.flap, .dog-ear, .data, .tag')) return
+  if ((e.target as Element | null)?.closest('.flap, .dog-ear, .data, .tag, .balloon, .pin-card, .turn-back, .push')) return
   rest()
 }
 function measureView() {

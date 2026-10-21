@@ -124,7 +124,9 @@ Ferrari's website spaces everything on one scale: 4, 8, 16, 24, 32, 48, 64, 96, 
 ::::
 
 ::::sheet-entry{term="The numbers"}
-In the footer, or with the D key, you choose how much of the construction shows: Fair copy, Scale, Grid, or Drawing. At Drawing, the measurements appear in the margins, the way they would on a real drawing. The 96 = 4 × 24 between two sections is that rhythm.
+In the footer, or with the D key, you choose how far the drawing has gone: Fair copy, Scale, Grid, or Drawing, from a first sketch to a finished, measured sheet. The site opens at Drawing, because that's where there's the most to see.
+
+At that level the measurements appear in the margins, the way they would on a real drawing: the width of each column, the size of each type, the 96 = 4 × 24 between two sections, the equation the ∞ is drawn from. Every size on the page was calculated, and these notes show the numbers.
 ::::
 :::
 ::
@@ -154,7 +156,7 @@ The city in the corner is real. I change it when I travel. A letter has to come 
 ::::
 
 ::::sheet-entry{term="By hand"}
-The dot in the footer switches to light or dark by hand. Press it again, and the page follows the sun.
+The dot in the footer switches to light or dark by hand. Press it again, and the page follows the sun. Under the page, the dot moves a lever in the mechanism, as the other buttons in the footer move their own parts.
 ::::
 :::
 
@@ -191,23 +193,23 @@ A hand turned into a mark, as Ferrari's [Dino](https://en.wikipedia.org/wiki/Fer
 ::
 
 ::sheet-section{id="underneath" numeral="VI" label="Underneath"}
-On a computer, lift any corner of the page and it folds back. Underneath is the working drawing of your visit, drawn the first time you see it. The idea comes from a page Vercel made, where you could peel back the surface and see the machinery.
+Lift any corner of the page and it folds back. On a phone, tap the corner and the page turns over. Underneath is the working drawing of the page you were reading, and the mechanism that runs it. The idea comes from a page Vercel made, where you could peel back the surface and see the machinery.
 
 :::sheet-entries
-::::sheet-entry{term="Fig. 1"}
-The request: your city, the Vercel edge that answered, the region that rendered the page, and how the first load went.
+::::sheet-entry{term="The mechanism"}
+Everything on the page that moves on its own sits over the part that moves it. The movement under the hour beats 21,600 times an hour, like the 430 MC in the Santos-Dumont I wear, so the page keeps time with a real watch. The buttons in the footer move their own parts. Under the ∞ is the barrel, which holds the mainspring and can only turn one way.
 ::::
 
-::::sheet-entry{term="Fig. 2"}
-The sun: today's curve, and where it is now.
+::::sheet-entry{term="Fig. 1"}
+The request. The page was rendered on a Vercel server and sent to you over the network. Your city, the edge that answered, the region that rendered it, and the shortest time light needs for the trip.
 ::::
 
 ::::sheet-entry{term="Title block"}
-The sheet, the place, the revision.
+The sheet, the place, the time, and the revision.
 ::::
 
-::::sheet-entry{term="The last corner"}
-The page itself, as a drawing.
+::::sheet-entry{term="Revisions"}
+The last changes to the site, numbered from the first one.
 ::::
 :::
 ::
