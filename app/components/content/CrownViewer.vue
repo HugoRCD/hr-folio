@@ -188,6 +188,12 @@ onBeforeUnmount(() => {
 .space {
   height: 200px;
 }
+/* on a phone the readout goes under the dial: 8 + 192 + 16 + 127 (measured) */
+@media (max-width: 639px) {
+  .space {
+    height: 343px;
+  }
+}
 .readout {
   display: flex;
   flex: 1;

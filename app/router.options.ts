@@ -4,7 +4,8 @@ import { START_LOCATION } from 'vue-router'
 // Nuxt's own scrolling, with one change. On the page's first load it scrolled to the top whenever
 // the router had not saved a position itself, after the browser had already put the reader back
 // where they were: refreshing at the foot of an article sent you to its head. On the first load
-// the browser's restoration now stands (a fresh visit is at the top anyway); a #hash still wins.
+// the place a reload comes back to is set before the app starts (modules/keep-place), and left
+// alone here; a #hash still wins.
 const hashTop = (selector: string) => {
   try {
     const el = document.querySelector(selector)

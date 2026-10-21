@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     './modules/screenshots',
     './modules/inspection',
     './modules/first-light',
+    './modules/keep-place',
   ],
 
   evlog: {

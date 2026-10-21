@@ -24,4 +24,10 @@
   height: 299px;
   margin-top: 32px;
 }
+/* narrower than 406px a line of its readout wraps, and the figure is 16px taller (measured) */
+@media (max-width: 405px) {
+  .space {
+    height: 315px;
+  }
+}
 </style>
