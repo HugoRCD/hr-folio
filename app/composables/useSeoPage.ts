@@ -37,8 +37,11 @@ export function useSeoPage(page: ContentCollectionItem, isWriting: boolean) {
     }, { width: 1200, height: 630 })
   } else {
     useSeoMeta({
-      ogImage: '/og/index.jpg',
-      twitterImage: '/og/index.jpg',
+      // a new name rather than the old one replaced: the networks keep an image by its URL
+      ogImage: '/og/home.jpg',
+      ogImageWidth: 1200,
+      ogImageHeight: 630,
+      twitterImage: '/og/home.jpg',
     })
   }
 
