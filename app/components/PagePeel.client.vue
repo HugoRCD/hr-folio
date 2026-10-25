@@ -150,9 +150,25 @@ const shape = computed(() => {
   const y0 = Math.max(0, Math.floor(Math.min(...pts.map(q => q.y)) - pad))
   const x1 = Math.min(view.value.w, Math.ceil(Math.max(...pts.map(q => q.x)) + pad))
   const y1 = Math.min(view.value.h, Math.ceil(Math.max(...pts.map(q => q.y)) + pad))
+  // Both held from the window's edges at the corner, not from its top left: a window being dragged
+  // larger can draw a frame at its new size before this has been measured again, and the corner
+  // must not be drawn where the old corner was, inside the page, with the red showing through it.
+  const right = corner.value[1] === 'r'
+  const bottom = corner.value[0] === 'b'
+  const { w: vw, h: vh } = view.value
   return {
-    box: { left: `${x0}px`, top: `${y0}px`, width: `${x1 - x0}px`, height: `${y1 - y0}px` },
-    inner: { left: `${-x0}px`, top: `${-y0}px`, width: `${view.value.w}px`, height: `${view.value.h}px` },
+    box: {
+      [right ? 'right' : 'left']: `${right ? vw - x1 : x0}px`,
+      [bottom ? 'bottom' : 'top']: `${bottom ? vh - y1 : y0}px`,
+      width: `${x1 - x0}px`,
+      height: `${y1 - y0}px`,
+    },
+    inner: {
+      [right ? 'right' : 'left']: `${right ? x1 - vw : -x0}px`,
+      [bottom ? 'bottom' : 'top']: `${bottom ? y1 - vh : -y0}px`,
+      width: `${vw}px`,
+      height: `${vh}px`,
+    },
     lifted: poly(lifted),
     flap: poly(flap),
     flapShade: along(back, m, paperBack),
@@ -179,7 +195,11 @@ function clipPaper() {
     return
   }
   const md = { x: m.x + window.scrollX, y: m.y + window.scrollY }
-  const keep = cut(rect(paper.offsetWidth, paper.offsetHeight), q => -((q.x - md.x) * n.x + (q.y - md.y) * n.y))
+  // the whole side of the fold the paper is on, well past its edges: a window grown before this is
+  // set again must not find a strip of the paper clipped away at its edge
+  const far = 20000
+  const half = [{ x: -far, y: -far }, { x: paper.offsetWidth + far, y: -far }, { x: paper.offsetWidth + far, y: paper.offsetHeight + far }, { x: -far, y: paper.offsetHeight + far }]
+  const keep = cut(half, q => -((q.x - md.x) * n.x + (q.y - md.y) * n.y))
   paper.style.clipPath = poly(keep)
 }
 watch([() => p.x, () => p.y, mode, corner], clipPaper, { flush: 'sync' })
