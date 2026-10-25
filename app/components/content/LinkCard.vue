@@ -20,7 +20,7 @@ const domain = computed(() => {
     :href="url"
     target="_blank"
     rel="noopener noreferrer"
-    class="group my-4 flex overflow-hidden rounded-lg border border-muted/10 transition-all hover:border-muted/30 hover:bg-muted/5"
+    class="group my-4 flex overflow-hidden rounded-lg border border-muted/10 transition-colors hover:border-muted/30 hover:bg-muted/5"
   >
     <div v-if="image" class="hidden w-32 shrink-0 sm:block">
       <img

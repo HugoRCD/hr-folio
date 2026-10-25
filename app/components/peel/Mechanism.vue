@@ -929,6 +929,7 @@ defineExpose({ measure, place })
   --thin: color-mix(in oklab, #ebebeb 46%, #901112);
   position: absolute;
   inset: 0;
+  contain: strict;
   z-index: 10;
   pointer-events: none;
 }

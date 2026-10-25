@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { penEase as ease, toward } from '~/utils/motion'
 import { seenSinceLoad } from '~/utils/once'
 // "Until further notice", drawn rather than typed: a lemniscate, slightly inclined like a hand
 // would write it, ruled once in the red when it comes into view. Then a small beam of light goes
@@ -69,9 +70,6 @@ const span = (t: number, [a, b]: number[]) => {
   const u = clamp((t - a!) / (b! - a!))
   return u * u * (3 - 2 * u)
 }
-const ease = (u: number) => 0.6 * u + 0.4 * (0.5 - Math.cos(Math.PI * u) / 2)
-// moves `v` toward `to`, the same way whatever the frame rate: τ is the time to cover 63%
-const toward = (v: number, to: number, tau: number, dt: number) => v + (to - v) * (1 - Math.exp(-dt / tau))
 
 let raf = 0
 let target = 0 // 1 open, 0 closed
@@ -381,8 +379,10 @@ html.light .beam path {
   letter-spacing: 0.04em;
   fill: color-mix(in oklab, var(--ui-text) 45%, var(--ui-bg));
 }
+/* hidden is not enough: an animation under display: none still runs, a style recalc every frame */
 @media (prefers-reduced-motion: reduce) {
   .ink { transition: none; }
   .beam { display: none; }
+  .beam path { animation: none; }
 }
 </style>

@@ -49,13 +49,14 @@ const ringPath = `M40 ${40 - RING}A${RING} ${RING} 0 1 1 ${(40 - 0.01).toFixed(2
 // --- part numbers -------------------------------------------------------------------------------
 // Each block of the page carries the file that draws it (data-part). Underneath, the file's path
 // is written at the block's corner, and leads to that file as it is in this deployment.
-type Tag = { path: string, name: string, x: number, y: number, url: string }
+type Tag = { path: string, name: string, x: number, y: number }
 const tags = shallowRef<Tag[]>([])
 const REPO = 'https://github.com/HugoRCD/hr-folio/blob'
+// the file as it is in this deployment, once the request has said which one it is
+const fileUrl = (path: string) => `${REPO}/${request.value?.deployment.sha ?? 'main'}/${path}`
 function placeTags() {
   if (!root.value) return
   const base = root.value.getBoundingClientRect()
-  const version = request.value?.deployment.sha ?? 'main'
   const taken = rects().map(b => b.rect)
   const hits = (l: number, t: number, w: number, h: number) =>
     taken.some(r => l < r.right && l + w > r.left && t < r.bottom && t + h > r.top)
@@ -69,7 +70,7 @@ function placeTags() {
     const x = r.left - base.left
     const y = r.top - base.top - 15
     if (hits(r.left, r.top - 15, name.length * 6 + 24, 14)) return
-    out.push({ path, name, x, y, url: `${REPO}/${version}/${path}` })
+    out.push({ path, name, x, y })
   })
   tags.value = out
 }
@@ -87,57 +88,109 @@ function invalidate() {
   builtFor = ''
 }
 
+/** Everything the page shows when it is lifted: the copy, and what Vercel knows about the request. */
 function build() {
   loadRequest()
   loadRevisions()
+  copy()
+  finish()
+  draw()
+}
+
+/** The copy, made ahead of the lift while the hand rests on a corner, a step at a time. */
+function prepare() {
+  copy()
+  stepLater()
+}
+
+// Making the copy is too much work for one frame: it is done in steps, one per idle moment, so
+// nothing moves less smoothly while it is made. A lift that comes before the last step takes the
+// rest at once, each step after the page has caught up with the one before.
+let steps: (() => void)[] = []
+let idle: number | undefined
+let finishing = false
+function stepLater() {
+  if (!steps.length) return
+  const step = () => {
+    steps.shift()?.()
+    stepLater()
+  }
+  // (Safari has no idle callback: a frame later is nearly as good)
+  idle = 'requestIdleCallback' in window ? requestIdleCallback(step, { timeout: 400 }) : window.setTimeout(step, 16)
+}
+function stopSteps() {
+  if ('cancelIdleCallback' in window) cancelIdleCallback(idle as number)
+  clearTimeout(idle)
+}
+async function finish() {
+  if (finishing) return
+  finishing = true
+  stopSteps()
+  while (steps.length) {
+    steps.shift()!()
+    await nextTick()
+  }
+  finishing = false
+}
+onBeforeUnmount(stopSteps)
+
+function copy() {
   const host = drawing.value
   const sheet = document.querySelector<HTMLElement>('.paper .sheet')
   if (!host || !sheet || builtFor === route.path) return
   builtFor = route.path
+  stopSteps()
+  steps = [
+    () => clone(host, sheet),
+    // the mechanism is measured from the same page, then the copy is cleared around it
+    () => root.value && mechanism.value?.measure(root.value),
+    clearAround,
+    // the balloons go where they cover the least of what is left
+    () => root.value && mechanism.value?.place(root.value),
+    () => {
+      clearing()
+      placeTags()
+    },
+  ]
+}
+
+function clone(host: HTMLElement, sheet: HTMLElement) {
+  const sources = [document.querySelector<SVGSVGElement>('.paper .construction'), sheet].filter(src => src !== null)
+  // the pictures' sizes, read from the page before anything changes, so it is laid out only once
+  // (a picture in the copy has no size of its own until the copy is in the document)
+  const sizes = sources.map(src => [...src.querySelectorAll('img, video, iframe')].map(el => el.getBoundingClientRect()))
   host.replaceChildren()
-  const construction = document.querySelector<SVGSVGElement>('.paper .construction')
-  for (const src of [construction, sheet]) {
-    if (!src) continue
-    const copy = src.cloneNode(true) as HTMLElement
+  sources.forEach((src, i) => {
+    const twin = src.cloneNode(true) as HTMLElement
     // the copy must never answer for the page: no ids, no hooks
-    copy.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'))
-    copy.querySelectorAll('[data-construct], [data-signature], [data-row]').forEach((el) => {
+    twin.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'))
+    twin.querySelectorAll('[data-construct], [data-signature], [data-row]').forEach((el) => {
       el.removeAttribute('data-construct')
       el.removeAttribute('data-signature')
       el.removeAttribute('data-row')
     })
-    copy.classList.remove('instant')
+    twin.classList.remove('instant')
     // pictures become what they are on a drawing: a frame with its diagonals
-    copy.querySelectorAll('img, video, iframe').forEach((el) => {
-      const r = (el as HTMLElement).getBoundingClientRect()
+    twin.querySelectorAll('img, video, iframe').forEach((el, k) => {
+      const r = sizes[i]![k]!
       const ph = document.createElement('span')
       ph.className = `${(el as HTMLElement).className} plate`
       ph.style.width = `${r.width}px`
       ph.style.height = `${r.height}px`
       el.replaceWith(ph)
     })
-    host.append(copy)
-  }
-  // the copy's construction draws itself line by line the first time; after that it is just there
-  const lines = host.querySelectorAll('.construction :is(path, text)')
-  if (drawnOnce) {
-    lines.forEach(el => el.classList.add('on'))
-  } else {
-    drawnOnce = true
-    lines.forEach(el => el.classList.remove('on'))
-    requestAnimationFrame(() => requestAnimationFrame(() => lines.forEach(el => el.classList.add('on'))))
-  }
-  // the mechanism is measured from the same page, then the copy is cleared around it
-  if (root.value) mechanism.value?.measure(root.value)
-  // the balloons go where they cover the least of what is left
-  nextTick(() => {
-    clearAround()
-    if (root.value) mechanism.value?.place(root.value)
-    nextTick(() => {
-      clearing()
-      placeTags()
-    })
+    host.append(twin)
   })
+  // the copy's construction is drawn the first time the page is lifted (draw); after that it is just there
+  host.querySelectorAll('.construction :is(path, text)').forEach(el => el.classList.toggle('on', drawnOnce))
+}
+
+// the first lift of the visit draws the copy's construction line by line, as the page's own was drawn
+function draw() {
+  const lines = drawing.value?.querySelectorAll('.construction :is(path, text)')
+  if (drawnOnce || !lines?.length) return
+  drawnOnce = true
+  requestAnimationFrame(() => requestAnimationFrame(() => lines.forEach(el => el.classList.add('on'))))
 }
 
 // Nothing of the copy runs under an instrument: any line of text it would touch is left out
@@ -147,17 +200,21 @@ function clearAround() {
   if (!host || !root.value) return
   const boxes = [...root.value.querySelectorAll<HTMLElement>('[data-instrument]')].map(el => el.getBoundingClientRect())
   const hits = (r: DOMRect) => boxes.some(b => r.right > b.left - PAD && r.left < b.right + PAD && r.bottom > b.top - PAD && r.top < b.bottom + PAD)
-  const candidates = host.querySelectorAll<HTMLElement | SVGElement>('*')
-  for (const el of candidates) {
+  // every box is read before anything is changed, so the copy is laid out once, not once per line
+  const unlined: HTMLElement[] = []
+  const hidden: HTMLElement[] = []
+  for (const el of host.querySelectorAll<HTMLElement>('*')) {
     // a block's dashed outline would run through the part: the block stays, its outline goes
-    if (el.matches(':is(h1, h2, h3, h4, p, li, pre, time)') && hits(el.getBoundingClientRect())) (el as HTMLElement).style.outline = 'none'
+    if (el.matches(':is(h1, h2, h3, h4, p, li, pre, time)') && hits(el.getBoundingClientRect())) unlined.push(el)
     const textual = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent?.trim())
     const leaf = el.matches('.plate, svg:not(.construction), .leader, .rule, .tick, .construction text')
     if (!textual && !leaf) continue
     if (el.closest('svg:not(.construction)') && el.tagName.toLowerCase() !== 'svg') continue
     const r = el.getBoundingClientRect()
-    if (r.width && hits(r)) (el as HTMLElement).style.visibility = 'hidden'
+    if (r.width && hits(r)) hidden.push(el)
   }
+  unlined.forEach(el => el.style.outline = 'none')
+  hidden.forEach(el => el.style.visibility = 'hidden')
 }
 
 // Around each part and its balloon the copy fades out, so the mechanism sits on the plain ground
@@ -191,7 +248,7 @@ function rects() {
   }))
 }
 
-defineExpose({ build, invalidate, rects })
+defineExpose({ build, prepare, invalidate, rects })
 
 // --- the title block --------------------------------------------------------------------------
 
@@ -241,7 +298,7 @@ const block = computed(() => {
       <a
         v-for="t in tags"
         :key="t.path"
-        :href="t.url"
+        :href="fileUrl(t.path)"
         target="_blank"
         rel="noopener"
         class="tag"
@@ -628,6 +685,7 @@ const block = computed(() => {
 .drawing {
   position: absolute;
   inset: 0;
+  contain: strict;
   --ui-bg: #901112;
   --ui-text: #ebebeb;
   --ui-text-highlighted: #ffffff;
@@ -636,9 +694,10 @@ const block = computed(() => {
   --ui-primary: #ebebeb;
   --ui-border: rgb(235 235 235 / 0.3);
 }
-/* the copy is a drawing, not a second page: nothing in it moves, not even the ∞ glint */
-.drawing :deep(.glint) {
-  display: none;
+/* the copy is a drawing, not a second page: nothing in it moves, not even the ∞ beam, which would
+   otherwise go round under the paper for the rest of the visit */
+.drawing :deep(*) {
+  animation: none !important;
 }
 .drawing :deep(*) {
   color: inherit;
@@ -678,7 +737,7 @@ const block = computed(() => {
   fill: rgb(235 235 235 / 0.75) !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .instrument, .tb-row {
+  .instrument, .tb-row, .equation, .stamp {
     transition: none;
   }
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { penEase as ease } from '~/utils/motion'
 import { seenSinceLoad } from '~/utils/once'
 // Signed once, at the end. The ink is revealed by a pen that follows the centreline of each
 // letter in writing order, so it reads as written rather than wiped in.
@@ -30,7 +31,6 @@ for (const s of strokes) {
   if (!g) groups.set(s.stroke, { from: s.t, to: end })
   else g.to = Math.max(g.to, end)
 }
-const ease = (u: number) => 0.6 * u + 0.4 * (0.5 - Math.cos(Math.PI * u) / 2)
 
 const width = `${(signatureOrigin.width / 1000) * size}px`
 const height = `${(signatureOrigin.height / 1000) * size}px`

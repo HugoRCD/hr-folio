@@ -4,6 +4,7 @@
 // which is the clock unless the crown (or the sun viewer) has set another. Setting a watch moves
 // the hands, not the train, and so it is here: the hands travel to the new hour, the train runs on.
 import { angles, B, balance, C, centres, CROWN, D, E, F, fork, GOING, I, MOTION, P, T, VIEW } from '~/utils/movement'
+import { approach } from '~/utils/motion'
 import { secondsOfDay, zoneOffsetMs } from '~/utils/zone'
 
 const { width = 240, tone = 'page', shown = true, running = false, at = null, crown = false, pulled = false, turn = 0 } = defineProps<{
@@ -73,7 +74,7 @@ function frame(now = performance.now()) {
   } else {
     // the shorter way round the day, and an even approach whatever the frame rate
     const diff = ((target - shownH + 43200) % 86400 + 86400) % 86400 - 43200
-    shownH = Math.abs(diff) < 0.5 ? target : (shownH + diff * (1 - Math.exp(-dt / 0.09)) + 86400) % 86400
+    shownH = Math.abs(diff) < 0.5 ? target : (shownH + diff * approach(dt, 0.09) + 86400) % 86400
   }
   const a = angles(t, shownH, reduced)
   place('C', C, a.C)
