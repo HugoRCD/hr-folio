@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import fontPreloads from '#build/font-preloads.mjs'
+
 const { seo, profile, socials, link } = useFolioConfig()
 
 useHead({
@@ -8,7 +10,7 @@ useHead({
     { name: 'robots', content: 'index, follow' },
     { name: 'color-scheme', content: 'light dark' },
   ],
-  link,
+  link: [...link, ...fontPreloads],
 })
 
 useSchemaOrg([

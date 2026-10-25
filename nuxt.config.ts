@@ -60,6 +60,7 @@ export default defineNuxtConfig({
     './modules/inspection',
     './modules/first-light',
     './modules/keep-place',
+    './modules/font-preloads',
   ],
 
   evlog: {

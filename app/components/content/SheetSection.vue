@@ -19,7 +19,7 @@ defineProps<{
   scroll-margin-top: 48px;
 }
 .sheet-section > :deep(p) {
-  max-width: 65ch;
+  max-width: 528px; /* the measure, in pixels: a width in ch would change when the font arrives */
   margin: 0;
   font-size: 14px;
   line-height: 24px;

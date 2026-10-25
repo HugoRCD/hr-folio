@@ -4,11 +4,51 @@
 @source "../../../";
 
 @theme {
-  --font-serif: "Redaction", serif;
-  --font-sans: "Geist", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, monospace;
-  --font-redaction: "Redaction", serif;
+  --font-serif: "Redaction", "Redaction Fallback", serif;
+  --font-sans: "Geist", "Geist Fallback", sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-redaction: "Redaction", "Redaction Fallback", serif;
   --font-signature: "Mrs Saint Delafield", cursive;
+}
+
+/* Until each font arrives, the page is set in a system font scaled to take the same width, so the
+   lines break in the same places and nothing moves when it swaps in. Measured on this site's own
+   text: Geist runs 2.6% wider than Arial, Redaction 8.1% wider than Times, Geist Mono as wide as
+   Menlo. The overrides keep the baseline where the real font puts it. */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica"), local("Helvetica Neue");
+  font-weight: 100 400;
+  size-adjust: 102.6%;
+  ascent-override: 98.4%;
+  descent-override: 28.3%;
+  line-gap-override: 0%;
+}
+/* the links and names are set at 500, where Geist runs 5% wider than Arial */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica"), local("Helvetica Neue");
+  font-weight: 500 900;
+  size-adjust: 105%;
+  ascent-override: 96.2%;
+  descent-override: 27.6%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Redaction Fallback";
+  src: local("Times New Roman"), local("Times");
+  size-adjust: 108.1%;
+  ascent-override: 83.3%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Geist Mono Fallback";
+  src: local("Menlo"), local("Courier New");
+  size-adjust: 100%;
+  ascent-override: 101%;
+  descent-override: 29%;
+  line-gap-override: 0%;
 }
 
 h1, h2, h3, .font-serif, .font-redaction {
