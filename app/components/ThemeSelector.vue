@@ -47,21 +47,20 @@ const triggerTransition = (event?: MouseEvent) => {
     switchTheme()
   })
 
+  // asked for less motion, the new page fades in over the old one instead of opening from the dot
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
   transition.ready.then(() => {
     document.documentElement.animate(
+      reduced
+        ? { opacity: [0, 1] }
+        : { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
       {
-        clipPath: [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`
-        ],
-      },
-      {
-        duration: 600,
-        easing: 'cubic-bezier(.76,.32,.29,.99)',
+        duration: reduced ? 200 : 600,
+        easing: reduced ? 'ease' : 'cubic-bezier(.76,.32,.29,.99)',
         pseudoElement: '::view-transition-new(root)',
       }
     )
-  })
+  }).catch(() => {})
 }
 </script>
 
