@@ -71,8 +71,9 @@ h1, h2, h3, .font-serif, .font-redaction {
 }
 :root {
   --sheet-margin: 40px;
-  /* 880 = the two margins, the two gutters, the measure and the note margin */
-  --sheet-index: min(224px, 100vw - 880px);
+  /* 880 = the two margins, the two gutters, the measure and the note margin. Never under 144px:
+     below 1024px there is no index margin, and a negative one would narrow the phone's sheet */
+  --sheet-index: clamp(144px, 100vw - 880px, 224px);
   --sheet-gutter: 48px;
   --sheet-measure: 528px;
   --sheet-note: 176px;

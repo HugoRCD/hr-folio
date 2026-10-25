@@ -156,7 +156,9 @@ function measure() {
   const spans = narrow
     ? [[0, L], [L, R], [R, W]] as const
     : edges.slice(1).map((x, i) => [edges[i]!, x] as const)
-  const widths = narrow ? spans.map(([a, b]) => Math.round(b - a)) : [index, gutter, measureW, gutter, note]
+  // read from the column's own edges: the lines' edges sit half a pixel over, onto the pixel grid
+  const box = main.getBoundingClientRect()
+  const widths = narrow ? [box.left, box.width, W - box.right].map(Math.round) : [index, gutter, measureW, gutter, note]
   spans.forEach(([a, b], i) => label(1, (a + b) / 2, top - LABEL_GAP, `${widths[i]}`, passes(b)))
 
   // What the column edges must not touch. Plates keep the whole of their crop marks clear; text,
