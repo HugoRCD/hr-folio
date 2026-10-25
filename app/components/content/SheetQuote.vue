@@ -24,6 +24,10 @@ defineProps<{
 .quote:first-child {
   margin-top: 0;
 }
+/* opening a section, its words sit on the same baseline as the section's mark */
+.section-mark + .quote {
+  margin-top: -4px;
+}
 blockquote {
   font-size: 32px;
   line-height: 40px;
