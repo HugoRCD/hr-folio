@@ -215,16 +215,25 @@ export function inspectLight(step = 0.25) {
 // The sun beside the hour, in the letterhead: today's path over the horizon, small, and where it is
 // on it now. Shared with the mechanism under the page, which draws it again where it lies above.
 export const SUN_ICON = { w: 22, h: 16, horizon: 10 }
-export function sunIcon(place: { lat: number, lon: number, timeZone: string }, time: string, elevation: number) {
+export function sunIcon(place: { lat: number, lon: number, timeZone: string }, time: string) {
   const { w, h: ih, horizon } = SUN_ICON
-  const midnight = localInstant('0:00', place.timeZone).getTime()
-  const els = Array.from({ length: 49 }, (_, i) => sunAt(new Date(midnight + i * 1800000), place).elevation)
+  // Sampled by the clock on the wall, every quarter hour, as the hour beside it is read: a day the
+  // clocks change is 23 or 25 hours long, and sampled by elapsed time the path ran an hour off it.
+  const STEPS = 96
+  const els = Array.from({ length: STEPS + 1 }, (_, i) => {
+    const minutes = Math.min(i * 15, 1439)
+    return sunAt(localInstant(`${Math.floor(minutes / 60)}:${minutes % 60}`, place.timeZone), place).elevation
+  })
   const top = Math.max(10, ...els)
   // above the horizon up to the day's highest sun; below it down to −18°, in less room
   const y = (e: number) => e >= 0
     ? horizon - (e / top) * (horizon - 2)
     : horizon + Math.min(1, -e / 18) * (ih - 2 - horizon)
-  const pts = els.map((e, i) => `${((i / 48) * w).toFixed(2)} ${y(e).toFixed(2)}`)
+  const pts = els.map((e, i) => `${((i / STEPS) * w).toFixed(2)} ${y(e).toFixed(2)}`)
+  // the dot is read off the drawn path itself, so it always sits on it
   const [h = 0, m = 0] = time.split(':').map(Number)
-  return { d: `M${pts.join('L')}`, x: ((h * 60 + m) / 1440) * w, y: y(elevation), up: elevation >= 0 }
+  const at = ((h * 60 + m) / 1440) * STEPS
+  const i = Math.min(STEPS - 1, Math.floor(at))
+  const elevation = els[i]! + (els[i + 1]! - els[i]!) * (at - i)
+  return { d: `M${pts.join('L')}`, x: (at / STEPS) * w, y: y(elevation), up: elevation >= 0 }
 }

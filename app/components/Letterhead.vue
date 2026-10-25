@@ -13,7 +13,7 @@ const daylight = useState<{ phase: string, time: string, date: string, elevation
 const ICON = SUN_ICON
 const sunPath = computed(() => {
   const d = daylight.value
-  return d?.place.timeZone ? sunIcon(d.place, d.time, d.elevation) : null
+  return d?.place.timeZone ? sunIcon(d.place, d.time) : null
 })
 
 // Rested on, the hour has the page's corner lift and show what keeps it, right under it (see
