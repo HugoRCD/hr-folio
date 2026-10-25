@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { springStep } from '~/utils/motion'
 // Any corner of the page can be lifted, to see the working drawing underneath (PeelUnderside).
 //
 // It is a real fold, not a picture of one. A corner C of the window is pulled to P; the fold is
@@ -25,7 +26,7 @@ const TURN = 40 // on a touch screen the sheet is turned over, like a page in a 
 
 const route = useRoute()
 const colorMode = useColorMode()
-const underside = useTemplateRef<{ build:() => void, invalidate: () => void, rects: () => { id: string, label: boolean, rect: DOMRect }[] }>('underside')
+const underside = useTemplateRef<{ build:() => void, prepare: () => void, invalidate: () => void, rects: () => { id: string, label: boolean, rect: DOMRect }[] }>('underside')
 
 // which part a peek is for: the hour asks while it is rested on, the light dot and the detail
 // ruler when they are moved; and, once the corner has settled, which part is now in view
@@ -35,6 +36,7 @@ const corner = ref<Corner>(HOME)
 const open = ref(false)
 const dragging = ref(false)
 const view = ref({ w: 0, h: 0 })
+const touch = ref(false) // a touch screen: the sheet is turned over rather than its corner lifted
 const p = reactive({ x: 0, y: 0 }) // where the corner is
 let vel = { x: 0, y: 0 }
 let target: Pt = { x: 0, y: 0 }
@@ -156,7 +158,16 @@ const shape = computed(() => {
   const right = corner.value[1] === 'r'
   const bottom = corner.value[0] === 'b'
   const { w: vw, h: vh } = view.value
+  // On a touch screen the turned sheet carries a tab on its crease, halfway down the window: it is
+  // set on the fold line itself, square to it, so it goes wherever the sheet goes.
+  let tab: string | null = null
+  const crease = { x: -n.y, y: n.x } // the fold's own direction
+  if (touch.value && Math.abs(crease.y) > 0.3) {
+    const s = (vh / 2 - m.y) / crease.y
+    tab = `translate(${(m.x + crease.x * s).toFixed(1)}px, ${(m.y + crease.y * s).toFixed(1)}px) rotate(${Math.atan2(n.y, n.x).toFixed(4)}rad)`
+  }
   return {
+    tab,
     box: {
       [right ? 'right' : 'left']: `${right ? vw - x1 : x0}px`,
       [bottom ? 'bottom' : 'top']: `${bottom ? vh - y1 : y0}px`,
@@ -239,11 +250,10 @@ function settleTo(t: Pt, then?: () => void, zeta = 0.78, k = 210) {
   const step = (now: number) => {
     const dt = Math.min(0.032, (now - last) / 1000)
     last = now
-    const c = 2 * Math.sqrt(k) * zeta
     for (const axis of ['x', 'y'] as const) {
-      const a = -k * (p[axis] - target[axis]) - c * vel[axis]
-      vel[axis] += a * dt
-      p[axis] += vel[axis] * dt
+      const s = springStep({ x: p[axis], v: vel[axis] }, target[axis], dt, { k, zeta })
+      p[axis] = s.x
+      vel[axis] = s.v
     }
     if (Math.hypot(p.x - target.x, p.y - target.y) < 0.3 && Math.hypot(vel.x, vel.y) < 2) {
       place(target)
@@ -368,6 +378,10 @@ function turnOver() {
   open.value = true
   settleTo(turned(), () => (settled.value = open.value), 0.86, 120)
 }
+// the tab comes out as the sheet comes to rest, not once the spring has spent its last pixel
+watch(() => touch.value && open.value && !dragging.value && Math.abs(p.x - turned().x) < 24, (near) => {
+  if (near) settled.value = true
+})
 // or the page is pushed back the way it went, with a swipe to the right anywhere on what it uncovered
 let swipe: { x: number, y: number } | null = null
 function onTouchStart(e: TouchEvent) {
@@ -432,6 +446,17 @@ function onUp(e?: PointerEvent) {
   }
 }
 
+// Copying the sheet is too much work to do as the hand takes hold of the corner. A hand that has
+// come to rest on a corner is likely to lift it: the copy is made then, while nothing moves.
+const prepare = () => mode.value === 'rest' && underside.value?.prepare()
+// A touch screen has no hand resting anywhere: the copy is made a little after the page has come
+// in, a step at a time, so the first turn of the page is as smooth as the next.
+let early: ReturnType<typeof setTimeout> | undefined
+function prepareSoon() {
+  clearTimeout(early)
+  if (touch.value) early = setTimeout(prepare, 2000)
+}
+
 // near a corner, that corner turns up; away from it, it lies flat again
 function onEnter(k: Corner) {
   if (mode.value !== 'rest' || dragging.value) return
@@ -440,7 +465,7 @@ function onEnter(k: Corner) {
     corner.value = k
     place(atLegs(0.5))
   }
-  settleTo(atLegs(HOVER))
+  settleTo(atLegs(HOVER), prepare)
 }
 function onLeave(k: Corner) {
   if (mode.value !== 'rest' || dragging.value || k !== corner.value) return
@@ -464,7 +489,6 @@ function nudge() {
 let mq: MediaQueryList | undefined
 // on a phone, only the home corner turns up (the others sit over the letterhead), and a tap
 // anywhere off the paper lays it back down
-const touch = ref(false)
 function onTapOff(e: PointerEvent) {
   if (e.pointerType === 'mouse' || mode.value !== 'lifted' || dragging.value) return
   if ((e.target as Element | null)?.closest('.flap, .dog-ear, .data, .tag, .balloon, .pin-card, .turn-back, .push')) return
@@ -491,6 +515,7 @@ function enable() {
 function onResize() {
   measureView()
   underside.value?.invalidate()
+  prepareSoon()
   if (mode.value === 'lifted') rest()
   else if (mode.value === 'rest') place(atLegs(corner.value === HOME ? REST : 0.5))
 }
@@ -528,9 +553,11 @@ onMounted(() => {
     // private mode: nudge
   }
   if (!seen && !reduced) nudges = [setTimeout(nudge, 2400), setTimeout(nudge, 16000)]
+  prepareSoon()
 })
 onBeforeUnmount(() => {
   cancelAnimationFrame(raf)
+  clearTimeout(early)
   stopNudges()
   mq?.removeEventListener('change', enable)
   window.removeEventListener('resize', onResize)
@@ -549,6 +576,7 @@ onBeforeUnmount(() => {
 // another page, another drawing: let the corner fall back first
 watch(() => route.path, () => {
   if (mode.value === 'lifted') rest()
+  prepareSoon()
 })
 </script>
 
@@ -561,6 +589,27 @@ watch(() => route.path, () => {
     <div v-if="shape" class="peel-box" :style="shape.box">
       <!-- at rest the uncovered corner is drawn on its own, so the paper needs no clip -->
       <div v-if="mode === 'rest'" class="corner-ground" :style="{ ...shape.inner, clipPath: shape.lifted }" />
+
+      <!-- the tab on the turned sheet's crease, to turn it back: drawn before the flap, whose rolled
+           edge lies over its root, so the two are one piece of paper -->
+      <div v-if="shape.tab && mode === 'lifted'" class="tab-layer" :style="shape.inner">
+        <button
+          type="button"
+          class="turn-back"
+          :class="{ out: !settled }"
+          :style="{ transform: shape.tab }"
+          :tabindex="settled ? 0 : -1"
+          :aria-hidden="settled ? undefined : 'true'"
+          aria-label="Turn the page back"
+          @click="rest()"
+        >
+          <span class="tab-lift">
+            <span class="tab-paper">
+              <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M3.75 2 6.75 5l-3 3" fill="none" stroke="currentColor" stroke-width="1.25" /></svg>
+            </span>
+          </span>
+        </button>
+      </div>
 
       <!-- the back of the lifted paper -->
       <div class="flap-shadow" :style="{ ...shape.inner, filter: shape.shadow }">
@@ -593,22 +642,11 @@ watch(() => route.path, () => {
         @pointercancel="onUp"
         @lostpointercapture="onUp"
         @click.prevent
+        @focus="k === HOME && prepare()"
         @keydown.enter.prevent="toggle"
         @keydown.space.prevent="toggle"
       />
     </template>
-    <Transition name="tab">
-      <button
-        v-if="touch && settled"
-        type="button"
-        class="turn-back"
-        :style="{ left: `${TURN}px` }"
-        aria-label="Turn the page back"
-        @click="rest()"
-      >
-        <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.2" /></svg>
-      </button>
-    </Transition>
     <button v-if="open && !(touch && settled)" type="button" class="sr-only" @click="rest()">
       Lay the page back down
     </button>
@@ -668,37 +706,76 @@ watch(() => route.path, () => {
 .dog-ear.bl { left: 0; bottom: 0; clip-path: polygon(0 0, 100% 100%, 0 100%); }
 .dog-ear.tr { right: 0; top: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
 .dog-ear.tl { left: 0; top: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+/* The tab is the sheet's own paper, its back side, standing out from the crease and tapered like a
+   ledger's index tab. Its button is set on the fold, square to it, and is wider than the tab, for a
+   thumb; it clips the tab a pixel behind the crease, so the tab comes out from under the rolled
+   edge and goes back under it. */
+.tab-layer {
+  position: absolute;
+  pointer-events: none;
+}
 .turn-back {
-  position: fixed;
-  top: 50%;
-  z-index: 33;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 72px;
-  margin-top: -36px;
-  color: #6b6b69;
-  background: linear-gradient(90deg, #dcdcda, #f8f8f6 30%, #ececea);
-  border-radius: 0 6px 6px 0;
-  box-shadow: 2px 0 6px rgb(0 0 0 / 0.28), 1px 0 1px rgb(0 0 0 / 0.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 104px;
+  margin: -52px 0 0 -1px;
+  overflow: hidden;
+  transform-origin: 1px 52px;
+  pointer-events: auto;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-html.dark .turn-back {
-  color: #b5b5b5;
-  background: linear-gradient(90deg, #141414, #2a2a2a 30%, #1f1f1f);
+.turn-back.out {
+  pointer-events: none;
 }
-.tab-enter-active {
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
+.tab-lift {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  /* its shadow falls outward, on the red, as the crease's does */
+  filter: drop-shadow(1px 0 0.5px rgb(0 0 0 / 0.18)) drop-shadow(3px 0 5px rgb(0 0 0 / 0.24));
+  transition: transform 0.34s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
 }
-.tab-leave-active {
-  transition: opacity 0.12s ease;
-}
-.tab-enter-from {
+.turn-back.out .tab-lift {
   opacity: 0;
   transform: translateX(-100%);
+  transition: transform 0.18s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.18s ease;
 }
-.tab-leave-to {
-  opacity: 0;
+.tab-paper {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 80px;
+  padding-left: 1px;
+  color: #8c8c8a;
+  background: linear-gradient(90deg, #f2f2f0, #e6e6e4 45%, #dededc);
+  clip-path: polygon(0 0, 100% 8px, 100% calc(100% - 8px), 0 100%);
+}
+html.dark .tab-paper {
+  color: #8f8f8f;
+  background: linear-gradient(90deg, #2c2c2c, #222 45%, #1b1b1b);
+}
+html.dark .tab-lift {
+  filter: drop-shadow(1px 0 0.5px rgb(0 0 0 / 0.5)) drop-shadow(3px 0 5px rgb(0 0 0 / 0.45));
+}
+/* pressed, it gives a little, back under the crease */
+.turn-back:not(.out):active .tab-lift {
+  transform: translateX(-3px);
+  transition-duration: 0.12s;
+}
+.turn-back:focus-visible {
+  outline: 1px solid var(--ui-primary);
+  outline-offset: -6px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-lift,
+  .turn-back.out .tab-lift,
+  .turn-back:not(.out):active .tab-lift {
+    transform: none;
+    transition: opacity 0.18s ease;
+  }
 }
 .dog-ear:focus-visible {
   outline: 1px solid var(--ui-primary);
