@@ -52,7 +52,7 @@ defineExpose({ total: computed(() => route.value?.total ?? 0) })
       <circle class="packet" cy="22" r="1.6" :style="{ '--from': `${x(0, route.stops.length)}px`, '--to': `${x(route.stops.length - 1, route.stops.length)}px` }" />
     </svg>
     <p v-else class="local">
-      Served from this computer, not from Vercel: there is no route to draw. Online, this shows your city, the Vercel edge that answered and where the page was rendered.
+      Served from this computer: no route to draw.
     </p>
   </div>
 </template>

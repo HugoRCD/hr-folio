@@ -144,7 +144,7 @@ function measure(root: HTMLElement) {
 // --- the plate: the portrait's negative -------------------------------------------------------
 // The picture above as it sits on a square frame of roll film, seen on a light box: where the
 // photo is light the film is dense, where it is dark the film is clear. The film runs a little past
-// the frame either side, with its maker's line and the frame number printed in the edges.
+// the frame either side, with the frame number printed in its edge.
 const REBATE = 12 // the film's edge above and below the frame
 const RUN = 18 // how far the strip runs past the frame before it was cut
 const neg = computed(() => {
@@ -352,14 +352,14 @@ const NAMES: Record<number, [string, string, string]> = {
 // is there, and where to read more. Only under the sheet: the page above explains nothing.
 const STORY = '/writing/how-i-redrew-my-portfolio'
 const WHY: Record<number, [string, string]> = {
-  1: ['Keeps the time at the top of the page, at 21,600 beats an hour, like the Santos-Dumont I wear.', 'underneath'],
+  1: ['Keeps the time at the top of the page, at 21,600 beats an hour, the rate of a Santos-Dumont.', 'underneath'],
   2: ['Its outline is today\'s sun where I am. The raised part is the daylight.', 'light'],
-  3: ['Reads how high the sun is from the cam. That sets how light or dark the page is.', 'light'],
+  3: ['Reads the sun\'s height from the cam, and sets how light the page is.', 'light'],
   4: ['Moved by the dot in the footer. It sets the page to light or dark, or back to following the sun.', 'light'],
   5: ['Turned by the four sheets in the footer. Each level of detail moves it a quarter turn.', 'sheet'],
-  6: ['Holds the spring that drives the movement. Its click lets it turn one way only, so it sits under the ∞.', 'infinity'],
-  7: ['The portrait as it sits on film, before it is printed: what is light above is dark here.', 'light'],
-  8: ['Pushed by the sound button. It strikes two notes, then again every quarter hour while the sound is on.', 'underneath'],
+  6: ['Holds the spring that drives the movement. Its click lets it turn one way only.', 'infinity'],
+  7: ['The portrait as a negative, before it is printed.', 'light'],
+  8: ['Pushed by the sound button. Two notes, then one chime each quarter hour while the sound is on.', 'underneath'],
 }
 const pinned = ref<number | null>(null)
 let unpin: ReturnType<typeof setTimeout> | undefined
@@ -800,8 +800,7 @@ defineExpose({ measure, place })
         />
         <!-- the strip's edges, cut square at both ends -->
         <path class="draw thin" :d="`M${neg.x} ${neg.y}h${neg.w}v${neg.h}h${-neg.w}Z`" pathLength="1" />
-        <!-- printed in the edges: the film, and the frame number -->
-        <text class="edge" :x="neg.fx" :y="neg.fy - 4">HR 400</text>
+        <!-- printed in the edge: the frame number -->
         <text class="edge" :x="neg.fx + neg.fw / 2" :y="neg.fy + neg.fh + 8.5" text-anchor="middle">1</text>
         <text class="edge" :x="neg.fx + neg.fw" :y="neg.fy + neg.fh + 8.5" text-anchor="end">▸</text>
       </g>

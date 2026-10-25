@@ -223,7 +223,6 @@ const block = computed(() => {
     ['Place', d ? `${d.place.city}, ${deg(d.place.lat)} ${deg(d.place.lon, 'E', 'W')}` : '—'],
     ['Local time', clock.value || d?.time || '—'],
     ['Sun', d ? `${d.elevation >= 0 ? '+' : '−'}${Math.abs(d.elevation).toFixed(1)}° · ${d.phase}` : '—'],
-    ['Grid', '224 · 48 · 528 · 48 · 176'],
     ['Revision', request.value?.deployment.sha ? `${request.value.deployment.sha} · ${request.value.deployment.env}` : (request.value ? 'local' : '—')],
     ['Detail', levels[detail.value] ?? '—'],
     ['Built with', `Nuxt${nuxtVersion ? ` ${nuxtVersion}` : ''} · Nitro · Vercel`],
@@ -277,7 +276,7 @@ const block = computed(() => {
               <i>t</i> ≥ 2<i>d</i> ⁄ <i>v</i> = {{ route2.total.toFixed(1) }} ms
             </p>
             <p class="caption">
-              No answer can come back sooner: twice the distance <i>d</i>, at the speed of light in glass fibre, <i>v</i> ≈ 200 000 km/s.
+              The least time a reply can take: twice the distance <i>d</i>, at the speed of light in glass fibre, <i>v</i> ≈ 200 000 km/s.
             </p>
           </div>
         </div>
@@ -320,7 +319,7 @@ const block = computed(() => {
               <text x="40" y="47" text-anchor="middle" class="sha">{{ inspection.sha || 'local' }}</text>
             </svg>
             <p class="stamp-note">
-              Every version is reviewed before it goes online. I put my name to it.
+              Every version is reviewed before it goes online.
             </p>
           </div>
         </div>
