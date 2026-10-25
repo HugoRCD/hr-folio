@@ -2,7 +2,7 @@ import type { ContentCollectionItem } from '@nuxt/content'
 
 export function useSeoPage(page: ContentCollectionItem, isWriting: boolean) {
   const route = useRoute()
-  const { seo, profile } = useFolioConfig()
+  const { seo } = useFolioConfig()
 
   const title = page?.title || seo?.title
   const description = page?.description || seo?.description
@@ -28,11 +28,13 @@ export function useSeoPage(page: ContentCollectionItem, isWriting: boolean) {
   })
 
   if (isWriting) {
+    const raw = (page as unknown as { rawbody?: string }).rawbody
     defineOgImage('WritingPost', {
       title,
       description,
-      avatar: profile?.picture,
-    })
+      date: page.date,
+      minutes: raw ? useReadingTime(raw) : undefined,
+    }, { width: 1200, height: 630 })
   } else {
     useSeoMeta({
       ogImage: '/og/index.jpg',
