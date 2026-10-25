@@ -1,7 +1,7 @@
 {
   "name": "Shelve",
   "category": "featured",
-  "description": "Environment variable manager",
+  "description": "Secrets management, simplified",
   "url": "https://shelve.cloud/",
   "github": "https://github.com/HugoRCD/shelve",
   "screenshotUrl": "/works/shelve.png",

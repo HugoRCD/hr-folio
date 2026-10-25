@@ -1,0 +1,784 @@
+<script setup lang="ts">
+import { springStep } from '~/utils/motion'
+// Any corner of the page can be lifted, to see the working drawing underneath (PeelUnderside).
+//
+// It is a real fold, not a picture of one. A corner C of the window is pulled to P; the fold is
+// the perpendicular bisector of CP. The paper is clipped to the side of the fold away from C, and
+// the flap is the clipped-off part reflected across the fold. At rest only the bottom-right corner
+// shows, as a small dog-ear drawn on its own (no clip); the other corners turn up when the pointer
+// comes near them. The drawing underneath is built when the page is first lifted.
+//
+// Resting on the hour in the dateline lifts the top-right corner by itself, slowly, just far
+// enough to show the movement under it, and lays it down again when the pointer moves on.
+
+type Pt = { x: number, y: number }
+type Mode = 'off' | 'rest' | 'lifted'
+type Corner = 'tl' | 'tr' | 'bl' | 'br'
+
+const CORNERS: Corner[] = ['tl', 'tr', 'bl', 'br']
+const HOME: Corner = 'br'
+const REST = 24 // the dog-ear's legs, px
+const HOVER = 46
+const NUDGE = 40
+const OPEN = 520 // opened from the keyboard, if the data block cannot be measured
+const PINNED = 300 // pulled past this, the page stays where it was left
+const TURN = 40 // on a touch screen the sheet is turned over, like a page in a book: its edge rests here
+
+const route = useRoute()
+const colorMode = useColorMode()
+const underside = useTemplateRef<{ build:() => void, prepare: () => void, invalidate: () => void, rects: () => { id: string, label: boolean, rect: DOMRect }[] }>('underside')
+
+// which part a peek is for: the hour asks while it is rested on, the light dot and the detail
+// ruler when they are moved; and, once the corner has settled, which part is now in view
+const peek = useState<string | null>('peel-peek', () => null)
+const mode = ref<Mode>('off')
+const corner = ref<Corner>(HOME)
+const open = ref(false)
+const dragging = ref(false)
+const view = ref({ w: 0, h: 0 })
+const touch = ref(false) // a touch screen: the sheet is turned over rather than its corner lifted
+const p = reactive({ x: 0, y: 0 }) // where the corner is
+let vel = { x: 0, y: 0 }
+let target: Pt = { x: 0, y: 0 }
+let raf = 0
+let reduced = false
+
+const cornerPt = (k: Corner): Pt => ({ x: k[1] === 'r' ? view.value.w : 0, y: k[0] === 'b' ? view.value.h : 0 })
+const atLegs = (legs: number, k: Corner = corner.value): Pt => {
+  const c = cornerPt(k)
+  return { x: c.x + (k[1] === 'r' ? -legs : legs), y: c.y + (k[0] === 'b' ? -legs : legs) }
+}
+// Where to pull a corner so that a box near it is wholly past the fold. In the corner's own
+// distances the fold cuts the edges at X and Y; the box's far point (w, h) is clear when
+// w/X + h/Y ≤ 1, so X = 2w, Y = 2h. The corner goes to the reflection of itself in that line.
+function reveal(k: Corner, r: { left: number, top: number, right: number, bottom: number }): Pt {
+  const PAD = 18
+  const w = (k[1] === 'r' ? view.value.w - r.left : r.right) + PAD
+  const h = (k[0] === 'b' ? view.value.h - r.top : r.bottom) + PAD
+  const X = 2 * w
+  const Y = 2 * h
+  const d2 = (4 * X * X * Y * Y) / (X * X + Y * Y)
+  const c = cornerPt(k)
+  const dx = d2 / (2 * X)
+  const dy = d2 / (2 * Y)
+  return { x: c.x + (k[1] === 'r' ? -dx : dx), y: c.y + (k[0] === 'b' ? -dy : dy) }
+}
+// a part's box, with its balloons unless only the part itself is asked for
+function union(id: string, labels = true) {
+  const rs = (underside.value?.rects() ?? []).filter(b => b.id === id && (labels || !b.label)).map(b => b.rect)
+  if (!rs.length) return null
+  return {
+    left: Math.min(...rs.map(r => r.left)),
+    top: Math.min(...rs.map(r => r.top)),
+    right: Math.max(...rs.map(r => r.right)),
+    bottom: Math.max(...rs.map(r => r.bottom)),
+  }
+}
+
+const place = (q: Pt) => {
+  p.x = q.x
+  p.y = q.y
+}
+
+// --- geometry ---------------------------------------------------------------------------------
+
+function fold() {
+  const c = cornerPt(corner.value)
+  const vx = c.x - p.x
+  const vy = c.y - p.y
+  // a corner pushed back past itself (a spring overshooting) is simply flat: otherwise the fold
+  // turns around and takes the whole window with it
+  const inward = (corner.value[1] === 'r' ? vx : -vx) + (corner.value[0] === 'b' ? vy : -vy)
+  const d = inward > 0 ? Math.hypot(vx, vy) : 0
+  const n = d ? { x: vx / d, y: vy / d } : { x: 0, y: 0 } // from the fold toward the corner
+  const m = { x: (c.x + p.x) / 2, y: (c.y + p.y) / 2 }
+  return { n, m, d }
+}
+
+// keep the part of a polygon where f >= 0 (one Sutherland–Hodgman pass)
+function cut(poly: Pt[], f: (q: Pt) => number) {
+  const out: Pt[] = []
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i]!
+    const b = poly[(i + 1) % poly.length]!
+    const fa = f(a)
+    const fb = f(b)
+    if (fa >= 0) out.push(a)
+    if ((fa >= 0) !== (fb >= 0)) {
+      const t = fa / (fa - fb)
+      out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t })
+    }
+  }
+  return out
+}
+
+const rect = (w: number, h: number): Pt[] => [{ x: 0, y: 0 }, { x: w, y: 0 }, { x: w, y: h }, { x: 0, y: h }]
+const poly = (pts: Pt[]) => `polygon(${pts.map(q => `${q.x.toFixed(1)}px ${q.y.toFixed(1)}px`).join(',')})`
+
+// a linear gradient across the whole window, from the fold line along `dir`
+function along(dir: Pt, from: Pt, stops: [string, number][]) {
+  const { w, h } = view.value
+  const angle = Math.atan2(dir.x, -dir.y)
+  const len = Math.abs(w * Math.sin(angle)) + Math.abs(h * Math.cos(angle))
+  const start = { x: w / 2 - (dir.x * len) / 2, y: h / 2 - (dir.y * len) / 2 }
+  const o = (from.x - start.x) * dir.x + (from.y - start.y) * dir.y
+  return `linear-gradient(${angle}rad, ${stops.map(([c, at]) => `${c} ${(o + at).toFixed(1)}px`).join(', ')})`
+}
+
+const shape = computed(() => {
+  if (mode.value === 'off') return null
+  const { n, m, d } = fold()
+  if (d < 1) return null // nothing lifted: draw nothing, rather than a degenerate fold
+  const side = (q: Pt) => (q.x - m.x) * n.x + (q.y - m.y) * n.y
+  const lifted = cut(rect(view.value.w, view.value.h), side) // the part of the window that is off the paper
+  const flap = lifted.map((q) => {
+    const s = side(q)
+    return { x: q.x - 2 * s * n.x, y: q.y - 2 * s * n.y }
+  })
+  const back = { x: -n.x, y: -n.y }
+  // the back of the paper: in the crease's shadow, then the rolled edge catching the light,
+  // a soft band where the sheet curves, and flatter toward the tip
+  const paperBack: [string, number][] = colorMode.value === 'dark'
+    ? [['#080808', 0], ['#3c3c3c', 0.9], ['#121212', 3.5], ['#1d1d1d', d * 0.12], ['#2a2a2a', d * 0.24], ['#1a1a1a', d * 0.6]]
+    : [['#c4c4c2', 0], ['#ffffff', 0.9], ['#d6d6d4', 3.5], ['#e9e9e7', d * 0.12], ['#f8f8f6', d * 0.24], ['#e6e6e4', d * 0.6]]
+  // the flap casts its shadow away from the corner, onto the page
+  const k = Math.min(1, d / 260)
+  // The corner's own box, with room for the shadow. The layers are drawn inside it rather than
+  // over the whole window: Safari tints its bars from fixed elements at the window's edge and
+  // ignores their clip, so a full-window flap at rest turned the top bar the white of its back.
+  const pts = [...lifted, ...flap]
+  const pad = 40
+  const x0 = Math.max(0, Math.floor(Math.min(...pts.map(q => q.x)) - pad))
+  const y0 = Math.max(0, Math.floor(Math.min(...pts.map(q => q.y)) - pad))
+  const x1 = Math.min(view.value.w, Math.ceil(Math.max(...pts.map(q => q.x)) + pad))
+  const y1 = Math.min(view.value.h, Math.ceil(Math.max(...pts.map(q => q.y)) + pad))
+  // Both held from the window's edges at the corner, not from its top left: a window being dragged
+  // larger can draw a frame at its new size before this has been measured again, and the corner
+  // must not be drawn where the old corner was, inside the page, with the red showing through it.
+  const right = corner.value[1] === 'r'
+  const bottom = corner.value[0] === 'b'
+  const { w: vw, h: vh } = view.value
+  // On a touch screen the turned sheet carries a tab on its crease, halfway down the window: it is
+  // set on the fold line itself, square to it, so it goes wherever the sheet goes.
+  let tab: string | null = null
+  const crease = { x: -n.y, y: n.x } // the fold's own direction
+  if (touch.value && Math.abs(crease.y) > 0.3) {
+    const s = (vh / 2 - m.y) / crease.y
+    tab = `translate(${(m.x + crease.x * s).toFixed(1)}px, ${(m.y + crease.y * s).toFixed(1)}px) rotate(${Math.atan2(n.y, n.x).toFixed(4)}rad)`
+  }
+  return {
+    tab,
+    box: {
+      [right ? 'right' : 'left']: `${right ? vw - x1 : x0}px`,
+      [bottom ? 'bottom' : 'top']: `${bottom ? vh - y1 : y0}px`,
+      width: `${x1 - x0}px`,
+      height: `${y1 - y0}px`,
+    },
+    inner: {
+      [right ? 'right' : 'left']: `${right ? x1 - vw : -x0}px`,
+      [bottom ? 'bottom' : 'top']: `${bottom ? y1 - vh : -y0}px`,
+      width: `${vw}px`,
+      height: `${vh}px`,
+    },
+    lifted: poly(lifted),
+    flap: poly(flap),
+    flapShade: along(back, m, paperBack),
+    underShade: along(n, m, [['rgba(0,0,0,0.42)', 0], ['rgba(0,0,0,0.12)', Math.min(48, d * 0.2)], ['rgba(0,0,0,0)', Math.min(120, d * 0.45)]]),
+    shadow: `drop-shadow(${(back.x * 1).toFixed(1)}px ${(back.y * 1).toFixed(1)}px 1px rgb(0 0 0 / 0.22)) drop-shadow(${(back.x * (3 + 9 * k)).toFixed(1)}px ${(back.y * (3 + 9 * k)).toFixed(1)}px ${(5 + 17 * k).toFixed(0)}px rgb(0 0 0 / ${(0.16 + 0.22 * k).toFixed(2)}))`,
+    m,
+    n,
+  }
+})
+
+// the fold, in window coordinates, for what is drawn underneath and has to stay off the paper
+// (the pins' notes): a point q is uncovered where (q − m)·n > 0
+const foldLine = useState<{ m: Pt, n: Pt } | null>('peel-fold', () => null)
+watch(() => shape.value && mode.value === 'lifted' ? { m: shape.value.m, n: shape.value.n } : null, f => (foldLine.value = f))
+
+// The paper itself is clipped only while lifted, in its own (document) coordinates. Set on every
+// change rather than on the next frame, so it can never be left behind by a fold that has gone.
+function clipPaper() {
+  const paper = document.querySelector<HTMLElement>('.paper')
+  if (!paper) return
+  const { n, m, d } = fold()
+  if (mode.value !== 'lifted' || d < 1) {
+    paper.style.clipPath = ''
+    return
+  }
+  const md = { x: m.x + window.scrollX, y: m.y + window.scrollY }
+  // the whole side of the fold the paper is on, well past its edges: a window grown before this is
+  // set again must not find a strip of the paper clipped away at its edge
+  const far = 20000
+  const half = [{ x: -far, y: -far }, { x: paper.offsetWidth + far, y: -far }, { x: paper.offsetWidth + far, y: paper.offsetHeight + far }, { x: -far, y: paper.offsetHeight + far }]
+  const keep = cut(half, q => -((q.x - md.x) * n.x + (q.y - md.y) * n.y))
+  paper.style.clipPath = poly(keep)
+}
+watch([() => p.x, () => p.y, mode, corner], clipPaper, { flush: 'sync' })
+
+// --- what the fold uncovers --------------------------------------------------------------------
+
+const uncovered = ref<string[]>([])
+// Once an instrument has been uncovered it stays drawn for the rest of the visit: lifting the page
+// again shows it as it was, rather than drawing it all over again.
+function updateUncovered() {
+  if (mode.value !== 'lifted') return
+  const { n, m, d } = fold()
+  if (d < 1) return
+  const side = (x: number, y: number) => (x - m.x) * n.x + (y - m.y) * n.y
+  // once uncovered, an instrument stays drawn until the page is laid down again
+  // measured each time: the mechanism's parts lie on the page, in its coordinates
+  const now = (underside.value?.rects() ?? [])
+    .filter(({ rect: r }) => [[r.left, r.top], [r.right, r.top], [r.left, r.bottom], [r.right, r.bottom]].some(([x, y]) => side(x!, y!) > 0))
+    .map(b => b.id)
+  const next = [...new Set([...uncovered.value, ...now])]
+  if (next.length !== uncovered.value.length) uncovered.value = next
+}
+watch([() => p.x, () => p.y, mode], updateUncovered)
+
+// --- motion -----------------------------------------------------------------------------------
+
+// `zeta` below 1 lets the paper settle with the smallest flop; laying it down uses 1 (no flop)
+function settleTo(t: Pt, then?: () => void, zeta = 0.78, k = 210) {
+  target = t
+  cancelAnimationFrame(raf)
+  if (reduced) {
+    place(t)
+    then?.()
+    return
+  }
+  let last = performance.now()
+  const step = (now: number) => {
+    const dt = Math.min(0.032, (now - last) / 1000)
+    last = now
+    for (const axis of ['x', 'y'] as const) {
+      const s = springStep({ x: p[axis], v: vel[axis] }, target[axis], dt, { k, zeta })
+      p[axis] = s.x
+      vel[axis] = s.v
+    }
+    if (Math.hypot(p.x - target.x, p.y - target.y) < 0.3 && Math.hypot(vel.x, vel.y) < 2) {
+      place(target)
+      vel = { x: 0, y: 0 }
+      then?.()
+      return
+    }
+    raf = requestAnimationFrame(step)
+  }
+  raf = requestAnimationFrame(step)
+}
+
+function lift() {
+  stopNudges()
+  if (mode.value === 'lifted') return
+  underside.value?.build()
+  mode.value = 'lifted'
+  // the page is held: it does not scroll under the hand (the clip is in page coordinates, and a
+  // scroll would leave it a frame behind). Scrollbars are hidden site-wide, so nothing shifts.
+  document.documentElement.style.overflow = 'hidden'
+  try {
+    sessionStorage.setItem('folio-peeled', '1')
+  } catch {
+    // private mode: the corner may nudge again next visit
+  }
+}
+
+// lay the page down: the corner falls back, then the dog-ear returns to its home corner
+let closing = false
+function rest() {
+  if (closing) return // already on its way down: another wheel tick changes nothing
+  closing = true
+  peeking = null
+  peek.value = null
+  open.value = false
+  settled.value = false
+  const k = corner.value
+  settleTo(atLegs(k === HOME ? REST : 0.5), () => {
+    closing = false
+    if (open.value || dragging.value) return
+    mode.value = 'rest'
+    document.documentElement.style.overflow = ''
+    if (k !== HOME) home()
+  }, 1)
+}
+
+function home() {
+  corner.value = HOME
+  place(atLegs(0.5))
+  settleTo(atLegs(REST))
+}
+
+// From the keyboard the page opens at the bottom-left corner, where the sheet's data is, with
+// the way to the other sheet: far enough for the whole block to be past the fold.
+async function toggle() {
+  if (open.value) return rest()
+  corner.value = 'bl'
+  place(atLegs(0.5))
+  lift()
+  open.value = true
+  await nextTick()
+  const r = union('data')
+  settleTo(r ? reveal('bl', r) : atLegs(OPEN))
+}
+
+// --- a part, looked at: the corner lifts just enough to show what is under it -----------------
+// Only the hour, while it is rested on (top right). Nothing else lifts the page by itself: the
+// controls at the bottom move their parts out of sight, and the reader lifts the corner.
+const PEEK_CORNER: Record<string, Corner> = { clock: 'tr' }
+let peeking: string | null = null
+async function startPeek(part: string) {
+  if (peeking === part) return
+  if (mode.value !== 'rest' || dragging.value) {
+    peek.value = null
+    return
+  }
+  const k = PEEK_CORNER[part] ?? 'tr'
+  underside.value?.build()
+  // once to draw the parts, once more for the balloons placed around them
+  await nextTick()
+  await nextTick()
+  const own = union(part, false)
+  const all = union(part)
+  const { w, h } = view.value
+  // only what is on screen: a part scrolled out of view has nothing to show. A part that runs off
+  // the window's edge (a narrow window) is shown as far as the window goes.
+  const cx = own && (own.left + own.right) / 2
+  const cy = own && (own.top + own.bottom) / 2
+  if (!own || !all || cx! < 0 || cx! > w || cy! < 0 || cy! > h) {
+    peek.value = null
+    return
+  }
+  stopNudges()
+  corner.value = k
+  place(atLegs(0.5))
+  lift()
+  peeking = part
+  // slower than a hand would pull it, and without a flop: it is the page showing, not thrown
+  const r = { left: Math.max(0, all.left), top: Math.max(0, all.top), right: Math.min(w, all.right), bottom: Math.min(h, all.bottom) }
+  settleTo(reveal(k, r), undefined, 1, 55)
+}
+watch(peek, (part) => {
+  if (part) startPeek(part)
+})
+// the hour's peek stays lifted while the pointer is on the hour or over what it uncovered
+function onPeekMove(e: PointerEvent) {
+  if (peeking !== 'clock' || dragging.value) return
+  const { n, m, d } = fold()
+  const over = d >= 1 && (e.clientX - m.x) * n.x + (e.clientY - m.y) * n.y > 0
+  const hour = document.querySelector('.paper [data-mech="hour"]')?.closest('a')?.getBoundingClientRect()
+  const onHour = hour && e.clientX > hour.left - 12 && e.clientX < hour.right + 12 && e.clientY > hour.top - 10 && e.clientY < hour.bottom + 10
+  if (!over && !onHour) rest()
+}
+
+// On a touch screen there is no hover and no room to pull a corner far: a tap, or any pull, turns
+// the whole sheet over from its right edge, as you would a page, and leaves it standing at the left.
+const turned = (): Pt => ({ x: 2 * TURN - view.value.w, y: view.value.h })
+// once it has turned, a tab stands out from the sheet's edge to bring it back: the edge alone sits
+// where the phone takes a swipe as "back"
+const settled = ref(false)
+function turnOver() {
+  open.value = true
+  settleTo(turned(), () => (settled.value = open.value), 0.86, 120)
+}
+// the tab comes out as the sheet comes to rest, not once the spring has spent its last pixel
+watch(() => touch.value && open.value && !dragging.value && Math.abs(p.x - turned().x) < 24, (near) => {
+  if (near) settled.value = true
+})
+// or the page is pushed back the way it went, with a swipe to the right anywhere on what it uncovered
+let swipe: { x: number, y: number } | null = null
+function onTouchStart(e: TouchEvent) {
+  const [t] = e.touches
+  swipe = touch.value && settled.value && e.touches.length === 1 && t ? { x: t.clientX, y: t.clientY } : null
+}
+function onTouchEnd(e: TouchEvent) {
+  const [t] = e.changedTouches
+  if (!swipe || !t || !settled.value) return
+  const dx = t.clientX - swipe.x
+  const dy = t.clientY - swipe.y
+  swipe = null
+  if (dx > 56 && Math.abs(dx) > Math.abs(dy) * 1.5) rest()
+}
+
+let grab = { x: 0, y: 0 }
+let down = { x: 0, y: 0, t: 0, wasOpen: false }
+function onDown(e: PointerEvent, k: Corner = corner.value) {
+  if (e.button !== 0) return
+  e.preventDefault()
+  ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+  cancelAnimationFrame(raf)
+  closing = false
+  if (k !== corner.value) {
+    corner.value = k
+    place(atLegs(REST))
+  }
+  down = { x: e.clientX, y: e.clientY, t: performance.now(), wasOpen: open.value }
+  dragging.value = true
+  peeking = null // taken in hand: it is an ordinary lift from here
+  grab = { x: p.x - e.clientX, y: p.y - e.clientY }
+  lift()
+}
+function onMove(e: PointerEvent) {
+  if (!dragging.value) return
+  const { w, h } = view.value
+  place({ x: Math.min(w * 1.2, Math.max(-w * 0.2, e.clientX + grab.x)), y: Math.min(h * 1.2, Math.max(-h * 0.2, e.clientY + grab.y)) })
+}
+function onUp(e?: PointerEvent) {
+  if (!dragging.value) return
+  dragging.value = false
+  const c = cornerPt(corner.value)
+  const legs = Math.hypot(c.x - p.x, c.y - p.y) / Math.SQRT2
+  if (touch.value) {
+    // A tap turns the page, or turns it back. Otherwise only a deliberate pull does: to the left to
+    // turn it, to the right to bring it back. A thumb that only brushed the corner on its way down
+    // the page, scrolling, leaves it as it was.
+    const dx = e ? e.clientX - down.x : 0
+    const dy = e ? e.clientY - down.y : 0
+    const tap = e && Math.hypot(dx, dy) < 10 && performance.now() - down.t < 400
+    const pulled = Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)
+    const turn = tap ? !down.wasOpen : pulled ? dx < 0 : down.wasOpen
+    if (turn) turnOver()
+    else rest()
+    return
+  }
+  if (legs > PINNED) {
+    open.value = true
+    vel = { x: 0, y: 0 }
+  } else {
+    rest()
+  }
+}
+
+// Copying the sheet is too much work to do as the hand takes hold of the corner. A hand that has
+// come to rest on a corner is likely to lift it: the copy is made then, while nothing moves.
+const prepare = () => mode.value === 'rest' && underside.value?.prepare()
+// A touch screen has no hand resting anywhere: the copy is made a little after the page has come
+// in, a step at a time, so the first turn of the page is as smooth as the next.
+let early: ReturnType<typeof setTimeout> | undefined
+function prepareSoon() {
+  clearTimeout(early)
+  if (touch.value) early = setTimeout(prepare, 2000)
+}
+
+// near a corner, that corner turns up; away from it, it lies flat again
+function onEnter(k: Corner) {
+  if (mode.value !== 'rest' || dragging.value) return
+  stopNudges()
+  if (k !== corner.value) {
+    corner.value = k
+    place(atLegs(0.5))
+  }
+  settleTo(atLegs(HOVER), prepare)
+}
+function onLeave(k: Corner) {
+  if (mode.value !== 'rest' || dragging.value || k !== corner.value) return
+  if (k === HOME) settleTo(atLegs(REST))
+  else settleTo(atLegs(0.5), () => mode.value === 'rest' && !dragging.value && corner.value === k && home())
+}
+
+// The first time, the corner lifts a little by itself, twice, so the eye finds it.
+let nudges: ReturnType<typeof setTimeout>[] = []
+function stopNudges() {
+  nudges.forEach(clearTimeout)
+  nudges = []
+}
+function nudge() {
+  if (mode.value !== 'rest' || dragging.value || corner.value !== HOME) return
+  settleTo(atLegs(NUDGE), () => nudges.push(setTimeout(() => mode.value === 'rest' && corner.value === HOME && settleTo(atLegs(REST)), 220)))
+}
+
+// --- lifecycle ------------------------------------------------------------------------------
+
+let mq: MediaQueryList | undefined
+// on a phone, only the home corner turns up (the others sit over the letterhead), and a tap
+// anywhere off the paper lays it back down
+function onTapOff(e: PointerEvent) {
+  if (e.pointerType === 'mouse' || mode.value !== 'lifted' || dragging.value) return
+  if ((e.target as Element | null)?.closest('.flap, .dog-ear, .data, .tag, .balloon, .pin-card, .turn-back, .push')) return
+  rest()
+}
+function measureView() {
+  view.value = { w: document.documentElement.clientWidth, h: window.innerHeight }
+}
+function enable() {
+  if (!mq?.matches) {
+    cancelAnimationFrame(raf)
+    mode.value = 'off'
+    document.documentElement.style.overflow = ''
+    return
+  }
+  measureView()
+  if (mode.value === 'off') {
+    corner.value = HOME
+    place(atLegs(REST))
+    mode.value = 'rest'
+  }
+}
+
+function onResize() {
+  measureView()
+  underside.value?.invalidate()
+  prepareSoon()
+  if (mode.value === 'lifted') rest()
+  else if (mode.value === 'rest') place(atLegs(corner.value === HOME ? REST : 0.5))
+}
+// a wheel on a page that is held open lets go of it; while dragging, it is ignored
+function onWheel(e: WheelEvent) {
+  if (mode.value !== 'lifted') return
+  e.preventDefault()
+  if (!dragging.value) rest()
+}
+function onKey(e: KeyboardEvent) {
+  if (e.key === 'Escape' && mode.value === 'lifted') rest()
+}
+function onBlur() {
+  if (dragging.value) onUp()
+}
+
+onMounted(() => {
+  reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  mq = matchMedia('(min-width: 1024px) and (pointer: fine), (pointer: coarse)')
+  touch.value = matchMedia('(pointer: coarse)').matches
+  mq.addEventListener('change', enable)
+  window.addEventListener('resize', onResize)
+  window.addEventListener('wheel', onWheel, { passive: false })
+  window.addEventListener('keydown', onKey)
+  window.addEventListener('blur', onBlur)
+  window.addEventListener('pointermove', onPeekMove)
+  window.addEventListener('pointerdown', onTapOff)
+  window.addEventListener('touchstart', onTouchStart, { passive: true })
+  window.addEventListener('touchend', onTouchEnd, { passive: true })
+  enable()
+  let seen = false
+  try {
+    seen = Boolean(sessionStorage.getItem('folio-peeled'))
+  } catch {
+    // private mode: nudge
+  }
+  if (!seen && !reduced) nudges = [setTimeout(nudge, 2400), setTimeout(nudge, 16000)]
+  prepareSoon()
+})
+onBeforeUnmount(() => {
+  cancelAnimationFrame(raf)
+  clearTimeout(early)
+  stopNudges()
+  mq?.removeEventListener('change', enable)
+  window.removeEventListener('resize', onResize)
+  window.removeEventListener('wheel', onWheel)
+  window.removeEventListener('keydown', onKey)
+  window.removeEventListener('blur', onBlur)
+  window.removeEventListener('pointermove', onPeekMove)
+  window.removeEventListener('pointerdown', onTapOff)
+  window.removeEventListener('touchstart', onTouchStart)
+  window.removeEventListener('touchend', onTouchEnd)
+  const paper = document.querySelector<HTMLElement>('.paper')
+  if (paper) paper.style.clipPath = ''
+  document.documentElement.style.overflow = ''
+})
+
+// another page, another drawing: let the corner fall back first
+watch(() => route.path, () => {
+  if (mode.value === 'lifted') rest()
+  prepareSoon()
+})
+</script>
+
+<template>
+  <template v-if="mode !== 'off'">
+    <!-- underneath (behind the paper in the desk's stacking) -->
+    <PeelUnderside ref="underside" :uncovered :active="mode === 'lifted'" />
+    <div v-if="shape && mode === 'lifted'" class="under-shade" :style="{ clipPath: shape.lifted, backgroundImage: shape.underShade }" />
+
+    <div v-if="shape" class="peel-box" :style="shape.box">
+      <!-- at rest the uncovered corner is drawn on its own, so the paper needs no clip -->
+      <div v-if="mode === 'rest'" class="corner-ground" :style="{ ...shape.inner, clipPath: shape.lifted }" />
+
+      <!-- the tab on the turned sheet's crease, to turn it back: drawn before the flap, whose rolled
+           edge lies over its root, so the two are one piece of paper -->
+      <div v-if="shape.tab && mode === 'lifted'" class="tab-layer" :style="shape.inner">
+        <button
+          type="button"
+          class="turn-back"
+          :class="{ out: !settled }"
+          :style="{ transform: shape.tab }"
+          :tabindex="settled ? 0 : -1"
+          :aria-hidden="settled ? undefined : 'true'"
+          aria-label="Turn the page back"
+          @click="rest()"
+        >
+          <span class="tab-lift">
+            <span class="tab-paper">
+              <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M3.75 2 6.75 5l-3 3" fill="none" stroke="currentColor" stroke-width="1.25" /></svg>
+            </span>
+          </span>
+        </button>
+      </div>
+
+      <!-- the back of the lifted paper -->
+      <div class="flap-shadow" :style="{ ...shape.inner, filter: shape.shadow }">
+        <div
+          class="flap"
+          :style="{ clipPath: shape.flap, backgroundImage: shape.flapShade }"
+          @pointerdown="onDown"
+          @pointermove="onMove"
+          @pointerup="onUp"
+          @pointercancel="onUp"
+          @lostpointercapture="onUp"
+        />
+      </div>
+    </div>
+
+    <template v-for="k in CORNERS" :key="k">
+      <button
+        v-if="(mode === 'rest' && (!touch || k === HOME)) || (dragging && k === corner)"
+        type="button"
+        class="dog-ear"
+        :class="k"
+        :tabindex="k === HOME ? 0 : -1"
+        :aria-hidden="k === HOME ? undefined : 'true'"
+        :aria-label="k === HOME ? 'Lift the corner of the page' : undefined"
+        @pointerenter="onEnter(k)"
+        @pointerleave="onLeave(k)"
+        @pointerdown="onDown($event, k)"
+        @pointermove="onMove"
+        @pointerup="onUp"
+        @pointercancel="onUp"
+        @lostpointercapture="onUp"
+        @click.prevent
+        @focus="k === HOME && prepare()"
+        @keydown.enter.prevent="toggle"
+        @keydown.space.prevent="toggle"
+      />
+    </template>
+    <button v-if="open && !(touch && settled)" type="button" class="sr-only" @click="rest()">
+      Lay the page back down
+    </button>
+  </template>
+</template>
+
+<style scoped>
+.under-shade {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.peel-box {
+  position: fixed;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+}
+.corner-ground {
+  position: absolute;
+  pointer-events: none;
+}
+/* the sliver of the drawing seen under the dog-ear: the same red and grid as underneath */
+.corner-ground {
+  background-color: #901112;
+  background-image:
+    linear-gradient(rgb(235 235 235 / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(235 235 235 / 0.08) 1px, transparent 1px);
+  background-size: 8px 8px;
+  background-attachment: fixed;
+}
+.flap-shadow {
+  position: absolute;
+  pointer-events: none;
+}
+.flap {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+.flap:active {
+  cursor: grabbing;
+}
+.dog-ear {
+  position: fixed;
+  z-index: 32;
+  width: 72px;
+  height: 72px;
+  cursor: grab;
+  touch-action: none;
+  background: transparent;
+}
+/* only the corner triangle catches the pointer */
+.dog-ear.br { right: 0; bottom: 0; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+.dog-ear.bl { left: 0; bottom: 0; clip-path: polygon(0 0, 100% 100%, 0 100%); }
+.dog-ear.tr { right: 0; top: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.dog-ear.tl { left: 0; top: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+/* The tab is the sheet's own paper, its back side, standing out from the crease and tapered like a
+   ledger's index tab. Its button is set on the fold, square to it, and is wider than the tab, for a
+   thumb; it clips the tab a pixel behind the crease, so the tab comes out from under the rolled
+   edge and goes back under it. */
+.tab-layer {
+  position: absolute;
+  pointer-events: none;
+}
+.turn-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 104px;
+  margin: -52px 0 0 -1px;
+  overflow: hidden;
+  transform-origin: 1px 52px;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.turn-back.out {
+  pointer-events: none;
+}
+.tab-lift {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  /* its shadow falls outward, on the red, as the crease's does */
+  filter: drop-shadow(1px 0 0.5px rgb(0 0 0 / 0.18)) drop-shadow(3px 0 5px rgb(0 0 0 / 0.24));
+  transition: transform 0.34s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
+}
+.turn-back.out .tab-lift {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: transform 0.18s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.18s ease;
+}
+.tab-paper {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 80px;
+  padding-left: 1px;
+  color: #8c8c8a;
+  background: linear-gradient(90deg, #f2f2f0, #e6e6e4 45%, #dededc);
+  clip-path: polygon(0 0, 100% 8px, 100% calc(100% - 8px), 0 100%);
+}
+html.dark .tab-paper {
+  color: #8f8f8f;
+  background: linear-gradient(90deg, #2c2c2c, #222 45%, #1b1b1b);
+}
+html.dark .tab-lift {
+  filter: drop-shadow(1px 0 0.5px rgb(0 0 0 / 0.5)) drop-shadow(3px 0 5px rgb(0 0 0 / 0.45));
+}
+/* pressed, it gives a little, back under the crease */
+.turn-back:not(.out):active .tab-lift {
+  transform: translateX(-3px);
+  transition-duration: 0.12s;
+}
+.turn-back:focus-visible {
+  outline: 1px solid var(--ui-primary);
+  outline-offset: -6px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-lift,
+  .turn-back.out .tab-lift,
+  .turn-back:not(.out):active .tab-lift {
+    transform: none;
+    transition: opacity 0.18s ease;
+  }
+}
+.dog-ear:focus-visible {
+  outline: 1px solid var(--ui-primary);
+  outline-offset: -10px;
+}
+</style>

@@ -12,6 +12,7 @@ export default defineContentConfig({
         date: z.string().optional(),
         image: z.string().optional(),
         rawbody: z.string().optional(),
+        sheet: z.boolean().optional().describe('Lay the page out as a sheet, like the notice.'),
         sitemap: defineSitemapSchema({
           name: 'content',
         }),
@@ -26,6 +27,7 @@ export default defineContentConfig({
         date: z.string(),
         tags: z.array(z.string()).optional(),
         rawbody: z.string(),
+        sheet: z.boolean().optional(),
         sitemap: defineSitemapSchema({
           name: 'writing',
         }),

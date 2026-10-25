@@ -47,8 +47,10 @@ const { data: allProjects } = await useAsyncData('projects', () =>
     .all()
 )
 
-const featuredNames = ['Evlog', 'Shelve', 'Canvas', 'GitHub Tools']
-const featuredWorkNames = ['Nuxt MCP Toolkit', 'Docus', 'Nuxt.com', 'Nuxt UI', 'Knowledge Agent', 'Comark']
+// the landing page shows three: the two he made and keeps, and the framework he works on. The
+// rest are under All projects. On the right, his part in each.
+const featuredNames = ['Evlog', 'Shelve', 'Nuxt']
+const ROLE: Record<string, string> = { Evlog: 'Author', Shelve: 'Author', Nuxt: 'Team' }
 
 function sortByOrder(items: typeof allProjects.value, order: string[]) {
   return [...items!].sort((a, b) => {
@@ -83,12 +85,7 @@ const displayedProjects = computed(() => {
   if (activeTab.value === 'projects') items = items.filter(p => p.category !== 'ecosystem')
   else if (activeTab.value === 'work') items = items.filter(p => p.category === 'ecosystem')
 
-  if (featured) {
-    if (activeTab.value === 'projects') return sortByOrder(items.filter(p => featuredNames.includes(p.name)), featuredNames)
-    if (activeTab.value === 'work') return sortByOrder(items.filter(p => featuredWorkNames.includes(p.name)), featuredWorkNames)
-    const allFeatured = [...featuredNames, ...featuredWorkNames]
-    return sortByOrder(items.filter(p => allFeatured.includes(p.name)), allFeatured)
-  }
+  if (featured) return sortByOrder(allProjects.value.filter(p => featuredNames.includes(p.name)), featuredNames)
 
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase()
@@ -153,41 +150,57 @@ function onProjectHover(project: { name: string, screenshotUrl?: string }, e: Mo
   preloadImage(getScreenshot(project))
 }
 
+// a row on its way out keeps its place while it fades, instead of falling to the top of the list
+// (measured before the list updates: by the time Vue calls the leave hook they already read 0)
+const list = useTemplateRef<{ $el: HTMLElement }>('list')
+const lastTops = new Map<string, number>()
+watch(displayedProjects, () => {
+  lastTops.clear()
+  list.value?.$el.querySelectorAll<HTMLElement>('[data-row]').forEach(row => lastTops.set(row.dataset.row!, row.offsetTop))
+}, { flush: 'pre' })
+function pin(el: Element) {
+  const row = el as HTMLElement
+  row.style.top = `${lastTops.get(row.dataset.row!) ?? row.offsetTop}px`
+}
+
+const listHeight = ref(0)
+let listObserver: ResizeObserver | undefined
+
 onMounted(() => {
   displayedProjects.value.forEach((p) => {
     preloadImage(getScreenshot(p))
   })
+  const el = list.value?.$el
+  if (!el) return
+  listObserver = new ResizeObserver(() => (listHeight.value = el.offsetHeight))
+  listObserver.observe(el)
 })
+onBeforeUnmount(() => listObserver?.disconnect())
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <div class="flex items-baseline justify-between">
-      <component :is="featured ? 'h3' : 'h1'" class="font-serif text-lg italic text-highlighted">
-        Projects<span class="text-primary">.</span>
-      </component>
-      <div class="flex gap-3 text-sm">
+  <section class="relative flex flex-col">
+    <SectionMark :numeral="featured ? 'III' : '§'" label="Projects" :as="featured ? 'h3' : 'h1'" />
+    <!-- filters and search are notes in the right margin on wide screens, so the mark keeps the first entry's line -->
+    <div v-if="!featured" class="in-note top-2 mb-3 flex items-center gap-4 lg:mb-0 lg:flex-col lg:items-stretch lg:gap-0">
+      <div class="flex gap-4 lg:flex-col lg:gap-0" role="tablist" aria-label="Filter projects">
         <button
           v-for="tab in tabs"
           :key="tab.key"
-          class="relative pb-0.5 transition-colors duration-200"
-          :class="activeTab === tab.key ? 'text-highlighted' : 'text-muted/40 hover:text-muted'"
+          role="tab"
+          :aria-selected="activeTab === tab.key"
+          class="tab flex items-center gap-2 text-left font-mono text-[10px] uppercase leading-6 tracking-[0.08em]"
+          :class="{ active: activeTab === tab.key }"
           @click="activeTab = tab.key"
         >
+          <span class="tick" aria-hidden="true" />
           {{ tab.label }}
-          <Transition name="indicator">
-            <span
-              v-if="activeTab === tab.key"
-              class="absolute bottom-0 left-0 h-px w-full bg-primary"
-            />
-          </Transition>
         </button>
       </div>
-    </div>
-
-    <div v-if="!featured" class="flex justify-end">
       <ListToolbar
+        v-if="!featured"
         ref="toolbarRef"
+        class="ml-auto lg:ml-5 lg:mt-5"
         :count="displayedProjects.length"
         label="projects"
         :tags="allTags"
@@ -204,23 +217,34 @@ onMounted(() => {
       @mousemove="onMouseMove"
       @mouseleave="hoveredProject = null"
     >
-      <Transition name="fade" mode="out-in">
-        <div :key="activeTab" class="flex flex-col">
+      <!-- rows that stay slide to their new place, new ones settle in, the list's height follows -->
+      <div class="rows" :class="{ sized: listHeight }" :style="{ height: listHeight ? `${listHeight}px` : undefined }">
+        <!-- block flow, not flex: a leaving row taken out of the flow stays where it was -->
+        <TransitionGroup ref="list" name="row" tag="div" class="relative" @before-leave="pin">
           <NuxtLink
             v-for="(project, index) in displayedProjects"
             :key="project.name"
+            :data-row="project.name"
             :to="project.url"
             target="_blank"
-            class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
+            class="entry group relative flex items-baseline gap-4 py-2"
             :class="{ 'bg-muted/5': highlightedIndex === index }"
-            :style="{ animationDelay: `${index * 40}ms` }"
+            :style="{ '--i': index }"
             @mouseenter="onProjectHover(project, $event)"
           >
-            <span class="shrink-0 font-medium text-highlighted decoration-primary group-hover:underline">{{ project.name }}</span>
-            <span class="truncate text-right text-sm text-muted">{{ project.description }}</span>
+            <span class="entry-title flex shrink-0 items-baseline">
+              <span class="in-gutter font-mono text-[10px] tabular-nums text-muted/40" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
+              <span class="font-medium text-highlighted decoration-primary underline-offset-4 group-hover:underline">{{ project.name }}</span>
+            </span>
+            <template v-if="featured">
+              <span class="entry-sub truncate text-sm text-muted">{{ project.description }}</span>
+              <span class="leader" aria-hidden="true" />
+              <span class="shrink-0 font-mono text-xs text-muted/70">{{ ROLE[project.name] }}</span>
+            </template>
+            <span v-else class="entry-sub ml-auto truncate text-right text-sm text-muted">{{ project.description }}</span>
           </NuxtLink>
-        </div>
-      </Transition>
+        </TransitionGroup>
+      </div>
     </div>
 
     <Teleport to="body">
@@ -244,23 +268,71 @@ onMounted(() => {
     <NuxtLink
       v-if="featured"
       to="/works"
-      class="text-sm text-muted/50 transition-colors hover:text-muted"
+      class="mt-2 self-start font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50 transition-colors hover:text-highlighted"
     >
-      View all &rarr;
+      All projects &rarr;
     </NuxtLink>
-  </div>
+  </section>
 </template>
 
 <style scoped>
-.fade-enter-active {
-  transition: opacity 0.2s ease;
+/* tabs: the active one's tick is ruled in red, the others keep a faint stub */
+.tab {
+  color: color-mix(in oklab, var(--ui-text-muted) 45%, transparent);
+  transition: color 0.35s ease;
 }
-.fade-leave-active {
-  transition: opacity 0.12s ease;
+.tab:hover {
+  color: var(--ui-text-muted);
 }
-.fade-enter-from,
-.fade-leave-to {
+.tab.active {
+  color: var(--ui-text-highlighted);
+}
+.tick {
+  position: relative;
+  width: 12px;
+  height: 1px;
+  background: color-mix(in oklab, currentColor 30%, transparent);
+}
+.tick::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ui-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.tab.active .tick::after {
+  transform: scaleX(1);
+}
+
+/* the list */
+.rows.sized {
+  transition: height 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.row-move {
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.row-enter-active {
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+  transition-delay: calc(170ms + var(--i) * 30ms); /* after the outgoing rows are gone: no two lines on one line */
+}
+.row-leave-active {
+  position: absolute;
+  inset-inline: 0;
+  transition: opacity 0.16s ease;
+}
+.row-enter-from {
   opacity: 0;
+  transform: translateY(6px);
+}
+.row-leave-to {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rows.sized, .row-move, .row-enter-active, .row-leave-active, .tick::after {
+    transition: none;
+  }
 }
 
 .indicator-enter-active {

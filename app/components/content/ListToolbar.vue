@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// The list's count, and what finds in it. Opened (the lens, or / anywhere), a small sheet is laid
+// over the margin under the count, drawn like the rest: a ruled line to write on, the order and
+// the subjects marked with the same ticks as the tabs, crop marks at its corners. Esc, a click
+// elsewhere, or the lens again puts it away.
 type SortMode = 'newest' | 'a-z'
 
 const {
@@ -24,6 +28,7 @@ const emit = defineEmits<{
 }>()
 
 const isOpen = ref(false)
+const root = useTemplateRef<HTMLElement>('root')
 const searchInput = ref<HTMLInputElement | null>(null)
 
 function toggleTag(tag: string) {
@@ -35,85 +40,294 @@ function toggleTag(tag: string) {
 }
 
 useEventListener('keydown', (e: KeyboardEvent) => {
-  if (e.key === '/' && document.activeElement !== searchInput.value && !isOpen.value) {
+  if (e.key === 'Escape' && isOpen.value) {
+    isOpen.value = false
+    return
+  }
+  const t = e.target
+  if (t instanceof Element && t.closest('input, textarea, select, [contenteditable="true"]')) return
+  if (e.key === '/' && !isOpen.value) {
     e.preventDefault()
     isOpen.value = true
   }
 })
+onClickOutside(root, () => (isOpen.value = false))
 
+// Wider than the note margin it opens from, so on wide screens it keeps to the margin's right
+// edge (the page's) and reaches left over the gutter, rather than hanging off the sheet.
+const shift = ref(0)
 watch(isOpen, (open) => {
-  if (open) nextTick(() => searchInput.value?.focus())
+  if (!open) return
+  const el = root.value
+  if (el && window.innerWidth >= 1024) {
+    const edge = el.closest('.in-note')?.getBoundingClientRect().right ?? window.innerWidth - 24
+    shift.value = Math.min(0, Math.round(edge - el.getBoundingClientRect().left - 256))
+  } else shift.value = 0
+  nextTick(() => searchInput.value?.focus())
 })
 
+const noun = computed(() => count === 1 ? label.replace(/s$/, '') : label)
 const hasActiveFilters = computed(() => !!search || selectedTags.length > 0)
+const clear = () => {
+  emit('update:search', '')
+  emit('update:selectedTags', [])
+}
 
 defineExpose({ searchInput })
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
-    <span class="text-[11px] text-muted/50">{{ count }} {{ label }}</span>
-    <UPopover v-model:open="isOpen" :content="{ align: 'end', side: 'bottom', sideOffset: 8 }">
-      <button
-        class="relative transition-colors"
-        :class="hasActiveFilters ? 'text-primary' : 'text-muted/40 hover:text-muted/60'"
-      >
-        <UIcon name="i-lucide-search" class="size-3.5" />
-        <span
-          v-if="hasActiveFilters"
-          class="absolute -right-0.5 -top-0.5 size-1 rounded-full bg-primary"
-        />
-      </button>
-      <template #content>
-        <div class="flex w-64 flex-col gap-3 p-3">
-          <div class="relative">
-            <input
-              ref="searchInput"
-              type="text"
-              :value="search"
-              placeholder="Search..."
-              class="w-full border-0 border-b border-muted/20 bg-transparent py-1 text-sm text-highlighted outline-hidden placeholder:text-muted/50 focus:border-primary/40"
-              @input="emit('update:search', ($event.target as HTMLInputElement).value)"
-            >
-            <kbd class="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-muted/30">/</kbd>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 text-[11px]">
-              <button
-                :class="sort === 'newest' ? 'text-highlighted' : 'text-muted/50 hover:text-muted/70'"
-                @click="emit('update:sort', 'newest')"
-              >
-                newest
-              </button>
-              <span class="text-muted/30">·</span>
-              <button
-                :class="sort === 'a-z' ? 'text-highlighted' : 'text-muted/50 hover:text-muted/70'"
-                @click="emit('update:sort', 'a-z')"
-              >
-                a-z
-              </button>
-            </div>
-            <button
-              v-if="hasActiveFilters"
-              class="text-[11px] text-muted/50 hover:text-muted/70"
-              @click="emit('update:search', ''); emit('update:selectedTags', [])"
-            >
-              clear
-            </button>
-          </div>
-          <div v-if="tags.length" class="flex flex-wrap gap-x-2 gap-y-1">
+  <div ref="root" class="toolbar relative flex items-center gap-2">
+    <span class="font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50">{{ count }} {{ noun }}</span>
+    <button
+      type="button"
+      class="lens relative transition-colors"
+      :class="hasActiveFilters || isOpen ? 'text-primary' : 'text-muted/40 hover:text-muted/60'"
+      :aria-expanded="isOpen"
+      :aria-label="isOpen ? 'Close the search' : `Search the ${label}`"
+      @click="isOpen = !isOpen"
+    >
+      <UIcon name="i-lucide-search" class="size-3.5" />
+      <span v-if="hasActiveFilters" class="absolute -right-0.5 -top-0.5 size-1 rounded-full bg-primary" />
+    </button>
+
+    <Transition name="unroll">
+      <div v-if="isOpen" class="finder" :style="shift ? { left: `${shift}px` } : undefined" role="dialog" :aria-label="`Search the ${label}`">
+        <span class="crop tl" aria-hidden="true" /><span class="crop tr" aria-hidden="true" />
+        <span class="crop bl" aria-hidden="true" /><span class="crop br" aria-hidden="true" />
+
+        <label class="find">
+          <span class="title">Find</span>
+          <input
+            ref="searchInput"
+            type="text"
+            :value="search"
+            :placeholder="`in ${count} ${noun}`"
+            spellcheck="false"
+            autocomplete="off"
+            @input="emit('update:search', ($event.target as HTMLInputElement).value)"
+          >
+          <button type="button" class="esc" tabindex="-1" @click="isOpen = false">esc</button>
+        </label>
+
+        <div class="row order">
+          <span class="key">Order</span>
+          <button
+            v-for="mode in (['newest', 'a-z'] as const)"
+            :key="mode"
+            type="button"
+            class="option"
+            :class="{ on: sort === mode }"
+            :aria-pressed="sort === mode"
+            @click="emit('update:sort', mode)"
+          >
+            <span class="tick" aria-hidden="true" />{{ mode === 'a-z' ? 'a–z' : mode }}
+          </button>
+          <button v-if="hasActiveFilters" type="button" class="clear" @click="clear">
+            clear
+          </button>
+        </div>
+
+        <div v-if="tags.length" class="row subjects">
+          <span class="key">Subjects</span>
+          <span class="tags">
             <button
               v-for="tag in tags"
               :key="tag"
-              class="text-[11px] transition-colors"
-              :class="selectedTags.includes(tag) ? 'text-primary' : 'text-muted/50 hover:text-muted/70'"
+              type="button"
+              class="tag"
+              :class="{ on: selectedTags.includes(tag) }"
+              :aria-pressed="selectedTags.includes(tag)"
               @click="toggleTag(tag)"
             >
               {{ tag }}
             </button>
-          </div>
+          </span>
         </div>
-      </template>
-    </UPopover>
+      </div>
+    </Transition>
   </div>
 </template>
+
+<style scoped>
+/* a small sheet on the page, drawn like the index: the paper's own ground, a hairline frame,
+   crop marks off its corners, the field to write on ruled in red */
+.finder {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  z-index: 40;
+  width: min(300px, calc(100vw - 48px));
+  background: var(--ui-bg);
+  border: 1px solid color-mix(in oklab, var(--ui-text) 24%, var(--ui-bg));
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+@media (min-width: 1024px) {
+  /* in the note margin, from the count's left edge */
+  .finder {
+    right: auto;
+    left: 0;
+    width: 256px;
+  }
+}
+.crop {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 0 solid color-mix(in oklab, var(--ui-text) 40%, var(--ui-bg));
+  pointer-events: none;
+}
+.crop.tl { top: -5px; left: -5px; border-top-width: 1px; border-left-width: 1px; }
+.crop.tr { top: -5px; right: -5px; border-top-width: 1px; border-right-width: 1px; }
+.crop.bl { bottom: -5px; left: -5px; border-bottom-width: 1px; border-left-width: 1px; }
+.crop.br { bottom: -5px; right: -5px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.find {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--ui-primary);
+}
+.find .title {
+  font-family: var(--font-redaction);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--ui-primary);
+}
+.find input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--ui-text-highlighted);
+}
+.find input::placeholder {
+  color: var(--ui-text-dimmed);
+}
+.esc,
+.key,
+.clear {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ui-text-dimmed);
+}
+.esc:hover {
+  color: var(--ui-text-highlighted);
+}
+
+.row {
+  padding: 8px 12px;
+}
+.row + .row {
+  border-top: 1px solid color-mix(in oklab, var(--ui-text) 10%, var(--ui-bg));
+}
+.order {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.order .key {
+  width: 56px;
+}
+.clear {
+  margin-left: auto;
+  color: var(--ui-primary);
+}
+.subjects .key {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* the order, ticked like the tabs: red when chosen */
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 20px;
+  color: var(--ui-text-dimmed);
+  transition: color 0.2s ease;
+}
+.option:hover,
+.option.on {
+  color: var(--ui-text-highlighted);
+}
+.tick {
+  width: 12px;
+  height: 1px;
+  background: color-mix(in oklab, currentColor 35%, var(--ui-bg));
+  transform: scaleX(0.67);
+  transform-origin: left;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.option.on .tick {
+  background: var(--ui-primary);
+  transform: none;
+}
+
+/* the subjects as words in a line, underlined in red when chosen */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 12px;
+  max-height: 104px;
+  overflow-y: auto;
+}
+.tag {
+  line-height: 20px;
+  color: var(--ui-text-dimmed);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+.tag:hover {
+  color: var(--ui-text-highlighted);
+}
+.tag.on {
+  color: var(--ui-text-highlighted);
+  text-decoration-color: var(--ui-primary);
+}
+.option:focus-visible,
+.tag:focus-visible,
+.esc:focus-visible,
+.clear:focus-visible {
+  outline: 1px dotted var(--ui-primary);
+  outline-offset: 2px;
+}
+
+/* laid down from the top edge, as a sheet is unrolled; taken up the same way */
+.unroll-enter-active,
+.unroll-leave-active {
+  transition: clip-path 0.32s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.2s ease;
+}
+.unroll-enter-from,
+.unroll-leave-to {
+  clip-path: inset(-8px -8px 100% -8px);
+  opacity: 0;
+}
+.unroll-enter-to,
+.unroll-leave-from {
+  clip-path: inset(-8px -8px -8px -8px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .unroll-enter-active,
+  .unroll-leave-active,
+  .tick,
+  .option,
+  .tag {
+    transition: none;
+  }
+}
+</style>

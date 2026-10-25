@@ -10,37 +10,30 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <h3 class="font-serif text-lg italic text-highlighted">
-      Experience<span class="text-primary">.</span>
-    </h3>
-    <div class="flex flex-col">
-      <template v-for="(item, index) in items" :key="item.company">
-        <NuxtLink
-          v-if="item.url"
-          :to="item.url"
-          target="_blank"
-          class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
-          :style="{ animationDelay: `${index * 40}ms` }"
+  <section class="relative">
+    <SectionMark numeral="II" label="Experience" as="h3" />
+    <ol class="flex flex-col">
+      <li
+        v-for="item in items"
+        :key="item.company"
+      >
+        <component
+          :is="item.url ? 'a' : 'div'"
+          :href="item.url"
+          :target="item.url ? '_blank' : undefined"
+          :rel="item.url ? 'noopener noreferrer' : undefined"
+          class="entry group flex items-baseline gap-3 py-2"
         >
-          <div class="flex items-baseline gap-2">
-            <span class="font-medium text-highlighted decoration-primary group-hover:underline">{{ item.company }}</span>
-            <span class="text-sm text-muted">{{ item.role }}</span>
-          </div>
-          <span class="shrink-0 text-sm text-muted/60">{{ item.period }}</span>
-        </NuxtLink>
-        <div
-          v-else
-          class="flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
-          :style="{ animationDelay: `${index * 40}ms` }"
-        >
-          <div class="flex items-baseline gap-2">
-            <span class="font-medium text-highlighted">{{ item.company }}</span>
-            <span class="text-sm text-muted">{{ item.role }}</span>
-          </div>
-          <span class="shrink-0 text-sm text-muted/60">{{ item.period }}</span>
-        </div>
-      </template>
-    </div>
-  </div>
+          <span class="entry-title shrink-0 font-medium text-highlighted decoration-primary underline-offset-4" :class="item.url && 'group-hover:underline'">{{ item.company }}</span>
+          <span class="entry-sub truncate text-sm text-muted">{{ item.role }}</span>
+          <span class="leader" aria-hidden="true" />
+          <span class="shrink-0 whitespace-nowrap font-mono text-xs tabular-nums text-muted/70">
+            <!-- YAML reads a lone year as a number -->
+            <template v-if="String(item.period).endsWith('∞')">{{ String(item.period).slice(0, -1) }}<InfinityMark class="ml-0.5" /></template>
+            <template v-else>{{ item.period }}</template>
+          </span>
+        </component>
+      </li>
+    </ol>
+  </section>
 </template>

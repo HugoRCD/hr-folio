@@ -1,0 +1,10 @@
+{
+  "name": "Nuxt",
+  "category": "ecosystem",
+  "description": "The full-stack Vue framework",
+  "url": "https://nuxt.com",
+  "github": "https://github.com/nuxt/nuxt",
+  "screenshotUrl": "/works/nuxt.com.png",
+  "date": "2016-10-26",
+  "tags": ["nuxt", "vue", "open-source"]
+}

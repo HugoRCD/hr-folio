@@ -1,7 +1,7 @@
 {
   "name": "Nuxt Connect Starter",
   "category": "ecosystem",
-  "description": "Minimal Nuxt starter for Vercel Connect — OAuth integrations hub with GitHub and Linear",
+  "description": "Nuxt starter for Vercel Connect",
   "url": "https://nuxt-connect-starter.labs.vercel.dev",
   "github": "https://github.com/vercel-labs/nuxt-connect-starter",
   "screenshotUrl": "/works/nuxt-connect-starter.png",

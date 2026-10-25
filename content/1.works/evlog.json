@@ -1,7 +1,7 @@
 {
   "name": "Evlog",
   "category": "featured",
-  "description": "Structured logging library for TypeScript",
+  "description": "Wide events and structured errors for TypeScript",
   "url": "https://evlog.dev",
   "github": "https://github.com/HugoRCD/evlog",
   "date": "2026-01-24",

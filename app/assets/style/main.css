@@ -4,16 +4,64 @@
 @source "../../../";
 
 @theme {
-  --font-serif: "Redaction", serif;
-  --font-sans: "Geist", sans-serif;
-  --font-redaction: "Redaction", serif;
+  --font-serif: "Redaction", "Redaction Fallback", serif;
+  --font-sans: "Geist", "Geist Fallback", sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-redaction: "Redaction", "Redaction Fallback", serif;
+  --font-signature: "Mrs Saint Delafield", cursive;
+}
+
+/* Until each font arrives, the page is set in a system font scaled to take the same width, so the
+   lines break in the same places and nothing moves when it swaps in. Measured on this site's own
+   text: Geist runs 2.6% wider than Arial, Redaction 8.1% wider than Times, Geist Mono as wide as
+   Menlo. The overrides keep the baseline where the real font puts it. */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica"), local("Helvetica Neue");
+  font-weight: 100 400;
+  size-adjust: 102.6%;
+  ascent-override: 98.4%;
+  descent-override: 28.3%;
+  line-gap-override: 0%;
+}
+/* the links and names are set at 500, where Geist runs 5% wider than Arial */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica"), local("Helvetica Neue");
+  font-weight: 500 900;
+  size-adjust: 105%;
+  ascent-override: 96.2%;
+  descent-override: 27.6%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Redaction Fallback";
+  src: local("Times New Roman"), local("Times");
+  size-adjust: 108.1%;
+  ascent-override: 83.3%;
+  descent-override: 27.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Geist Mono Fallback";
+  src: local("Menlo"), local("Courier New");
+  size-adjust: 100%;
+  ascent-override: 101%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+}
+
+h1, h2, h3, .font-serif, .font-redaction {
+  font-synthesis: none;
 }
 
 :root {
   scrollbar-color: var(--ui-border) transparent;
   scrollbar-width: thin;
 
-  --ui-primary: rgb(40, 83, 255) !important;
+  /* One red, between Cartier and Ferrari: halfway by day and by night. Around sunset and sunrise
+     the daylight plugin slides it along that band so it keeps its contrast as the ground dims. */
+  --ui-primary: #CD1919 !important;
   --code-bg: #f6f6f6;
   --code-border: #e5e5e5;
 
@@ -21,7 +69,7 @@
 }
 
 .dark {
-  --ui-primary: rgb(8, 73, 236) !important;
+  --ui-primary: #E1342D !important;
   --ui-bg: rgb(2, 2, 2);
   --code-bg: #0a0a0a;
   --code-border: #1e1e1e;
@@ -38,9 +86,136 @@
   color: var(--ui-text-highlighted);
 }
 
+/*
+ * The sheet. From 1024px the page is a 1024px plate read left to right:
+ * an index margin (section marks, the figure, contents), a gutter, the measure,
+ * a gutter, a note margin (the dateline, filters, dimensions).
+ * Anything placed with .in-index / .in-note hangs off its measure-wide parent.
+ * The plate always keeps 40px of page around it: in a window too narrow for that, the index
+ * margin gives up the difference (down to 144px at 1024). Registered as a length so it is
+ * computed in px, and read back as a number by the construction drawing.
+ */
+@property --sheet-index {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 224px;
+}
+:root {
+  --sheet-margin: 40px;
+  /* 880 = the two margins, the two gutters, the measure and the note margin. Never under 144px:
+     below 1024px there is no index margin, and a negative one would narrow the phone's sheet */
+  --sheet-index: clamp(144px, 100vw - 880px, 224px);
+  --sheet-gutter: 48px;
+  --sheet-measure: 528px;
+  --sheet-note: 176px;
+  --sheet-width: calc(var(--sheet-index) + var(--sheet-measure) + var(--sheet-note) + var(--sheet-gutter) * 2);
+}
+
+.sheet {
+  width: 100%;
+  max-width: var(--sheet-width);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.measure {
+  position: relative;
+  width: 100%;
+  max-width: var(--sheet-measure);
+  margin-inline: auto;
+}
+
+.in-index,
+.in-note {
+  position: static;
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    max-width: calc(var(--sheet-width) + var(--sheet-margin) * 2);
+    padding-inline: var(--sheet-margin);
+  }
+  .measure {
+    margin-left: calc(var(--sheet-index) + var(--sheet-gutter));
+    margin-right: 0;
+  }
+  .in-index {
+    position: absolute;
+    right: calc(100% + var(--sheet-gutter));
+    width: var(--sheet-index);
+  }
+  .in-note {
+    position: absolute;
+    left: calc(100% + var(--sheet-gutter));
+    width: var(--sheet-note);
+  }
+  /* Entry numbers hang in the gutter, 12px clear of the text. They stay in the flow
+     (pulled out by a negative margin) so they share the entry's baseline. */
+  .in-gutter {
+    flex: none;
+    width: calc(var(--sheet-gutter) - 12px);
+    margin-left: calc(-1 * var(--sheet-gutter));
+    margin-right: 12px;
+    text-align: right;
+  }
+}
+
+/* Narrower, there is no gutter for the entry numbers: hung in the 24px page margin they sat
+   against the screen's edge. The order is in the list itself. */
+@media (max-width: 1023px) {
+  .in-gutter {
+    display: none;
+  }
+}
+
+/* On a phone an entry is two lines rather than one cut short: the title and its date, then what it
+   is, in full, underneath. No leader: there is no run of space left to lead across. */
+@media (max-width: 639px) {
+  .entry {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+  .entry > .leader {
+    display: none;
+  }
+  .entry > .entry-title {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+  .entry > .entry-title,
+  .entry > .entry-title > * {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  .entry > .entry-sub {
+    order: 3;
+    flex: 0 0 100%;
+    margin-left: 0;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 20px;
+  }
+}
+
+/* A ledger leader: the dotted line between an entry and its date. */
+.leader {
+  flex: 1 1 auto;
+  min-width: 16px;
+  align-self: baseline;
+  height: 0;
+  border-bottom: 1px dotted color-mix(in oklab, var(--ui-text) 22%, transparent);
+  transform: translateY(-0.28em);
+}
+
 @layer base {
   :root {
     @apply selection:bg-primary selection:text-highlighted;
+    /* the ground on the html element itself, not only the body: the browser reads it for its bars
+       and shows it past the page's ends when it is pulled */
+    background-color: var(--ui-bg);
   }
 
   *:focus-visible {
@@ -78,6 +253,17 @@
   margin-inline: calc(var(--breakout) * -1);
 }
 
+/* On the sheet, plates break out asymmetrically: a little into the left gutter
+   (the contents live in the index margin), further into the empty note margin. */
+@media (min-width: 1024px) {
+  .prose-breakout :where(.prose-code-block, figure, video, iframe, .breakout, img:not(a img):not(p img)) {
+    width: calc(100% + 40px + 136px);
+    max-width: calc(100% + 40px + 136px);
+    margin-left: -40px;
+    margin-right: -136px;
+  }
+}
+
 @media (max-width: 639px) {
   .prose-breakout :where(.prose-code-block, figure, video, iframe, img:not(a img):not(p img), .breakout) {
     --breakout: 0px;
@@ -107,20 +293,6 @@
 .prose-compact :where(blockquote) {
   margin-top: 1rem;
   margin-bottom: 1rem;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-in {
-  animation: slideIn 0.3s ease forwards;
-}
-
-html.revisit .animate-in {
-  animation: none;
-  opacity: 1;
 }
 
 * {

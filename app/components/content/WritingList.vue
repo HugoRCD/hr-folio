@@ -80,12 +80,10 @@ const { highlightedIndex } = isFullPage.value
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <component :is="limit > 0 ? 'h3' : 'h1'" class="font-serif text-lg italic text-highlighted">
-      Writing<span class="text-primary">.</span>
-    </component>
+  <section class="relative flex flex-col">
+    <SectionMark :numeral="limit > 0 ? 'IV' : '§'" label="Writing" :as="limit > 0 ? 'h3' : 'h1'" />
 
-    <div v-if="isFullPage" class="flex justify-end">
+    <div v-if="isFullPage" class="in-note top-2 mb-3 flex items-center justify-end lg:mb-0 lg:h-6 lg:justify-start">
       <ListToolbar
         ref="toolbarRef"
         :count="posts.length"
@@ -100,30 +98,31 @@ const { highlightedIndex } = isFullPage.value
       />
     </div>
 
-    <div class="flex flex-col">
-      <NuxtLink
-        v-for="(post, index) in posts"
-        :key="post.path"
-        :to="post.path"
-        class="group flex items-baseline justify-between gap-4 py-2 animate-in opacity-0"
-        :class="{ 'bg-muted/5': highlightedIndex === index }"
-        :style="{ animationDelay: `${index * 40}ms` }"
-      >
-        <span class="flex min-w-0 items-center gap-2 font-medium text-highlighted decoration-primary group-hover:underline">
-          <span class="truncate">{{ post.title }}</span>
-        </span>
-        <span class="flex shrink-0 items-baseline gap-2 text-sm text-muted/60">
-          <span v-if="isFullPage && post.readingMinutes" class="text-muted/30">{{ post.readingMinutes }} min</span>
-          {{ new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) }}
-        </span>
-      </NuxtLink>
-    </div>
+    <ol class="flex flex-col">
+      <li v-for="(post, index) in posts" :key="post.path" class="relative">
+        <NuxtLink
+          :to="post.path"
+          class="entry group flex items-baseline gap-3 py-2"
+          :class="{ 'bg-muted/5': highlightedIndex === index }"
+        >
+          <span class="entry-title flex min-w-0 items-baseline">
+            <span class="in-gutter font-mono text-[10px] tabular-nums text-muted/40" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
+            <span class="min-w-0 truncate font-medium text-highlighted decoration-primary underline-offset-4 group-hover:underline">{{ post.title }}</span>
+          </span>
+          <span class="leader" aria-hidden="true" />
+          <span class="entry-sub flex shrink-0 items-baseline gap-3">
+            <span v-if="isFullPage && post.readingMinutes" class="font-mono text-xs tabular-nums text-muted/40">{{ post.readingMinutes }} min</span>
+            <time :datetime="post.date" class="font-mono text-xs tabular-nums text-muted/70">{{ new Date(post.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) }}</time>
+          </span>
+        </NuxtLink>
+      </li>
+    </ol>
     <NuxtLink
       v-if="showViewAll"
       to="/writing"
-      class="text-sm text-muted/50 transition-colors hover:text-highlighted"
+      class="mt-2 self-start font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50 transition-colors hover:text-highlighted"
     >
       All writing &rarr;
     </NuxtLink>
-  </div>
+  </section>
 </template>
