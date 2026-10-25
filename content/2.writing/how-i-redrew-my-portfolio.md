@@ -1,7 +1,7 @@
 ---
 title: How I Redrew My Portfolio
-description: I've just redesigned my portfolio. Here is every detail on it, where
-  it comes from, and why it's there.
+description: I've just redesigned my portfolio. It used to be blue, it's red now.
+  Here is where everything on it comes from.
 date: 2026-10-18
 tags: [design, personal]
 sheet: true
@@ -10,236 +10,266 @@ sheet: true
 ::sheet-head
 # How I Redrew My Portfolio
 
-I've just redesigned my portfolio. It used to be blue. It's red now, and almost everything around that red changed too.
+I've just redesigned my portfolio. It used to be blue. It's red now, and almost everything around that red has changed with it.
 
-Today we can make almost anything. Code is nearly free, and AI does the rest. I wrote about how I use it in [How I Work With Agents Right Now](/writing/how-i-work-with-agents-right-now). So what matters is what we choose not to make, and why we make the rest. Intention comes first.
+We live at a time when almost anything can be made. Code is nearly free, and AI does much of the rest; I wrote about how I work with it in [How I Work With Agents Right Now](/writing/how-i-work-with-agents-right-now). When everything is within reach, what makes a thing yours is what you choose to make, what you choose to leave out, and why. Intention comes first.
 
-I wanted this site to be beautiful: simple, not overdone, harmonious, made with taste. In [How a Tweet Changed My Life](/writing/how-a-tweet-changed-my-life), I wrote that every detail counts, including the ones nobody will consciously notice. So here is every detail of this one: what it is, where it comes from, and why it's there.
+So instead of starting from a style, I started from the things I love, and let each of them leave its mark on the page: a watch, two reds, the letters we've stopped writing, and the light. In [How a Tweet Changed My Life](/writing/how-a-tweet-changed-my-life), I wrote that every detail counts, even the ones nobody will consciously notice. These are the details of this site, and the stories behind them.
 ::
 
 ::sheet-section{id="red" numeral="I" label="The red"}
-The site has one colour, and I wanted it to be my own: a red. The two reds I love most are Cartier's and Ferrari's, so I made mine from both.
+The site has one colour, and I knew early on it would be a red. Of all the reds I know, the two I've loved the longest are Cartier's and Ferrari's, and I couldn't choose between them. So the red here is made from both.
 
-:::sheet-entries
-::::sheet-entry{term="Cartier" font="redaction"}
-To me, Cartier is French excellence. Behind the name there's an amazing atelier, with the same idea of craft I try to put into my work. They make beautiful jewellery, and especially beautiful watches.
+Cartier, to me, is French excellence. Behind the name there is an atelier, and more than a century and a half of people perfecting the same gestures: setting stones, shaping cases, finishing the smallest parts by hand. It's the same idea of craft I try to bring to my own work, with code instead of gold. And of everything that comes out of that atelier, what moves me most is their watches.
 
-I love watches, and for years my dream watch was a Cartier: the Santos-Dumont. Louis Cartier made the first one in 1904 for his friend Alberto Santos-Dumont, an aviator who needed to read the time without letting go of the controls. It's one of the first wristwatches made for a man, with a square case and Roman numerals on the dial.
+For years, my dream watch was the Santos-Dumont. Its story begins in Paris, in 1904. Alberto Santos-Dumont, a Brazilian aviator and a friend of Louis Cartier, couldn't take out his pocket watch in flight without letting go of the controls. So Cartier designed him a watch to wear on the wrist: a square case with its screws left in view, and Roman numerals on the dial. It became one of the first wristwatches made for a man.
 
-I bought mine when I joined Vercel. That role means a lot to me, and I wanted to mark it with something just as meaningful.
+I bought mine when I joined Vercel. It was a huge step in my career, and I wanted to mark that moment with something I would keep. You'll find the watch all over this site: in the numbering of the sections, in the hour at the top of the page, and in the movement that keeps that hour.
 
-And Cartier's red is one of the most beautiful there is. You recognise it at a glance.
-::::
-
-::::sheet-entry{term="Ferrari" font="redaction"}
-Ferrari is Italy, and passion. The factory, the speed, the most beautiful engines and cars. Its red is passion too, and you recognise it everywhere.
-
-My father showed me Formula 1 on the weekends I spent at his place. It was the time of Michael Schumacher, already a legend. When you're a kid and you see those cars, fast and beautiful, you want them. That's how a passion starts.
-
-I stopped watching during high school and my studies. I came back a few years ago, following Charles Leclerc, and Lewis Hamilton, at Mercedes and now at Ferrari. A lot came back with it. Ferrari is almost a religion: look at how many people gather for it. It's the F40. It's memories, desire, and a longing for the future.
-::::
+:::print-spread
+---
+ratio: 528/268
+prints:
+  - src: /images/writing/redrew/louis-cartier.jpg
+    alt: Louis Cartier in a frock coat and top hat, photographed by the atelier Nadar
+    caption: Louis Cartier, photographed by Nadar
+    ratio: 471/650
+    x: 1
+    y: 5
+    w: 22
+    r: -3
+  - src: /images/writing/redrew/santos-dumont-1906.jpg
+    alt: Alberto Santos-Dumont standing at the controls of his 14-bis at Neuilly in 1906
+    caption: Alberto Santos-Dumont at the controls of his 14-bis, 1906
+    ratio: 720/503
+    x: 22
+    y: 19
+    w: 40
+    r: 2
+  - src: /images/writing/redrew/santos-dumont-movement.jpg
+    alt: The hand-wound movement inside a Cartier Santos-Dumont, seen through the open case
+    caption: The movement of a Santos-Dumont
+    ratio: 635/720
+    x: 55
+    y: 2
+    w: 24
+    r: -1.5
+  - src: /images/writing/redrew/panther-1914.jpg
+    alt: George Barbier's Lady with Panther, drawn for Cartier in 1914
+    caption: George Barbier for Cartier, 1914
+    ratio: 563/720
+    x: 75
+    y: 14
+    w: 25
+    r: 3.5
+---
 :::
 
-The two reds have almost the same hue and the same intensity. Only the lightness is different: Cartier's is just a bit darker. So I mixed them in OKLab and kept the point halfway. Drag the needle, and the page's red follows.
+Ferrari is the other side of the same colour. Where Cartier is patience and precision, Ferrari is Italy, and passion: the factory in Maranello, the noise, the speed, some of the most beautiful engines and cars ever built. Its red isn't a quiet one. You see it from the other side of a circuit, and you feel it before you understand it.
+
+It came to me through my father. On the weekends I spent at his place, he showed me Formula 1. It was the time of Michael Schumacher, already a legend, and of red cars that seemed to win every Sunday. I was a child. I didn't know yet what I was looking at, only that I couldn't look away. That's how a passion starts: quietly, long before you have a name for it.
+
+Then life took over, and through high school and my studies I stopped watching. A few years ago I came back, following Charles Leclerc, and Lewis Hamilton, from his years at Mercedes to his move to Ferrari, and a lot came back with it. Ferrari is almost a religion: you only have to see the crowds dressed in red, at every race, in every country. And for me it's also the F40, which holds all of it at once: memories, desire, and a longing for the future.
+
+:::print-spread
+---
+ratio: 528/222
+prints:
+  - src: /images/writing/redrew/maranello-1947.jpg
+    alt: The first Ferrari, a 125 S, at the gate of the Maranello factory in 1947
+    caption: The first Ferrari, at the factory gate, Maranello, 1947
+    ratio: 720/504
+    x: 0
+    y: 4
+    w: 28
+    r: -2.5
+  - src: /images/writing/redrew/gto-1962.jpg
+    alt: A Ferrari 250 GTO surrounded by a crowd after winning the Coppa Fagioli in 1962
+    caption: A 250 GTO wins the Coppa Fagioli, 1962
+    ratio: 720/540
+    x: 24
+    y: 21
+    w: 28
+    r: 1.5
+  - src: /images/writing/redrew/f40-1987.jpg
+    alt: A red Ferrari F40 shown to the press at Fiorano in 1987
+    caption: The F40 at Fiorano, 1987
+    ratio: 720/540
+    x: 48
+    y: 2
+    w: 28
+    r: -1
+  - src: /images/writing/redrew/schumacher-2004.jpg
+    alt: Michael Schumacher driving the Ferrari F2004 in 2004
+    caption: Michael Schumacher in the F2004, 2004
+    ratio: 720/480
+    x: 72
+    y: 20
+    w: 28
+    r: 2.5
+---
+:::
+
+Side by side, the two reds are closer than you'd think: almost the same hue, almost the same strength, with Cartier's just a little darker. So I mixed them in OKLab, a colour space built around the way our eyes see, and took the point exactly halfway between them. Drag the needle, and the page's red follows.
 
 :::red-viewer
 :::
 
-Halfway passes AA contrast on white and on black. Cartier's red alone doesn't, on black. It also has the same lightness as my old blue, so nothing on the pages looks heavier or lighter than before.
+That point also has the same lightness as my old blue, so nothing on the pages got heavier when the colour changed. At night the red is a touch brighter, so it still reads on black.
 
-I use it like Cartier uses theirs, as a line: a rule, an underline, a numeral, a title, the ink of the signature. Never as a background.
+:::sheet-entries
+::::sheet-entry{term="Entre-deux" font="redaction" swatch="#CD1919"}
+The red itself. In couture, an *entre-deux* is the narrow band of lace sewn between two pieces of fabric to join them, as this red joins two others.
+::::
+
+::::sheet-entry{term="At night" font="redaction" swatch="#E1342D"}
+The same red, lifted for dark grounds.
+::::
+
+::::sheet-entry{term="Envers" font="redaction" swatch="#901112"}
+*L'envers* is the back of a fabric, the side you don't see. It's the ground under the page.
+::::
+
+::::sheet-entry{term="Bone" font="redaction" swatch="#EBEBEB"}
+Everything drawn on Envers: the lines, the text, the mechanism.
+::::
+
+::::sheet-entry{term="Ink" font="redaction" swatch="#171717"}
+The deepest grey, for text on white.
+::::
+:::
 
 :::sheet-note
-Measured from the CSS each site ships: cartier.com, 11 Oct 2026; ferrari.com, 17 Oct 2026.
+Measured from the CSS each site ships: Cartier `#C10016`, Ferrari `#DA291C`, on 11 and 17 Oct 2026.
 
-[OKLab](https://bottosson.github.io/posts/oklab/) is a colour space built around how we see colour.
+[OKLab](https://bottosson.github.io/posts/oklab/): halfway in it looks halfway.
 
-On black, each red is lifted a little, as Ferrari lifts its own.
-
-[Santos-Dumont](https://int.cartier.com/en/collections/watches/all-watches/santos-de-cartier-all/wssa0022-santos-dumont-watch.html), large model, steel. [Alberto Santos-Dumont](https://en.wikipedia.org/wiki/Alberto_Santos-Dumont), aviator.
-
-[Michael Schumacher](https://en.wikipedia.org/wiki/Michael_Schumacher), [F40](https://en.wikipedia.org/wiki/Ferrari_F40).
+My watch: the [Santos-Dumont](https://int.cartier.com/en/collections/watches/all-watches/santos-de-cartier-all/wssa0022-santos-dumont-watch.html), large model, steel.
 :::
 ::
 
-::sheet-section{id="type" numeral="II" label="The type"}
+::sheet-section{id="sheet" numeral="II" label="The letter"}
+The site is two things at once: a letter, and a drawing sheet.
+
+I don't write letters, and I think it's a shame we're losing them. Everything is instant now. Messages arrive before we've finished thinking, nobody waits for anything, and text can be generated without end. A letter asks for the opposite. You write it with an intention, you take your time over each line, you send it, and then you wait, sometimes for days, for an answer. It teaches you to care about the way you write, and to be patient. And there is something romantic about it that nothing has replaced: letters run all through history, they've changed the course of things, and they've started passions and love stories we still read today.
+
+So every page here is written like one. It opens the way a letter does, with the place and the date, *London* and today, beneath the H of my signature. And it closes with the signature itself. A signature is a stamp, like the one at the bottom of a document: it says that I made this, and that I stand behind it. I sign Hugo rather than Hugo Richard, because a surname always keeps a little distance, and a first name is how you sign a letter to someone you know.
+
+:::print-spread
+---
+ratio: 528/246
+prints:
+  - src: /images/writing/redrew/gazette-1924.jpg
+    alt: The cover of the Gazette du Bon Ton, May 1924, with the date at the top
+    caption: Gazette du Bon Ton, May 1924, the date first
+    ratio: 602/720
+    x: 3
+    y: 4
+    w: 26
+    r: -2.5
+  - src: /images/writing/redrew/telegram-enzo.jpg
+    alt: A telegram of congratulations signed Enzo Ferrari, sent from Maranello
+    caption: A telegram of congratulations signed by Enzo Ferrari
+    ratio: 720/507
+    x: 27
+    y: 12
+    w: 44
+    r: 1.5
+  - src: /images/writing/redrew/dino-badge.jpg
+    alt: The Dino badge, Alfredo Ferrari's signature in blue on yellow enamel
+    caption: The Dino badge, drawn from a signature
+    ratio: 720/540
+    x: 70
+    y: 20
+    w: 28
+    r: -3
+---
+:::
+
+Three typefaces share the page, one for each voice: the titles of the letter, its text, and the measurements of the drawing.
+
 :::sheet-entries
 ::::sheet-entry{term="Redaction" font="redaction"}
-Titles and numerals. It was inspired by legal briefs, and it gives these pages the voice of a document.
+The titles. A serif Jeremy Mickel drew in 2019 from the typefaces of official documents, Times New Roman and New Century Schoolbook, then took somewhere else: soft, round curves that end in terminals as sharp as a blade. Its italic sets the red numerals.
 ::::
 
 ::::sheet-entry{term="Geist" font="sans"}
-The text.
+The text. Vercel's typeface, drawn in the Swiss tradition: plain, precise, made to be read.
 ::::
 
 ::::sheet-entry{term="Geist Mono" font="mono"}
-Measurements, labels and code.
-::::
-
-::::sheet-entry{term="Hugo" font="signature"}
-Mrs Saint Delafield, for the signature at the end of a page. A signature is a stamp, like on a document: it says I made this, and I stand behind it. AI is part of how I work now, so I want the human behind it to show.
-
-I sign Hugo, not Hugo Richard. A surname puts a bit of distance. A first name is how you sign a letter to someone you know.
+The measurements, notes and captions. Every character takes the same width, like figures on a drawing.
 ::::
 :::
 
-:::sheet-note
-[Redaction](https://www.redaction.us): Jeremy Mickel and Forest Young, MCKL.
+When you arrive here, I'd like it to feel like receiving a beautiful letter: a good moment, a few things to take away from what I've written, and the feeling, somewhere, that it was made with care.
 
-[Geist](https://vercel.com/font): Vercel.
-
-[Mrs Saint Delafield](https://fonts.google.com/specimen/Mrs+Saint+Delafield): SIL Open Font License.
-:::
-::
-
-::sheet-section{id="sheet" numeral="III" label="The sheet"}
-The site is two things at once: a letter, and a drawing sheet.
-
-:::sheet-entries
-::::sheet-entry{term="The letter"}
-A letter opens with where and when it was written, and it ends with a signature. This site does the same.
-
-I don't write letters, and I think it's a shame we're losing them. Everything is instant now, there's no waiting, and text can be generated without end. A letter is the answer to that. You write it with an intention, you take your time, you send it, and you wait. It teaches you to care about how you write, and to be patient.
-
-There's also something romantic about letters, like in a story. They run all through history, they've changed a lot of things, started passions and romances. I find that a very strong symbol.
-
-When you visit this site, I'd like it to feel like receiving a beautiful letter: a good moment, a few things to take away from what I write, and the feeling that it was well made.
-::::
-
-::::sheet-entry{term="The sheet"}
-A drawing sheet is where things are designed, measured, and redrawn until they're right. It's the workshop side of the site: craft and iteration. So every page is laid out like one, on the same plate of five columns.
-::::
-:::
+The drawing sheet is the other half of the site, the workshop behind the letter. It's where things are designed, measured, and redrawn until they're right, which is how I like to work. Every page sits on the same plate of five columns.
 
 :::sheet-plate
 :::
 
-:::sheet-entries
-::::sheet-entry{term="The columns"}
-On the left, the index, where the section numbers sit. In the middle, the text, never more than about 65 characters a line, so it stays easy to read. On the right, the notes and sources, like the margin of a drawing. Between them, two gutters of 48px.
-::::
+And you can decide how much of the drawing you want to see. In the footer, or with the D key, the page goes from a clean fair copy to the full drawing, with every measurement written in its margins.
 
-::::sheet-entry{term="The spacing"}
-Ferrari's website spaces everything on one scale: 4, 8, 16, 24, 32, 48, 64, 96, 128. I took it as it is. Lines are 24px, gutters 48px, and sections sit 96px apart, which is four lines. Because every space is one of these steps, the page keeps the same rhythm from top to bottom.
-::::
+:::sheet-note
+[Redaction](https://www.redaction.us): Jeremy Mickel and Forest Young, MCKL. [Geist](https://vercel.com/font): Vercel. [Mrs Saint Delafield](https://fonts.google.com/specimen/Mrs+Saint+Delafield): SIL Open Font License.
 
-::::sheet-entry{term="The numbers"}
-In the footer, or with the D key, you choose how far the drawing has gone: Fair copy, Scale, Grid, or Drawing, from a first sketch to a finished, measured sheet. The site opens at Drawing, because that's where there's the most to see.
-
-At that level the measurements appear in the margins, the way they would on a real drawing: the width of each column, the size of each type, the 96 = 4 × 24 between two sections, the equation the ∞ is drawn from. Every size on the page was calculated, and these notes show the numbers.
-::::
+The [Dino](https://en.wikipedia.org/wiki/Ferrari_Dino) badge was drawn from the signature of Alfredo Ferrari, Enzo's son.
 :::
 ::
 
-::sheet-section{id="light" numeral="IV" label="The light"}
-A letter is written somewhere, at some hour. So is this page: it's lit by the sun over wherever I am.
+::sheet-section{id="light" numeral="III" label="The light"}
+A letter is always written somewhere, at a certain hour. So is this page. It's lit by the sun over wherever I happen to be, and the city written at the top is real: I change it when I travel, because a letter has to come from somewhere, and knowing where brings you a little closer to whoever wrote it.
 
-The light comes from photography. Light is what makes a good photo: on leaves, on flowers, on anything that reflects it. And time passing reminds me of the watch.
+The light comes from photography. When I take pictures, it's what matters most, and nearly always what decides whether a picture is worth taking. The same street can be flat at noon and beautiful an hour before sunset, when the light comes in low and catches a face, the leaves of a tree, the texture of a wall. Very often a good photograph is just good light, seen at the right moment. So I wanted this page to have a light of its own, one that changes through the day like everything I photograph.
 
-So the page keeps its time the way a watch does, with a movement. Pull the crown and turn it: the hands move, and the whole page takes the light of that hour.
+There's also a moment in photography I've always loved: before the print, there's the negative, the same picture with light and dark swapped. Lift the corner of the home page, and that's what you'll find under my portrait: its negative, laid on a light box, as if it hadn't been printed yet.
+
+The hour comes from the watch. The page keeps time the way my Santos-Dumont does, with a movement, and its sections are numbered like the hours on its dial. Pull the crown and turn it: the hands move, and the whole page takes on the light of that hour.
 
 :::crown-viewer
 :::
 
-Through the afternoon, the white turns to parchment. After sunset, the page becomes a violet dusk that gets darker until it's black. Before sunrise, the same in blue. Drag the needle, or run the whole day.
+Through the afternoon, the white slowly turns to parchment. After sunset the page becomes a violet dusk that darkens until it's black, and before sunrise it goes through the same in blue. None of it ever makes the page harder to read: every grey keeps the contrast it has at noon, and the red slides gently along its band, towards Cartier's as the light falls, towards Ferrari's at dusk.
 
 :::sun-viewer
 :::
 
-:::sheet-entries
-::::sheet-entry{term="Contrast"}
-Everything moves with the light. Each grey keeps the contrast it has at noon. The red moves along its band: towards Cartier's as the light falls, towards Ferrari's at dusk, back to halfway by day and by night.
-::::
-
-::::sheet-entry{term="The place"}
-The city in the corner is real. I change it when I travel. A letter has to come from somewhere, and knowing where brings you a bit closer.
-::::
-
-::::sheet-entry{term="By hand"}
-The dot in the footer switches to light or dark by hand. Press it again, and the page follows the sun. Under the page, the dot moves a lever in the mechanism, as the other buttons in the footer move their own parts.
-::::
-:::
+And if you'd rather choose for yourself, the dot in the footer sets light or dark by hand. Press it again, and the page goes back to following the sun.
 
 :::sheet-note
-[Photography](https://en.wikipedia.org/wiki/Photography#Etymology) means drawing with light.
+The red never drops under 4.6&nbsp;:&nbsp;1, nor the text under 4.5&nbsp;:&nbsp;1. Every build checks it at every height the sun can take.
 
-The red never drops under 4.6&nbsp;:&nbsp;1, nor the text under 4.5&nbsp;:&nbsp;1.
-
-The movement is drawn, not copied: a train of 80/10 · 75/10 · 84/7 and a 15-tooth escape wheel, for 21,600 beats an hour, the beat of the hand-wound 430 MC in my Santos-Dumont. Its 24-hour wheel carries the sun.
+The movement is drawn, not copied: 21,600 beats an hour, the beat of the hand-wound 430 MC in my Santos-Dumont.
 :::
 ::
 
-::sheet-section{id="marks" numeral="V" label="The marks"}
-:::sheet-entries
-::::sheet-entry{term="I – VII" font="redaction-italic" red="true"}
-Sections are numbered in Roman numerals, like the hours on my Santos-Dumont.
-::::
+::sheet-section{id="underneath" numeral="IV" label="Underneath"}
+Lift any corner of the page, and it folds back like a sheet of paper. On a phone, tap the corner and the page turns over, like the page of a book. I like design that makes you feel something, and few gestures are as familiar as lifting a sheet of paper to see what's underneath. It's also the transition the site needed: the letter is on top, the drawing sheet lies underneath, and something has to take you from one to the other. Nothing does that better than lifting the page.
 
-::::sheet-entry{term="London," font="redaction-italic"}
-A letter opens with where and when. Here the line is true: the date and hour are local to where I am, and that same place lights the page (IV).
-::::
-
-::::sheet-entry{term="H" font="signature" red="true"}
-The H that opens my signature, alone at the top of every page.
-::::
-
-:::
-
-:::sheet-note
-[Gazette du Bon Ton](https://en.wikipedia.org/wiki/Gazette_du_Bon_Ton), nº 9, May 1924: the date comes first. Rijksmuseum, CC0.
-
-A hand turned into a mark, as Ferrari's [Dino](https://en.wikipedia.org/wiki/Ferrari_Dino) badge was drawn from Alfredo Ferrari's signature.
-:::
+What you find here is the working drawing of the page you were reading, and the mechanism that runs it. Everything that changes on the page by itself sits right above the part that changes it: the movement beneath the hour, a lever for the light, a wheel for the level of detail, a chime for the sound. Point at a part's number, and it tells you what it does. Around them lie the request that brought you here, the file each block of the page comes from, and the last changes made to the site.
 ::
 
-::sheet-section{id="underneath" numeral="VI" label="Underneath"}
-Lift any corner of the page and it folds back. On a phone, tap the corner and the page turns over. Underneath is the working drawing of the page you were reading, and the mechanism that runs it. The idea comes from a page Vercel made, where you could peel back the surface and see the machinery.
-
-:::sheet-entries
-::::sheet-entry{term="The mechanism"}
-Everything on the page that moves on its own sits over the part that moves it. The movement under the hour beats 21,600 times an hour, like the 430 MC in the Santos-Dumont I wear, so the page keeps time with a real watch. The buttons in the footer move their own parts. Under the ∞ is the barrel, which holds the mainspring and can only turn one way.
-::::
-
-::::sheet-entry{term="Fig. 1"}
-The request. The page was rendered on a Vercel server and sent to you over the network. Your city, the edge that answered, the region that rendered it, and the shortest time light needs for the trip.
-::::
-
-::::sheet-entry{term="Title block"}
-The sheet, the place, the time, and the revision.
-::::
-
-::::sheet-entry{term="Revisions"}
-The last changes to the site, numbered from the first one.
-::::
-:::
-::
-
-::sheet-section{id="infinity" numeral="VII" label="Infinity"}
-On the home page, my role at Vercel reads 2025, and then, where the end date would be, an infinity sign. It's the mark I care about most.
-
-:::sheet-entries
-::::sheet-entry{font="infinity"}
-A commitment. I joined Vercel in 2025, and it's where I want to stay. I don't want to change companies.
-::::
-
-::::sheet-entry{term="Vercel"}
-Vercel has a lot in common with Cartier and Ferrari: excellence, design, and speed. It's what I love in them, but in my world, in tech, today.
-::::
-
-::::sheet-entry{term="Iterate to Greatness"}
-One of Vercel's values. Ship fast rather than wait for perfect, make sure everything works, then keep making it better. evlog grew up that way, and it's how I want to work. I don't drop projects: I give them time and push them all the way, so the people using them know someone is behind them.
-::::
-
-::::sheet-entry{term="The impact"}
-What I build at Vercel, like what I built at NuxtLabs before, is used by hundreds of thousands of people, sometimes millions. Each time, I'm adding my stone to a building that's still going up. That's why I want to stay, and keep adding to it.
-::::
+::sheet-section{id="infinity" numeral="V" label="Iterate"}
+:::sheet-quote{by="One of Vercel's values"}
+Iterate to Greatness.
 :::
 
-This site works the same way. It isn't finished, and it won't be. I'll keep iterating on it.
+Of every idea I've come across in my work, it's the one I find most powerful. When you chase perfection, you miss the point. It's been said a thousand times, but it's true: perfection isn't something you can reach. And while you wait for it, you sometimes never release anything at all, because it's never quite ready.
+
+Iterating is the opposite. You release something that already holds the foundations of what you think and what you want to show, and then you keep going. You improve it, people tell you what they see, and what they tell you improves it again. There's no end to it, and that's exactly what I love. Most of the time, the process is the most interesting part, and the most fun. For me, it's the only real way to move forward.
+
+It's something I did less with my projects before, and I want to do much more of it now: not drop the things I start, give them time, and keep taking them further, so that the people who use them know someone is behind them.
+
+It meets another phrase I love: simplicity is the ultimate sophistication. To me, something becomes right not when there's nothing left to add, but when there's nothing left to take away. And you only get there by coming back to it, again and again.
+
+On the home page, my role at Vercel starts in 2025 and ends with ∞. Under the page, that sign sits above the barrel, the part that holds the mainspring and can only turn one way. This site works the same way. It isn't finished, and it never will be. I'll keep iterating on it.
 
 :::sheet-note
-The mark is drawn, not typed: a [lemniscate of Bernoulli](https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli), tilted 12° like a hand would write it.
+The ∞ is drawn as a curve, not typed: a [lemniscate of Bernoulli](https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli), the figure of eight mathematicians use for infinity, leaning 12° as if written by hand.
 
-[Iterate to Greatness](https://vercel.notion.site/Vercel-s-Values-Interview-e24f2ffeea734e6eade4569e46ba2573): "Iterate" is not launching late, "to Greatness" is uncompromising quality.
+*Simplicity is the ultimate sophistication* is usually credited to Leonardo da Vinci. *Nothing left to take away* is Antoine de Saint-Exupéry's, in *Terre des hommes*, 1939.
+
+The archive pictures come from Wikimedia Commons and are in the public domain, apart from [the Santos-Dumont movement](https://commons.wikimedia.org/wiki/File:Calibro_Fr%C3%A9d%C3%A9ric_Piguet_21_incassato_in_un_Cartier_Santos_Dumont_anni_Novanta.jpg) by EMore98 and [the telegram](https://commons.wikimedia.org/wiki/File:Un_t%C3%A9l%C3%A9gramme_de_f%C3%A9licitations_d%27Enzo_Ferrari....JPG) by Claude F. Sage (both CC BY-SA 4.0), [Schumacher in the F2004](https://commons.wikimedia.org/wiki/File:Michael_Schumacher_Ferrari_2004.jpg) by Rick Dikeman (CC BY-SA 3.0), and the Gazette du Bon Ton, from the Rijksmuseum (CC0).
 :::
 ::

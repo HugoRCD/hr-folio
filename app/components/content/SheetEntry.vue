@@ -1,8 +1,10 @@
 <script setup lang="ts">
 // One entry of a sheet (::sheet-entry{term="Cartier" font="redaction"}): the term in a fixed column,
-// set in what it describes when that helps, the definition beside it.
-const { font, red = false } = defineProps<{
+// set in what it describes when that helps, the definition beside it. A colour's entry carries its
+// chip (swatch="#CD1919"), so the name is read beside the colour it names.
+const { font, red = false, swatch } = defineProps<{
   term?: string
+  swatch?: string
   font?: 'redaction' | 'redaction-italic' | 'sans' | 'mono' | 'signature' | 'infinity'
   red?: boolean | string
 }>()
@@ -26,7 +28,8 @@ const termClass = computed(() => {
     <dt :class="termClass">
       <InfinityMark v-if="font === 'infinity'" :width="40" />
       <template v-else>
-        {{ term }}
+        <span v-if="swatch" class="chip" :style="{ backgroundColor: swatch }" aria-hidden="true" />{{ term }}
+        <span v-if="swatch" class="hex">{{ swatch }}</span>
       </template>
     </dt>
     <dd>
@@ -49,6 +52,22 @@ dt {
   width: 128px;
   flex: none;
 }
+.hex {
+  display: block;
+  margin-top: 2px;
+  padding-left: 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ui-text-muted);
+}
+.chip {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-text) 14%, transparent);
+}
 dt.label {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -64,6 +83,7 @@ dd {
 }
 dd :deep(p) {
   margin: 0;
+  line-height: inherit;
 }
 dd :deep(p + p) {
   margin-top: 12px;
