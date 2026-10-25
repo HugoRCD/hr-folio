@@ -221,7 +221,107 @@ The [Dino](https://en.wikipedia.org/wiki/Ferrari_Dino) badge was drawn from the 
 ::sheet-section{id="light" numeral="III" label="The light"}
 A letter is always written somewhere, at a certain hour. So is this page. It's lit by the sun over wherever I happen to be, and the city written at the top is real: I change it when I travel, because a letter has to come from somewhere, and knowing where brings you a little closer to whoever wrote it.
 
-The light comes from photography. When I take pictures, it's what matters most, and nearly always what decides whether a picture is worth taking. The same street can be flat at noon and beautiful an hour before sunset, when the light comes in low and catches a face, the leaves of a tree, the texture of a wall. Very often a good photograph is just good light, seen at the right moment. So I wanted this page to have a light of its own, one that changes through the day like everything I photograph.
+The light comes from photography, and from painting. When I take pictures, it's what matters most, and nearly always what decides whether a picture is worth taking. The same street can be flat at noon and beautiful an hour before sunset, when the light comes in low and catches a face, the leaves of a tree, the texture of a wall. Very often a good photograph is just good light, seen at the right moment.
+
+A photographer waits for that light. A painter has to make it, with nothing but pigment, and the painters I love most are the ones who made it best: Leonardo's sfumato, the soft shadow that lets a face dissolve into the air around it; the warm skies of Titian; Caravaggio's beam of light cutting across a dark room; the daylight Vermeer lets in through a window; the sun on Fragonard's pink silk in a shaded garden; Van Gogh's yellow lamp under a night sky. Each of them found their own way to put light on a flat surface.
+
+:::print-spread
+---
+ratio: 528/456
+prints:
+  - src: /images/writing/redrew/leonardo-mona-lisa-1503.jpg
+    alt: A woman with folded hands before a hazy landscape, her face modelled in soft shadow
+    caption: Mona Lisa, by Leonardo da Vinci, 1503–19
+    ratio: 483/720
+    x: 0
+    y: 3
+    w: 21
+    r: -2
+  - src: /images/writing/redrew/titian-bacchus-ariadne-1523.jpg
+    alt: Bacchus leaping from his chariot towards Ariadne, under a bright blue sky
+    caption: Bacchus and Ariadne, by Titian, 1520–23
+    ratio: 720/652
+    x: 19
+    y: 0
+    w: 28
+    r: 1.5
+  - src: /images/writing/redrew/caravaggio-matthew-1600.jpg
+    alt: Men counting money at a table in a dark room, caught in a beam of light from a high window
+    caption: The Calling of Saint Matthew, by Caravaggio, 1600
+    ratio: 720/680
+    x: 44
+    y: 3
+    w: 28
+    r: -1
+  - src: /images/writing/redrew/vermeer-milkmaid-1658.jpg
+    alt: A maid pouring milk at a table, lit by daylight from a window on the left
+    caption: The Milkmaid, by Johannes Vermeer, around 1660
+    ratio: 642/720
+    x: 72
+    y: 1
+    w: 26
+    r: 2
+  - src: /images/writing/redrew/fragonard-swing-1767.jpg
+    alt: A young woman in a pink dress on a swing in a dark garden, lit by a patch of sun
+    caption: The Swing, by Jean-Honoré Fragonard, 1767
+    ratio: 563/720
+    x: 5
+    y: 55
+    w: 26
+    r: 1.5
+  - src: /images/writing/redrew/monet-impression-1872.jpg
+    alt: A harbour in blue morning haze, with a small orange sun and its reflection on the water
+    caption: Impression, Sunrise, by Claude Monet, 1872
+    ratio: 720/558
+    x: 30
+    y: 58
+    w: 36
+    r: -1.5
+  - src: /images/writing/redrew/van-gogh-cafe-1888.jpg
+    alt: A café terrace lit yellow by its lamp, on a cobbled street under a starry blue sky
+    caption: Café Terrace at Night, by Vincent van Gogh, 1888
+    ratio: 574/720
+    x: 66
+    y: 55
+    w: 27
+    r: 2
+---
+:::
+
+And then Monet, who made the light itself the subject. In Rouen, he painted the front of the cathedral more than thirty times, from across the square, at different hours and in different weather, because the stone was never the same colour twice.
+
+:::print-spread
+---
+ratio: 528/300
+prints:
+  - src: /images/writing/redrew/monet-rouen-morning.jpg
+    alt: The façade of Rouen Cathedral in pale blue morning light
+    caption: Rouen Cathedral in the morning, by Claude Monet, 1892–94
+    ratio: 514/760
+    x: 4
+    y: 4
+    w: 30
+    r: -2
+  - src: /images/writing/redrew/monet-rouen-sun.jpg
+    alt: The same façade of Rouen Cathedral in bright white sunlight, under a blue sky
+    caption: Rouen Cathedral in full sun, by Claude Monet, 1892–94
+    ratio: 494/760
+    x: 34
+    y: 0
+    w: 30
+    r: 1
+  - src: /images/writing/redrew/monet-rouen-evening.jpg
+    alt: The same façade of Rouen Cathedral in warm orange evening light
+    caption: Rouen Cathedral in the evening, by Claude Monet, 1892–94
+    ratio: 468/760
+    x: 66
+    y: 5
+    w: 30
+    r: 2.5
+---
+:::
+
+That's what I wanted for this page: a light of its own, one that changes through the day, like the stone in Rouen, or anything I photograph.
 
 There's also a moment in photography I've always loved: before the print, there's the negative, the same picture with light and dark swapped. Lift the corner of the home page, and that's what you'll find under my portrait: its negative, laid on a light box, as if it hadn't been printed yet.
 
@@ -246,6 +346,9 @@ The movement is drawn, not copied: 21,600 beats an hour, the beat of the hand-wo
 
 ::sheet-section{id="underneath" numeral="IV" label="Underneath"}
 Lift any corner of the page, and it folds back like a sheet of paper. On a phone, tap the corner and the page turns over, like the page of a book. I like design that makes you feel something, and few gestures are as familiar as lifting a sheet of paper to see what's underneath. It's also the transition the site needed: the letter is on top, the drawing sheet lies underneath, and something has to take you from one to the other. Nothing does that better than lifting the page.
+
+:::page-layers
+:::
 
 What you find here is the working drawing of the page you were reading, and the mechanism that runs it. Everything that changes on the page by itself sits right above the part that changes it: the movement beneath the hour, a lever for the light, a wheel for the level of detail, a chime for the sound. Point at a part's number, and it tells you what it does. Around them lie the request that brought you here, the file each block of the page comes from, and the last changes made to the site.
 ::

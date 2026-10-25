@@ -90,13 +90,15 @@ figcaption {
 }
 /* at night the prints lie in the dark too: dimmer, and their shadow is lost in the ground */
 html.dark .print {
-  filter: brightness(0.82);
+  filter: brightness(0.92);
   box-shadow: 0 0 0 1px rgb(255 255 255 / 0.04), 0 6px 14px -4px rgb(0 0 0 / 0.6);
 }
 @media (max-width: 639px) {
   figcaption {
     font-size: 7px;
     line-height: 9px;
+    /* the prints are narrow here: the caption takes more of the margin, to stay on fewer lines */
+    max-width: 94%;
   }
   .print {
     padding: 3px 3px 0;
