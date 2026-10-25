@@ -11,15 +11,6 @@
   --font-signature: "Mrs Saint Delafield", cursive;
 }
 
-/* The italic ships in /fonts but was never registered, so italics were faked. */
-@font-face {
-  font-family: "Redaction";
-  src: url("/fonts/Redaction-Italic.otf") format("opentype");
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-}
-
 h1, h2, h3, .font-serif, .font-redaction {
   font-synthesis: none;
 }

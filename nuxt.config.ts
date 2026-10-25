@@ -196,12 +196,25 @@ Prefer raw markdown (rawbody) over rendered AST for analysis.`,
       weights: ['100 900'],
     },
     families: [
+      // a face given by its file takes a single weight and style (not the plural lists), or it has none
       {
         name: 'Redaction',
         src: '/fonts/Redaction-Regular.ttf',
-        weights: [400],
+        weight: 400,
+        style: 'normal',
         global: true,
       },
+      {
+        name: 'Redaction',
+        src: '/fonts/Redaction-Italic.ttf',
+        weight: 400,
+        style: 'italic',
+        global: true,
+      },
+      // Named here with the variable axis alone: merged with @nuxt/ui's single weights, the request
+      // to Google mixed a range and single values, was refused, and no Geist was ever served.
+      { name: 'Geist', provider: 'google', weights: ['100 900'], styles: ['normal'], global: true },
+      { name: 'Geist Mono', provider: 'google', weights: ['100 900'], styles: ['normal'], global: true },
     ]
   },
 })
