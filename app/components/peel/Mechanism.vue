@@ -15,7 +15,7 @@
 //   8 above the sound button, the chime: the button pushes its slide, and it strikes two notes
 // Measured from the live page each time the drawing underneath is made; the balloons are then
 // placed where they cover the least.
-import { localInstant, sunAt } from '~/utils/daylight'
+import { sunAt, wallInstant } from '~/utils/daylight'
 import { angles, C, circle, D, mesh, pitch, polar, toothed, VIEW } from '~/utils/movement'
 
 type Pt = { x: number, y: number }
@@ -228,8 +228,7 @@ const hourSec = computed(() => {
 const day = computed(() => {
   const place = daylight.value?.place
   if (!place?.timeZone) return null
-  const midnight = localInstant('0:00', place.timeZone).getTime()
-  const els = Array.from({ length: 97 }, (_, i) => sunAt(new Date(midnight + i * 900000), place).elevation)
+  const els = Array.from({ length: 97 }, (_, i) => sunAt(wallInstant(i * 15, place.timeZone), place).elevation)
   return { els, top: Math.max(...els) }
 })
 // the cam's radius for a sun height: smallest at night, largest at the day's top, so the day is

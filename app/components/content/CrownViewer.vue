@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { lightFor, localInstant, offsetMinutes, sunAt } from '~/utils/daylight'
+import { lightFor, offsetMinutes, sunAt, wallInstant, wallMinutes } from '~/utils/daylight'
 import { seenSinceLoad } from '~/utils/once'
 
 // The movement, with its crown (::crown-viewer). Pull the crown and turn it, as on a watch: the
@@ -14,13 +14,13 @@ const DAY = 1440
 const PER_PX = 2 // minutes a pixel of turning moves the hands
 
 const place = computed<Place>(() => daylight.value?.place ?? HOME_WHEREABOUTS)
-const midnight = computed(() => localInstant('0:00', place.value.timeZone).getTime())
 const skew = useState<number>('daylight-skew', () => 0) // the page's clock, if ?hour= moved it
 const nowMinutes = () => {
   const local = Date.now() + skew.value + offsetMinutes(new Date(), place.value.timeZone) * 60000
   return Math.floor((local % 86400000) / 60000)
 }
-const minutesOf = (instant: number) => Math.round((instant - midnight.value) / 60000)
+const minutesOf = (instant: number) => wallMinutes(instant, place.value.timeZone)
+const instantOf = (minutes: number) => wallInstant(minutes, place.value.timeZone)
 const wrap = (m: number) => ((Math.round(m) % DAY) + DAY) % DAY
 const hhmm = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
 
@@ -33,14 +33,14 @@ watch(preview, (v) => {
 function setTo(next: number) {
   const w = wrap(next)
   m.value = w
-  preview.value = w === nowMinutes() ? null : midnight.value + w * 60000
+  preview.value = w === nowMinutes() ? null : instantOf(w).getTime()
 }
 function backToNow() {
   preview.value = null
 }
 
 const reading = computed(() => {
-  const sun = sunAt(new Date(midnight.value + m.value * 60000), place.value)
+  const sun = sunAt(instantOf(m.value), place.value)
   const light = lightFor(sun.elevation, sun.morning)
   return { elevation: sun.elevation, phase: light.phase, hex: light.hex, dark: light.dark }
 })

@@ -28,12 +28,24 @@ export function offsetMinutes(at: Date, timeZone: string) {
   return (Date.UTC(n('year'), n('month') - 1, n('day'), n('hour'), n('minute')) - Math.floor(at.getTime() / 60000) * 60000) / 60000
 }
 
+/** The instant the zone's clock reads `minutes` past midnight today. Counted on the clock, not from
+ *  midnight: on the day the clocks change, midnight + 16 h is not 16:00. */
+export function wallInstant(minutes: number, timeZone: string) {
+  const now = new Date(Date.now() + offsetMinutes(new Date(), timeZone) * 60000) // the zone's wall clock, read as UTC
+  const guess = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) + Math.round(minutes) * 60000
+  return new Date(guess - offsetMinutes(new Date(guess), timeZone) * 60000)
+}
+
+/** Minutes past midnight on the zone's clock at that instant. */
+export function wallMinutes(instant: number, timeZone: string) {
+  const local = instant + offsetMinutes(new Date(instant), timeZone) * 60000
+  return Math.round((((local % 86400000) + 86400000) % 86400000) / 60000)
+}
+
 /** `17:40` today, in the given zone (the day is today's there). */
 export function localInstant(hhmm: string, timeZone: string) {
   const [h, m = '0'] = hhmm.split(':')
-  const now = new Date(Date.now() + offsetMinutes(new Date(), timeZone) * 60000) // the zone's wall clock, read as UTC
-  const guess = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), Number(h), Number(m)))
-  return new Date(guess.getTime() - offsetMinutes(guess, timeZone) * 60000)
+  return wallInstant(Number(h) * 60 + Number(m), timeZone)
 }
 
 export type Oklch = [l: number, c: number, h: number]

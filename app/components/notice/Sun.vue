@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { contrast } from '~/utils/oklab'
-import { lightFor, localInstant, offsetMinutes, sunAt } from '~/utils/daylight'
+import { lightFor, offsetMinutes, sunAt, wallInstant, wallMinutes } from '~/utils/daylight'
 
 // How the page is lit: today's sun over the place in the dateline, and the ground it gives the
 // page, hour by hour. The needle picks an hour, and the whole page takes that hour's light while
@@ -16,8 +16,7 @@ const RUN = 12000 // ms for a whole day
 const reduced = import.meta.client && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const place = computed<Place>(() => daylight.value?.place ?? HOME_WHEREABOUTS)
-const midnight = computed(() => localInstant('0:00', place.value.timeZone).getTime())
-const at = (m: number) => new Date(midnight.value + m * 60000)
+const at = (m: number) => wallInstant(m, place.value.timeZone)
 const skew = useState<number>('daylight-skew', () => 0) // the page's clock, if ?hour= moved it
 const nowMinutes = () => {
   const local = Date.now() + skew.value + offsetMinutes(new Date(), place.value.timeZone) * 60000
@@ -77,7 +76,7 @@ watch(t, (m) => {
 // and follows the hour when something else sets it (the crown, in the article)
 watch(preview, (v) => {
   if (running.value) return
-  const m = v === null ? now.value : Math.round((v - midnight.value) / 60000)
+  const m = v === null ? now.value : wallMinutes(v, place.value.timeZone)
   if (m !== t.value && m >= 0 && m < DAY) t.value = m
 })
 onBeforeUnmount(() => {
