@@ -76,8 +76,8 @@ dt.label {
   color: var(--ui-text-muted);
 }
 dd {
-  font-size: 14px;
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 28px;
   color: var(--ui-text-muted);
   text-wrap: pretty;
 }

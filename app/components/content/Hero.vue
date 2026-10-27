@@ -32,13 +32,13 @@ const { profile } = useFolioConfig()
           {{ title }}
         </h1>
         <!-- the job, from the page (#subtitle): the trade in Redaction italic, the house it is for -->
-        <p class="job text-sm/6 text-muted">
+        <p class="job text-base/7 text-muted">
           <slot name="subtitle" mdc-unwrap="p">
             {{ subtitle }}
           </slot>
         </p>
       </div>
-      <p class="max-w-prose text-pretty text-sm/6 text-muted">
+      <p class="max-w-prose text-pretty text-base/7 text-muted">
         <slot mdc-unwrap="p" />
       </p>
     </div>
@@ -50,7 +50,7 @@ const { profile } = useFolioConfig()
    beside the engineer */
 .job :deep(em) {
   font-family: var(--font-redaction);
-  font-size: 15px;
+  font-size: 17px;
   font-style: italic;
   color: var(--ui-primary);
 }

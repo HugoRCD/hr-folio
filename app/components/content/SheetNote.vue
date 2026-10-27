@@ -44,7 +44,7 @@
 }
 @media (min-width: 1024px) {
   .note {
-    top: 9px;
+    top: 11px;
     margin-top: 0;
   }
 }
