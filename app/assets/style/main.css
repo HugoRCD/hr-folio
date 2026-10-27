@@ -239,35 +239,41 @@ h1, h2, h3, .font-serif, .font-redaction {
   }
 }
 
-.prose-breakout :where(.prose-code-block, figure, video, iframe, .breakout) {
-  --breakout: 4rem;
-  width: calc(100% + var(--breakout) * 2);
-  max-width: calc(100% + var(--breakout) * 2);
-  margin-inline: calc(var(--breakout) * -1);
+/*
+ * Breaking out of the measure. Anything given .breakout (in an article, ::breakout around plain
+ * Markdown, or {.breakout} on a component) leaves the column by --breakout-start on the left and
+ * --breakout-end on the right. On the sheet that is a gutter and half the note margin either side,
+ * so it stays centred on the text; narrower, what is left either side of the measure, up to 96px;
+ * on a phone, nothing. In prose articles the plates (code, figures, images, videos) do it on their own.
+ */
+:root {
+  --breakout-start: 0px;
+  --breakout-end: 0px;
 }
-
-.prose-breakout :where(img:not(a img):not(p img)) {
-  --breakout: 4rem;
-  width: calc(100% + var(--breakout) * 2);
-  max-width: calc(100% + var(--breakout) * 2);
-  margin-inline: calc(var(--breakout) * -1);
+@media (min-width: 640px) and (max-width: 1023px) {
+  :root {
+    --breakout-start: clamp(0px, (100vw - 576px) / 2 - 16px, 96px);
+    --breakout-end: var(--breakout-start);
+  }
 }
-
-/* On the sheet, plates break out asymmetrically: a little into the left gutter
-   (the contents live in the index margin), further into the empty note margin. */
 @media (min-width: 1024px) {
-  .prose-breakout :where(.prose-code-block, figure, video, iframe, .breakout, img:not(a img):not(p img)) {
-    width: calc(100% + 40px + 136px);
-    max-width: calc(100% + 40px + 136px);
-    margin-left: -40px;
-    margin-right: -136px;
+  :root {
+    --breakout-start: calc(var(--sheet-gutter) + var(--sheet-note) / 2);
+    --breakout-end: var(--breakout-start);
+  }
+  /* a prose article keeps its contents in the index margin, held there as you read: on that side
+     a plate only crosses the gutter, and takes the rest from the empty note margin */
+  .prose-breakout {
+    --breakout-start: 40px;
   }
 }
 
-@media (max-width: 639px) {
-  .prose-breakout :where(.prose-code-block, figure, video, iframe, img:not(a img):not(p img), .breakout) {
-    --breakout: 0px;
-  }
+.breakout,
+.prose-breakout :where(.prose-code-block, figure, video, iframe, img:not(a img):not(p img)) {
+  width: calc(100% + var(--breakout-start) + var(--breakout-end));
+  max-width: none;
+  margin-left: calc(var(--breakout-start) * -1);
+  margin-right: calc(var(--breakout-end) * -1);
 }
 
 .prose-compact :where(h1, h2, h3) {

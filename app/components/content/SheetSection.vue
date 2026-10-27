@@ -21,8 +21,8 @@ defineProps<{
 .sheet-section > :deep(p) {
   max-width: 528px; /* the measure, in pixels: a width in ch would change when the font arrives */
   margin: 0;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 28px;
   color: var(--ui-text-muted);
   text-wrap: pretty;
 }
@@ -39,5 +39,9 @@ defineProps<{
 }
 .sheet-section :deep(.section-mark + .entries) {
   margin-top: 0;
+}
+/* the mark is set on the same 28px line as the text beside it, so the two keep one baseline */
+.sheet-section > :deep(.section-mark) {
+  line-height: 28px;
 }
 </style>

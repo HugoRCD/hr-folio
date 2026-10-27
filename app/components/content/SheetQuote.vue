@@ -26,7 +26,7 @@ defineProps<{
 }
 /* opening a section, its words sit on the same baseline as the section's mark */
 .section-mark + .quote {
-  margin-top: -4px;
+  margin-top: -2px;
 }
 blockquote {
   font-size: 32px;

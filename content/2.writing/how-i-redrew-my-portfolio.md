@@ -26,7 +26,7 @@ For years, my dream watch was the Santos-Dumont. Its story begins in Paris, in 1
 
 I bought mine when I joined Vercel. It was a huge step in my career, and I wanted to mark that moment with something I would keep. You'll find the watch all over this site: in the numbering of the sections, in the hour at the top of the page, and in the movement that keeps that hour.
 
-:::print-spread
+:::print-spread{.breakout}
 ---
 ratio: 528/268
 prints:
@@ -71,7 +71,7 @@ It came to me through my father. On the weekends I spent at his place, he showed
 
 Then life took over, and through high school and my studies I stopped watching. A few years ago I came back, following Charles Leclerc, and Lewis Hamilton, from his years at Mercedes to his move to Ferrari, and a lot came back with it. Ferrari is almost a religion: you only have to see the crowds dressed in red, at every race, in every country. And for me it's also the F40, which holds all of it at once: memories, desire, and a longing for the future.
 
-:::print-spread
+:::print-spread{.breakout}
 ---
 ratio: 528/222
 prints:
@@ -155,7 +155,7 @@ I don't write letters, and I think it's a shame we're losing them. Everything is
 
 So every page here is written like one. It opens the way a letter does, with the place and the date, *London* and today, beneath the H of my signature. And it closes with the signature itself. A signature is a stamp, like the one at the bottom of a document: it says that I made this, and that I stand behind it. I sign Hugo rather than Hugo Richard, because a surname always keeps a little distance, and a first name is how you sign a letter to someone you know.
 
-:::print-spread
+:::print-spread{.breakout}
 ---
 ratio: 528/246
 prints:
@@ -225,7 +225,7 @@ The light comes from photography, and from painting. When I take pictures, it's 
 
 A photographer waits for that light. A painter has to make it, with nothing but pigment, and the painters I love most are the ones who made it best: Leonardo's sfumato, the soft shadow that lets a face dissolve into the air around it; the warm skies of Titian; Caravaggio's beam of light cutting across a dark room; the daylight Vermeer lets in through a window; the sun on Fragonard's pink silk in a shaded garden; Van Gogh's yellow lamp under a night sky. Each of them found their own way to put light on a flat surface.
 
-:::print-spread
+:::print-spread{.breakout}
 ---
 ratio: 528/456
 prints:
@@ -290,7 +290,7 @@ prints:
 
 And then Monet, who made the light itself the subject. In Rouen, he painted the front of the cathedral more than thirty times, from across the square, at different hours and in different weather, because the stone was never the same colour twice.
 
-:::print-spread
+:::print-spread{.breakout}
 ---
 ratio: 528/300
 prints:

@@ -43,10 +43,13 @@ const top = ref<number | null>(null)
 </template>
 
 <style scoped>
+/* the spread takes the measure, or more when it is given .breakout (:::print-spread{.breakout}):
+   only the block margins are set here, so the width and side margins stay the page's to give */
 .spread {
   position: relative;
-  width: 100%;
-  margin: 32px 0 8px;
+  margin-top: 32px;
+  margin-bottom: 8px;
+  container-type: inline-size;
 }
 /* a print: the picture in its white margin, a caption written in the margin underneath */
 .print {
@@ -87,6 +90,16 @@ figcaption {
   text-wrap: balance;
   /* the next print may lie over this one's right edge: the words keep clear of it */
   max-width: 84%;
+}
+/* a spread wider than the measure lays its prints larger: their captions grow with them */
+@container (min-width: 700px) {
+  figcaption {
+    font-size: 10px;
+    line-height: 13px;
+  }
+  .print {
+    padding: 6px 6px 0;
+  }
 }
 /* at night the prints lie in the dark too: dimmer, and their shadow is lost in the ground */
 html.dark .print {
