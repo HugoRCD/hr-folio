@@ -48,6 +48,23 @@ const top = ref<number | null>(null)
   width: 100%;
   margin: 32px 0 8px;
 }
+/* The prints are laid on the desk, not set in the column: they leave the measure. On the sheet they
+   cross the gutter on the left, and the gutter and the empty note margin on the right, out to the
+   edge of the plate (a section's notes hang at its top, the spreads come further down). Narrower,
+   they take what is left either side of the measure, up to 96px. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .spread {
+    --bleed: clamp(0px, (100vw - 576px) / 2 - 16px, 96px);
+    width: calc(100% + var(--bleed) * 2);
+    margin-inline: calc(var(--bleed) * -1);
+  }
+}
+@media (min-width: 1024px) {
+  .spread {
+    width: calc(100% + var(--sheet-gutter) * 2 + var(--sheet-note));
+    margin-left: calc(var(--sheet-gutter) * -1);
+  }
+}
 /* a print: the picture in its white margin, a caption written in the margin underneath */
 .print {
   position: absolute;
@@ -87,6 +104,16 @@ figcaption {
   text-wrap: balance;
   /* the next print may lie over this one's right edge: the words keep clear of it */
   max-width: 84%;
+}
+@media (min-width: 1024px) {
+  /* the prints are half as large again out here: their captions with them */
+  figcaption {
+    font-size: 10px;
+    line-height: 13px;
+  }
+  .print {
+    padding: 6px 6px 0;
+  }
 }
 /* at night the prints lie in the dark too: dimmer, and their shadow is lost in the ground */
 html.dark .print {
