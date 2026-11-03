@@ -52,7 +52,7 @@ const showCollapse = computed(() => isLong.value && isCollapsed.value)
       color="neutral"
       variant="ghost"
       size="xs"
-      class="absolute right-2 top-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
+      class="absolute right-2 top-2 z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
       :aria-label="copied ? 'Copied' : 'Copy'"
       @click="copy(props.code || '')"
     />
