@@ -73,8 +73,6 @@ onBeforeUnmount(() => {
         :hour
         :minute
         :spin
-        :code
-        :path
         :dims="false"
         loupe
       >

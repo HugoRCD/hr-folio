@@ -1,31 +1,25 @@
 <script setup lang="ts">
-import { monogramPath } from '~/utils/signature'
-
 // The drawing of the watch, on its own (<ErrorSketch>): Hugo's Santos-Dumont, large model, in pencil,
 // every measure taken off a face-on picture of it (a unit is one of its pixels, the centre is the
 // hands' arbor). The page around it decides where the hands are (hour and minute, in degrees from
 // XII), how far the crown has turned (spin), and whether the dimensions are drawn.
 //
 // With the loupe, it can be looked at closely: press on it, and it is drawn again at six times its
-// size, still sharp. Close up there is more on the dial than can be seen from where you stand:
-// words in the thick strokes of the numerals, as Cartier hides its name in the VII; a line round
-// the central square that is writing; the error, in the track, where the minute hand stopped; and
-// the monogram at six o'clock.
+// size, still sharp. Close up, the thick strokes of some numerals are written in: Hugo's name in the
+// VII, where Cartier hides its own, and in six others the quotes he keeps coming back to, a line to
+// a stroke.
 //
 // The graphite isn't fixed. A quick pass over the drawing, with the cursor or a finger, smudges it, as
 // a finger smudges pencil: the lines it crosses are dragged a little the way it went, and thinned.
 // Bare paper stays bare. A slow movement only passes over. The hands are steel, on top of the
 // drawing, and nothing smudges them.
-const { hour = 122, minute = 24, spin = 0, dims = true, smudge = true, loupe = false, code = 404, path = '' } = defineProps<{
+const { hour = 122, minute = 24, spin = 0, dims = true, smudge = true, loupe = false } = defineProps<{
   hour?: number
   minute?: number
   spin?: number
   dims?: boolean
   smudge?: boolean
   loupe?: boolean
-  /** the error, and the address that led to it: they are engraved on the dial */
-  code?: number
-  path?: string
 }>()
 
 // rounded, so the server and the browser write the same numbers
@@ -194,21 +188,24 @@ const SIDES = [
   { n: [-1, 0], t: [0, -1], foot: FOOT.hx, head: HEAD.hx },
 ]
 const ROMAN = ['XII', 'I', 'II', 'III', 'IIII', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI']
-// What is written in the numerals, too small to be read without the loupe, by hour and by stroke:
-// the watch's name at the top, and who made it first, when; the movement beside the crown that
-// winds it; in the 4 of 404 the address that was asked for; Hugo's name in the VII, where Cartier
-// hides its own; at IX where he was when he bought it, and at XI what he says about work. Some
-// numerals have nothing in them.
-const ENGRAVED: Record<number, Array<string | null>> = {
-  0: ['SANTOS-DUMONT'],
-  1: ['LOUIS CARTIER · 1904'],
-  3: ['430 MC', 'HAND-WOUND', '21,600 VPH'],
-  4: ['@path'],
-  7: ['HUGO'],
-  9: [null, 'VERCEL'],
-  11: ['ITERATE TO GREATNESS'],
+// What is written in the numerals, too small to be read without the loupe. Hugo's name is in the
+// first stroke of the VII. The quotes are mostly on the sides of the dial, where the strokes lie
+// across it like the lines of a page; the one at XII reads downwards, as on a book's spine. Each
+// line is in a stroke, read from the top down, the name last. Each is signed by whoever is known to
+// have written it, or UNKNOWN: a quote nobody can trace isn't put in a famous mouth. Eames's is as
+// it is usually quoted (his own words, in his 1961 film on Eames Contract Storage, were "They make
+// the product"); Saint-Exupéry's is the fox in The Little Prince, in Katherine Woods's translation.
+const SIGNED = { hour: 7, stroke: 0, text: 'HUGO' }
+const QUOTES: Record<number, string[]> = {
+  0: ['THE DETAILS ARE NOT THE DETAILS.', 'THEY MAKE THE DESIGN', '— CHARLES EAMES'],
+  2: ['LIFE IS THE ART OF CULTIVATING BEAUTY', '— UNKNOWN'],
+  3: ['SIMPLICITY IS', 'THE ULTIMATE SOPHISTICATION.', '— UNKNOWN'],
+  4: ['DON’T RUSH SOMETHING YOU', 'WANT TO', 'LAST FOREVER.', '— UNKNOWN'],
+  8: ['IT IS THE TIME YOU HAVE WASTED', 'FOR YOUR ROSE THAT MAKES', 'YOUR ROSE SO IMPORTANT.', '— ANTOINE DE SAINT-EXUPÉRY'],
+  9: ['WHAT A PLOT TWIST YOU WERE.', '— FARAWAY'],
 }
-const MONO = 0.6 // a mono letter's width, in ems
+const MONO = 0.64 // a mono letter's advance, in ems, with the letter-spacing
+const SMALLEST = 1.35 // a line too long for its stroke is set smaller, down to this
 const numerals = ROMAN.map((n, i) => {
   const a = i * 30
   const side = Math.round(a / 90) % 4
@@ -218,39 +215,37 @@ const numerals = ROMAN.map((n, i) => {
   const dx = nn[0]! + t[0]! * k
   const dy = nn[1]! + t[1]! * k
   const g = letters(n, head - foot)
-  // each word set along its stroke, the way round that reads left to right, or downwards, on the dial
-  const words = (ENGRAVED[i] ?? []).flatMap((word, k) => {
-    const st = g.strokes[k]
-    const text = word === '@path' ? (path || `ERROR ${code}`) : word
-    if (!st || !text) return []
+  // each stroke as it lies on the dial: where it is, and which way its words read, left to right or
+  // downwards
+  const laid = g.strokes.map((st) => {
     const rad = st.a * deg
-    const sx = t[0]! * Math.cos(rad) - dx * Math.sin(rad)
-    const sy = t[1]! * Math.cos(rad) - dy * Math.sin(rad)
-    const a = sx < -0.2 || (Math.abs(sx) <= 0.2 && sy < 0) ? st.a + 180 : st.a
-    const size = Math.min(1.9, st.th * 0.56)
-    const long = text.length * size * (MONO + 0.04) > st.len
-    return [{ text, x: r2(st.x), y: r2(st.y), a: r2(a), size: r2(size), fit: long ? r2(st.len) : undefined }]
+    let ux = t[0]! * Math.cos(rad) - dx * Math.sin(rad)
+    let uy = t[1]! * Math.cos(rad) - dy * Math.sin(rad)
+    const flip = ux < -0.2 || (Math.abs(ux) <= 0.2 && uy < 0)
+    if (flip) [ux, uy] = [-ux, -uy]
+    const x = t[0]! * st.x - dx * st.y + foot * dx
+    const y = t[1]! * st.x - dy * st.y + foot * dy
+    return { st, a: flip ? st.a + 180 : st.a, x, y, ux, uy }
+  })
+  // the lines go into the strokes in reading order: the first in the one nearest the top of the text
+  const lines = QUOTES[i] ?? []
+  let order = laid
+  if (lines.length) {
+    const ux = laid.reduce((s, l) => s + l.ux, 0)
+    const uy = laid.reduce((s, l) => s + l.uy, 0)
+    order = [...laid].sort((p, q) => (p.y * ux - p.x * uy) - (q.y * ux - q.x * uy))
+  }
+  const words = order.flatMap((l, k) => {
+    const text = lines.length ? lines[k] : (i === SIGNED.hour && l === laid[SIGNED.stroke] ? SIGNED.text : undefined)
+    if (!text) return []
+    let size = Math.min(1.9, l.st.th * 0.56)
+    if (text.length * size * MONO > l.st.len) size = Math.max(SMALLEST, l.st.len / (text.length * MONO))
+    const fit = text.length * size * MONO > l.st.len ? r2(l.st.len) : undefined
+    return [{ text, x: r2(l.st.x), y: r2(l.st.y), a: r2(l.a), size: r2(size), fit }]
   })
   // the upright letters, carried onto the slant: across stays across, up runs along the hour
   return { n, d: g.d, words, m: `matrix(${t[0]} ${t[1]} ${r2(-dx)} ${r2(-dy)} ${r2(foot * dx)} ${r2(foot * dy)})` }
 })
-
-// The line round the central square, looked at closely, is writing, as on a banknote: the error,
-// over and over, fitted to the line's length (about 517 units, less a gap where it starts).
-const PHRASE = code === 404 ? 'ERROR 404 · PAGE NOT FOUND · ' : `ERROR ${code} · SOMETHING WENT WRONG · `
-const MICRO = { size: 1.6, length: 511 }
-const microprint = PHRASE.repeat(Math.floor(MICRO.length / (MICRO.size * (MONO + 0.06)) / PHRASE.length)).trimEnd()
-// The error again, in the track, in the minute after the one the minute hand stopped at: the one it
-// can't get to.
-const STUCK_AT = code % 100 < 60 ? code % 100 : 0
-const inTrack = (() => {
-  const a = (STUCK_AT + 0.5) * 6
-  const p = onRect(a, { hx: (TRACK_IN.hx + TRACK_OUT.hx) / 2, hy: (TRACK_IN.hy + TRACK_OUT.hy) / 2 })
-  return { x: r2(p.x), y: r2(p.y), a: Math.round(a / 90) % 4 * 90 }
-})()
-// and at six o'clock, just inside the track, the monogram, where some watchmakers etch theirs
-const MONOGRAM = { h: 4.4, cx: 489, cy: -301.5, at: 116.4 }
-const monogram = `translate(0 ${MONOGRAM.at}) scale(${Math.round((MONOGRAM.h / 943) * 1e5) / 1e5}) translate(${-MONOGRAM.cx} ${-MONOGRAM.cy})`
 
 // the slim sword hands of blued steel, pointing up, of length len: widening a little to a short point
 const sword = (len: number) => `M-1.5 9L-2.5 ${r2(-len * 0.88)}L0 ${-len}L2.5 ${r2(-len * 0.88)}L1.5 9Z`
@@ -591,14 +586,15 @@ function smudgeAt(e: PointerEvent) {
 // not enlarged, so it stays sharp. What has been smudged is enlarged into it from the copy. With a
 // finger, it waits for the finger to rest a moment (a quick stroke is a smudge), and sits above it.
 const ZOOM = 6
-const lens = reactive({ on: false, p: { x: 0, y: 0 }, c: { x: 0, y: 0 }, r: 78 })
+const lens = reactive({ on: false, p: { x: 0, y: 0 }, c: { x: 0, y: 0 }, r: 96 })
 const lensPaint = ref<HTMLCanvasElement>()
 let resting: ReturnType<typeof setTimeout> | undefined
 let pressed: Pt | null = null
 function aim(e: PointerEvent) {
   const box = sheet.value!.getBoundingClientRect()
   const p = { x: e.clientX - box.left, y: e.clientY - box.top }
-  lens.r = Math.round(Math.min(78, box.width * 0.22))
+  // wide enough to take in a whole quote at a time
+  lens.r = Math.round(Math.min(96, box.width * 0.26))
   lens.p = p
   lens.c = e.pointerType === 'mouse' ? p : { x: p.x, y: p.y - lens.r - 28 }
   paintLens()
@@ -929,6 +925,7 @@ onBeforeUnmount(() => {
             <text x="-15.2" :y="(TRACK_IN.hy + TRACK_OUT.hy) / 2" text-anchor="middle" dominant-baseline="central" class="made">SWISS</text>
             <text x="15.2" :y="(TRACK_IN.hy + TRACK_OUT.hy) / 2" text-anchor="middle" dominant-baseline="central" class="made">MADE</text>
             <path :d="rounded(FRAME)" class="fine light" />
+            <path :d="rounded(SQUARE)" class="fine light" />
           </g>
         </g>
 
@@ -986,7 +983,7 @@ onBeforeUnmount(() => {
               v-for="(w, k) in n.words"
               :key="k"
               :transform="`translate(${w.x} ${w.y}) rotate(${w.a})`"
-              :font-size="w.size"
+              :style="{ fontSize: `${w.size}px` }"
               :textLength="w.fit"
               :lengthAdjust="w.fit ? 'spacingAndGlyphs' : undefined"
               class="secret"
@@ -997,19 +994,6 @@ onBeforeUnmount(() => {
             </text>
           </g>
           <text x="1.3" y="-38.5" text-anchor="middle" dominant-baseline="central" class="signature">HUGO</text>
-        </g>
-
-        <!-- printed, too small for the pencil's waver: the line round the square, which is writing; the
-             error in the track; the monogram at six -->
-        <g class="engraved fade" style="--d: 1.1s">
-          <defs>
-            <path :id="`w-square-${v}`" :d="rounded(SQUARE)" />
-          </defs>
-          <text class="microprint" dominant-baseline="central">
-            <textPath :href="`#w-square-${v}`" startOffset="2" :textLength="MICRO.length" lengthAdjust="spacingAndGlyphs">{{ microprint }}</textPath>
-          </text>
-          <text :transform="`translate(${inTrack.x} ${inTrack.y}) rotate(${inTrack.a})`" class="in-track" text-anchor="middle" dominant-baseline="central">{{ code }}</text>
-          <path :d="monogramPath" :transform="monogram" class="monogram" />
         </g>
       </svg>
 
@@ -1252,25 +1236,6 @@ onBeforeUnmount(() => {
   font-family: var(--font-mono);
   font-size: 1.9px;
   letter-spacing: 0.04em;
-}
-/* from where you stand, a fine grey line */
-.microprint {
-  fill: var(--graphite);
-  fill-opacity: 0.5;
-  font-family: var(--font-mono);
-  font-size: 1.6px;
-  letter-spacing: 0.06em;
-}
-.in-track {
-  fill: var(--graphite);
-  fill-opacity: 0.75;
-  font-family: var(--font-mono);
-  font-size: 2.3px;
-  letter-spacing: 0.08em;
-}
-.monogram {
-  fill: var(--graphite);
-  fill-opacity: 0.6;
 }
 .signature {
   fill: var(--graphite);
