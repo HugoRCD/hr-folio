@@ -313,6 +313,13 @@ let last: (Pt & { t: number }) | null = null
 let speed = 0
 // the pointer is holding something (the loupe, the dial): it doesn't smudge meanwhile
 const held = ref(false)
+const daylight = useState<{ time: string, dark: boolean } | undefined>('daylight')
+// the paper the copy was made on, whether it is dark (at night graphite is light on it), and whether
+// anything has been rubbed since
+let paperAt = ''
+let paperIsDark = false
+let touched = false
+let nightAt: boolean | undefined // whether the page was in its night light then
 
 function blank(w: number, h: number) {
   const c = document.createElement('canvas')
@@ -336,12 +343,12 @@ function round(size: number, colour = '#000') {
   return c
 }
 // the paper: the first ground behind the drawing
-function paperOf(el: Element) {
+function paperOf(el: Element): string {
   for (let e: Element | null = el; e; e = e.parentElement) {
     const c = getComputedStyle(e).backgroundColor
     if (c && c !== 'transparent' && c !== 'rgba(0, 0, 0, 0)') return c
   }
-  return '#efe9de'
+  return getComputedStyle(document.documentElement).getPropertyValue('--ui-bg') || '#fff'
 }
 
 // An image can't reach the page's fonts, so the faces the drawing's words are set in are written
@@ -450,18 +457,26 @@ const context = (w: number, h: number) => {
   return g
 }
 
-async function prepare() {
+// `fresh`: copy it again even at the same size, as when the light has changed the paper
+async function prepare(fresh = false) {
   const el = sheet.value
   if (!el || !drawing.value || !rubbed.value) return
   const ratio = Math.min(3, window.devicePixelRatio || 1)
   const w = Math.round(el.clientWidth * ratio)
   const h = Math.round(el.clientHeight * ratio)
-  if (!w || !h || (work?.canvas.width === w && work.canvas.height === h)) return
+  if (!w || !h || (!fresh && work?.canvas.width === w && work.canvas.height === h)) return
   const token = ++preparing
-  const copy = await rasterise(drawing.value, w, h, paperOf(el)).catch(() => undefined)
+  const paper = paperOf(el)
+  const copy = await rasterise(drawing.value, w, h, paper).catch(() => undefined)
   if (!copy || token !== preparing || !rubbed.value) return
   dpr = ratio
   work = copy
+  paperAt = paper
+  nightAt = daylight.value?.dark
+  // the paper's own colour, read back off the copy's corner, where nothing is drawn
+  const [pr = 0, pg = 0, pb = 0] = copy.getImageData(1, 1, 1, 1).data
+  paperIsDark = 0.2126 * pr + 0.7152 * pg + 0.0722 * pb < 128
+  touched = false
   reach = context(w, h)
   // a new size starts clean: what was smudged at the old one is let go
   rubbed.value.width = w
@@ -508,18 +523,20 @@ function smear(at: Pt, u: Pt, a: number, b: number) {
   stamp!.drawImage(soft!.canvas, margin, margin, d, d, 0, 0, d, d)
   stamp!.globalCompositeOperation = 'destination-in'
   stamp!.drawImage(tip!, 0, 0)
-  // the lines go paler, towards what they'd be spread out; bare paper can't go paler
-  work!.globalCompositeOperation = 'lighten'
+  // the lines go towards the paper, towards what they'd be spread out; bare paper can't go further.
+  // On light paper that is paler, on dark paper (at night, the graphite is light) darker
+  work!.globalCompositeOperation = paperIsDark ? 'darken' : 'lighten'
   work!.globalAlpha = a
   work!.drawImage(stamp!.canvas, at.x - r, at.y - r)
-  // and what came off them settles on the paper round them, in its grain; graphite can't go darker
+  // and what came off them settles on the paper round them, in its grain; graphite can't gain more
   stamp!.drawImage(tooth!, at.x - r, at.y - r, d, d, 0, 0, d, d)
-  work!.globalCompositeOperation = 'darken'
+  work!.globalCompositeOperation = paperIsDark ? 'lighten' : 'darken'
   work!.globalAlpha = b
   work!.drawImage(stamp!.canvas, at.x - r, at.y - r)
   work!.globalCompositeOperation = 'source-over'
   work!.globalAlpha = 1
   reach!.drawImage(tip!, at.x - r, at.y - r)
+  touched = true
   dirty = {
     x0: Math.min(dirty?.x0 ?? Infinity, at.x - r),
     y0: Math.min(dirty?.y0 ?? Infinity, at.y - r),
@@ -664,6 +681,19 @@ const setLensPaint = (el: unknown) => {
   lensPaint.value = (el ?? undefined) as HTMLCanvasElement | undefined
 }
 
+// The page's light moves with the sun, and the paper with it: the copy is made again on the new
+// paper. What was smudged is kept while the change is slight; when day turns to night it is let go.
+let relight: ReturnType<typeof setTimeout> | undefined
+watch(() => [daylight.value?.time, daylight.value?.dark], () => {
+  if (!smudge || !work || relight) return
+  // looked at once the page has faded to its new light, and at most that often
+  relight = setTimeout(() => {
+    relight = undefined
+    if (!sheet.value || paperOf(sheet.value) === paperAt) return
+    if (!touched || daylight.value?.dark !== nightAt) prepare(true)
+  }, 2600)
+})
+
 const shown = ref(false)
 let wait: ReturnType<typeof setTimeout> | undefined
 let again: ReturnType<typeof setTimeout> | undefined
@@ -688,6 +718,7 @@ onBeforeUnmount(() => {
   clearTimeout(wait)
   clearTimeout(again)
   clearTimeout(resting)
+  clearTimeout(relight)
   cancelAnimationFrame(frame)
   observer?.disconnect()
 })
@@ -778,8 +809,8 @@ onBeforeUnmount(() => {
           <clipPath id="w-stone-clip">
             <path :d="STONE" />
           </clipPath>
-          <pattern id="w-hatch-blue" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <line x1="0" y1="0" x2="0" y2="2.2" class="hatch-blue" />
+          <pattern id="w-hatch-red" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="2.2" class="hatch-red" />
           </pattern>
         </defs>
 
@@ -960,9 +991,9 @@ onBeforeUnmount(() => {
           </g>
           <path :d="STONE" class="stone-fill fade" style="--d: 1.4s" />
           <g clip-path="url(#w-stone-clip)" class="fade" style="--d: 1.6s">
-            <rect x="214" y="2.5" width="28" height="16" fill="url(#w-hatch-blue)" />
+            <rect x="214" y="2.5" width="28" height="16" fill="url(#w-hatch-red)" />
           </g>
-          <path d="M217.5 -12.4C221.5 -12.4 225.5 -10.4 228.6 -7.4L234.6 -1.6" class="blue-fine fade" style="--d: 1.6s" />
+          <path d="M217.5 -12.4C221.5 -12.4 225.5 -10.4 228.6 -7.4L234.6 -1.6" class="red-fine fade" style="--d: 1.6s" />
           <ellipse
             cx="220.5"
             cy="-11.6"
@@ -1009,18 +1040,18 @@ onBeforeUnmount(() => {
           <path :d="MINUTE.d" :transform="`rotate(${minute})`" />
           <circle r="11" />
         </g>
-        <!-- the hands, in blue pencil -->
+        <!-- the hands, in red pencil -->
         <g filter="url(#pencil)" class="hands fade" style="--d: 2s">
           <g :transform="`rotate(${hour})`">
-            <path :d="HOUR.d" class="blue hand" />
-            <path :d="HOUR.ridge" class="blue-fine" />
+            <path :d="HOUR.d" class="red hand" />
+            <path :d="HOUR.ridge" class="red-fine" />
           </g>
           <g :transform="`rotate(${minute})`">
-            <path :d="MINUTE.d" class="blue hand" />
-            <path :d="MINUTE.ridge" class="blue-fine" />
+            <path :d="MINUTE.d" class="red hand" />
+            <path :d="MINUTE.ridge" class="red-fine" />
           </g>
-          <circle r="11" class="blue hand" />
-          <circle r="7.5" class="blue-fine" />
+          <circle r="11" class="red hand" />
+          <circle r="7.5" class="red-fine" />
           <circle r="2.2" class="pin" />
         </g>
       </svg>
@@ -1033,8 +1064,11 @@ onBeforeUnmount(() => {
 .sketch {
   /* the order every part is drawn in is given in seconds (--d); the whole is drawn at this pace */
   --pace: 0.42;
-  --graphite: #2f2b27;
-  --blue: #2a4aa8;
+  /* The page's own colours, which follow the light: the paper is its ground, the graphite its text
+     mixed a little into the paper, the hands and the stone its red */
+  --paper: var(--ui-bg);
+  --graphite: color-mix(in oklab, var(--ui-text-highlighted) 86%, var(--ui-bg));
+  --hand: var(--ui-primary);
   position: relative;
   width: var(--w, min(400px, 78vw));
   aspect-ratio: 580 / 690;
@@ -1065,11 +1099,11 @@ onBeforeUnmount(() => {
   z-index: 2;
   overflow: hidden;
   border-radius: 50%;
-  background: #efe9de;
+  background: var(--paper);
   box-shadow:
-    0 0 0 1.25px rgb(47 43 39 / 0.75),
-    0 14px 34px rgb(40 30 20 / 0.22),
-    0 3px 8px rgb(40 30 20 / 0.12);
+    0 0 0 1.25px color-mix(in oklab, var(--graphite) 75%, transparent),
+    0 14px 34px rgb(0 0 0 / 0.22),
+    0 3px 8px rgb(0 0 0 / 0.12);
   pointer-events: none;
   visibility: hidden;
   opacity: 0;
@@ -1093,9 +1127,9 @@ onBeforeUnmount(() => {
   inset: 0;
   border-radius: 50%;
   box-shadow:
-    inset 0 0 0 3px rgb(239 233 222 / 0.7),
-    inset 0 0 0 3.75px rgb(47 43 39 / 0.3),
-    inset 0 0 22px rgb(47 43 39 / 0.14);
+    inset 0 0 0 3px color-mix(in oklab, var(--paper) 70%, transparent),
+    inset 0 0 0 3.75px color-mix(in oklab, var(--graphite) 30%, transparent),
+    inset 0 0 22px color-mix(in oklab, var(--graphite) 14%, transparent);
 }
 .lens .drawing,
 .lens .rubbed,
@@ -1179,7 +1213,7 @@ onBeforeUnmount(() => {
   stroke-opacity: 0.7;
 }
 .bead {
-  fill: #efe9de;
+  fill: var(--paper);
   stroke: var(--graphite);
   stroke-width: 0.6;
 }
@@ -1187,7 +1221,7 @@ onBeforeUnmount(() => {
   stroke-opacity: 0.7;
 }
 .paper-fill {
-  fill: #efe9de;
+  fill: var(--paper);
 }
 .bead-shade {
   fill: none;
@@ -1195,24 +1229,24 @@ onBeforeUnmount(() => {
   stroke-width: 0.45;
   stroke-opacity: 0.55;
 }
-/* the stone: blue pencil, its tip drawn to a point */
+/* the stone: red pencil, its tip drawn to a point */
 .stone {
   fill: none;
-  stroke: var(--blue);
+  stroke: var(--hand);
   stroke-width: 0.95;
   stroke-linejoin: miter;
   stroke-miterlimit: 12;
 }
 .stone-fill {
-  fill: rgb(42 74 168 / 0.2);
+  fill: color-mix(in oklab, var(--hand) 20%, transparent);
 }
-.hatch-blue {
-  stroke: var(--blue);
+.hatch-red {
+  stroke: var(--hand);
   stroke-width: 0.5;
   stroke-opacity: 0.6;
 }
 .glint {
-  fill: #efe9de;
+  fill: var(--paper);
   fill-opacity: 0.9;
 }
 .slot {
@@ -1232,7 +1266,7 @@ onBeforeUnmount(() => {
 }
 /* what is written in the numerals' strokes: a speck, until it is looked at through the loupe */
 .secret {
-  fill: #efe9de;
+  fill: var(--paper);
   font-family: var(--font-mono);
   font-size: 1.9px;
   letter-spacing: 0.04em;
@@ -1250,24 +1284,25 @@ onBeforeUnmount(() => {
   font-size: 3.6px;
   letter-spacing: 0.14em;
 }
-/* blue pencil: the blued steel of the hands, and the stone in the crown */
-.blue {
-  fill: rgb(42 74 168 / 0.3);
-  stroke: var(--blue);
+/* red pencil, the page's red: the blued steel of the hands, and the stone in the crown. Drawn in the
+   one colour the site has, rather than the watch's blue */
+.red {
+  fill: color-mix(in oklab, var(--hand) 30%, transparent);
+  stroke: var(--hand);
   stroke-width: 0.9;
   stroke-linejoin: round;
 }
-.blue-fine {
+.red-fine {
   fill: none;
-  stroke: var(--blue);
+  stroke: var(--hand);
   stroke-width: 0.5;
 }
 .hands-under {
-  fill: #efe9de;
+  fill: var(--paper);
 }
 .pin {
-  fill: #efe9de;
-  stroke: var(--blue);
+  fill: var(--paper);
+  stroke: var(--hand);
   stroke-width: 0.6;
 }
 

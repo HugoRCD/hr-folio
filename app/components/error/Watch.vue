@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 .turn:focus-visible {
-  outline: 1px solid #901112;
+  outline: 1px solid var(--ui-primary);
   outline-offset: 2px;
 }
 .caption {
@@ -132,7 +132,7 @@ onBeforeUnmount(() => {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #901112;
+  color: var(--ui-primary);
 }
 .title {
   margin-top: 6px;
@@ -141,18 +141,19 @@ onBeforeUnmount(() => {
   font-weight: 400;
   font-size: 34px;
   line-height: 40px;
+  color: var(--ui-text-highlighted);
 }
 .where {
   margin-top: 4px;
   font-size: 15px;
-  color: rgb(28 25 23 / 0.64);
+  color: var(--ui-text-muted);
 }
 .where s {
   display: inline-block;
   overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-size: 13px;
-  text-decoration-color: #cd1919;
+  text-decoration-color: var(--ui-primary);
 }
 .links {
   display: flex;
@@ -165,14 +166,15 @@ onBeforeUnmount(() => {
   font-family: var(--font-redaction);
   font-style: italic;
   font-size: 17px;
+  color: var(--ui-text-highlighted);
   text-decoration: underline;
-  text-decoration-color: rgb(28 25 23 / 0.2);
+  text-decoration-color: var(--ui-border);
   text-underline-offset: 4px;
   transition: text-decoration-color 0.2s ease;
 }
 .links a:hover,
 .links a:focus-visible {
-  text-decoration-color: #901112;
+  text-decoration-color: var(--ui-primary);
   outline: none;
 }
 </style>
