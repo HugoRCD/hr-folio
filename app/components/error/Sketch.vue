@@ -314,7 +314,7 @@ let preparing = 0
 let last: (Pt & { t: number }) | null = null
 let speed = 0
 // the pointer is holding something (the loupe, the dial): it doesn't smudge meanwhile
-const held = ref(false)
+let held = false
 const daylight = useState<{ time: string, dark: boolean } | undefined>('daylight')
 // the paper the copy was made on, whether it is dark (at night graphite is light on it), and whether
 // anything has been rubbed since
@@ -594,204 +594,166 @@ function rub(x: number, y: number, t: number, touch: boolean) {
   frame ||= requestAnimationFrame(show)
 }
 function smudgeAt(e: PointerEvent) {
-  if (!work || !smudge || held.value) return
+  if (!work || !smudge || held) return
   const box = sheet.value!.getBoundingClientRect()
   const all = e.getCoalescedEvents?.()
   for (const p of all?.length ? all : [e]) rub(p.clientX - box.left, p.clientY - box.top, p.timeStamp, e.pointerType !== 'mouse')
 }
 
 // --- the loupe -----------------------------------------------------------------------------------
-// The drawing again, in a round lens, its view box narrowed to the part under the pointer: drawn,
-// not enlarged, so it stays sharp. What has been smudged is enlarged into it from the copy. With a
-// finger, it waits for the finger to rest a moment (a quick stroke is a smudge), and sits above it.
-// It magnifies as much as it takes for the quotes to be read at the size of small print, whatever
-// size the drawing is on the screen: always the same, wherever it is held.
+// The drawing again, in a round lens: laid out once at many times its size, so it stays sharp, and
+// slid along under the lens as it moves, so nothing is drawn again while it does. What has been
+// smudged is enlarged into it from the copy. With a finger, it waits for the finger to rest a moment
+// (a quick stroke is a smudge), and sits above it. It magnifies as much as it takes for the quotes to
+// be read at the size of small print, whatever size the drawing is on the screen: always the same,
+// wherever it is held.
 const READ = 11.5 // px: the size a quote's letters are seen at through it
-const lens = reactive({ on: false, p: { x: 0, y: 0 }, c: { x: 0, y: 0 }, r: 128, z: 10 })
+const lens = ref<HTMLDivElement>()
+const stage = ref<HTMLDivElement>() // the drawing in it, at its size
 const lensPaint = ref<HTMLCanvasElement>()
+// the lens's radius and power, and the drawing's width they were found for
+const power = { r: 128, z: 10, w: 0 }
+// where it is held, on the screen
+const aimAt = { x: 0, y: 0, finger: false }
+let looking = false
+let aiming = 0
 let resting: ReturnType<typeof setTimeout> | undefined
 let pressed: Pt | null = null
-function aim(e: PointerEvent) {
-  const box = sheet.value!.getBoundingClientRect()
-  const p = { x: e.clientX - box.left, y: e.clientY - box.top }
-  lens.z = Math.min(14, Math.max(6, READ / ((SMALLEST + 0.1) * box.width / 580)))
-  lens.r = Math.round(Math.min(128, box.width * 0.34))
-  lens.p = p
-  lens.c = e.pointerType === 'mouse' ? p : { x: p.x, y: p.y - lens.r - 28 }
-  paintLens()
-  sizeGlass()
+function fit() {
+  const el = sheet.value
+  if (!el || !lens.value || !stage.value) return
+  const { width: w, height: h } = el.getBoundingClientRect()
+  if (w === power.w) return
+  power.w = w
+  power.z = Math.min(14, Math.max(6, READ / ((SMALLEST + 0.1) * w / 580)))
+  power.r = Math.round(Math.min(128, w * 0.34))
+  lens.value.style.width = `${2 * power.r}px`
+  lens.value.style.height = `${2 * power.r}px`
+  stage.value.style.width = `${w * power.z}px`
+  stage.value.style.height = `${h * power.z}px`
 }
-const unit = () => 580 / (sheet.value?.clientWidth || 580)
-const lensBox = computed(() => {
-  const u = unit()
-  const side = ((2 * lens.r) / lens.z) * u
-  return `${r2(-290 + (lens.p.x - lens.r / lens.z) * u)} ${r2(-345 + (lens.p.y - lens.r / lens.z) * u)} ${r2(side)} ${r2(side)}`
-})
-const lensStyle = computed(() => ({ width: `${2 * lens.r}px`, height: `${2 * lens.r}px`, translate: `${lens.c.x - lens.r}px ${lens.c.y - lens.r}px` }))
-function paintLens() {
+// The lens over the pointer, or above the finger, and the drawing slid under it so that what is under
+// the pointer is in its middle. Both are moved without being drawn again, and land on whole pixels of
+// the screen, so the lines stay sharp.
+function place() {
+  aiming = 0
+  const el = sheet.value
+  if (!el || !lens.value || !stage.value) return
+  const { r, z } = power
+  const box = el.getBoundingClientRect()
+  const p = { x: aimAt.x - box.left, y: aimAt.y - box.top }
+  const c = aimAt.finger ? { x: p.x, y: p.y - r - 28 } : p
+  const ratio = window.devicePixelRatio || 1
+  const snap = (n: number) => Math.round(n * ratio) / ratio
+  lens.value.style.translate = `${snap(box.left + c.x - r) - box.left}px ${snap(box.top + c.y - r) - box.top}px`
+  stage.value.style.transform = `translate(${snap(r - p.x * z)}px, ${snap(r - p.y * z)}px)`
+}
+// at most once a frame, however often the pointer reports
+function aim(e: PointerEvent) {
+  aimAt.x = e.clientX
+  aimAt.y = e.clientY
+  aimAt.finger = e.pointerType !== 'mouse'
+  if (looking) aiming ||= requestAnimationFrame(place)
+}
+// what has been smudged, into the loupe: once, as it comes up (nothing smudges while it is out)
+function develop() {
   const c = lensPaint.value
   const from = rubbed.value
-  if (!lens.on || !c || !from || !work) return
-  const size = Math.round(2 * lens.r * Math.min(3, window.devicePixelRatio || 1))
-  if (c.width !== size) c.width = c.height = size
+  if (!c) return
+  const smudged = !!(touched && work && from)
+  c.toggleAttribute('data-smudged', smudged)
+  if (!smudged || !from) return
+  // at twice the copy's size, smoothly: enlarged as much as the loupe enlarges, it would show its pixels
+  const w = from.width * 2
+  const h = from.height * 2
+  if (c.width !== w || c.height !== h) {
+    c.width = w
+    c.height = h
+  }
   const g = c.getContext('2d')!
   g.imageSmoothingQuality = 'high'
-  g.clearRect(0, 0, size, size)
-  const side = ((2 * lens.r) / lens.z) * dpr
-  g.drawImage(from, (lens.p.x - lens.r / lens.z) * dpr, (lens.p.y - lens.r / lens.z) * dpr, side, side, 0, 0, size, size)
+  g.globalCompositeOperation = 'copy'
+  g.drawImage(from, 0, 0, w, h)
 }
 function showLens(on: boolean) {
-  lens.on = on
-  held.value = on
+  looking = on
+  held = on
+  sheet.value?.toggleAttribute('data-held', on)
   if (on) {
-    nextTick(() => {
-      paintLens()
-      sizeGlass()
-    })
+    fit()
+    develop()
+    grain()
+    place()
+  } else {
+    cancelAnimationFrame(aiming)
+    aiming = 0
   }
+  lens.value?.toggleAttribute('data-on', on)
 }
 
-// --- the glass -----------------------------------------------------------------------------------
-// Where the browser can draw HTML into a canvas (HTML-in-Canvas, from Chrome 157), the loupe's view is
-// laid out inside a canvas and drawn into it through a pane of glass: the middle as it is, and towards
-// the rim the glass bends what is under it inward, a little more for red than for blue, as the edge of
-// a lens does. Everywhere else, or if anything about it fails, the view is shown as it is.
-type Pane = HTMLCanvasElement & {
-  requestPaint: () => void
-  getElementImageDefaultSize: (el: Element) => { width: number, height: number }
-}
-type GlassGL = WebGL2RenderingContext & {
-  // (target, level, x, y, element)
-  texElementSubImage2D: (...upload: [number, number, number, number, Element]) => void
-}
-const glass = ref(false)
-let pane: Pane | undefined
-let gl: GlassGL | null = null
-let texture: WebGLTexture | null = null
-let edge: WebGLUniformLocation | null = null
-let allocated = { w: 0, h: 0 }
-const VERTEX = `attribute vec2 a;
-varying vec2 v;
-void main() {
-  v = vec2(a.x * 0.5 + 0.5, 0.5 - a.y * 0.5);
-  gl_Position = vec4(a, 0.0, 1.0);
-}`
-const FRAGMENT = `precision highp float;
-varying vec2 v;
-uniform sampler2D view;
-uniform float edge;
-void main() {
-  vec2 p = v * 2.0 - 1.0;
-  float r = length(p);
-  float a = 1.0 - smoothstep(1.0 - edge, 1.0, r);
-  if (a <= 0.0) {
-    gl_FragColor = vec4(0.0);
-    return;
-  }
-  float bend = 0.085 * pow(smoothstep(0.68, 1.0, r), 2.0);
-  vec2 q = p * 0.5;
-  float red = texture2D(view, 0.5 + q * (1.0 - bend * 1.035)).r;
-  float green = texture2D(view, 0.5 + q * (1.0 - bend)).g;
-  float blue = texture2D(view, 0.5 + q * (1.0 - bend * 0.965)).b;
-  gl_FragColor = vec4(vec3(red, green, blue) * a, a);
-}`
-function canDrawHtml() {
-  const probe = document.createElement('canvas')
-  probe.setAttribute('content', 'drawable')
-  return (probe as HTMLCanvasElement & { content?: string }).content === 'drawable'
-    && typeof WebGL2RenderingContext !== 'undefined'
-    && 'texElementSubImage2D' in WebGL2RenderingContext.prototype
-}
-function shatter() {
-  // the glass gave way: from now on the view is shown as it is
-  gl = null
-  pane = undefined
-  glass.value = false
-}
-function setupGlass(c: Pane) {
-  const g = c.getContext('webgl2', { premultipliedAlpha: true, antialias: false }) as GlassGL | null
-  if (!g) return false
-  const compile = (type: number, src: string) => {
-    const sh = g.createShader(type)!
-    g.shaderSource(sh, src)
-    g.compileShader(sh)
-    return sh
-  }
-  const prog = g.createProgram()!
-  g.attachShader(prog, compile(g.VERTEX_SHADER, VERTEX))
-  g.attachShader(prog, compile(g.FRAGMENT_SHADER, FRAGMENT))
-  g.linkProgram(prog)
-  if (!g.getProgramParameter(prog, g.LINK_STATUS)) return false
-  g.useProgram(prog)
-  const quad = g.createBuffer()
-  g.bindBuffer(g.ARRAY_BUFFER, quad)
-  g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), g.STATIC_DRAW)
-  const at = g.getAttribLocation(prog, 'a')
-  g.enableVertexAttribArray(at)
-  g.vertexAttribPointer(at, 2, g.FLOAT, false, 0, 0)
-  texture = g.createTexture()
-  g.bindTexture(g.TEXTURE_2D, texture)
-  g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR)
-  g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, g.LINEAR)
-  g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE)
-  g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE)
-  edge = g.getUniformLocation(prog, 'edge')
-  gl = g
-  allocated = { w: 0, h: 0 }
-  c.addEventListener('paint', drawGlass)
-  c.addEventListener('webglcontextlost', shatter)
-  return true
-}
-// the canvas's grid, one cell to a device pixel, so nothing is drawn twice over
-function sizeGlass() {
-  if (!pane) return
-  const side = Math.round(2 * lens.r * Math.min(3, window.devicePixelRatio || 1))
-  if (pane.width !== side) {
-    pane.width = side
-    pane.height = side
-  }
-  pane.requestPaint()
-}
-function drawGlass() {
-  const view = pane?.firstElementChild
-  if (!gl || !pane || !view || !lens.on) return
-  try {
-    const { width, height } = pane.getElementImageDefaultSize(view)
-    const w = Math.max(1, Math.ceil(width))
-    const h = Math.max(1, Math.ceil(height))
-    gl.bindTexture(gl.TEXTURE_2D, texture)
-    if (w !== allocated.w || h !== allocated.h) {
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
-      allocated = { w, h }
+// The pencil's grain is a filter, worked out again over everything it is on: over a drawing this much
+// larger, it would take far longer than a glance. In the loupe the paper's tooth is laid over the
+// lines instead: the same grain, worked out once on a small square of the paper's colour and
+// repeated, the paper showing where the graphite didn't catch. When the paper changes with the light,
+// it is made again.
+const TOOTH = 32 // the square's side, in the drawing's units
+// as in the filters: the outlines' coarser grain, and the numerals' firmer one
+const TEETH = [
+  { id: 'coarse', frequency: 1.1, seed: 8, gain: 2.6, offset: -0.55 },
+  { id: 'firm', frequency: 1.3, seed: 11, gain: 2, offset: -0.1 },
+]
+const toothImages = new Map<string, SVGImageElement>()
+let toothOn = '' // the paper it was made on
+let toothUrls: string[] = []
+async function grain() {
+  const el = sheet.value
+  if (!el || !loupe) return
+  const paper = paperOf(el)
+  if (paper === toothOn) return
+  toothOn = paper
+  // enough pixels for a phone's screen at the loupe's power
+  const side = TOOTH * 16
+  const urls = await Promise.all(TEETH.map(async (t) => {
+    // the filter's grain, turned inside out: the paper, where the graphite would be let through
+    const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="${side}" height="${side}" viewBox="0 0 ${TOOTH} ${TOOTH}">`
+      + `<filter id="t" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${t.frequency}" numOctaves="2" seed="${t.seed}" stitchTiles="stitch"/>`
+      + `<feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${-t.gain} 0 0 0 ${1 - t.offset}"/></filter>`
+      + `<rect width="${TOOTH}" height="${TOOTH}" filter="url(#t)"/></svg>`
+    const url = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml' }))
+    try {
+      const img = new Image()
+      await new Promise((resolve, reject) => {
+        img.onload = resolve
+        img.onerror = reject
+        img.src = url
+      })
+      const g = blank(side, side).getContext('2d')!
+      g.drawImage(img, 0, 0)
+      g.globalCompositeOperation = 'source-in'
+      g.fillStyle = paper
+      g.fillRect(0, 0, side, side)
+      const blob = await new Promise<Blob | null>(resolve => g.canvas.toBlob(resolve))
+      return blob ? URL.createObjectURL(blob) : ''
+    } catch {
+      return ''
+    } finally {
+      URL.revokeObjectURL(url)
     }
-    gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, view)
-    gl.viewport(0, 0, pane.width, pane.height)
-    gl.uniform1f(edge, 2 / pane.width)
-    gl.clearColor(0, 0, 0, 0)
-    gl.clear(gl.COLOR_BUFFER_BIT)
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-  } catch {
-    shatter()
+  }))
+  if (paper !== toothOn) {
+    urls.forEach(u => URL.revokeObjectURL(u))
+    return
   }
+  toothUrls.forEach(u => URL.revokeObjectURL(u))
+  toothUrls = urls
+  TEETH.forEach((t, i) => toothImages.get(t.id)?.setAttribute('href', urls[i] ?? ''))
 }
-const setPane = (el: unknown) => {
-  const c = el instanceof HTMLCanvasElement ? el as Pane : undefined
-  if (c === pane) return
-  pane = undefined
-  gl = null
-  if (!c) return
-  if (setupGlass(c)) {
-    pane = c
-    sizeGlass()
-  } else {
-    shatter()
-  }
-}
+
 // On a phone a finger moved up or down scrolls the page under it. While the loupe is out it moves the
 // loupe instead. (It can only be stopped once the loupe is out: a finger that hasn't rested yet may be
 // scrolling.)
 function hold(e: TouchEvent) {
-  if (lens.on && e.cancelable) e.preventDefault()
+  if (looking && e.cancelable) e.preventDefault()
 }
 
 function down(e: PointerEvent) {
@@ -806,7 +768,7 @@ function down(e: PointerEvent) {
 function move(e: PointerEvent) {
   if (pressed) {
     // a finger that moves on before resting was smudging, not looking
-    if (!lens.on && Math.hypot(e.clientX - pressed.x, e.clientY - pressed.y) > 10) {
+    if (!looking && Math.hypot(e.clientX - pressed.x, e.clientY - pressed.y) > 10) {
       clearTimeout(resting)
       pressed = null
     } else {
@@ -818,12 +780,14 @@ function move(e: PointerEvent) {
 function up() {
   clearTimeout(resting)
   pressed = null
-  if (lens.on) showLens(false)
+  if (looking) showLens(false)
 }
 function leave() {
   last = null
 }
 const views = computed(() => (loupe ? ['plate', 'lens'] : ['plate']))
+// the pencil's filters, on the drawing only (see `grain`)
+const pencil = (v: string, firm = false) => (v === 'plate' ? `url(#pencil${firm ? '-firm' : ''}-plate)` : undefined)
 const setDrawing = (el: unknown) => {
   drawing.value = (el ?? undefined) as SVGSVGElement | undefined
 }
@@ -832,6 +796,19 @@ const setRubbed = (el: unknown) => {
 }
 const setLensPaint = (el: unknown) => {
   lensPaint.value = (el ?? undefined) as HTMLCanvasElement | undefined
+}
+const setLens = (el: unknown) => {
+  lens.value = (el ?? undefined) as HTMLDivElement | undefined
+}
+const setStage = (el: unknown) => {
+  stage.value = (el ?? undefined) as HTMLDivElement | undefined
+}
+const setTooth = (el: unknown) => {
+  const id = el instanceof SVGImageElement ? el.dataset.tooth : undefined
+  if (!id) return
+  toothImages.set(id, el as SVGImageElement)
+  const url = toothUrls[TEETH.findIndex(t => t.id === id)]
+  if (url && (el as SVGImageElement).getAttribute('href') !== url) (el as SVGImageElement).setAttribute('href', url)
 }
 
 // The page's light moves with the sun, and the paper with it: the copy is made again on the new
@@ -858,7 +835,10 @@ onMounted(() => {
   })
   // not passive, or it couldn't keep the page still
   if (loupe) sheet.value?.addEventListener('touchmove', hold, { passive: false })
-  if (loupe && canDrawHtml()) glass.value = true
+  if (loupe) {
+    fit()
+    grain()
+  }
   if (!smudge) return
   // once the drawing has drawn itself
   wait = setTimeout(() => {
@@ -876,8 +856,9 @@ onBeforeUnmount(() => {
   clearTimeout(resting)
   clearTimeout(relight)
   sheet.value?.removeEventListener('touchmove', hold)
-  pane?.removeEventListener('paint', drawGlass)
   cancelAnimationFrame(frame)
+  cancelAnimationFrame(aiming)
+  toothUrls.forEach(u => URL.revokeObjectURL(u))
   observer?.disconnect()
 })
 </script>
@@ -886,351 +867,410 @@ onBeforeUnmount(() => {
   <div
     ref="sheet"
     class="sketch"
-    :class="{ shown, smudge, loupe, held }"
+    :class="{ shown, smudge, loupe }"
     @pointerdown="down"
     @pointermove="move"
     @pointerup="up"
     @pointerleave="leave"
     @pointercancel="up"
   >
-    <!-- the drawing, and in the loupe the same drawing again, closer. In the loupe, where the browser
-         can draw HTML into a canvas, the view is drawn through the glass (see `glass`) -->
-    <div v-for="v in views" :key="v" :class="[v, { on: v === 'lens' && lens.on }]" :style="v === 'lens' ? lensStyle : undefined">
-      <component
-        :is="v === 'lens' && glass ? 'canvas' : 'div'"
-        :ref="v === 'lens' ? setPane : undefined"
-        class="pane"
-        :content.attr="v === 'lens' && glass ? 'drawable' : undefined"
-        aria-hidden="true"
-      >
-        <div class="view" :drawable.attr="v === 'lens' && glass ? '' : undefined">
-          <svg :ref="v === 'plate' ? setDrawing : undefined" class="drawing" :viewBox="v === 'plate' ? '-290 -345 580 690' : lensBox" aria-hidden="true">
-            <!-- each view has its own: what is drawn inside a canvas can't reach out of it for them -->
-            <defs>
-              <!-- graphite on paper: the line wavers a little, and the paper's tooth shows through it -->
-              <filter :id="`pencil-${v}`" x="-5%" y="-5%" width="110%" height="110%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="wave" />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="wave"
-                  scale="1.8"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                  result="drawn"
-                />
-                <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="8" result="tooth" />
-                <feColorMatrix in="tooth" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.6 0 0 0 -0.55" result="grain" />
-                <feComposite in="drawn" in2="grain" operator="in" />
-              </filter>
-              <!-- the numerals are inked more firmly: a softer grain, and a steadier hand -->
-              <filter :id="`pencil-firm-${v}`" x="-5%" y="-5%" width="110%" height="110%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="5" result="wave" />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="wave"
-                  scale="0.6"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                  result="drawn"
-                />
-                <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="11" result="tooth" />
-                <feColorMatrix in="tooth" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2 0 0 0 -0.1" result="grain" />
-                <feComposite in="drawn" in2="grain" operator="in" />
-              </filter>
-              <!-- the shading: hatched at 45 degrees -->
-              <pattern :id="`w-hatch-${v}`" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <line x1="0" y1="0" x2="0" y2="3" class="hatch-line" />
-              </pattern>
-              <pattern :id="`w-hatch-dense-${v}`" width="2" height="2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <line x1="0" y1="0" x2="0" y2="2" class="hatch-line dense" />
-              </pattern>
-              <!-- the brushing on the case, running from horn to horn -->
-              <pattern :id="`w-brush-${v}`" width="4" height="40" patternUnits="userSpaceOnUse">
-                <line x1="1" y1="0" x2="1" y2="40" class="brush-line" />
-              </pattern>
-              <!-- the side away from the light, bottom right -->
-              <linearGradient :id="`w-shade-${v}`" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0.45" stop-color="#fff" stop-opacity="0" />
-                <stop offset="1" stop-color="#fff" />
-              </linearGradient>
-              <mask :id="`w-shade-mask-${v}`">
-                <rect x="-290" y="-345" width="580" height="690" :fill="`url(#w-shade-${v})`" />
-              </mask>
-              <linearGradient :id="`w-fade-${v}`" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#fff" stop-opacity="0" />
-                <stop offset="0.85" stop-color="#fff" />
-              </linearGradient>
-              <mask :id="`w-strap-mask-${v}`">
-                <rect x="-140" y="-345" width="280" :height="345 - CASE.notch" :fill="`url(#w-fade-${v})`" />
-                <rect
-                  x="-140"
-                  :y="CASE.notch"
-                  width="280"
-                  :height="345 - CASE.notch"
-                  :fill="`url(#w-fade-${v})`"
-                  :transform="`rotate(180 0 ${(CASE.notch + 345) / 2})`"
-                />
-              </mask>
-              <clipPath :id="`w-crown-clip-${v}`">
-                <path :d="crownBody" />
-              </clipPath>
-              <clipPath :id="`w-stone-clip-${v}`">
-                <path :d="STONE" />
-              </clipPath>
-              <pattern :id="`w-hatch-red-${v}`" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <line x1="0" y1="0" x2="0" y2="2.2" class="hatch-red" />
-              </pattern>
-            </defs>
-
-            <g :filter="`url(#pencil-${v})`">
-              <!-- construction: the centre lines, through and past the watch -->
-              <g class="construction draw" style="--d: 0s">
-                <line x1="-262" y1="0" x2="262" y2="0" pathLength="1" />
-                <line x1="0" y1="-268" x2="0" y2="330" pathLength="1" />
-              </g>
-              <!-- the dimensions: 31.4 across the case, 43.5 from horn to horn -->
-              <g v-if="dims" class="dims fade" style="--d: 2.6s">
-                <line x1="-128" :y1="-CASE.end" x2="-244" :y2="-CASE.end" />
-                <line x1="-128" :y1="CASE.end" x2="-244" :y2="CASE.end" />
-                <line x1="-236" :y1="-CASE.end" x2="-236" :y2="CASE.end" />
-                <line x1="-240" :y1="-CASE.end + 4" x2="-232" :y2="-CASE.end - 4" />
-                <line x1="-240" :y1="CASE.end + 4" x2="-232" :y2="CASE.end - 4" />
-                <text transform="translate(-242 -80) rotate(-90)" text-anchor="middle">43.5</text>
-                <line :x1="-CASE.side" :y1="-CASE.start - 8" :x2="-CASE.side" y2="-298" />
-                <line :x1="CASE.side" :y1="-CASE.start - 8" :x2="CASE.side" y2="-298" />
-                <line :x1="-CASE.side" y1="-290" x2="-22" y2="-290" />
-                <line x1="22" y1="-290" :x2="CASE.side" y2="-290" />
-                <line :x1="-CASE.side - 4" y1="-286" :x2="-CASE.side + 4" y2="-294" />
-                <line :x1="CASE.side - 4" y1="-286" :x2="CASE.side + 4" y2="-294" />
-                <text x="0" y="-286.5" text-anchor="middle">31.4</text>
-              </g>
-
-              <!-- the strap, only begun: set in its notch between the horns, its stitching, fading away -->
-              <g :mask="`url(#w-strap-mask-${v})`" class="strap fade" style="--d: 1.8s">
-                <line
-                  v-for="sx in [-1, 1]"
-                  :key="`st${sx}`"
-                  :x1="sx * CASE.hornIn"
-                  y1="-345"
-                  :x2="sx * CASE.hornIn"
-                  :y2="-CASE.end"
-                />
-                <line
-                  v-for="sx in [-1, 1]"
-                  :key="`sb${sx}`"
-                  :x1="sx * CASE.hornIn"
-                  :y1="CASE.end"
-                  :x2="sx * CASE.hornIn"
-                  y2="345"
-                />
-                <line
-                  v-for="sx in [-1, 1]"
-                  :key="`tt${sx}`"
-                  :x1="sx * (CASE.hornIn - 7)"
-                  y1="-345"
-                  :x2="sx * (CASE.hornIn - 7)"
-                  :y2="-CASE.notch - 6"
-                  class="stitch"
-                />
-                <line
-                  v-for="sx in [-1, 1]"
-                  :key="`tb${sx}`"
-                  :x1="sx * (CASE.hornIn - 7)"
-                  :y1="CASE.notch + 6"
-                  :x2="sx * (CASE.hornIn - 7)"
-                  y2="345"
-                  class="stitch"
-                />
-              </g>
-
-              <!-- the case: brushed, shaded away from the light, its outline, the bevel along its flanks -->
-              <path :d="`${silhouette}${rounded(BEZEL)}`" :fill="`url(#w-brush-${v})`" fill-rule="evenodd" class="fade" style="--d: 2s" />
-              <path
-                :d="`${silhouette}${rounded(BEZEL)}`"
-                :fill="`url(#w-hatch-${v})`"
-                fill-rule="evenodd"
-                :mask="`url(#w-shade-mask-${v})`"
-                class="fade"
-                style="--d: 2.2s"
+    <!-- the drawing, and in the loupe the same drawing again, many times larger (see `place`) -->
+    <div v-for="v in views" :key="v" :ref="v === 'lens' ? setLens : undefined" :class="v">
+      <div :ref="v === 'lens' ? setStage : undefined" class="view" aria-hidden="true">
+        <svg :ref="v === 'plate' ? setDrawing : undefined" class="drawing" viewBox="-290 -345 580 690" aria-hidden="true">
+          <!-- each view has its own -->
+          <defs>
+            <!-- graphite on paper: the line wavers a little, and the paper's tooth shows through it -->
+            <filter
+              v-if="v === 'plate'"
+              :id="`pencil-${v}`"
+              x="-5%"
+              y="-5%"
+              width="110%"
+              height="110%"
+            >
+              <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="wave" />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="wave"
+                scale="1.8"
+                xChannelSelector="R"
+                yChannelSelector="G"
+                result="drawn"
               />
-              <path :d="silhouette" class="ink bold draw" pathLength="1" style="--d: 0.4s" />
-              <path :d="bevel" class="fine draw" pathLength="1" style="--d: 0.9s" />
-
-              <!-- the bezel: its edges drawn past the corners, the polished lip, where its faces meet -->
-              <g class="construction fine-over draw" style="--d: 0.2s">
-                <line
-                  v-for="(l, i) in overshoot"
-                  :key="i"
-                  :x1="l[0]"
-                  :y1="l[1]"
-                  :x2="l[2]"
-                  :y2="l[3]"
-                  pathLength="1"
-                />
-              </g>
-              <path
-                :d="`${rounded(BEZEL)}${rounded(OPEN)}`"
-                :fill="`url(#w-hatch-${v})`"
-                fill-rule="evenodd"
-                :mask="`url(#w-shade-mask-${v})`"
-                class="fade"
-                style="--d: 2.2s"
+              <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="8" result="tooth" />
+              <feColorMatrix in="tooth" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.6 0 0 0 -0.55" result="grain" />
+              <feComposite in="drawn" in2="grain" operator="in" />
+            </filter>
+            <!-- the numerals are inked more firmly: a softer grain, and a steadier hand -->
+            <filter
+              v-if="v === 'plate'"
+              :id="`pencil-firm-${v}`"
+              x="-5%"
+              y="-5%"
+              width="110%"
+              height="110%"
+            >
+              <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="5" result="wave" />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="wave"
+                scale="0.6"
+                xChannelSelector="R"
+                yChannelSelector="G"
+                result="drawn"
               />
-              <path :d="rounded(BEZEL)" class="ink bold draw" pathLength="1" style="--d: 0.6s" />
-              <path :d="rounded(LIP)" class="fine draw" pathLength="1" style="--d: 0.8s" />
-              <path :d="rounded(LIP_IN)" class="fine light draw" pathLength="1" style="--d: 0.85s" />
-              <path :d="rounded(OPEN)" class="ink draw" pathLength="1" style="--d: 0.9s" />
-              <line v-for="(m, i) in miters" :key="`m${i}`" v-bind="m" class="faint fade" style="--d: 1.7s" />
-              <g class="fade" style="--d: 1.4s">
-                <g v-for="(s, i) in screws" :key="i" :transform="`translate(${s.x} ${s.y})`">
-                  <circle r="7.5" class="ink" />
-                  <circle r="6" class="fine" />
-                  <line
-                    x1="-5.4"
-                    y1="0"
-                    x2="5.4"
-                    y2="0"
-                    :transform="`rotate(${s.r})`"
-                    class="slot"
-                  />
-                </g>
-              </g>
+              <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="11" result="tooth" />
+              <feColorMatrix in="tooth" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2 0 0 0 -0.1" result="grain" />
+              <feComposite in="drawn" in2="grain" operator="in" />
+            </filter>
+            <!-- the shading: hatched at 45 degrees -->
+            <pattern :id="`w-hatch-${v}`" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="3" class="hatch-line" />
+            </pattern>
+            <pattern :id="`w-hatch-dense-${v}`" width="2" height="2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="2" class="hatch-line dense" />
+            </pattern>
+            <!-- the brushing on the case, running from horn to horn -->
+            <pattern :id="`w-brush-${v}`" width="4" height="40" patternUnits="userSpaceOnUse">
+              <line x1="1" y1="0" x2="1" y2="40" class="brush-line" />
+            </pattern>
+            <!-- the side away from the light, bottom right -->
+            <linearGradient :id="`w-shade-${v}`" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0.45" stop-color="#fff" stop-opacity="0" />
+              <stop offset="1" stop-color="#fff" />
+            </linearGradient>
+            <mask :id="`w-shade-mask-${v}`">
+              <rect x="-290" y="-345" width="580" height="690" :fill="`url(#w-shade-${v})`" />
+            </mask>
+            <linearGradient :id="`w-fade-${v}`" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff" stop-opacity="0" />
+              <stop offset="0.85" stop-color="#fff" />
+            </linearGradient>
+            <mask :id="`w-strap-mask-${v}`">
+              <rect x="-140" y="-345" width="280" :height="345 - CASE.notch" :fill="`url(#w-fade-${v})`" />
+              <rect
+                x="-140"
+                :y="CASE.notch"
+                width="280"
+                :height="345 - CASE.notch"
+                :fill="`url(#w-fade-${v})`"
+                :transform="`rotate(180 0 ${(CASE.notch + 345) / 2})`"
+              />
+            </mask>
+            <clipPath :id="`w-crown-clip-${v}`">
+              <path :d="crownBody" />
+            </clipPath>
+            <clipPath :id="`w-stone-clip-${v}`">
+              <path :d="STONE" />
+            </clipPath>
+            <pattern :id="`w-hatch-red-${v}`" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="2.2" class="hatch-red" />
+            </pattern>
+            <!-- in the loupe, instead of the filters: the paper's tooth (see `grain`) -->
+            <template v-if="v === 'lens'">
+              <pattern
+                v-for="t in TEETH"
+                :id="`tooth-${t.id}`"
+                :key="t.id"
+                :width="TOOTH"
+                :height="TOOTH"
+                patternUnits="userSpaceOnUse"
+              >
+                <image :ref="setTooth" :data-tooth="t.id" :width="TOOTH" :height="TOOTH" preserveAspectRatio="none" />
+              </pattern>
+            </template>
+          </defs>
 
-              <!-- the recess down to the dial, in shadow -->
-              <path :d="`${rounded(OPEN)}${rounded(TRACK_OUT)}`" :fill="`url(#w-hatch-dense-${v})`" fill-rule="evenodd" class="fade" style="--d: 2.2s" />
-              <path
-                v-for="(ring, i) in RINGS"
-                :key="`r${i}`"
-                :d="rounded(ring)"
-                class="fine draw"
+          <g :filter="pencil(v)">
+            <!-- construction: the centre lines, through and past the watch -->
+            <g class="construction draw" style="--d: 0s">
+              <line x1="-262" y1="0" x2="262" y2="0" pathLength="1" />
+              <line x1="0" y1="-268" x2="0" y2="330" pathLength="1" />
+            </g>
+            <!-- the dimensions: 31.4 across the case, 43.5 from horn to horn -->
+            <g v-if="dims" class="dims fade" style="--d: 2.6s">
+              <line x1="-128" :y1="-CASE.end" x2="-244" :y2="-CASE.end" />
+              <line x1="-128" :y1="CASE.end" x2="-244" :y2="CASE.end" />
+              <line x1="-236" :y1="-CASE.end" x2="-236" :y2="CASE.end" />
+              <line x1="-240" :y1="-CASE.end + 4" x2="-232" :y2="-CASE.end - 4" />
+              <line x1="-240" :y1="CASE.end + 4" x2="-232" :y2="CASE.end - 4" />
+              <text transform="translate(-242 -80) rotate(-90)" text-anchor="middle">43.5</text>
+              <line :x1="-CASE.side" :y1="-CASE.start - 8" :x2="-CASE.side" y2="-298" />
+              <line :x1="CASE.side" :y1="-CASE.start - 8" :x2="CASE.side" y2="-298" />
+              <line :x1="-CASE.side" y1="-290" x2="-22" y2="-290" />
+              <line x1="22" y1="-290" :x2="CASE.side" y2="-290" />
+              <line :x1="-CASE.side - 4" y1="-286" :x2="-CASE.side + 4" y2="-294" />
+              <line :x1="CASE.side - 4" y1="-286" :x2="CASE.side + 4" y2="-294" />
+              <text x="0" y="-286.5" text-anchor="middle">31.4</text>
+            </g>
+
+            <!-- the strap, only begun: set in its notch between the horns, its stitching, fading away -->
+            <g :mask="`url(#w-strap-mask-${v})`" class="strap fade" style="--d: 1.8s">
+              <line
+                v-for="sx in [-1, 1]"
+                :key="`st${sx}`"
+                :x1="sx * CASE.hornIn"
+                y1="-345"
+                :x2="sx * CASE.hornIn"
+                :y2="-CASE.end"
+              />
+              <line
+                v-for="sx in [-1, 1]"
+                :key="`sb${sx}`"
+                :x1="sx * CASE.hornIn"
+                :y1="CASE.end"
+                :x2="sx * CASE.hornIn"
+                y2="345"
+              />
+              <line
+                v-for="sx in [-1, 1]"
+                :key="`tt${sx}`"
+                :x1="sx * (CASE.hornIn - 7)"
+                y1="-345"
+                :x2="sx * (CASE.hornIn - 7)"
+                :y2="-CASE.notch - 6"
+                class="stitch"
+              />
+              <line
+                v-for="sx in [-1, 1]"
+                :key="`tb${sx}`"
+                :x1="sx * (CASE.hornIn - 7)"
+                :y1="CASE.notch + 6"
+                :x2="sx * (CASE.hornIn - 7)"
+                y2="345"
+                class="stitch"
+              />
+            </g>
+
+            <!-- the case: brushed, shaded away from the light, its outline, the bevel along its flanks -->
+            <path :d="`${silhouette}${rounded(BEZEL)}`" :fill="`url(#w-brush-${v})`" fill-rule="evenodd" class="fade" style="--d: 2s" />
+            <path
+              :d="`${silhouette}${rounded(BEZEL)}`"
+              :fill="`url(#w-hatch-${v})`"
+              fill-rule="evenodd"
+              :mask="`url(#w-shade-mask-${v})`"
+              class="fade"
+              style="--d: 2.2s"
+            />
+            <path :d="silhouette" class="ink bold draw" pathLength="1" style="--d: 0.4s" />
+            <path :d="bevel" class="fine draw" pathLength="1" style="--d: 0.9s" />
+
+            <!-- the bezel: its edges drawn past the corners, the polished lip, where its faces meet -->
+            <g class="construction fine-over draw" style="--d: 0.2s">
+              <line
+                v-for="(l, i) in overshoot"
+                :key="i"
+                :x1="l[0]"
+                :y1="l[1]"
+                :x2="l[2]"
+                :y2="l[3]"
                 pathLength="1"
-                :style="{ '--d': `${1 + i * 0.1}s` }"
               />
-
-              <!-- the railway, with SWISS MADE in it under the VI -->
-              <g class="fade" style="--d: 1.1s">
-                <path :d="rounded(TRACK_OUT)" class="fine" />
-                <path :d="rounded(TRACK_IN)" class="fine" />
+            </g>
+            <path
+              :d="`${rounded(BEZEL)}${rounded(OPEN)}`"
+              :fill="`url(#w-hatch-${v})`"
+              fill-rule="evenodd"
+              :mask="`url(#w-shade-mask-${v})`"
+              class="fade"
+              style="--d: 2.2s"
+            />
+            <path :d="rounded(BEZEL)" class="ink bold draw" pathLength="1" style="--d: 0.6s" />
+            <path :d="rounded(LIP)" class="fine draw" pathLength="1" style="--d: 0.8s" />
+            <path :d="rounded(LIP_IN)" class="fine light draw" pathLength="1" style="--d: 0.85s" />
+            <path :d="rounded(OPEN)" class="ink draw" pathLength="1" style="--d: 0.9s" />
+            <line v-for="(m, i) in miters" :key="`m${i}`" v-bind="m" class="faint fade" style="--d: 1.7s" />
+            <g class="fade" style="--d: 1.4s">
+              <g v-for="(s, i) in screws" :key="i" :transform="`translate(${s.x} ${s.y})`">
+                <circle r="7.5" class="ink" />
+                <circle r="6" class="fine" />
                 <line
-                  v-for="t in track"
-                  :key="`t${t.i}`"
-                  :x1="t.x1"
-                  :y1="t.y1"
-                  :x2="t.x2"
-                  :y2="t.y2"
-                  class="sleeper"
-                  :class="{ five: t.five }"
+                  x1="-5.4"
+                  y1="0"
+                  x2="5.4"
+                  y2="0"
+                  :transform="`rotate(${s.r})`"
+                  class="slot"
                 />
-                <text x="-15.2" :y="(TRACK_IN.hy + TRACK_OUT.hy) / 2" text-anchor="middle" dominant-baseline="central" class="made">SWISS</text>
-                <text x="15.2" :y="(TRACK_IN.hy + TRACK_OUT.hy) / 2" text-anchor="middle" dominant-baseline="central" class="made">MADE</text>
-                <path :d="rounded(FRAME)" class="fine light" />
-                <path :d="rounded(SQUARE)" class="fine light" />
               </g>
             </g>
 
-            <!-- the crown, with the firmer pencil so the stone keeps its point: the tube, the beads behind,
-               the steel, the beads in front, the cone to the collar, the stone -->
-            <g :filter="`url(#pencil-firm-${v})`" class="crown">
-              <path :d="`M${CASE.side} -6H188.5V6H${CASE.side}`" class="ink draw" pathLength="1" style="--d: 1.2s" />
-              <g class="fade" style="--d: 1.3s">
-                <circle
-                  v-for="b in beadsBehind"
-                  :key="`bb${b.i}`"
-                  :cx="RING.x"
-                  :cy="b.y"
-                  :r="RING.bead"
-                  class="bead"
-                />
-              </g>
-              <path :d="crownBody" class="paper-fill fade" style="--d: 1.3s" />
-              <g :clip-path="`url(#w-crown-clip-${v})`" class="fade" style="--d: 1.6s">
-                <rect x="188" y="-30" width="4.5" height="60" :fill="`url(#w-hatch-dense-${v})`" />
-                <rect x="188" y="12" width="28" height="20" :fill="`url(#w-hatch-${v})`" />
-              </g>
-              <path :d="crownBody" class="ink draw" pathLength="1" style="--d: 1.25s" />
-              <g class="fade" style="--d: 1.45s">
-                <path d="M194.2 -28.4V28.4M201.8 -28.4V28.4" class="fine light" />
-                <path d="M209.6 -21.6C210.6 -8 210.6 8 209.6 21.6" class="fine light" />
-                <path d="M212.7 -18.7V18.7" class="fine" />
-                <g v-for="b in beadsInFront" :key="`bf${b.i}`">
-                  <circle :cx="RING.x" :cy="b.y" :r="RING.bead" class="bead" />
-                  <path :d="b.shade" class="bead-shade" />
-                </g>
-              </g>
-              <path :d="STONE" class="stone-fill fade" style="--d: 1.4s" />
-              <g :clip-path="`url(#w-stone-clip-${v})`" class="fade" style="--d: 1.6s">
-                <rect x="214" y="2.5" width="28" height="16" :fill="`url(#w-hatch-red-${v})`" />
-              </g>
-              <path d="M217.5 -12.4C221.5 -12.4 225.5 -10.4 228.6 -7.4L234.6 -1.6" class="red-fine fade" style="--d: 1.6s" />
-              <ellipse
-                cx="220.5"
-                cy="-11.6"
-                rx="2.6"
-                ry="0.9"
-                transform="rotate(-10 220.5 -11.6)"
-                class="glint fade"
-                style="--d: 1.6s"
+            <!-- the recess down to the dial, in shadow -->
+            <path :d="`${rounded(OPEN)}${rounded(TRACK_OUT)}`" :fill="`url(#w-hatch-dense-${v})`" fill-rule="evenodd" class="fade" style="--d: 2.2s" />
+            <path
+              v-for="(ring, i) in RINGS"
+              :key="`r${i}`"
+              :d="rounded(ring)"
+              class="fine draw"
+              pathLength="1"
+              :style="{ '--d': `${1 + i * 0.1}s` }"
+            />
+
+            <!-- the railway, with SWISS MADE in it under the VI -->
+            <g class="fade" style="--d: 1.1s">
+              <path :d="rounded(TRACK_OUT)" class="fine" />
+              <path :d="rounded(TRACK_IN)" class="fine" />
+              <line
+                v-for="t in track"
+                :key="`t${t.i}`"
+                :x1="t.x1"
+                :y1="t.y1"
+                :x2="t.x2"
+                :y2="t.y2"
+                class="sleeper"
+                :class="{ five: t.five }"
               />
-              <path :d="STONE" class="stone draw" pathLength="1" style="--d: 1.35s" />
+              <text x="-15.2" :y="(TRACK_IN.hy + TRACK_OUT.hy) / 2" text-anchor="middle" dominant-baseline="central" class="made">SWISS</text>
+              <text x="15.2" :y="(TRACK_IN.hy + TRACK_OUT.hy) / 2" text-anchor="middle" dominant-baseline="central" class="made">MADE</text>
+              <path :d="rounded(FRAME)" class="fine light" />
+              <path :d="rounded(SQUARE)" class="fine light" />
             </g>
+          </g>
+          <!-- in the loupe, the paper's tooth through all of that -->
+          <rect
+            v-if="v === 'lens'"
+            x="-290"
+            y="-345"
+            width="580"
+            height="690"
+            fill="url(#tooth-coarse)"
+          />
 
-            <!-- the numerals, slanted along their hours, and the name under XII -->
-            <g :filter="`url(#pencil-firm-${v})`" class="numerals fade" style="--d: 1.6s">
-              <g v-for="n in numerals" :key="n.n" :transform="n.m">
-                <path :d="n.d" class="numeral" />
-              </g>
-              <text x="1.3" y="-38.5" text-anchor="middle" dominant-baseline="central" class="signature">HUGO</text>
+          <!-- the crown, with the firmer pencil so the stone keeps its point: the tube, the beads behind,
+             the steel, the beads in front, the cone to the collar, the stone -->
+          <g :filter="pencil(v, true)" class="crown">
+            <path :d="`M${CASE.side} -6H188.5V6H${CASE.side}`" class="ink draw" pathLength="1" style="--d: 1.2s" />
+            <g class="fade" style="--d: 1.3s">
+              <circle
+                v-for="b in beadsBehind"
+                :key="`bb${b.i}`"
+                :cx="RING.x"
+                :cy="b.y"
+                :r="RING.bead"
+                class="bead"
+              />
             </g>
-            <!-- what is written in their strokes, over the pencil rather than through it: its waver and its
-             grain would blur letters this small, and under the loupe they have to be read -->
-            <g class="quotes fade" style="--d: 1.6s">
-              <g v-for="n in engraved" :key="n.n" :transform="n.m">
-                <text
-                  v-for="(w, k) in n.words"
-                  :key="k"
-                  :transform="`translate(${w.x} ${w.y}) rotate(${w.a})`"
-                  :style="{ fontSize: `${w.size}px` }"
-                  :textLength="w.fit"
-                  :lengthAdjust="w.fit ? 'spacingAndGlyphs' : undefined"
-                  class="secret"
-                  text-anchor="middle"
-                  dominant-baseline="central"
-                >
-                  {{ w.text }}
-                </text>
+            <path :d="crownBody" class="paper-fill fade" style="--d: 1.3s" />
+            <g :clip-path="`url(#w-crown-clip-${v})`" class="fade" style="--d: 1.6s">
+              <rect x="188" y="-30" width="4.5" height="60" :fill="`url(#w-hatch-dense-${v})`" />
+              <rect x="188" y="12" width="28" height="20" :fill="`url(#w-hatch-${v})`" />
+            </g>
+            <path :d="crownBody" class="ink draw" pathLength="1" style="--d: 1.25s" />
+            <g class="fade" style="--d: 1.45s">
+              <path d="M194.2 -28.4V28.4M201.8 -28.4V28.4" class="fine light" />
+              <path d="M209.6 -21.6C210.6 -8 210.6 8 209.6 21.6" class="fine light" />
+              <path d="M212.7 -18.7V18.7" class="fine" />
+              <g v-for="b in beadsInFront" :key="`bf${b.i}`">
+                <circle :cx="RING.x" :cy="b.y" :r="RING.bead" class="bead" />
+                <path :d="b.shade" class="bead-shade" />
               </g>
             </g>
-          </svg>
+            <path :d="STONE" class="stone-fill fade" style="--d: 1.4s" />
+            <g :clip-path="`url(#w-stone-clip-${v})`" class="fade" style="--d: 1.6s">
+              <rect x="214" y="2.5" width="28" height="16" :fill="`url(#w-hatch-red-${v})`" />
+            </g>
+            <path d="M217.5 -12.4C221.5 -12.4 225.5 -10.4 228.6 -7.4L234.6 -1.6" class="red-fine fade" style="--d: 1.6s" />
+            <ellipse
+              cx="220.5"
+              cy="-11.6"
+              rx="2.6"
+              ry="0.9"
+              transform="rotate(-10 220.5 -11.6)"
+              class="glint fade"
+              style="--d: 1.6s"
+            />
+            <path :d="STONE" class="stone draw" pathLength="1" style="--d: 1.35s" />
+          </g>
+          <rect
+            v-if="v === 'lens'"
+            x="187.5"
+            y="-33"
+            width="55"
+            height="66"
+            fill="url(#tooth-firm)"
+          />
 
-          <!-- the drawing as it has been smudged, where it has been -->
-          <canvas v-if="smudge && v === 'plate'" :ref="setRubbed" class="rubbed" aria-hidden="true" />
-          <canvas v-if="smudge && v === 'lens'" :ref="setLensPaint" class="rubbed" aria-hidden="true" />
+          <!-- the numerals, slanted along their hours, and the name under XII -->
+          <g :filter="pencil(v, true)" class="numerals fade" style="--d: 1.6s">
+            <g v-for="n in numerals" :key="n.n" :transform="n.m">
+              <path :d="n.d" class="numeral" />
+              <path v-if="v === 'lens'" :d="n.d" fill="url(#tooth-firm)" />
+            </g>
+            <text x="1.3" y="-38.5" text-anchor="middle" dominant-baseline="central" class="signature">HUGO</text>
+            <text
+              v-if="v === 'lens'"
+              x="1.3"
+              y="-38.5"
+              text-anchor="middle"
+              dominant-baseline="central"
+              class="signature"
+              style="fill: url(#tooth-firm)"
+            >
+              HUGO
+            </text>
+          </g>
+          <!-- what is written in their strokes, over the pencil rather than through it: its waver and its
+           grain would blur letters this small, and under the loupe they have to be read -->
+          <g class="quotes fade" style="--d: 1.6s">
+            <g v-for="n in engraved" :key="n.n" :transform="n.m">
+              <text
+                v-for="(w, k) in n.words"
+                :key="k"
+                :transform="`translate(${w.x} ${w.y}) rotate(${w.a})`"
+                :style="{ fontSize: `${w.size}px` }"
+                :textLength="w.fit"
+                :lengthAdjust="w.fit ? 'spacingAndGlyphs' : undefined"
+                class="secret"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                {{ w.text }}
+              </text>
+            </g>
+          </g>
+        </svg>
 
-          <svg class="over" :viewBox="v === 'plate' ? '-290 -345 580 690' : lensBox" aria-hidden="true">
-            <!-- the hands are solid steel: nothing printed on the dial shows through them. The pencil
-               leaves its grain in what it draws, so they are laid on a sheet of paper cut to their shape -->
-            <g class="hands-under fade" style="--d: 2s">
-              <path :d="HOUR.d" :transform="`rotate(${hour})`" />
-              <path :d="MINUTE.d" :transform="`rotate(${minute})`" />
-              <circle r="11" />
+        <!-- the drawing as it has been smudged, where it has been -->
+        <canvas v-if="smudge && v === 'plate'" :ref="setRubbed" class="rubbed" aria-hidden="true" />
+        <canvas v-if="smudge && v === 'lens'" :ref="setLensPaint" class="rubbed" aria-hidden="true" />
+
+        <svg class="over" viewBox="-290 -345 580 690" aria-hidden="true">
+          <!-- the hands are solid steel: nothing printed on the dial shows through them. The pencil
+             leaves its grain in what it draws, so they are laid on a sheet of paper cut to their shape -->
+          <g class="hands-under fade" style="--d: 2s">
+            <path :d="HOUR.d" :transform="`rotate(${hour})`" />
+            <path :d="MINUTE.d" :transform="`rotate(${minute})`" />
+            <circle r="11" />
+          </g>
+          <!-- the hands, in red pencil -->
+          <g :filter="pencil(v)" class="hands fade" style="--d: 2s">
+            <g :transform="`rotate(${hour})`">
+              <path :d="HOUR.d" class="red hand" />
+              <path :d="HOUR.ridge" class="red-fine" />
             </g>
-            <!-- the hands, in red pencil -->
-            <g :filter="`url(#pencil-${v})`" class="hands fade" style="--d: 2s">
-              <g :transform="`rotate(${hour})`">
-                <path :d="HOUR.d" class="red hand" />
-                <path :d="HOUR.ridge" class="red-fine" />
-              </g>
-              <g :transform="`rotate(${minute})`">
-                <path :d="MINUTE.d" class="red hand" />
-                <path :d="MINUTE.ridge" class="red-fine" />
-              </g>
-              <circle r="11" class="red hand" />
-              <circle r="7.5" class="red-fine" />
-              <circle r="2.2" class="pin" />
+            <g :transform="`rotate(${minute})`">
+              <path :d="MINUTE.d" class="red hand" />
+              <path :d="MINUTE.ridge" class="red-fine" />
             </g>
-          </svg>
-        </div>
-      </component>
+            <circle r="11" class="red hand" />
+            <circle r="7.5" class="red-fine" />
+            <circle r="2.2" class="pin" />
+          </g>
+          <g
+            v-if="v === 'lens'"
+            fill="url(#tooth-coarse)"
+            stroke="url(#tooth-coarse)"
+            stroke-width="0.9"
+            class="fade"
+            style="--d: 2s"
+          >
+            <path :d="HOUR.d" :transform="`rotate(${hour})`" />
+            <path :d="MINUTE.d" :transform="`rotate(${minute})`" />
+            <circle r="11" />
+          </g>
+        </svg>
+      </div>
     </div>
     <slot />
   </div>
@@ -1267,8 +1307,7 @@ onBeforeUnmount(() => {
   overflow: visible;
   pointer-events: none;
 }
-/* the view, in its pane: in the loupe, its paper behind it */
-.pane,
+/* the view: in the loupe, the drawing at the loupe's size, on its paper, slid along under it */
 .view {
   position: absolute;
   inset: 0;
@@ -1278,7 +1317,14 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 .lens .view {
+  inset: auto;
+  top: 0;
+  left: 0;
   background: var(--paper);
+  will-change: transform;
+}
+.lens .rubbed:not([data-smudged]) {
+  display: none;
 }
 /* The loupe: a disc of glass laid on the drawing. A hairline round it, as everything on the sheet is
    drawn; a thin bright edge just inside, where the glass catches the light; the light falling off a
@@ -1297,6 +1343,7 @@ onBeforeUnmount(() => {
     0 8px 18px -6px rgb(0 0 0 / 0.16),
     0 26px 48px -14px rgb(0 0 0 / 0.24);
   pointer-events: none;
+  will-change: transform;
   visibility: hidden;
   opacity: 0;
   scale: 0.94;
@@ -1305,7 +1352,7 @@ onBeforeUnmount(() => {
     scale 0.12s ease-in,
     visibility 0s linear 0.12s;
 }
-.lens.on {
+.lens[data-on] {
   visibility: visible;
   opacity: 1;
   scale: 1;
@@ -1325,15 +1372,10 @@ onBeforeUnmount(() => {
     inset 0 0 30px color-mix(in oklab, var(--graphite) 7%, transparent);
   pointer-events: none;
 }
-.lens .drawing,
-.lens .rubbed,
-.lens .over {
-  overflow: hidden;
-}
 .sketch.loupe {
   cursor: zoom-in;
 }
-.sketch.loupe.held {
+.sketch.loupe[data-held] {
   cursor: none;
 }
 /* the pencil: a firm line for the outlines, a light one for what is inside them */
@@ -1536,7 +1578,7 @@ onBeforeUnmount(() => {
 }
 @media (prefers-reduced-motion: reduce) {
   .lens,
-  .lens.on {
+  .lens[data-on] {
     scale: 1;
   }
   .shown .draw,
