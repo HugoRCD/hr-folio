@@ -26,16 +26,12 @@ const PLACES = [
   { path: '/', title: 'Home' },
   { path: '/works', title: 'Works' },
   { path: '/writing', title: 'Writing' },
-  { path: '/clipboard', title: 'Clipboard' },
 ]
 
 const requestFetch = useRequestFetch()
 const { data: known } = await useAsyncData('error-known-pages', async () => {
-  const [writing, clipboard] = await Promise.all([
-    requestFetch<Array<{ path: string, title: string }>>('/api/folio/writing').catch(() => []),
-    requestFetch<Array<{ path: string, title: string }>>('/api/folio/clipboard').catch(() => []),
-  ])
-  return [...writing, ...clipboard, ...PLACES].map(p => ({ path: p.path, title: p.title }))
+  const writing = await requestFetch<Array<{ path: string, title: string }>>('/api/folio/writing').catch(() => [])
+  return [...writing, ...PLACES].map(p => ({ path: p.path, title: p.title }))
 })
 const near = computed(() => is404.value ? nearest(path.value, known.value ?? []) : [])
 </script>

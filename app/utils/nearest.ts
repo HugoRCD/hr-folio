@@ -40,3 +40,11 @@ export function nearest(path: string, pages: Known[], count = 2, floor = 0.6) {
     .slice(0, count)
     .map(m => m.page)
 }
+
+// where to go instead: the nearest page first, then the main ones, four at most
+export function instead(near: Known[], places: Known[], count = 4) {
+  const first = near.slice(0, 1)
+  return [...first, ...places.filter(p => !first.some(f => f.path === p.path))]
+    .slice(0, count)
+    .map(p => ({ path: p.path, title: p.title }))
+}

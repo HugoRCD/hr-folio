@@ -31,7 +31,9 @@ const daylight = useState<{ time: string, date: string, phase: string, place: { 
     <footer class="bottom">
       <span>hugorcd.com</span>
       <NuxtLink to="/" class="back">
-        Back to the index &rarr;
+        Back to the index
+        <!-- drawn, not set: the font's arrow sits at the height of small letters, below the middle of capitals -->
+        <svg class="arrow" viewBox="0 0 8 7.2" aria-hidden="true"><path d="M0.4 3.6H7.1M4.7 1.3L7.1 3.6L4.7 5.9" /></svg>
       </NuxtLink>
     </footer>
   </div>
@@ -113,6 +115,22 @@ const daylight = useState<{ time: string, date: string, phase: string, place: { 
 }
 .back {
   transition: color 0.2s ease;
+}
+/* as tall as the capitals and standing on their baseline, so its shaft is at their middle */
+.arrow {
+  display: inline-block;
+  height: 0.72em;
+  width: auto;
+  margin-left: 0.15em;
+  vertical-align: baseline;
+  overflow: visible;
+}
+.arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .back:hover {
   color: var(--fg);
