@@ -43,7 +43,8 @@ const daylight = useState<{ time: string, date: string, phase: string, place: { 
 .frame {
   --ground: #efe9de;
   --fg: #1c1917;
-  --muted: rgb(28 25 23 / 0.55);
+  /* as light as it can be and still read: 4.5:1 on the cream, at the size of the dateline and the footer */
+  --muted: rgb(28 25 23 / 0.64);
   --mark: #901112;
   display: grid;
   grid-template-rows: auto 1fr auto;

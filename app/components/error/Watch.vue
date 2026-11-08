@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
 .where {
   margin-top: 4px;
   font-size: 15px;
-  color: rgb(28 25 23 / 0.6);
+  color: rgb(28 25 23 / 0.64);
 }
 .where s {
   display: inline-block;

@@ -14,7 +14,14 @@ const code = computed(() => {
 })
 const is404 = computed(() => code.value === 404)
 const route = useRoute()
-const path = computed(() => decodeURI(route.path))
+// an address with a broken escape (/%E0%A4%A) can't be decoded: it is shown as it was typed
+const path = computed(() => {
+  try {
+    return decodeURI(route.path)
+  } catch {
+    return route.path
+  }
+})
 
 useHead({
   title: () => is404.value ? 'Page not found' : 'Something went wrong',
@@ -28,11 +35,14 @@ const PLACES = [
   { path: '/writing', title: 'Writing' },
 ]
 
+// Only a missing page needs the articles, to find the one it was probably meant to be; and the page
+// doesn't wait long for them.
 const requestFetch = useRequestFetch()
 const { data: known } = await useAsyncData('error-known-pages', async () => {
-  const writing = await requestFetch<Array<{ path: string, title: string }>>('/api/folio/writing').catch(() => [])
+  if (!is404.value) return []
+  const writing = await requestFetch<Array<{ path: string, title: string }>>('/api/folio/writing', { timeout: 1500 }).catch(() => [])
   return [...writing, ...PLACES].map(p => ({ path: p.path, title: p.title }))
-})
+}, { watch: [is404] })
 const near = computed(() => is404.value ? nearest(path.value, known.value ?? []) : [])
 </script>
 
