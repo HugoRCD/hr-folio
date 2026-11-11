@@ -34,5 +34,6 @@ minimumReleaseAgeExclude:
   - satori
 
 overrides:
+  '@nuxtjs/mdc': ^0.23.3
   # 2.2.0 rewrote attention serialization and overflows the stack on our content in /llms-full.txt
   mdast-util-to-markdown: 2.1.2
