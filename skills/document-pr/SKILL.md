@@ -8,12 +8,12 @@ disable-model-invocation: true
 
 Improve the description, not the code. Read code only to understand and verify behavior. Propose a full replacement body and wait for approval before changing anything on GitHub.
 
-The `pr-writing` skill defines the shape (Why, Try it, Proof, Notes, Checks, ELI5). This skill is how to fill it honestly.
+The `pr-writing` skill defines the order: an opening paragraph, how to try it, the evidence, notes, what CI doesn't show, the ELI5. This skill is how to fill it honestly.
 
 ## 1. Inspect
 
 1. Get the PR number or URL, then one `gh pr view --json title,body,baseRefName,headRefName,url,files,commits,statusCheckRollup,comments,reviews,closingIssuesReferences`.
-2. Read only the diffs and files needed to understand each behavior. Don't rerun checks already in `statusCheckRollup`.
+2. Read only the diffs and files needed to understand each behavior. Don't rerun checks already in `statusCheckRollup`, and don't repeat the green ones in the description: the reviewer sees them on the PR.
 3. Find the test links now: the preview deployment URL (bot comment or deployment status) plus the path of the changed page, and the PR build install command from its bot comment (pkg.pr.new and similar). Open each link once to confirm it serves the change.
 4. Never read `.env`, tokens or deployment linkage files into context.
 
@@ -48,17 +48,17 @@ Look at every capture and check it shows the change.
 ```markdown
 > [the disclosure line from `pr-writing`, when an agent wrote the change]
 
-[Why: one or two sentences.]
+[What was wrong or missing, the cause if it isn't obvious, and what changes. One paragraph.]
 
-**Try it:** [preview URL of the changed page / `npx https://pkg.pr.new/<package>@<pr> <command>` / snippet]
+To try it [on a page / in a project that has X]:
 
-### [Behavior]
+[preview URL of the changed page, or `npx https://pkg.pr.new/<package>@<pr> <command>`, or a snippet]
 
-[Its before/after]
+### Before and after
 
-[Notes, only if a reviewer needs them]
+[The embedded evidence, one pair per behavior]
 
-**Checks:** [one line]
+[A trade-off or risk, only if a reviewer needs it. Then what CI doesn't show: failures, checks run by hand, what nobody verified.]
 
 <details><summary>ELI5</summary>
 
@@ -67,9 +67,10 @@ Look at every capture and check it shows the change.
 </details>
 ```
 
+- No "Why:", "Proof:" or "Checks:" labels. A heading only where there's real content under it.
 - Keep each proof next to the behavior it shows. Omit empty parts.
 - Don't list files, commits or tests. Explain a mechanism only when a reviewer would otherwise be lost.
-- Claim only what you verified. A check that couldn't run goes in **Checks**.
+- Claim only what you verified, and keep every limit even when it makes the description longer.
 
 ## 5. Approval and publication
 
@@ -87,7 +88,9 @@ Look at every capture and check it shows the change.
 
 ## Final check
 
-- Someone can test the change from the **Try it** line without asking.
+- Reads like a colleague explaining their work, not a filled-in form.
+- Someone can test the change from the line after the opening, without asking.
+- Nothing CI already shows green is restated; every unverified part is stated.
 - Every behavior has its own comparable before/after.
 - No prose a reviewer would skip: every paragraph explains something the diff doesn't.
 - No media in the repo, no local paths left in the published body.
