@@ -21,7 +21,9 @@ Stop exploring when each behavior has a way to reproduce it or a concrete blocke
 
 ## 2. Plan the proof
 
-Split the PR into behaviors a reviewer would check separately. Each gets its own before/after; two unrelated fixes need two pairs.
+Split the PR into behaviors a reviewer would check separately. Each gets its own before/after, or the new thing on its own for a pure addition; two unrelated fixes need two pairs.
+
+For a security fix, the public proof is the impact at a high level. Keep reproductions, payloads and exploit steps out of the PR until the fix is released, and follow the project's security policy.
 
 Prefer, in order: the same real command, prompt or interaction before and after; the same API or protocol call; the same discovery call showing changed capabilities; a focused test with meaningful output; text with a stated blocker. Source code, configs, allowlists and styled diffs are never proof: the reviewer already has the diff.
 
@@ -37,7 +39,7 @@ Work in one temporary folder outside the repo:
 PR_PROOF_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pr-proof-<repo>-<pr>.XXXXXX")"
 ```
 
-Worktrees, raw output, media and the draft body go there; `git status --short` must stay clean. Run base in a temporary `git worktree` inside it. Use the same input, viewport, fixture and steps on both sides. Save stdout, stderr and exit codes as they happen; never reconstruct them later. Redact tokens and IDs, and say where you did.
+Worktrees, raw output, media and the draft body go there; `git status --short` must stay clean. Run base in a temporary `git worktree` inside it. Use the same input, viewport, fixture and steps on both sides. Save stdout, stderr and exit codes as they happen; never reconstruct them later. Capture only demo or sanitised data (no real users, emails or private messages), redact tokens and IDs, and say where you did.
 
 Capture screenshots and recordings with `agent-browser` (github.com/vercel-labs/agent-browser), one session at a time; `before-and-after` (github.com/vercel-labs/before-and-after) can format them as a table. When raw output reads badly, build a small HTML artifact from the saved output following [evidence-design.md](evidence-design.md).
 
@@ -84,6 +86,8 @@ To try it [on a page / in a project that has X]:
      --attach ./<behavior>/before.png --attach ./<behavior>/after.png
    ```
 
+   Attach only the media files that exist; proof that is captured text needs no `--attach`.
+
 4. Read the body back, confirm every URL loads and sits in the right place, return the final body in one Markdown block, then delete `$PR_PROOF_DIR`.
 
 ## Final check
@@ -91,6 +95,6 @@ To try it [on a page / in a project that has X]:
 - Reads like a colleague explaining their work, not a filled-in form.
 - Someone can test the change from the line after the opening, without asking.
 - Nothing CI already shows green is restated; every unverified part is stated.
-- Every behavior has its own comparable before/after.
+- Every behavior has its own comparable before/after, an after-only capture for a pure addition, or a stated blocker.
 - No prose a reviewer would skip: every paragraph explains something the diff doesn't.
 - No media in the repo, no local paths left in the published body.
