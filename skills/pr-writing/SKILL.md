@@ -1,11 +1,11 @@
 ---
 name: pr-writing
-description: Write pull request descriptions that show the change works instead of only describing it, and say who did what when an AI agent wrote the code. Use whenever you open a pull request, write or update its description, or prepare a change for someone else to review.
+description: Write pull request descriptions that are short, show the change works instead of only describing it, tell the reviewer how to try it in one step, and say who did what when an AI agent wrote the code. Use whenever you open a pull request, write or update its description, or prepare a change for someone else to review.
 ---
 
 # PR writing
 
-A reviewer spends most of their time picturing what the author already saw: the page they opened, the command they ran, the test that went green. Put that in the description. Prose that describes a change is a claim, not evidence.
+A reviewer should understand the change, see that it works, and be able to try it within a minute. Most of their time goes into picturing what the author already saw: the page they opened, the command they ran, the test that went green. Put that in the description. Prose that describes a change is a claim, not evidence.
 
 This skill covers the description only. Prepare it, show it to the user, and wait for their go-ahead before opening or editing the pull request, unless they've told you otherwise.
 
@@ -24,17 +24,31 @@ When an AI agent wrote the change, start the description with one line that tell
 - Use it instead of any default footer such as "Generated with…". No `Co-Authored-By` trailers in commits.
 - If the repository has a pull request template, keep the template and put the line above it.
 
-## 2. Order the description for a skimmer
+## 2. Write it in this order
 
-Most readers stop early, so put what matters first:
+Write the description the way you'd explain the work to a colleague. Don't label the parts ("Why:", "Proof:", "Checks:"): that reads like a form. Use a heading only where a section has real content, such as `### Before and after`. Skip what doesn't apply.
 
-1. **The problem, in one paragraph.** What was wrong or missing, for whom, and how it showed up. Real numbers when there are any.
-2. **What changed.** Short, grouped by area. Not a list of commits.
-3. **Evidence** (section 3).
-4. **Details** a reviewer needs: migrations, trade-offs, what you tried that didn't work, anything left to do.
-5. **ELI5.** Two or three plain sentences someone outside the project would follow. If you can't write it, the change probably isn't clear yet.
+1. An opening paragraph: what was wrong or missing, for whom, the cause when it isn't obvious, and what changes. Real numbers when there are any.
+2. Right after it, the fastest way to try the change, ready to copy and introduced by a plain sentence (section 3).
+3. The evidence (section 4).
+4. Anything a reviewer needs and can't get from the diff: a trade-off, a migration, what you tried that didn't work, what's left to do.
+5. What CI doesn't show, in plain sentences: a check that failed, checks you ran yourself because the repository has no CI for them, manual checks (a real device, a real project, a browser), and what nobody verified yet. Don't restate checks CI runs and shows green, such as lint, typecheck or tests: the reviewer already sees them on the pull request.
+6. An ELI5: two or three plain sentences someone outside the project would follow, in `<details><summary>ELI5</summary> … </details>` at the end. If you can't write it, the change probably isn't clear yet.
 
-## 3. Show it, with evidence that fits the change
+Keep the prose short. Length is fine when it explains something a reviewer needs, such as how a mechanism works or why this approach beats the obvious one. Never spend it on file lists, commit lists, a restatement of the diff, or sections that repeat each other. Snippets and captured output are evidence, not prose, and don't count against the length.
+
+## 3. Say how to try it
+
+Give the reviewer something they can paste or click, not a description of how to set things up.
+
+- **Page or UI:** the preview deployment URL of the changed page itself, not the deployment root. Take it from the deployment bot comment or the deployment status, then add the path.
+- **Package or CLI:** one command that runs the pull request build. Turn the bot's install comment (pkg.pr.new and similar) into `npx https://pkg.pr.new/<package>@<pr> <command>`; use install-then-run only when the package has no command to run.
+- **API:** a snippet someone can paste.
+- **No preview or PR build yet:** the local command, and say the link will follow.
+
+Open each link once to check it serves the change.
+
+## 4. Show it, with evidence that fits the change
 
 | Change | Evidence |
 |---|---|
@@ -48,18 +62,23 @@ Most readers stop early, so put what matters first:
 
 For browser captures, `agent-browser` (github.com/vercel-labs/agent-browser) can open both versions, set the viewport, screenshot and record. `before-and-after` (github.com/vercel-labs/before-and-after) can attach the result to the pull request.
 
-## 4. Keep it honest
+## 5. Keep it honest
 
 - "After" is the current branch. "Before" is production, the base branch, or the last deploy. Never revert, stash, or switch branches to fake a "before".
 - Look at every capture before using it, and check it shows what changed. Check that every image URL loads.
+- Embed the evidence; never only describe it ("screenshots are attached"). Use only output you actually captured: never invent it or leave a placeholder to fill in later. A code or `diff` block holds real output only; when all you have is a summary ("31 passed"), write it as a sentence.
 - Capture demo or sanitised data only: no real users, tokens, emails, or private messages.
-- Report what went wrong too: a check that failed or couldn't run, a number that got worse, a part of the test plan nobody has done yet.
+- Report what went wrong too: a check that failed or couldn't run, a number that got worse, a part of the test plan nobody has done yet. Never drop a limit to keep the description short.
 - Never commit screenshots or videos to the branch. Upload them to the pull request. If you can't host them, say so in the description.
 - **Security fixes are the exception.** Don't publish a reproduction, a payload, or a step-by-step exploit in a public pull request. Describe the impact at a high level, follow the project's security policy, and keep the detailed evidence private until the fix is released.
 
-## 5. Check before you hand it over
+## 6. Check before you hand it over
 
 - The first line matches what the user actually did.
-- Every claim in the description has evidence next to it, or says why there's none.
+- It reads like someone explaining their work, not a filled-in form.
+- Someone can try the change from the line after the opening, without asking anything.
+- Nothing CI already shows green is restated, and every unverified part is stated.
+- Every claim has evidence next to it, or says why there's none.
+- Every paragraph explains something the diff doesn't.
 - The ELI5 is there and makes sense on its own.
 - Nothing in it was invented: no numbers, results, or test runs you didn't see.
