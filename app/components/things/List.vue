@@ -499,8 +499,8 @@ onBeforeUnmount(() => {
 .cap-price {
   flex: none;
   font-family: var(--font-redaction);
-  font-size: 20px;
-  color: var(--ink);
+  font-size: 18px;
+  color: var(--dim);
   font-variant-numeric: tabular-nums;
 }
 .cap-detail {
@@ -675,12 +675,17 @@ onBeforeUnmount(() => {
   background-repeat: repeat-x;
   opacity: 0.9;
 }
+/* the price is there to be read, not announced: it stays quiet beside the name */
 .price {
   flex: none;
   font-family: var(--font-redaction);
-  font-size: 16px;
-  color: var(--ink);
+  font-size: 15px;
+  color: #BDB9B0;
   font-variant-numeric: tabular-nums;
+  transition: color 160ms var(--ease);
+}
+.row.on .price {
+  color: var(--dim);
 }
 @media (hover: hover) {
   .row:hover .name {
