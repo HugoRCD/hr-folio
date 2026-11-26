@@ -64,9 +64,13 @@ const emit = defineEmits<{
   cursor: pointer;
   box-shadow: none;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 .row:hover {
   background: #F7F6F3;
+}
+.row:active {
+  transform: scale(0.98);
 }
 .thumb {
   display: grid;

@@ -4,8 +4,8 @@
   "brand": "Herman Miller",
   "category": "tech",
   "price": {
-    "amount": 694.5,
-    "currency": "EUR"
+    "amount": 590,
+    "currency": "GBP"
   },
   "image": "/images/things/herman-miller-sayl-black-pitch.webp",
   "owned": true,

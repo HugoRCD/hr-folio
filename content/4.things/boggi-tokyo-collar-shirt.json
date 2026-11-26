@@ -4,8 +4,8 @@
   "brand": "Boggi Milano",
   "category": "wardrobe",
   "price": {
-    "amount": 122.55,
-    "currency": "EUR"
+    "amount": 105,
+    "currency": "GBP"
   },
   "image": "/images/things/boggi-tokyo-collar-shirt.webp",
   "owned": true,

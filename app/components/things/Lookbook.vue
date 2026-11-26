@@ -60,11 +60,17 @@ const emit = defineEmits<{
   box-shadow: none;
   text-align: left;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 @media (hover: hover) {
   .card:hover {
     transform: translateY(-6px);
+  }
+}
+@media (hover: none) {
+  .card:active {
+    transform: scale(0.98);
   }
 }
 .frame {

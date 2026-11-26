@@ -4,8 +4,8 @@
   "brand": "Boggi Milano",
   "category": "wardrobe",
   "price": {
-    "amount": 159,
-    "currency": "EUR"
+    "amount": 135,
+    "currency": "GBP"
   },
   "image": "/images/things/boggi-wool-travel-trousers.webp",
   "owned": true,

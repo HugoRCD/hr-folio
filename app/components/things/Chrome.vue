@@ -117,20 +117,22 @@ function pickSort(next: ThingSort) {
           class="view"
           :class="{ on: view === 'lookbook' }"
           :aria-pressed="view === 'lookbook'"
+          aria-label="Lookbook"
+          title="Lookbook"
           @click="emit('view', 'lookbook')"
         >
           <UIcon name="i-lucide-layout-grid" class="ico" />
-          Lookbook
         </button>
         <button
           type="button"
           class="view"
           :class="{ on: view === 'list' }"
           :aria-pressed="view === 'list'"
+          aria-label="List"
+          title="List"
           @click="emit('view', 'list')"
         >
           <UIcon name="i-lucide-list" class="ico" />
-          List
         </button>
       </div>
     </div>
@@ -294,14 +296,26 @@ function pickSort(next: ThingSort) {
   border-radius: 999px;
   background: #F7F6F3;
 }
+.tab,
+.sort-btn,
+.opt,
+.view {
+  -webkit-tap-highlight-color: transparent;
+}
 .view {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 0;
+  min-width: 36px;
+  min-height: 32px;
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 10px;
   white-space: nowrap;
+}
+.view:active {
+  transform: scale(0.98);
 }
 .view.on {
   background: #111111;
@@ -351,8 +365,9 @@ function pickSort(next: ThingSort) {
     font-size: 10px;
   }
   .view {
-    gap: 4px;
-    padding: 5px 8px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
   }
 }
 

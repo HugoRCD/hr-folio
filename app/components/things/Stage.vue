@@ -14,6 +14,15 @@ const emit = defineEmits<{
 const { reduced } = useThingMotion()
 const nearby = computed(() => adjacent(items, item.slug))
 const dir = ref(1)
+const dockEl = useTemplateRef<HTMLElement>('dockEl')
+const scrollerEl = useTemplateRef<HTMLElement>('scrollerEl')
+const dragX = ref(0)
+const dragging = ref(false)
+
+let startX = 0
+let startY = 0
+let axis: 'h' | 'v' | null = null
+let pointerId: number | null = null
 
 watch(() => item.slug, (next, prev) => {
   if (!prev) return
@@ -25,9 +34,35 @@ watch(() => item.slug, (next, prev) => {
   else dir.value = ni > pi ? 1 : -1
 })
 
+function scrollDock(smooth = true) {
+  const root = dockEl.value
+  const current = root?.querySelector<HTMLElement>('[data-dock-current="true"]')
+  current?.scrollIntoView({
+    inline: 'center',
+    block: 'nearest',
+    behavior: smooth ? 'smooth' : 'instant',
+  })
+}
+
+watch(
+  () => item.slug,
+  () => {
+    nextTick(() => scrollDock(true))
+  },
+)
+
+
 const slide = computed(() => {
   if (reduced.value) return ''
   return dir.value > 0 ? 'slide-next' : 'slide-prev'
+})
+
+const shotStyle = computed(() => {
+  if (!dragging.value && !dragX.value) return undefined
+  return {
+    transform: `translateX(${dragX.value}px)`,
+    transition: dragging.value ? 'none' : undefined,
+  }
 })
 
 function preload(target?: ThingItem) {
@@ -59,11 +94,69 @@ function onKey(e: KeyboardEvent) {
 function onGround(e: MouseEvent) {
   const el = e.target as HTMLElement | null
   if (!el) return
-  if (el.closest('.hero, .copy, .copy-slot, .peek, .close')) return
+  if (el.closest('.hero, .copy, .copy-slot, .peek, .close, .dock')) return
   emit('close')
 }
 
-onMounted(() => window.addEventListener('keydown', onKey))
+function coarse() {
+  return import.meta.client && window.matchMedia('(max-width: 767px)').matches
+}
+
+function onPointerDown(e: PointerEvent) {
+  if (!coarse() || e.pointerType === 'mouse') return
+  const { clientX, clientY, pointerId: id } = e
+  startX = clientX
+  startY = clientY
+  axis = null
+  pointerId = id
+  dragging.value = true
+  dragX.value = 0
+  ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
+}
+
+function onPointerMove(e: PointerEvent) {
+  if (!dragging.value || e.pointerId !== pointerId) return
+  const dx = e.clientX - startX
+  const dy = e.clientY - startY
+  if (!axis) {
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return
+    axis = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v'
+  }
+  if (axis === 'h') {
+    e.preventDefault()
+    dragX.value = dx
+  }
+}
+
+function onPointerUp(e: PointerEvent) {
+  if (!dragging.value || (pointerId !== null && e.pointerId !== pointerId)) return
+  const dx = dragX.value
+  const dy = e.clientY - startY
+  const used = axis
+  const atTop = (scrollerEl.value?.scrollTop ?? 0) < 8
+  dragging.value = false
+  pointerId = null
+  axis = null
+  dragX.value = 0
+  if (used === 'h') {
+    if (dx < -72 && nearby.value.next) emit('go', nearby.value.next)
+    else if (dx > 72 && nearby.value.prev) emit('go', nearby.value.prev)
+  } else if (used === 'v' && atTop && dy > 88) {
+    emit('close')
+  }
+}
+
+function onPointerCancel() {
+  dragging.value = false
+  pointerId = null
+  axis = null
+  dragX.value = 0
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKey)
+  nextTick(() => scrollDock(false))
+})
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
@@ -73,46 +166,79 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       Close
     </button>
 
-    <button
-      v-if="nearby.prev"
-      type="button"
-      class="peek prev"
-      :aria-label="nearby.prev.name"
-      @click="emit('go', nearby.prev)"
+    <div
+      ref="scrollerEl"
+      class="scroller"
     >
-      <span class="frame">
-        <ThingsCutout :item="nearby.prev" />
-      </span>
-    </button>
+      <button
+        v-if="nearby.prev"
+        type="button"
+        class="peek prev"
+        :aria-label="nearby.prev.name"
+        @click="emit('go', nearby.prev)"
+      >
+        <span class="frame">
+          <ThingsCutout :item="nearby.prev" />
+        </span>
+      </button>
 
-    <div class="hero">
-      <span class="frame" data-thing-hero>
+      <div
+        class="hero"
+        @pointerdown="onPointerDown"
+        @pointermove="onPointerMove"
+        @pointerup="onPointerUp"
+        @pointercancel="onPointerCancel"
+      >
+        <span class="frame" data-thing-hero>
+          <Transition :name="slide">
+            <span :key="item.slug" class="shot" :style="shotStyle">
+              <ThingsCutout :item priority />
+            </span>
+          </Transition>
+        </span>
+        <span class="contact" aria-hidden="true" />
+      </div>
+
+      <button
+        v-if="nearby.next"
+        type="button"
+        class="peek next"
+        :aria-label="nearby.next.name"
+        @click="emit('go', nearby.next)"
+      >
+        <span class="frame">
+          <ThingsCutout :item="nearby.next" />
+        </span>
+      </button>
+
+      <div class="copy-slot">
         <Transition :name="slide">
-          <span :key="item.slug" class="shot">
-            <ThingsCutout :item priority />
-          </span>
+          <ThingsCopy :key="item.slug" :item />
         </Transition>
-      </span>
-      <span class="contact" aria-hidden="true" />
+      </div>
     </div>
 
-    <button
-      v-if="nearby.next"
-      type="button"
-      class="peek next"
-      :aria-label="nearby.next.name"
-      @click="emit('go', nearby.next)"
+    <nav
+      ref="dockEl"
+      class="dock"
+      aria-label="Pieces"
     >
-      <span class="frame">
-        <ThingsCutout :item="nearby.next" />
-      </span>
-    </button>
-
-    <div class="copy-slot">
-      <Transition :name="slide">
-        <ThingsCopy :key="item.slug" :item />
-      </Transition>
-    </div>
+      <button
+        v-for="row in items"
+        :key="row.slug"
+        type="button"
+        class="dock-item"
+        :class="{ on: row.slug === item.slug }"
+        :data-dock-current="row.slug === item.slug ? 'true' : undefined"
+        :aria-current="row.slug === item.slug ? 'true' : undefined"
+        :aria-label="row.name"
+        @click="emit('go', row)"
+      >
+        <span class="dock-frame">
+          <ThingsCutout :item="row" />
+        </span>
+      </button>
+    </nav>
   </article>
 </template>
 
@@ -122,6 +248,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   inset: 0;
   z-index: 50;
   isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  background: #FAF9F7;
+  -webkit-tap-highlight-color: transparent;
+}
+.scroller {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
@@ -129,13 +263,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   padding: 88px 24px 48px;
   overflow: auto;
   overscroll-behavior: contain;
-  background: #FAF9F7;
 }
 .close {
   position: absolute;
   top: 22px;
   right: 28px;
   z-index: 8;
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -146,9 +280,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   color: var(--ui-text-dimmed);
   cursor: pointer;
   box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .close:hover {
   color: #111111;
+}
+.close:active {
+  transform: scale(0.98);
 }
 .copy-slot {
   position: relative;
@@ -163,6 +301,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   position: relative;
   display: grid;
   place-items: center;
+  touch-action: pan-y;
 }
 .frame {
   position: relative;
@@ -179,6 +318,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   inset: 0;
   padding: 6%;
   box-sizing: border-box;
+  will-change: transform;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .contact {
   position: absolute;
@@ -189,6 +330,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   background: radial-gradient(ellipse at center, rgb(32 24 16 / 0.18) 0%, rgb(32 24 16 / 0) 72%);
   filter: blur(12px);
   pointer-events: none;
+}
+.dock {
+  display: none;
 }
 
 .slide-next-enter-active,
@@ -230,7 +374,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 
 @media (min-width: 768px) {
-  .stage {
+  .scroller {
+    display: grid;
     grid-template-columns: 10vw minmax(0, 1.1fr) minmax(20rem, 0.85fr) 10vw;
     grid-template-areas: "prev hero copy next";
     gap: 8px 16px;
@@ -270,36 +415,77 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 
 @media (max-width: 767px) {
-  .stage {
+  .scroller {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
     gap: 16px;
-    padding: 0 18px calc(28px + env(safe-area-inset-bottom, 0px));
+    padding: calc(52px + env(safe-area-inset-top, 0px)) 18px 20px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
   .close {
-    position: sticky;
-    top: 0;
-    right: auto;
-    align-self: flex-end;
-    padding: 16px 0 8px;
-    background: #FAF9F7;
+    top: calc(8px + env(safe-area-inset-top, 0px));
+    right: 16px;
+    z-index: 9;
   }
   .hero {
     width: 100%;
-    max-height: 46vh;
+    max-height: 42vh;
   }
   .frame {
     max-width: min(75vw, 100%);
-    max-height: 46vh;
+    max-height: 42vh;
     margin-inline: auto;
   }
   .copy-slot {
     max-width: 100%;
     min-height: 0;
+  }
+  .dock {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    background: #FAF9F7;
+    border-top: 1px solid #E8E6E1;
+  }
+  .dock::-webkit-scrollbar {
+    display: none;
+  }
+  .dock-item {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: #F7F6F3;
+    box-shadow: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dock-item:active {
+    transform: scale(0.98);
+  }
+  .dock-item.on {
+    border-color: #CD1919;
+    background: #FFFFFF;
+  }
+  .dock-frame {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
   }
 }
 </style>

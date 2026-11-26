@@ -4,8 +4,8 @@
   "brand": "Boggi Milano",
   "category": "wardrobe",
   "price": {
-    "amount": 113.05,
-    "currency": "EUR"
+    "amount": 96,
+    "currency": "GBP"
   },
   "image": "/images/things/boggi-linen-bowling-shirt.webp",
   "owned": true,

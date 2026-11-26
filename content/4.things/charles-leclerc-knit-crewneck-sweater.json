@@ -4,8 +4,8 @@
   "brand": "CL16",
   "category": "wardrobe",
   "price": {
-    "amount": 145,
-    "currency": "EUR"
+    "amount": 125,
+    "currency": "GBP"
   },
   "image": "/images/things/charles-leclerc-knit-crewneck-sweater.webp",
   "owned": true,

@@ -172,5 +172,9 @@ const fields = computed(() => thingSpecs(item))
   .title {
     min-height: 2.24em;
   }
+  .shop {
+    min-height: 44px;
+    align-items: center;
+  }
 }
 </style>

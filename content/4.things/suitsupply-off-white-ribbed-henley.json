@@ -4,8 +4,8 @@
   "brand": "SuitSupply",
   "category": "wardrobe",
   "price": {
-    "amount": 129,
-    "currency": "EUR"
+    "amount": 110,
+    "currency": "GBP"
   },
   "image": "/images/things/suitsupply-off-white-ribbed-henley.webp",
   "owned": true,
