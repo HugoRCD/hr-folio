@@ -1,0 +1,16 @@
+{
+  "slug": "montblanc-horseshoe-buckle-leather-belt",
+  "name": "Horseshoe Buckle Leather Belt",
+  "brand": "Montblanc",
+  "category": "accessories",
+  "price": {
+    "amount": 315,
+    "currency": "GBP"
+  },
+  "image": "/images/things/montblanc-horseshoe-buckle-leather-belt.webp",
+  "owned": true,
+  "order": 44,
+  "color": "Black",
+  "material": "Leather, silver-toned horseshoe buckle with star motif",
+  "url": "https://www.selfridges.com/GB/en/product/montblanc-horseshoe-buckle-leather-belt_R03755398/"
+}

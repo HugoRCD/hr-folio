@@ -3,17 +3,16 @@
   "name": "Maru Oval 6-8 Seater Extending Oak Pedestal Dining Table",
   "brand": "Daals",
   "category": "home",
-  "color": "Oak",
-  "size": "6-8 seater, extending oval",
-  "material": "Oak veneer top, oak pedestal base",
-  "acquired": "2026-07-14",
   "price": {
     "amount": 549.99,
     "currency": "GBP"
   },
   "image": "/images/things/daals-maru-oak-dining-table.webp",
-  "note": "SKU BSD-136-OAK, dispatched 14 Jul 2026, Daals order #740425. Oak finish is assumed from the dispatch description. The exact paid price was not in the dispatch email; £549.99 is the live UK listed price.",
-  "url": "https://www.daals.co.uk/products/maru-oval-6-8-seater-extending-oak-pedestal-dining-table-oak",
   "owned": true,
-  "order": 18
+  "order": 18,
+  "color": "Oak",
+  "material": "Oak veneer top, oak pedestal base",
+  "size": "6-8 seater, extending oval",
+  "acquired": "2026-07-14",
+  "url": "https://www.daals.co.uk/products/maru-oval-6-8-seater-extending-oak-pedestal-dining-table-oak"
 }

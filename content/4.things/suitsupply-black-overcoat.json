@@ -3,17 +3,16 @@
   "name": "Black Overcoat",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "Black",
-  "size": "38",
-  "material": "100% wool, woven by Longda",
-  "acquired": "2025-09-29",
   "price": {
     "amount": 449,
     "currency": "GBP"
   },
   "image": "/images/things/suitsupply-black-overcoat.webp",
-  "note": "Slim-fit mid-thigh overcoat, product code J1072. Receipt SKU J107204 is the size-38 variant and redirects to this live UK page. Listed and paid £449; order 0488054299 totalled £474.",
-  "url": "https://suitsupply.com/en-gb/men/coats/black-overcoat/J1072.html",
   "owned": true,
-  "order": 1
+  "order": 1,
+  "color": "Black",
+  "material": "100% wool, woven by Longda",
+  "size": "38",
+  "acquired": "2025-09-29",
+  "url": "https://suitsupply.com/en-gb/men/coats/black-overcoat/J1072.html"
 }

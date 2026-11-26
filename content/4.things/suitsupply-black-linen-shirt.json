@@ -3,17 +3,16 @@
   "name": "Black Relaxed Fit Shirt",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "Black",
-  "size": "M",
-  "material": "Pure linen, relaxed fit",
-  "acquired": "2026-07-05",
   "price": {
     "amount": 119,
     "currency": "GBP"
   },
   "image": "/images/things/suitsupply-black-linen-shirt.webp",
-  "note": "SKU H7506, receipt PSGB00465587. Paid £119.",
-  "url": "https://suitsupply.com/en-gb/men/shirts/black-relaxed-fit-shirt/H7506.html",
   "owned": true,
-  "order": 6
+  "order": 6,
+  "color": "Black",
+  "material": "Pure linen, relaxed fit",
+  "size": "M",
+  "acquired": "2026-07-05",
+  "url": "https://suitsupply.com/en-gb/men/shirts/black-relaxed-fit-shirt/H7506.html"
 }

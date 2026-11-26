@@ -3,17 +3,16 @@
   "name": "Light Brown Wide Leg Trousers",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "Light brown",
-  "size": "46, altered in store",
-  "material": "Pure wool",
-  "acquired": "2026-11-02",
   "price": {
     "amount": 181,
     "currency": "EUR"
   },
   "image": "/images/things/suitsupply-light-brown-wide-leg-trousers.webp",
-  "note": "SKU TFT10021LB1, bought in Paris, receipt PSFR00364769. Paid EUR 169 plus a EUR 12 in-store alteration.",
-  "url": "https://suitsupply.com/en-gb/men/trousers/light-brown-wide-leg-trousers/TFT10021LB1.html",
   "owned": true,
-  "order": 11
+  "order": 11,
+  "color": "Light brown",
+  "material": "Pure wool",
+  "size": "46, altered in store",
+  "acquired": "2026-11-02",
+  "url": "https://suitsupply.com/en-gb/men/trousers/light-brown-wide-leg-trousers/TFT10021LB1.html"
 }

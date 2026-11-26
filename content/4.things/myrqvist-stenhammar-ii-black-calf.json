@@ -1,0 +1,17 @@
+{
+  "slug": "myrqvist-stenhammar-ii-black-calf",
+  "name": "Stenhammar II Black Calf",
+  "brand": "Myrqvist",
+  "category": "wardrobe",
+  "price": {
+    "amount": 323,
+    "currency": "GBP"
+  },
+  "image": "/images/things/myrqvist-stenhammar-ii-black-calf.webp",
+  "owned": true,
+  "order": 47,
+  "color": "Black Calf",
+  "material": "Black full-grain calf, Goodyear welt, full rubber sole, stacked leather heel, rounded last",
+  "acquired": "2026-08-30",
+  "url": "https://myrqvist.com/en-gb/products/stenhammar-ii-black-calf"
+}

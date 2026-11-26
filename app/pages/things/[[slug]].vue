@@ -10,7 +10,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const { seo } = useFolioConfig()
-const { spring } = useThingMotion()
+const { spring, arrive } = useThingMotion()
 
 const { data: allThings } = await useAsyncData('things', async () => {
   const rows = await queryCollection('things').all()
@@ -47,17 +47,23 @@ function setCategory(next: ThingCategory | 'all') {
   const query = { ...route.query }
   if (next === 'all') delete query.cat
   else query.cat = next
+  delete query.at
+  if (slug.value) {
+    router.replace({ path: '/things', query })
+    return
+  }
   router.replace({ query })
 }
 
 const owned = computed(() => (allThings.value ?? []).filter(item => item.owned !== false))
 const counts = computed(() => categoryCounts(owned.value))
-const items = computed(() => inCategory(owned.value, category.value))
+const walkItems = computed(() => studioSequence(inCategory(owned.value, category.value)))
+const detailItems = computed(() => walkItems.value.length ? walkItems.value : studioSequence(owned.value))
 
 const title = computed(() => selected.value?.name ?? 'Things')
 const description = computed(() => {
-  if (!selected.value) return 'Clothes, cameras, furniture, and the rest of the objects around the house.'
-  return `${selected.value.brand}. ${selected.value.note ?? CATEGORY_LABEL[selected.value.category]}`
+  if (!selected.value) return 'Objects around the house, standing in a studio.'
+  return selected.value.brand
 })
 
 useHead({
@@ -89,95 +95,84 @@ useSchemaOrg([defineWebPage()])
 
 <template>
   <LayoutGroup>
-    <AnimatePresence :initial="false">
+    <motion.div
+      class="bar"
+      :initial="{ opacity: 0, y: -8 }"
+      :animate="{ opacity: 1, y: 0 }"
+      :transition="arrive"
+    >
+      <p class="word">
+        Things.
+      </p>
+      <div class="cats" role="tablist" aria-label="Filter by use">
+        <button
+          v-for="c in categories"
+          :key="c"
+          type="button"
+          role="tab"
+          :aria-selected="category === c"
+          class="tab"
+          :class="{ active: category === c }"
+          @click="setCategory(c)"
+        >
+          {{ CATEGORY_LABEL[c] }}
+          <span class="n">({{ counts[c] }})</span>
+        </button>
+      </div>
+    </motion.div>
+
+    <AnimatePresence :initial="false" mode="sync">
       <ThingsDetail
         v-if="selected"
-        :key="selected.slug"
+        key="detail"
         :item="selected"
-        :items="owned"
+        :items="detailItems"
         :spring
       />
-      <motion.section
+      <ThingsWalk
         v-else
-        key="index"
-        class="studio-index"
-        :initial="false"
-      >
-        <header class="mast">
-          <h1 class="title">
-            Things
-          </h1>
-          <p class="lede">
-            Clothes, cameras, furniture, and the rest of the objects around the house.
-          </p>
-        </header>
-
-        <div class="cats" role="tablist" aria-label="Filter by use">
-          <button
-            v-for="c in categories"
-            :key="c"
-            type="button"
-            role="tab"
-            :aria-selected="category === c"
-            class="tab"
-            :class="{ active: category === c }"
-            @click="setCategory(c)"
-          >
-            {{ CATEGORY_LABEL[c] }}
-            <span class="n">({{ counts[c] }})</span>
-          </button>
-        </div>
-
-        <ThingsGrid :items :spring />
-
-        <p class="affiliate">
-          Some links are affiliate links.
-        </p>
-      </motion.section>
+        key="walk"
+        :items="walkItems"
+      />
     </AnimatePresence>
   </LayoutGroup>
 </template>
 
 <style scoped>
-.mast {
-  margin-bottom: 28px;
-}
-.title {
-  margin: 0;
-  font-family: var(--font-redaction);
-  font-size: clamp(40px, 6vw, 64px);
-  font-weight: 400;
-  line-height: 1.05;
-  color: #111111;
-}
-.lede {
-  max-width: 28rem;
-  margin: 12px 0 0;
-  font-size: 15px;
-  line-height: 24px;
-  color: var(--ui-text-muted);
-  text-wrap: pretty;
-}
-
-.cats {
-  position: sticky;
-  top: 0;
-  z-index: 8;
+.bar {
+  position: absolute;
+  top: 22px;
+  left: 148px;
+  right: 28px;
+  z-index: 28;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 28px;
-  margin: 0 0 48px;
-  padding: 18px 0 18px;
-  background: #FAF9F7;
-  border-bottom: 1px solid var(--ui-border);
+  align-items: baseline;
+  gap: 14px 28px;
+  pointer-events: none;
+}
+.bar > * {
+  pointer-events: auto;
+}
+.word {
+  margin: 0;
+  font-family: var(--font-redaction);
+  font-size: 28px;
+  line-height: 1;
+  color: #111111;
+}
+.cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
 }
 .tab {
   padding: 0;
   border: 0;
   background: transparent;
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   line-height: 20px;
   color: var(--ui-text-dimmed);
@@ -199,18 +194,11 @@ useSchemaOrg([defineWebPage()])
   opacity: 0.55;
 }
 
-.affiliate {
-  margin: 64px 0 0;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 15px;
-  letter-spacing: 0.04em;
-  color: var(--ui-text-dimmed);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tab {
-    transition: none;
+@media (max-width: 899px) {
+  .bar {
+    left: 24px;
+    right: 24px;
+    top: 72px;
   }
 }
 </style>

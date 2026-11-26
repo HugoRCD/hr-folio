@@ -3,17 +3,16 @@
   "name": "Oakley Set of 2 White Boucle Upholstered Dining Chairs with Piping",
   "brand": "Daals",
   "category": "home",
-  "color": "White boucle",
-  "size": "4 chairs (two sets of 2)",
-  "material": "White boucle upholstery with piping, black legs",
-  "acquired": "2026-07-20",
   "price": {
     "amount": 459.96,
     "currency": "GBP"
   },
   "image": "/images/things/daals-oakley-white-boucle-dining-chairs.webp",
-  "note": "Two sets of 2, paid £459.96 on Amex (DAALS 4182) on 20 Jul 2026, order #748624. Live listed price is £186.99 per set of 2. The live slug still says beige, but the current title and SKU are White Boucle (DCH-2138-WHITE-BOUCLE-2P).",
-  "url": "https://www.daals.co.uk/products/oakley-set-of-2-beige-boucle-upholstered-dining-chairs-with-piping",
   "owned": true,
-  "order": 19
+  "order": 19,
+  "color": "White boucle",
+  "material": "White boucle upholstery with piping, black legs",
+  "size": "4 chairs (two sets of 2)",
+  "acquired": "2026-07-20",
+  "url": "https://www.daals.co.uk/products/oakley-set-of-2-beige-boucle-upholstered-dining-chairs-with-piping"
 }

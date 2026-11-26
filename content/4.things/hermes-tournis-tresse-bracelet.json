@@ -1,0 +1,17 @@
+{
+  "slug": "hermes-tournis-tresse-bracelet",
+  "name": "Tournis Tressé Bracelet",
+  "brand": "Hermès",
+  "category": "accessories",
+  "price": {
+    "amount": 395,
+    "currency": "GBP"
+  },
+  "image": "/images/things/hermes-tournis-tresse-bracelet.webp",
+  "owned": true,
+  "order": 45,
+  "color": "Black",
+  "material": "Black Swift calfskin, palladium H clasp, Made in Italy",
+  "size": "T4",
+  "url": "https://www.hermes.com/uk/en/product/tournis-tresse-bracelet-H068406FP89/?size=T4"
+}

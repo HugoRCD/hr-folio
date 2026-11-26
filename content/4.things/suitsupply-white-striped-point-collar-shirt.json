@@ -3,17 +3,16 @@
   "name": "White Striped Tailored Fit Point Collar Shirt",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "White with mid-blue pinstripes",
-  "size": "39",
-  "material": "100% Egyptian cotton, woven by Thomas Mason, Italy",
-  "acquired": "2026-11-02",
   "price": {
     "amount": 119,
     "currency": "GBP"
   },
   "image": "/images/things/suitsupply-white-striped-point-collar-shirt.webp",
-  "note": "Bought in Paris for EUR 119 (receipt PSFR00364769). The live UK page lists the same shirt, product code H7549, at £119.",
-  "url": "https://suitsupply.com/en-gb/men/shirts/white-striped-tailored-fit-point-collar-shirt/H7549.html",
   "owned": true,
-  "order": 7
+  "order": 7,
+  "color": "White with mid-blue pinstripes",
+  "material": "100% Egyptian cotton, woven by Thomas Mason, Italy",
+  "size": "39",
+  "acquired": "2026-11-02",
+  "url": "https://suitsupply.com/en-gb/men/shirts/white-striped-tailored-fit-point-collar-shirt/H7549.html"
 }

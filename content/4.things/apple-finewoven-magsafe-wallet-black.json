@@ -3,17 +3,16 @@
   "name": "iPhone FineWoven Wallet with MagSafe",
   "brand": "Apple",
   "category": "accessories",
-  "color": "Black",
-  "size": "One size, holds up to three cards",
-  "material": "FineWoven micro-twill from 100% post-consumer recycled content",
-  "acquired": "2026-05-03",
   "price": {
     "amount": 59,
     "currency": "GBP"
   },
   "image": "/images/things/apple-finewoven-magsafe-wallet-black.webp",
-  "note": "Part number MK9L4ZM/A, Apple Store order W1855848147. An older MA6W4ZM/A slug now redirects to search, so this is the live UK product page.",
-  "url": "https://www.apple.com/uk/shop/product/mk9l4zm/a/iphone-finewoven-wallet-with-magsafe-black",
   "owned": true,
-  "order": 34
+  "order": 34,
+  "color": "Black",
+  "material": "FineWoven micro-twill from 100% post-consumer recycled content",
+  "size": "One size, holds up to three cards",
+  "acquired": "2026-05-03",
+  "url": "https://www.apple.com/uk/shop/product/mk9l4zm/a/iphone-finewoven-wallet-with-magsafe-black"
 }

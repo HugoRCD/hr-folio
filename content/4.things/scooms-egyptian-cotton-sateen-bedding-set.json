@@ -3,17 +3,16 @@
   "name": "Egyptian Cotton Sateen Bedding Set",
   "brand": "Scooms",
   "category": "home",
-  "color": "White",
-  "size": "Double (duvet cover 200 x 200 cm, fitted sheet 135 x 190 cm, standard 30 cm depth)",
-  "material": "600-thread-count Egyptian cotton sateen, OEKO-TEX Standard 100",
-  "acquired": "2026-05-03",
   "price": {
     "amount": 210,
     "currency": "GBP"
   },
   "image": "/images/things/scooms-egyptian-cotton-sateen-bedding-set.webp",
-  "note": "Paid £210 on order SCO30210 for a Double duvet cover (£130) and Double fitted sheet (£80). The live URL is Scooms' current Egyptian cotton sateen bedding bundle page (duvet cover, fitted sheet and pillowcases, 5% off versus buying separately).",
-  "url": "https://scooms.com/products/egyptian-cotton-bedding-sets",
   "owned": true,
-  "order": 21
+  "order": 21,
+  "color": "White",
+  "material": "600-thread-count Egyptian cotton sateen, OEKO-TEX Standard 100",
+  "size": "Double (duvet cover 200 x 200 cm, fitted sheet 135 x 190 cm, standard 30 cm depth)",
+  "acquired": "2026-05-03",
+  "url": "https://scooms.com/products/egyptian-cotton-bedding-sets"
 }

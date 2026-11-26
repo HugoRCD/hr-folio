@@ -3,17 +3,16 @@
   "name": "Sveti Curved Glass Coffee Table",
   "brand": "Daals",
   "category": "home",
-  "color": "Black",
-  "size": "120 x 80 x 31.8 cm",
-  "material": "Tempered clear glass top, magnesium oxide ball legs",
-  "acquired": "2026-08-28",
   "price": {
     "amount": 289.99,
     "currency": "GBP"
   },
   "image": "/images/things/daals-sveti-black-curved-glass-coffee-table.webp",
-  "note": "SKU BSD-142-BLACK. Paid £289.99 plus £29.99 shipping (£319.98 total), Daals order #767936. The guessed /sveti-curved-glass-coffee-table-black slug 404s; this slug is the live UK product page.",
-  "url": "https://www.daals.co.uk/products/sveti-curved-glass-coffee-table",
   "owned": true,
-  "order": 17
+  "order": 17,
+  "color": "Black",
+  "material": "Tempered clear glass top, magnesium oxide ball legs",
+  "size": "120 x 80 x 31.8 cm",
+  "acquired": "2026-08-28",
+  "url": "https://www.daals.co.uk/products/sveti-curved-glass-coffee-table"
 }

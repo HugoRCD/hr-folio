@@ -3,17 +3,16 @@
   "name": "Porcelain Mini Bowls with Antique Finish Rim",
   "brand": "Zara Home",
   "category": "home",
-  "color": "Ivory porcelain, antique-effect rim",
-  "size": "Two bowls, 12.3 x 5.8 x 12.3 cm",
-  "material": "Porcelain",
-  "acquired": "2024-11-03",
   "price": {
     "amount": 7.98,
     "currency": "EUR"
   },
   "image": "/images/things/zara-home-antique-rim-mini-bowls.webp",
-  "note": "Zara Home order 80063527518, picked up at Place Massena, Nice, on 7 Nov 2024. Two minibols, REF 5270/467, EUR 3.99 each (EUR 7.98 line total). The 2024 French email URL could not be confirmed from this box (HTTP 403/500). This Swiss English URL is the closest indexed official product page, and the cutout uses the official Zara static packshot (45270467959-e1).",
-  "url": "https://www.zarahome.com/ch/en/porcelain-mini-bowl-with-antique-finish-rim-l45270467",
   "owned": true,
-  "order": 30
+  "order": 30,
+  "color": "Ivory porcelain, antique-effect rim",
+  "material": "Porcelain",
+  "size": "Two bowls, 12.3 x 5.8 x 12.3 cm",
+  "acquired": "2024-11-03",
+  "url": "https://www.zarahome.com/ch/en/porcelain-mini-bowl-with-antique-finish-rim-l45270467"
 }

@@ -11,7 +11,7 @@ const { item, items, spring } = defineProps<{
 const route = useRoute()
 const nearby = computed(() => adjacent(items, item.slug))
 const href = computed(() => thingHref(item))
-const acquired = computed(() => formatAcquired(item.acquired))
+const note = computed(() => thingNote(item))
 
 const fields = computed(() => {
   const rows: Array<[string, string]> = [
@@ -20,7 +20,6 @@ const fields = computed(() => {
     ['Material', item.material ?? ''],
     ['Colour', item.color ?? ''],
     ['Size', item.size ?? ''],
-    ['Acquired', acquired.value ?? ''],
   ]
   return rows.filter(([, value]) => value)
 })
@@ -29,16 +28,30 @@ function thingTo(target: ThingItem) {
   return { path: thingPath(target), query: route.query }
 }
 
+function closeTo() {
+  const query = { ...route.query, at: item.slug }
+  return { path: '/things', query }
+}
+
 function onKey(e: KeyboardEvent) {
   if (e.metaKey || e.ctrlKey || e.altKey) return
   const tag = (e.target as HTMLElement | null)?.tagName
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
   if (document.querySelector('[role="dialog"]')) return
-  if (e.key === 'ArrowRight' && nearby.value.next) {
+  if (e.key === 'Escape') {
+    navigateTo(closeTo())
+  } else if (e.key === 'ArrowRight' && nearby.value.next) {
     navigateTo(thingTo(nearby.value.next))
   } else if (e.key === 'ArrowLeft' && nearby.value.prev) {
     navigateTo(thingTo(nearby.value.prev))
   }
+}
+
+function onGround(e: MouseEvent) {
+  const el = e.target as HTMLElement | null
+  if (!el) return
+  if (el.closest('.hero, .copy, .peek, .close')) return
+  navigateTo(closeTo())
 }
 
 onMounted(() => window.addEventListener('keydown', onKey))
@@ -47,72 +60,67 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 <template>
   <motion.article
+    class="stage"
     :initial="false"
     :transition="spring"
-    class="detail"
+    @click="onGround"
   >
-    <p class="crumb">
-      <NuxtLink :to="{ path: '/things', query: route.query }">
-        Things
-      </NuxtLink>
-      <span aria-hidden="true">/</span>
-      {{ item.name }}
-    </p>
+    <NuxtLink :to="closeTo()" class="close">
+      Close
+    </NuxtLink>
 
-    <div class="split">
-      <div class="figure">
-        <ThingsCutout :item priority />
-      </div>
+    <NuxtLink
+      v-if="nearby.prev"
+      :to="thingTo(nearby.prev)"
+      class="peek prev"
+      :aria-label="nearby.prev.name"
+    >
+      <ThingsCutout :key="nearby.prev.slug" :item="nearby.prev" />
+    </NuxtLink>
 
-      <div class="copy">
-        <p class="brand">
-          {{ item.brand }}
-        </p>
-        <h1 class="title">
-          {{ item.name }}
-        </h1>
-        <p class="price">
-          <ThingsPrice :price="item.price" />
-        </p>
-        <p v-if="href" class="links">
-          <a
-            :href
-            target="_blank"
-            rel="noopener noreferrer"
-            class="shop"
-          >
-            {{ item.brand }}
-          </a>
-        </p>
-        <p v-if="item.note" class="note">
-          {{ item.note }}
-        </p>
-        <dl class="sheet">
-          <div v-for="[label, value] in fields" :key="label" class="row">
-            <dt>{{ label }}</dt>
-            <dd>{{ value }}</dd>
-          </div>
-        </dl>
-        <nav v-if="nearby.prev || nearby.next" class="pager" aria-label="Other pieces">
-          <NuxtLink
-            v-if="nearby.prev"
-            :to="thingTo(nearby.prev)"
-            class="step prev"
-          >
-            <span class="dir">← Previous</span>
-            <span class="who">{{ nearby.prev.name }}</span>
-          </NuxtLink>
-          <span v-else class="step" />
-          <NuxtLink
-            v-if="nearby.next"
-            :to="thingTo(nearby.next)"
-            class="step next"
-          >
-            <span class="dir">Next →</span>
-            <span class="who">{{ nearby.next.name }}</span>
-          </NuxtLink>
-        </nav>
-      </div>
+    <div class="hero">
+      <ThingsCutout :key="item.slug" :item priority />
+      <span class="contact" aria-hidden="true" />
+    </div>
+
+    <NuxtLink
+      v-if="nearby.next"
+      :to="thingTo(nearby.next)"
+      class="peek next"
+      :aria-label="nearby.next.name"
+    >
+      <ThingsCutout :key="nearby.next.slug" :item="nearby.next" />
+    </NuxtLink>
+
+    <div class="copy">
+      <p class="brand">
+        {{ item.brand }}
+      </p>
+      <h1 class="title">
+        {{ item.name }}
+      </h1>
+      <p class="price">
+        <ThingsPrice :price="item.price" />
+      </p>
+      <p v-if="href" class="links">
+        <a
+          :href
+          target="_blank"
+          rel="noopener noreferrer"
+          class="shop"
+        >
+          View at {{ item.brand }} ↗
+        </a>
+      </p>
+      <p v-if="note" class="note">
+        {{ note }}
+      </p>
+      <dl class="sheet">
+        <div v-for="[label, value] in fields" :key="label" class="row">
+          <dt>{{ label }}</dt>
+          <dd>{{ value }}</dd>
+        </div>
+      </dl>
     </div>
 
     <p class="affiliate">
@@ -122,90 +130,95 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </template>
 
 <style scoped>
-.crumb {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px;
-  margin: 0 0 36px;
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100dvh;
+  padding: 88px 24px 48px;
+  cursor: default;
+  background: #FAF9F7;
+}
+.close {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  z-index: 8;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ui-text-dimmed);
-}
-.crumb a {
-  color: var(--ui-text-muted);
   text-decoration: none;
   border: 0;
   box-shadow: none;
 }
-.crumb a:hover {
-  color: var(--ui-text-highlighted);
+.close:hover {
+  color: #111111;
 }
 
-.split {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-  align-items: center;
-}
-@media (min-width: 900px) {
-  .split {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    gap: 72px;
-  }
+.peek {
+  display: none;
 }
 
-.figure {
+.hero {
+  position: relative;
   display: flex;
-  min-height: min(58vh, 560px);
-  align-items: center;
+  min-height: min(62vh, 560px);
+  align-items: flex-end;
   justify-content: center;
-  padding: 24px;
+  padding: 12px 12px 36px;
 }
-.figure :deep(.cutout) {
-  width: min(100%, 640px);
+.hero :deep(.cutout) {
+  width: min(100%, 720px);
   height: min(62vh, 580px);
 }
-.figure :deep(.object) {
-  max-width: 100%;
-  max-height: 100%;
+.contact {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 18px;
+  height: 22px;
+  background: radial-gradient(ellipse at center, rgb(32 24 16 / 0.22) 0%, rgb(32 24 16 / 0) 72%);
+  filter: blur(14px);
+  pointer-events: none;
 }
 
 .copy {
   min-width: 0;
+  max-width: 28rem;
+  margin-inline: auto;
 }
 .brand {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ui-text-dimmed);
 }
 .title {
   margin: 8px 0 0;
   font-family: var(--font-redaction);
-  font-size: clamp(28px, 4vw, 42px);
+  font-size: clamp(28px, 4vw, 44px);
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1.12;
   color: #111111;
   text-wrap: balance;
 }
 .price {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   font-family: var(--font-redaction);
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1;
   color: #111111;
   font-variant-numeric: tabular-nums;
 }
 .links {
-  margin: 20px 0 0;
+  margin: 18px 0 0;
 }
 .shop {
-  font-size: 16px;
+  font-size: 14px;
   color: #111111;
   text-decoration: none;
   border: 0;
@@ -216,16 +229,16 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   color: var(--ui-primary);
 }
 .note {
-  margin: 28px 0 0;
+  margin: 22px 0 0;
   font-size: 16px;
-  line-height: 28px;
+  line-height: 26px;
   color: var(--ui-text-muted);
   text-wrap: pretty;
 }
 .sheet {
   display: flex;
   flex-direction: column;
-  margin-top: 32px;
+  margin-top: 28px;
 }
 .row {
   display: grid;
@@ -249,54 +262,62 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   text-wrap: pretty;
 }
 
-.pager {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--ui-border);
-}
-.step {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  text-decoration: none;
-  border: 0;
-  box-shadow: none;
-  color: inherit;
-}
-.step.next {
-  text-align: right;
-  justify-self: end;
-}
-.dir {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ui-text-dimmed);
-}
-.who {
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--ui-text-toned);
-  text-wrap: pretty;
-}
-.step:hover .who {
-  color: #111111;
-}
-.step:hover .dir {
-  color: var(--ui-primary);
-}
-
 .affiliate {
-  margin: 56px 0 0;
+  margin: 40px 0 0;
   font-family: var(--font-mono);
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0.04em;
   color: var(--ui-text-dimmed);
+}
+
+@media (min-width: 900px) {
+  .stage {
+    grid-template-columns: 12vw minmax(0, 1.2fr) minmax(0, 0.8fr) 12vw;
+    grid-template-areas: "prev hero copy next";
+    align-items: center;
+    gap: 12px;
+    padding: 64px 0 48px;
+  }
+  .peek {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 34vh;
+    overflow: visible;
+    opacity: 0.34;
+    cursor: zoom-in;
+    text-decoration: none;
+    border: 0;
+    box-shadow: none;
+    transition: opacity 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .peek:hover {
+    opacity: 0.78;
+  }
+  .peek.prev {
+    grid-area: prev;
+  }
+  .peek.next {
+    grid-area: next;
+  }
+  .peek :deep(.cutout) {
+    width: 80%;
+    height: 100%;
+  }
+  .hero {
+    grid-area: hero;
+    min-height: 72vh;
+  }
+  .copy {
+    grid-area: copy;
+    margin-inline: 0 48px;
+  }
+  .affiliate {
+    position: absolute;
+    right: 28px;
+    bottom: 22px;
+    margin: 0;
+  }
 }
 </style>

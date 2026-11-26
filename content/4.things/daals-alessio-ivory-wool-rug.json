@@ -3,17 +3,15 @@
   "name": "Alessio Ivory Hand Tufted Wool Rug",
   "brand": "Daals",
   "category": "home",
-  "color": "Ivory",
-  "size": "unconfirmed (live S £139.99, M £169.99, L £239.99, XL £499.99)",
-  "material": "Hand-tufted wool",
-  "acquired": "2026-08-14",
   "price": {
     "amount": 239.99,
     "currency": "GBP"
   },
   "image": "/images/things/daals-alessio-ivory-wool-rug.webp",
-  "note": "Confirmed by a 7 Sep 2026 delivery-feedback email as part of Daals order #761515 (Amex £1,739.96 on 14 Aug 2026). Size and exact paid amount for this line are unconfirmed. The price field uses the live Large listed price as a midpoint reference only, not a claimed paid amount. Other lines of #761515 remain unmatched.",
-  "url": "https://www.daals.co.uk/products/alessio-ivory-hand-tufted-wool-rug",
   "owned": true,
-  "order": 20
+  "order": 20,
+  "color": "Ivory",
+  "material": "Hand-tufted wool",
+  "acquired": "2026-08-14",
+  "url": "https://www.daals.co.uk/products/alessio-ivory-hand-tufted-wool-rug"
 }

@@ -3,17 +3,16 @@
   "name": "Egyptian Cotton Duvet Cover (Double) and Fitted Sheet (King)",
   "brand": "Scooms",
   "category": "home",
-  "color": "White",
-  "size": "Double duvet cover 200 x 200 cm, King fitted sheet 150 x 200 cm, standard 30 cm depth",
-  "material": "600-thread-count Egyptian cotton sateen, OEKO-TEX Standard 100",
-  "acquired": "2026-06-29",
   "price": {
     "amount": 210,
     "currency": "GBP"
   },
   "image": "/images/things/scooms-egyptian-cotton-duvet-double-king-fitted.webp",
-  "note": "Scooms order SCO31368, packed 29 Jun 2026 and delivered 30 Jun 2026. Distinct from SCO30210 (Double plus Double). The packed email did not include a price; the price field reuses the £210 paid for the earlier similar sateen pair only as a reference, not a confirmed paid amount. The cutout is the same official Egyptian cotton sateen packshot as the SCO30210 set.",
-  "url": "https://scooms.com/products/egyptian-cotton-bedding-sets",
   "owned": true,
-  "order": 22
+  "order": 22,
+  "color": "White",
+  "material": "600-thread-count Egyptian cotton sateen, OEKO-TEX Standard 100",
+  "size": "Double duvet cover 200 x 200 cm, King fitted sheet 150 x 200 cm, standard 30 cm depth",
+  "acquired": "2026-06-29",
+  "url": "https://scooms.com/products/egyptian-cotton-bedding-sets"
 }

@@ -20,9 +20,10 @@ const { spring } = useThingMotion()
   >
     <img
       :src="item.image"
-      :alt="item.name"
+      :alt="thingAlt(item)"
       class="object"
       :fetchpriority="priority ? 'high' : 'auto'"
+      :loading="priority ? 'eager' : 'lazy'"
       draggable="false"
       decoding="async"
     >
@@ -46,7 +47,7 @@ const { spring } = useThingMotion()
   width: auto;
   height: auto;
   object-fit: contain;
-  object-position: center;
+  object-position: center bottom;
   user-select: none;
   pointer-events: none;
 }

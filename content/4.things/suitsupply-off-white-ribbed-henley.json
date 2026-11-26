@@ -3,17 +3,16 @@
   "name": "Off-White Ribbed Henley",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "Off-white",
-  "size": "M",
-  "material": "Pure wool",
-  "acquired": "2026-11-02",
   "price": {
     "amount": 129,
     "currency": "EUR"
   },
   "image": "/images/things/suitsupply-off-white-ribbed-henley.webp",
-  "note": "Bought in Paris for EUR 129, receipt PSFR00364769. The live UK page lists the same SKU KCV10032OW1.",
-  "url": "https://suitsupply.com/en-gb/men/knitwear/off-white-henley/KCV10032OW1.html",
   "owned": true,
-  "order": 4
+  "order": 4,
+  "color": "Off-white",
+  "material": "Pure wool",
+  "size": "M",
+  "acquired": "2026-11-02",
+  "url": "https://suitsupply.com/en-gb/men/knitwear/off-white-henley/KCV10032OW1.html"
 }

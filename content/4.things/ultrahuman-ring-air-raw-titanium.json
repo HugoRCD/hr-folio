@@ -1,0 +1,16 @@
+{
+  "slug": "ultrahuman-ring-air-raw-titanium",
+  "name": "Ring Air",
+  "brand": "Ultrahuman",
+  "category": "tech",
+  "price": {
+    "amount": 329,
+    "currency": "GBP"
+  },
+  "image": "/images/things/ultrahuman-ring-air-raw-titanium.webp",
+  "owned": true,
+  "order": 46,
+  "color": "Raw Titanium",
+  "material": "Titanium with tungsten carbide coating",
+  "url": "https://www.ultrahuman.com/gb/ring/buy/"
+}

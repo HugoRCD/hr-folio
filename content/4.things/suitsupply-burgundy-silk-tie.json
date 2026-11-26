@@ -3,17 +3,16 @@
   "name": "Burgundy Silk Tie",
   "brand": "SuitSupply",
   "category": "accessories",
-  "color": "Burgundy",
-  "size": "One size",
-  "material": "Silk",
-  "acquired": "2026-01-20",
   "price": {
     "amount": 59,
     "currency": "GBP"
   },
   "image": "/images/things/suitsupply-burgundy-silk-tie.webp",
-  "note": "SKU D221031, order 04117941763, paid £59. Live UK URL omits the old tiessub path, which now 301s to the ties category.",
-  "url": "https://suitsupply.com/en-gb/men/accessories/ties/burgundy-tie/D221031.html",
   "owned": true,
-  "order": 33
+  "order": 33,
+  "color": "Burgundy",
+  "material": "Silk",
+  "size": "One size",
+  "acquired": "2026-01-20",
+  "url": "https://suitsupply.com/en-gb/men/accessories/ties/burgundy-tie/D221031.html"
 }

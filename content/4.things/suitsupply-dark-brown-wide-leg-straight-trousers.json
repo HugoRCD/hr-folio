@@ -3,17 +3,16 @@
   "name": "Dark Brown Wide Leg Straight Trousers",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "Dark brown",
-  "size": "30",
-  "material": "Pure wool",
-  "acquired": "2026-01-20",
   "price": {
     "amount": 169,
     "currency": "GBP"
   },
   "image": "/images/things/suitsupply-dark-brown-wide-leg-straight-trousers.webp",
-  "note": "Receipt SKU B305105 is the size-30 variant of live product code B3051. Paid £169, order 04117941763.",
-  "url": "https://suitsupply.com/en-gb/men/trousers/dark-brown-wide-leg-trousers/B3051.html",
   "owned": true,
-  "order": 9
+  "order": 9,
+  "color": "Dark brown",
+  "material": "Pure wool",
+  "size": "30",
+  "acquired": "2026-01-20",
+  "url": "https://suitsupply.com/en-gb/men/trousers/dark-brown-wide-leg-trousers/B3051.html"
 }

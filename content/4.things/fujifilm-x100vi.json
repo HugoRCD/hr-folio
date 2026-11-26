@@ -3,17 +3,16 @@
   "name": "Fujifilm X100VI",
   "brand": "Fujifilm",
   "category": "tech",
-  "color": "Silver",
-  "size": "128 x 74.8 x 55.3 mm",
-  "material": "Aluminium top plate, 40.2MP APS-C X-Trans CMOS 5 HR sensor, 23mm F2 lens",
-  "acquired": "on or before 2026-05-21",
   "price": {
     "amount": 1749,
     "currency": "GBP"
   },
   "image": "/images/things/fujifilm-x100vi.webp",
-  "note": "Confirmed by Fujifilm UK registration and repair case 0042676. Live UK eShop price is £1,749. Purchase receipt and exact paid price not yet pulled. Packshot is the official silver finish.",
-  "url": "https://eshop.fujifilm-x.com/uk/fujifilm-x100vi.html",
   "owned": true,
-  "order": 13
+  "order": 13,
+  "color": "Silver",
+  "material": "Aluminium top plate, 40.2MP APS-C X-Trans CMOS 5 HR sensor, 23mm F2 lens",
+  "size": "128 x 74.8 x 55.3 mm",
+  "acquired": "on or before 2026-05-21",
+  "url": "https://eshop.fujifilm-x.com/uk/fujifilm-x100vi.html"
 }

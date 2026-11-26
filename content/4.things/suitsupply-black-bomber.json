@@ -3,17 +3,16 @@
   "name": "Black Bomber Jacket",
   "brand": "SuitSupply",
   "category": "wardrobe",
-  "color": "Black",
-  "size": "M",
-  "material": "100% cashmere, woven by Colombo, Italy",
-  "acquired": "2026-09-13",
   "price": {
     "amount": 549,
     "currency": "GBP"
   },
   "image": "/images/things/suitsupply-black-bomber.webp",
-  "note": "Relaxed-fit zip bomber in pure cashmere. Exact SKU OCO10028999, receipt PSGB00492486.",
-  "url": "https://suitsupply.com/en-gb/men/coats/black-bomber-jacket/OCO10028999.html",
   "owned": true,
-  "order": 2
+  "order": 2,
+  "color": "Black",
+  "material": "100% cashmere, woven by Colombo, Italy",
+  "size": "M",
+  "acquired": "2026-09-13",
+  "url": "https://suitsupply.com/en-gb/men/coats/black-bomber-jacket/OCO10028999.html"
 }

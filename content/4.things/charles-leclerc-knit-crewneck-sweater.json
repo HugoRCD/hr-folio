@@ -1,0 +1,14 @@
+{
+  "slug": "charles-leclerc-knit-crewneck-sweater",
+  "name": "Knit Crewneck Sweater",
+  "brand": "CL16",
+  "category": "wardrobe",
+  "price": {
+    "amount": 145,
+    "currency": "EUR"
+  },
+  "image": "/images/things/charles-leclerc-knit-crewneck-sweater.webp",
+  "owned": true,
+  "order": 50,
+  "url": "https://shop.charlesleclerc.com/products/knit-crewneck-sweater?variant=54483046727990"
+}

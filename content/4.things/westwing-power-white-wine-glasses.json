@@ -3,17 +3,16 @@
   "name": "Conical Crystal White Wine Glasses Power, Set of 6",
   "brand": "Westwing",
   "category": "home",
-  "color": "Clear crystal",
-  "size": "Set of 6",
-  "material": "Crystal glass",
-  "acquired": "2026-08-28",
   "price": {
     "amount": 39.99,
     "currency": "GBP"
   },
   "image": "/images/things/westwing-power-white-wine-glasses.webp",
-  "note": "Westwing order #4021497, paid £39.99. Live listed price is now about £42.99. The official packshot is used; a soft studio shadow under the foot remains faintly because removing it punched holes in the glass foot. URL verified HTTP 200.",
-  "url": "https://www.westwing.co.uk/conical-crystal-white-wine-glasses-power-set-of-6-en-19sto81507.html",
   "owned": true,
-  "order": 28
+  "order": 28,
+  "color": "Clear crystal",
+  "material": "Crystal glass",
+  "size": "Set of 6",
+  "acquired": "2026-08-28",
+  "url": "https://www.westwing.co.uk/conical-crystal-white-wine-glasses-power-set-of-6-en-19sto81507.html"
 }
