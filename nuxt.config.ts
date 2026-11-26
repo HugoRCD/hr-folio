@@ -77,7 +77,7 @@ Collections:
 - writing: blog posts (title, description, date, tags, body as raw markdown in rawbody).
 - clipboard: short dated notes.
 - works: project/work JSON (name, description, url, category, tags, stem — file stem is the stable id).
-- things: wardrobe and everyday objects (name, brand, room, category, price, image, note, slug). Catalogue at /things, each piece at /things/{slug}.
+- things: objects Hugo owns (name, brand, category wardrobe|tech|home|accessories, price, image, note, slug). Index at /things, each piece at /things/{slug}.
 - about: single authoritative JSON record with Hugo's bio, current role, past roles, location, languages, expertise, stack, project highlights, availability, and common misconceptions. Surfaced inside assistant-context as \`about\`.
 
 Workflow for assistants:
@@ -160,6 +160,14 @@ Prefer raw markdown (rawbody) over rendered AST for analysis.`,
       routes: [
         '/',
         '/things',
+        '/things/suitsupply-black-overcoat',
+        '/things/suitsupply-black-bomber',
+        '/things/suitsupply-white-striped-point-collar-shirt',
+        '/things/fujifilm-x100vi',
+        '/things/nuphy-air75-v3-raycast-edition',
+        '/things/daals-sveti-black-curved-glass-coffee-table',
+        '/things/scooms-egyptian-cotton-sateen-bedding-set',
+        '/things/apple-finewoven-magsafe-wallet-black',
         '/llms.txt',
         '/llms-full.txt',
         '/sitemap.xml',

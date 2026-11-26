@@ -87,7 +87,6 @@ export default defineMcpTool({
               match(t.name)
               || match(t.brand)
               || match(t.category)
-              || match(t.room)
               || match(t.note)
               || match(t.url)
               || match(t.affiliateUrl),
@@ -99,7 +98,6 @@ export default defineMcpTool({
           path: `/things/${t.slug}`,
           name: t.name,
           brand: t.brand,
-          room: t.room,
           category: t.category,
           acquired: t.acquired,
           url: t.affiliateUrl ?? t.url,

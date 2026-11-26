@@ -122,7 +122,6 @@ export default defineMcpTool({
         slug: t.slug,
         name: t.name,
         brand: t.brand,
-        room: t.room,
         category: t.category,
         url: absolute(`/things/${t.slug}`),
       })),

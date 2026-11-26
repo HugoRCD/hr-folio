@@ -8,25 +8,9 @@ const { item, index, spring } = defineProps<{
   spring: Record<string, unknown>
 }>()
 
-const frame = useTemplateRef<HTMLElement>('frame')
-const active = ref(false)
-const size = ref({ w: 0, h: 0 })
-let observer: ResizeObserver | undefined
-
-function measure() {
-  const el = frame.value
-  if (!el) return
-  const r = el.getBoundingClientRect()
-  size.value = { w: Math.round(r.width), h: Math.round(r.height) }
-}
-
-onMounted(() => {
-  measure()
-  if (!frame.value) return
-  observer = new ResizeObserver(measure)
-  observer.observe(frame.value)
-})
-onBeforeUnmount(() => observer?.disconnect())
+const { reduced } = useThingMotion()
+const href = computed(() => thingHref(item))
+const number = computed(() => String(index + 1).padStart(2, '0'))
 </script>
 
 <template>
@@ -36,53 +20,46 @@ onBeforeUnmount(() => observer?.disconnect())
     :transition="spring"
     :initial="false"
     :exit="{ opacity: 0 }"
-    @mouseenter="active = true"
-    @mouseleave="active = false"
-    @focusin="active = true"
-    @focusout="active = false"
+    :while-hover="reduced ? undefined : { y: -10 }"
   >
     <NuxtLink :to="thingPath(item)" class="hit">
-      <div class="stage">
-        <motion.div
-          :layout-id="`thing-${item.slug}`"
-          :transition="spring"
-          :initial="false"
-          class="cutout"
-        >
-          <img
-            ref="frame"
-            :src="item.image"
-            :alt="item.name"
-            class="object"
-            :class="{ featured: item.featured, ink: item.image.endsWith('.svg') }"
-            draggable="false"
-            decoding="async"
-          >
-        </motion.div>
-        <ThingsSpecPlate
-          :item
-          :index
-          :width="size.w"
-          :height="size.h"
-          :on="active"
-        />
-      </div>
+      <span class="numeral" aria-hidden="true">{{ number }}</span>
+      <ThingsCutout :item :priority="index < 2" class="photo" />
       <p class="caption">
         <span class="name">{{ item.name }}</span>
-        <span class="brand">{{ item.brand }}</span>
+        <span class="meta">
+          <ThingsPrice :price="item.price" />
+        </span>
       </p>
     </NuxtLink>
+    <a
+      v-if="href"
+      :href
+      class="shop"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {{ item.brand }}
+    </a>
   </motion.article>
 </template>
 
 <style scoped>
 .piece {
+  position: relative;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 12px 8px;
 }
 .hit {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
   text-decoration: none;
   color: inherit;
   border: 0;
@@ -91,64 +68,56 @@ onBeforeUnmount(() => observer?.disconnect())
 .hit:focus-visible {
   box-shadow: none;
 }
-.stage {
-  position: relative;
-  display: flex;
-  min-height: 196px;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 8px 12px 4px;
-}
-.cutout {
-  display: flex;
-  max-width: 100%;
-  align-items: flex-end;
-  justify-content: center;
-}
-.object {
-  display: block;
-  max-width: 100%;
-  height: 188px;
-  width: auto;
-  object-fit: contain;
-  object-position: bottom center;
-  color: var(--ui-text-highlighted);
+.numeral {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  font-family: var(--font-redaction);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ui-primary);
   user-select: none;
 }
-.object.featured {
-  height: 228px;
+.photo {
+  width: 100%;
 }
-.dark .object.ink {
-  filter: invert(1);
+.photo :deep(.object) {
+  max-height: min(52vh, 480px);
+  margin-inline: auto;
 }
 .caption {
-  display: none;
+  display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 4px;
   margin: 0;
+  text-align: center;
 }
 .name {
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 15px;
+  line-height: 22px;
   color: var(--ui-text-highlighted);
+  text-wrap: balance;
 }
-.brand {
+.meta {
+  font-family: var(--font-redaction);
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--ui-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.shop {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ui-text-dimmed);
+  color: var(--ui-text-muted);
+  text-decoration: none;
+  border: 0;
+  box-shadow: none;
+  border-bottom: 1px solid var(--ui-primary);
 }
-
-/* phones have no hover: the name sits under the object, as a caption on a plate */
-@media (max-width: 639px) {
-  .caption {
-    display: flex;
-  }
-}
-@media (hover: hover) and (pointer: fine) {
-  .hit:focus-visible .caption {
-    display: flex;
-  }
+.shop:hover {
+  color: var(--ui-primary);
 }
 </style>

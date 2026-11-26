@@ -11,7 +11,7 @@ const { items, spring } = defineProps<{
 <template>
   <motion.div
     layout
-    class="breakout pieces"
+    class="wide pieces"
     :transition="spring"
     :initial="false"
   >
@@ -28,30 +28,45 @@ const { items, spring } = defineProps<{
 </template>
 
 <style scoped>
-.pieces {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px 32px;
-  align-items: end;
+.wide {
+  width: calc(100% + 48px);
+  margin-inline: -24px;
+}
+@media (min-width: 1024px) {
+  .wide {
+    width: var(--sheet-width);
+    margin-left: calc(-1 * (var(--sheet-index) + var(--sheet-gutter)));
+    margin-right: 0;
+  }
 }
 
-/* a piece in hand stays, its neighbours step back */
+.pieces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 88px 64px;
+  padding: 40px 8px 80px;
+}
+.pieces :deep(.piece) {
+  flex: 1 1 300px;
+  max-width: 460px;
+  transition: opacity 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 .pieces:hover :deep(.piece),
 .pieces:has(:deep(.piece:focus-within)) :deep(.piece) {
-  opacity: 0.34;
+  opacity: 0.28;
 }
 .pieces:hover :deep(.piece:hover),
 .pieces:has(:deep(.piece:focus-within)) :deep(.piece:focus-within) {
   opacity: 1;
 }
-.pieces :deep(.piece) {
-  transition: opacity 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-}
 
 @media (max-width: 639px) {
   .pieces {
-    grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 56px 24px;
+    padding-inline: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,19 @@
+{
+  "slug": "nuphy-air75-v3-raycast-edition",
+  "name": "NuPhy Air75 V3 Raycast Edition",
+  "brand": "NuPhy",
+  "category": "tech",
+  "color": "Nebula Dark",
+  "size": "ANSI 75% (84 keys), 318.9 x 128.9 x 13.2 mm",
+  "material": "Aluminium top case, ABS bottom, dye-sublimation PBT keycaps, Blush nano switches",
+  "acquired": "2026-08-27",
+  "price": {
+    "amount": 114,
+    "currency": "GBP"
+  },
+  "image": "/images/things/nuphy-air75-v3-raycast-edition.png",
+  "note": "Raycast Edition, limited run. Listed at $149.95; Amex charged £113.71 on 27 Aug 2026. Order 436634, shipped 29 Aug 2026. The official product page was confirmed as a live listing (this box's curl got HTTP 429; a full page fetch still returned the product).",
+  "url": "https://nuphy.com/products/nuphy-air75-v3-raycast-edition",
+  "owned": true,
+  "order": 5
+}

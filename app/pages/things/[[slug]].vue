@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AnimatePresence, LayoutGroup, motion } from 'motion-v'
-import { THING_ROOMS, ROOM_LABEL, type ThingItem, type ThingRoom } from '~/utils/things'
+import { THING_CATEGORIES, CATEGORY_LABEL, type ThingItem, type ThingCategory } from '~/utils/things'
 
 definePageMeta({
   key: 'things',
@@ -33,42 +33,42 @@ watch([slug, allThings], ([s, list]) => {
   }
 })
 
-type View = 'catalogue' | 'ledger'
-const rooms: Array<ThingRoom | 'all'> = ['all', ...THING_ROOMS]
+type View = 'carousel' | 'grid'
+const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
 const views: { key: View, label: string }[] = [
-  { key: 'catalogue', label: 'Catalogue' },
-  { key: 'ledger', label: 'Ledger' },
+  { key: 'carousel', label: 'Carousel' },
+  { key: 'grid', label: 'Grid' },
 ]
 
-const room = computed<ThingRoom | 'all'>(() => {
-  const q = route.query.room
-  return typeof q === 'string' && rooms.includes(q as ThingRoom | 'all')
-    ? q as ThingRoom | 'all'
+const category = computed<ThingCategory | 'all'>(() => {
+  const q = route.query.cat
+  return typeof q === 'string' && categories.includes(q as ThingCategory | 'all')
+    ? q as ThingCategory | 'all'
     : 'all'
 })
-const view = computed<View>(() => route.query.view === 'ledger' ? 'ledger' : 'catalogue')
+const view = computed<View>(() => route.query.view === 'grid' ? 'grid' : 'carousel')
 
-function setRoom(next: ThingRoom | 'all') {
+function setCategory(next: ThingCategory | 'all') {
   const query = { ...route.query }
-  if (next === 'all') delete query.room
-  else query.room = next
+  if (next === 'all') delete query.cat
+  else query.cat = next
   router.replace({ query })
 }
 
 function setView(next: View) {
   const query = { ...route.query }
-  if (next === 'catalogue') delete query.view
+  if (next === 'carousel') delete query.view
   else query.view = next
   router.replace({ query })
 }
 
-const items = computed(() => inRoom((allThings.value ?? []).filter(item => item.owned !== false), room.value))
+const items = computed(() => inCategory((allThings.value ?? []).filter(item => item.owned !== false), category.value))
 const noun = computed(() => items.value.length === 1 ? 'piece' : 'pieces')
 
 const title = computed(() => selected.value?.name ?? 'Things')
 const description = computed(() => {
-  if (!selected.value) return 'Clothes, furniture, and the things on the desk.'
-  return `${selected.value.brand}. ${selected.value.note ?? ROOM_LABEL[selected.value.room]}`
+  if (!selected.value) return 'Clothes, cameras, furniture, and the rest of the objects around the house.'
+  return `${selected.value.brand}. ${selected.value.note ?? CATEGORY_LABEL[selected.value.category]}`
 })
 
 useHead({
@@ -118,20 +118,20 @@ useSchemaOrg([defineWebPage()])
       >
         <SectionMark numeral="§" label="Things" as="h1" />
 
-        <div class="in-note top-2 mb-3 flex items-center gap-4 lg:mb-0 lg:flex-col lg:items-stretch lg:gap-0">
-          <div class="flex flex-wrap gap-x-4 lg:flex-col lg:gap-0" role="tablist" aria-label="Filter by room">
+        <div class="in-note filters z-10 top-2 mb-3 flex items-center gap-4 lg:mb-0 lg:flex-col lg:items-stretch lg:gap-0">
+          <div class="flex flex-wrap gap-x-4 lg:flex-col lg:gap-0" role="tablist" aria-label="Filter by use">
             <button
-              v-for="r in rooms"
-              :key="r"
+              v-for="c in categories"
+              :key="c"
               type="button"
               role="tab"
-              :aria-selected="room === r"
+              :aria-selected="category === c"
               class="tab flex items-center gap-2 text-left font-mono text-[10px] uppercase leading-6 tracking-[0.08em]"
-              :class="{ active: room === r }"
-              @click="setRoom(r)"
+              :class="{ active: category === c }"
+              @click="setCategory(c)"
             >
               <span class="tick" aria-hidden="true" />
-              {{ ROOM_LABEL[r] }}
+              {{ CATEGORY_LABEL[c] }}
             </button>
           </div>
           <div class="flex flex-wrap gap-x-4 lg:mt-5 lg:flex-col lg:gap-0" role="tablist" aria-label="Choose a view">
@@ -154,16 +154,16 @@ useSchemaOrg([defineWebPage()])
           </p>
         </div>
 
-        <AnimatePresence :initial="false" mode="popLayout">
-          <ThingsCatalogue
-            v-if="view === 'catalogue'"
-            key="catalogue"
+        <AnimatePresence :initial="false">
+          <ThingsStage
+            v-if="view === 'carousel'"
+            key="carousel"
             :items
             :spring
           />
-          <ThingsLedger
+          <ThingsGrid
             v-else
-            key="ledger"
+            key="grid"
             :items
             :spring
           />
@@ -205,6 +205,10 @@ useSchemaOrg([defineWebPage()])
 }
 .tab.active .tick::after {
   transform: scaleX(1);
+}
+
+.filters {
+  z-index: 10;
 }
 
 .affiliate {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { motion } from 'motion-v'
-import { ROOM_LABEL, type ThingItem } from '~/utils/things'
+import { CATEGORY_LABEL, type ThingItem } from '~/utils/things'
 
 const { item, items, spring } = defineProps<{
   item: ThingItem
@@ -8,26 +8,45 @@ const { item, items, spring } = defineProps<{
   spring: Record<string, unknown>
 }>()
 
-const nearby = computed(() => neighbours(items, item.slug))
+const route = useRoute()
+const nearby = computed(() => adjacent(items, item.slug))
 const href = computed(() => thingHref(item))
 const number = computed(() => {
   const i = items.findIndex(t => t.slug === item.slug)
   return String((i >= 0 ? i : 0) + 1).padStart(2, '0')
 })
+const acquired = computed(() => formatAcquired(item.acquired))
 
 const fields = computed(() => {
   const rows: Array<[string, string]> = [
     ['Brand', item.brand],
-    ['Room', ROOM_LABEL[item.room]],
-    ['Category', item.category],
+    ['Use', CATEGORY_LABEL[item.category]],
     ['Material', item.material ?? ''],
     ['Colour', item.color ?? ''],
     ['Size', item.size ?? ''],
-    ['Acquired', acquiredYear(item.acquired) ?? item.acquired ?? ''],
-    ['Price', formatPrice(item.price)],
+    ['Acquired', acquired.value ?? ''],
   ]
   return rows.filter(([, value]) => value)
 })
+
+function thingTo(target: ThingItem) {
+  return { path: thingPath(target), query: route.query }
+}
+
+function onKey(e: KeyboardEvent) {
+  if (e.metaKey || e.ctrlKey || e.altKey) return
+  const tag = (e.target as HTMLElement | null)?.tagName
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+  if (document.querySelector('[role="dialog"]')) return
+  if (e.key === 'ArrowRight' && nearby.value.next) {
+    navigateTo(thingTo(nearby.value.next))
+  } else if (e.key === 'ArrowLeft' && nearby.value.prev) {
+    navigateTo(thingTo(nearby.value.prev))
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', onKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
@@ -38,66 +57,66 @@ const fields = computed(() => {
   >
     <div class="section-mark in-index flex items-baseline gap-3">
       <span class="numeral" aria-hidden="true">{{ number }}</span>
-      <NuxtLink to="/things" class="label">
+      <NuxtLink :to="{ path: '/things', query: route.query }" class="label">
         Things
       </NuxtLink>
       <span class="rule" aria-hidden="true" />
     </div>
 
-    <aside class="in-note sheet">
-      <p class="key">
-        Specification
-      </p>
-      <dl>
-        <div v-for="[label, value] in fields" :key="label" class="row">
-          <dt>{{ label }}</dt>
-          <dd>{{ value }}</dd>
-        </div>
-      </dl>
+    <div class="wide figure">
+      <ThingsCutout :item priority />
+    </div>
+
+    <h1 class="title">
+      {{ item.name }}
+    </h1>
+    <p class="brand">
+      {{ item.brand }}
+    </p>
+    <p class="price">
+      <ThingsPrice :price="item.price" />
+    </p>
+    <p class="links">
       <a
         v-if="href"
         :href
         target="_blank"
         rel="noopener noreferrer"
-        class="out"
+        class="shop"
       >
         {{ item.brand }}
       </a>
-      <p v-if="nearby.length" class="key also">
-        Also
-      </p>
-      <ul v-if="nearby.length" class="near">
-        <li v-for="n in nearby" :key="n.slug">
-          <NuxtLink :to="thingPath(n)">
-            {{ n.name }}
-          </NuxtLink>
-        </li>
-      </ul>
-    </aside>
-
-    <motion.div
-      :layout-id="`thing-${item.slug}`"
-      :transition="spring"
-      :initial="false"
-      class="breakout figure"
-    >
-      <img
-        :src="item.image"
-        :alt="item.name"
-        class="object"
-        :class="{ ink: item.image.endsWith('.svg') }"
-        data-construct="figure"
-        draggable="false"
-        decoding="async"
-      >
-    </motion.div>
-
-    <h1 class="title">
-      {{ item.name }}
-    </h1>
+    </p>
     <p v-if="item.note" class="note">
       {{ item.note }}
     </p>
+    <dl class="sheet">
+      <div v-for="[label, value] in fields" :key="label" class="row">
+        <dt>{{ label }}</dt>
+        <dd>{{ value }}</dd>
+      </div>
+    </dl>
+
+    <nav v-if="nearby.prev || nearby.next" class="pager" aria-label="Other pieces">
+      <NuxtLink
+        v-if="nearby.prev"
+        :to="thingTo(nearby.prev)"
+        class="step prev"
+      >
+        <span class="dir">← Previous</span>
+        <span class="who">{{ nearby.prev.name }}</span>
+      </NuxtLink>
+      <span v-else class="step" />
+      <NuxtLink
+        v-if="nearby.next"
+        :to="thingTo(nearby.next)"
+        class="step next"
+      >
+        <span class="dir">Next →</span>
+        <span class="who">{{ nearby.next.name }}</span>
+      </NuxtLink>
+    </nav>
+
     <p class="affiliate">
       Some links are affiliate links.
     </p>
@@ -145,39 +164,73 @@ const fields = computed(() => {
   background: color-mix(in oklab, var(--ui-text) 12%, transparent);
 }
 
+.wide {
+  width: calc(100% + 48px);
+  margin-inline: -24px;
+}
+@media (min-width: 1024px) {
+  .wide {
+    width: var(--sheet-width);
+    margin-left: calc(-1 * (var(--sheet-index) + var(--sheet-gutter)));
+    margin-right: 0;
+  }
+}
+
 .figure {
   display: flex;
-  min-height: 280px;
+  min-height: min(58vh, 560px);
   align-items: center;
   justify-content: center;
-  margin-bottom: 28px;
-  color: var(--ui-text-highlighted);
+  margin-bottom: 36px;
+  padding: 24px 16px;
 }
-.figure img {
-  display: block;
-  max-width: min(100%, 420px);
-  height: 380px;
-  width: auto;
-  object-fit: contain;
-  object-position: center;
-  user-select: none;
-}
-.dark .object.ink {
-  filter: invert(1);
+.figure :deep(.object) {
+  max-width: min(90vw, 760px);
+  max-height: min(64vh, 580px);
 }
 
 .title {
-  margin: 0 0 12px;
+  margin: 0 0 8px;
   font-family: var(--font-redaction);
-  font-size: 32px;
+  font-size: clamp(28px, 4vw, 40px);
   font-weight: 400;
-  line-height: 40px;
+  line-height: 1.15;
   color: var(--ui-text-highlighted);
   text-wrap: balance;
 }
+.brand {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ui-text-dimmed);
+}
+.price {
+  margin: 16px 0 0;
+  font-family: var(--font-redaction);
+  font-size: 28px;
+  line-height: 1;
+  color: var(--ui-text-highlighted);
+  font-variant-numeric: tabular-nums;
+}
+.links {
+  margin: 18px 0 0;
+}
+.shop {
+  font-size: 16px;
+  color: var(--ui-text-highlighted);
+  text-decoration: none;
+  border: 0;
+  box-shadow: none;
+  border-bottom: 1px solid var(--ui-primary);
+}
+.shop:hover {
+  color: var(--ui-primary);
+}
 .note {
   max-width: 528px;
-  margin: 0;
+  margin: 28px 0 0;
   font-size: 16px;
   line-height: 28px;
   color: var(--ui-text-muted);
@@ -196,29 +249,18 @@ const fields = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: 24px;
-  margin-bottom: 28px;
-}
-.key {
-  margin: 0 0 8px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ui-text-dimmed);
-}
-.key.also {
-  margin-top: 20px;
+  max-width: 528px;
+  margin-top: 36px;
 }
 .row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 6px 0;
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 16px;
+  padding: 8px 0;
   border-top: 1px solid color-mix(in oklab, var(--ui-text) 12%, transparent);
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 15px;
+  font-size: 11px;
+  line-height: 18px;
 }
 .row dt {
   letter-spacing: 0.08em;
@@ -227,52 +269,51 @@ const fields = computed(() => {
 }
 .row dd {
   margin: 0;
-  max-width: 58%;
-  text-align: right;
   color: var(--ui-text-muted);
   font-variant-numeric: tabular-nums;
+  text-wrap: pretty;
 }
-.out {
-  align-self: flex-start;
-  margin-top: 12px;
-  font-size: 14px;
-  color: var(--ui-text-highlighted);
-  text-decoration: none;
-  border-bottom: 1px solid var(--ui-primary);
+
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid color-mix(in oklab, var(--ui-text) 12%, transparent);
 }
-.out:hover {
-  color: var(--ui-primary);
-}
-.near {
+.step {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.near a {
-  display: block;
-  font-size: 13px;
-  line-height: 20px;
-  color: var(--ui-text-toned);
+  min-width: 0;
   text-decoration: none;
   border: 0;
   box-shadow: none;
+  color: inherit;
+}
+.step.next {
+  text-align: right;
+  justify-self: end;
+}
+.dir {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ui-text-dimmed);
+}
+.who {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ui-text-toned);
   text-wrap: pretty;
 }
-.near a:hover {
+.step:hover .who {
   color: var(--ui-text-highlighted);
-  text-decoration: underline;
-  text-decoration-color: var(--ui-primary);
-  text-underline-offset: 3px;
+}
+.step:hover .dir {
+  color: var(--ui-primary);
 }
 
-@media (min-width: 1024px) {
-  .sheet {
-    top: 8px;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-}
 </style>

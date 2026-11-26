@@ -1,6 +1,6 @@
-export const THING_ROOMS = ['wardrobe', 'apartment', 'desk', 'everyday'] as const
+export const THING_CATEGORIES = ['wardrobe', 'tech', 'home', 'accessories'] as const
 
-export type ThingRoom = typeof THING_ROOMS[number]
+export type ThingCategory = typeof THING_CATEGORIES[number]
 
 export type ThingPrice = {
   amount: number
@@ -12,8 +12,7 @@ export type ThingItem = {
   slug: string
   name: string
   brand: string
-  room: ThingRoom
-  category: string
+  category: ThingCategory
   color?: string
   size?: string
   material?: string
@@ -29,19 +28,21 @@ export type ThingItem = {
   order?: number
 }
 
-export const ROOM_LABEL: Record<ThingRoom | 'all', string> = {
+export const CATEGORY_LABEL: Record<ThingCategory | 'all', string> = {
   all: 'All',
   wardrobe: 'Wardrobe',
-  apartment: 'Apartment',
-  desk: 'Desk',
-  everyday: 'Everyday',
+  tech: 'Tech',
+  home: 'Home',
+  accessories: 'Accessories',
 }
 
 export function formatPrice(price: ThingPrice) {
+  const whole = Number.isInteger(price.amount)
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency: price.currency,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: whole ? 0 : 2,
+    maximumFractionDigits: whole ? 0 : 2,
   }).format(price.amount)
 }
 
@@ -54,10 +55,14 @@ export function thingHref(item: Pick<ThingItem, 'affiliateUrl' | 'url'>) {
   return item.affiliateUrl ?? item.url
 }
 
-export function acquiredYear(acquired?: string) {
+export function formatAcquired(acquired?: string) {
   if (!acquired) return undefined
-  const year = acquired.match(/^\d{4}/)?.[0]
-  return year
+  const iso = acquired.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (iso) {
+    const date = new Date(`${iso[1]}-${iso[2]}-${iso[3]}T00:00:00Z`)
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+  }
+  return acquired
 }
 
 export function sortThings<T extends { name: string, order?: number }>(items: T[]) {
@@ -69,16 +74,18 @@ export function sortThings<T extends { name: string, order?: number }>(items: T[
   })
 }
 
-export function inRoom(items: ThingItem[], room: ThingRoom | 'all') {
-  if (room === 'all') return items
-  return items.filter(item => item.room === room)
+export function inCategory(items: ThingItem[], category: ThingCategory | 'all') {
+  if (category === 'all') return items
+  return items.filter(item => item.category === category)
 }
 
-export function neighbours(items: ThingItem[], slug: string, count = 3) {
-  const current = items.find(item => item.slug === slug)
-  if (!current) return items.filter(item => item.slug !== slug).slice(0, count)
-  const rest = items.filter(item => item.slug !== slug)
-  const same = rest.filter(item => item.room === current.room)
-  const other = rest.filter(item => item.room !== current.room)
-  return [...same, ...other].slice(0, count)
+export function adjacent(items: ThingItem[], slug: string) {
+  const i = items.findIndex(item => item.slug === slug)
+  if (i < 0 || items.length === 0) return { prev: undefined, next: undefined }
+  const prev = items[(i - 1 + items.length) % items.length]
+  const next = items[(i + 1) % items.length]
+  return {
+    prev: prev?.slug === slug ? undefined : prev,
+    next: next?.slug === slug ? undefined : next,
+  }
 }

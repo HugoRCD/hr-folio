@@ -43,7 +43,7 @@ export default defineNitroPlugin((nitroApp) => {
       '## Things',
       '',
       ...thingRows.map((t) =>
-        `- [${t.name}](${abs(`/things/${t.slug}`)}) (${t.brand}, ${t.room})`,
+        `- [${t.name}](${abs(`/things/${t.slug}`)}) (${t.brand}, ${t.category})`,
       ),
       '',
     ]
