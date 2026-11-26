@@ -49,15 +49,23 @@ function studioQuery(partial: {
   const nextView = partial.view ?? view.value
   const nextCat = partial.cat ?? category.value
   const nextSort = partial.sort ?? sort.value
-  if (nextView !== 'lookbook') query.view = nextView
+  if (nextView !== 'list') query.view = nextView
   if (nextCat !== 'all') query.cat = nextCat
   if (nextSort !== 'curated') query.sort = nextSort
   return query
 }
 
+// the index moves its own lines into place; the lookbook's pictures go through a view transition
+function refine(update: () => Promise<unknown>) {
+  if (view.value === 'list') return update()
+  return withFilterTransition(async () => {
+    await update()
+  })
+}
+
 function setCategory(next: ThingCategory | 'all') {
   const keep = selected.value && (next === 'all' || selected.value.category === next)
-  withFilterTransition(() => router.replace({
+  refine(() => router.replace({
     path: keep ? route.path : '/things',
     query: studioQuery({ cat: next }),
   }))
@@ -68,10 +76,16 @@ function setView(next: ThingView) {
 }
 
 function setSort(next: ThingSort) {
-  withFilterTransition(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
+  refine(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
 }
 
-function open(item: ThingItem) {
+async function open(item: ThingItem) {
+  if (view.value === 'list' && active.value !== item.slug) {
+    // the piece is put on the stage first, so it is the stage that opens
+    active.value = item.slug
+    await nextTick()
+    await new Promise(requestAnimationFrame)
+  }
   withHeroTransition(item.slug, () => router.push({ path: thingPath(item), query: studioQuery() }))
 }
 
@@ -92,6 +106,17 @@ const owned = computed(() => (allThings.value ?? []).filter(item => item.owned !
 const counts = computed(() => categoryCounts(owned.value))
 const filtered = computed(() => sortThings(inCategory(owned.value, category.value), sort.value))
 const stageItems = computed(() => sortThings(owned.value, sort.value))
+
+// each piece keeps its number in the inventory, however the index is sorted
+const plates = computed(() => Object.fromEntries(sortThings(owned.value).map((item, i) => [item.slug, i + 1])))
+
+// the piece on the index's stage
+const active = ref(selected.value?.slug ?? filtered.value[0]?.slug ?? '')
+
+// the stage sits under the header, however tall the header wraps
+const chrome = useTemplateRef<{ $el: HTMLElement }>('chrome')
+const { height: chromeHeight } = useElementSize(() => chrome.value?.$el, undefined, { box: 'border-box' })
+const pageStyle = computed(() => chromeHeight.value ? { '--chrome-h': `${Math.round(chromeHeight.value)}px` } : undefined)
 
 const title = computed(() => selected.value?.name ?? 'Things')
 const description = computed(() => selected.value?.brand ?? 'Objects around the house, standing in a studio.')
@@ -136,8 +161,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="page">
+  <div class="page" :style="pageStyle">
     <ThingsChrome
+      ref="chrome"
       :category
       :counts
       :view
@@ -155,7 +181,11 @@ onBeforeUnmount(() => {
       />
       <ThingsList
         v-else
+        v-model:active="active"
         :items="filtered"
+        :sort
+        :plates
+        :opened="selected?.slug"
         @open="open"
       />
     </div>

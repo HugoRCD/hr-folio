@@ -2,7 +2,7 @@ export const THING_CATEGORIES = ['wardrobe', 'tech', 'home', 'accessories'] as c
 
 export type ThingCategory = typeof THING_CATEGORIES[number]
 
-export const THING_VIEWS = ['lookbook', 'list'] as const
+export const THING_VIEWS = ['list', 'lookbook'] as const
 
 export type ThingView = typeof THING_VIEWS[number]
 
@@ -44,9 +44,15 @@ export const CATEGORY_LABEL: Record<ThingCategory | 'all', string> = {
   accessories: 'Accessories',
 }
 
+// the sections of the inventory are numbered like the hours on the dial
+export const NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+
+// what is worn or carried every day comes first, in the order it was picked
+export const EVERYDAY_LABEL = 'Every day'
+
 export const VIEW_LABEL: Record<ThingView, string> = {
+  list: 'Index',
   lookbook: 'Lookbook',
-  list: 'List',
 }
 
 export const SORT_LABEL: Record<ThingSort, string> = {
@@ -103,7 +109,7 @@ export function thingSpecs(item: ThingItem) {
 }
 
 export function thingView(value: unknown): ThingView {
-  return value === 'list' ? 'list' : 'lookbook'
+  return value === 'lookbook' ? 'lookbook' : 'list'
 }
 
 export function thingSort(value: unknown): ThingSort {
@@ -123,6 +129,7 @@ export function sortThings<T extends {
   name: string
   brand?: string
   category?: string
+  featured?: boolean
   order?: number
   price?: { amount: number }
 }>(items: T[], sort: ThingSort = 'curated') {
@@ -137,6 +144,9 @@ export function sortThings<T extends {
     return rows.sort((a, b) => (a.brand ?? '').localeCompare(b.brand ?? '') || a.name.localeCompare(b.name))
   }
   return rows.sort((a, b) => {
+    const fr = Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+    if (fr) return fr
+    if (a.featured && b.featured) return (a.order ?? 99) - (b.order ?? 99)
     const cr = (CATEGORY_RANK[a.category ?? ''] ?? 9) - (CATEGORY_RANK[b.category ?? ''] ?? 9)
     if (cr) return cr
     const ao = a.order ?? 99

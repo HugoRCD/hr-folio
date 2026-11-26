@@ -115,6 +115,17 @@ function pickSort(next: ThingSort) {
         <button
           type="button"
           class="view"
+          :class="{ on: view === 'list' }"
+          :aria-pressed="view === 'list'"
+          aria-label="Index"
+          title="Index"
+          @click="emit('view', 'list')"
+        >
+          <UIcon name="i-lucide-list" class="ico" />
+        </button>
+        <button
+          type="button"
+          class="view"
           :class="{ on: view === 'lookbook' }"
           :aria-pressed="view === 'lookbook'"
           aria-label="Lookbook"
@@ -122,17 +133,6 @@ function pickSort(next: ThingSort) {
           @click="emit('view', 'lookbook')"
         >
           <UIcon name="i-lucide-layout-grid" class="ico" />
-        </button>
-        <button
-          type="button"
-          class="view"
-          :class="{ on: view === 'list' }"
-          :aria-pressed="view === 'list'"
-          aria-label="List"
-          title="List"
-          @click="emit('view', 'list')"
-        >
-          <UIcon name="i-lucide-list" class="ico" />
         </button>
       </div>
     </div>

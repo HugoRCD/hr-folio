@@ -1,5 +1,6 @@
 import type { RouterConfig } from '@nuxt/schema'
 import { START_LOCATION } from 'vue-router'
+import { isThingsPath } from '~/utils/things'
 
 // Nuxt's own scrolling, with one change. On the page's first load it scrolled to the top whenever
 // the router had not saved a position itself, after the browser had already put the reader back
@@ -18,6 +19,8 @@ const hashTop = (selector: string) => {
 
 export default {
   scrollBehavior(to, from, savedPosition) {
+    // a piece on /things opens over the index and closes back onto it: the index stays where it was
+    if (from !== START_LOCATION && isThingsPath(to.path) && isThingsPath(from.path)) return false
     if (to.path.replace(/\/$/, '') === from.path.replace(/\/$/, '')) {
       if (from.hash && !to.hash) return savedPosition ?? { left: 0, top: 0 }
       if (to.hash) return { el: to.hash, top: hashTop(to.hash) }
