@@ -4,12 +4,12 @@ export function useThingMotion() {
   const reduced = computed(() => prefersReducedMotion.value === 'reduce')
   const spring = computed(() => reduced.value
     ? { duration: 0 }
-    : { type: 'spring' as const, stiffness: 420, damping: 42, mass: 1 })
+    : { type: 'spring' as const, stiffness: 280, damping: 32, mass: 1 })
   const glide = computed(() => reduced.value
     ? { duration: 0 }
-    : { type: 'spring' as const, stiffness: 180, damping: 28, mass: 1.1 })
+    : { type: 'spring' as const, stiffness: 220, damping: 34, mass: 1.05 })
   const arrive = computed(() => reduced.value
     ? { duration: 0 }
-    : { type: 'spring' as const, stiffness: 160, damping: 22, mass: 1.05 })
+    : { type: 'spring' as const, stiffness: 200, damping: 30, mass: 1 })
   return { reduced, spring, glide, arrive }
 }

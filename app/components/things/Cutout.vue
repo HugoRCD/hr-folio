@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
 import type { ThingItem } from '~/utils/things'
 
-const { item, priority = false, shared = true } = defineProps<{
+const { item, priority = false } = defineProps<{
   item: ThingItem
   priority?: boolean
-  shared?: boolean
 }>()
-
-const { spring } = useThingMotion()
 </script>
 
 <template>
-  <motion.div
-    :layout-id="shared ? `thing-${item.slug}` : undefined"
-    :transition="spring"
-    :initial="false"
-    class="cutout"
-  >
+  <span class="cut">
     <img
       :src="item.image"
       :alt="thingAlt(item)"
@@ -25,29 +16,28 @@ const { spring } = useThingMotion()
       :fetchpriority="priority ? 'high' : 'auto'"
       :loading="priority ? 'eager' : 'lazy'"
       draggable="false"
-      decoding="async"
+      :decoding="priority ? 'sync' : 'async'"
     >
-  </motion.div>
+  </span>
 </template>
 
 <style scoped>
-.cutout {
-  display: flex;
+.cut {
+  display: grid;
+  place-items: stretch;
   width: 100%;
   height: 100%;
   min-width: 0;
   min-height: 0;
-  align-items: center;
-  justify-content: center;
 }
 .object {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center;
   user-select: none;
   pointer-events: none;
 }

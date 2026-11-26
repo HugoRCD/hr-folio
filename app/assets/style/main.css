@@ -106,11 +106,9 @@ html.things-studio .paper {
   background-color: #FAF9F7 !important;
   color: #111111;
 }
-@media (min-width: 900px) {
-  html.things-studio,
-  html.things-studio body {
-    overflow: hidden;
-  }
+html.things-studio,
+html.things-studio body {
+  overflow: auto;
 }
 
 .code-block {
