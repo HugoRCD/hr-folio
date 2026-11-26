@@ -187,12 +187,3 @@ export function adjacent(items: ThingItem[], slug: string) {
     next: next?.slug === slug ? undefined : next,
   }
 }
-
-export function prefetchThingImages(items: ThingItem[]) {
-  if (!import.meta.client) return
-  for (const item of items) {
-    const img = new Image()
-    img.decoding = 'async'
-    img.src = item.image
-  }
-}

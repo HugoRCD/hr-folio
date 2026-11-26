@@ -5,7 +5,7 @@ import {
   NUMERALS,
   type ThingItem,
   type ThingSort,
-} from '~/utils/things'
+} from '#shared/utils/things'
 
 // The index: one object at a time on the stage, and the inventory written out beside it, the way
 // the home page lists its entries. Point at a line, scroll, or press the arrows, and the stage

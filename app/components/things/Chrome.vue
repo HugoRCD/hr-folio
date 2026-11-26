@@ -10,7 +10,7 @@ import {
   type ThingCategory,
   type ThingSort,
   type ThingView,
-} from '~/utils/things'
+} from '#shared/utils/things'
 
 const { category, counts, view, sort } = defineProps<{
   category: ThingCategory | 'all'

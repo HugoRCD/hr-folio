@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { THING_CATEGORIES, type ThingItem, type ThingCategory, type ThingSort, type ThingView } from '~/utils/things'
+import { THING_CATEGORIES, type ThingItem, type ThingCategory, type ThingSort, type ThingView } from '#shared/utils/things'
 
 definePageMeta({
   key: 'things',
@@ -124,9 +124,13 @@ const { height: chromeHeight } = useElementSize(() => chrome.value?.$el, undefin
 const pageStyle = computed(() => chromeHeight.value ? { '--chrome-h': `${Math.round(chromeHeight.value)}px` } : undefined)
 
 const title = computed(() => selected.value?.name ?? 'Things')
-const description = computed(() => selected.value?.brand ?? 'Objects around the house, standing in a studio.')
+const description = computed(() => selected.value
+  ? `${selected.value.name} by ${selected.value.brand}, one of the things Hugo Richard owns and uses.`
+  : 'The things Hugo Richard owns and uses: what he wears and carries every day, the clothes, tech and objects at home.')
 
 useHead({
+  // the same inventory, as Markdown, for agents
+  link: [{ rel: 'alternate', type: 'text/markdown', href: '/things.md', title: 'Things (Markdown)' }],
   title,
   titleTemplate: (t) => t ? `${t} | ${seo?.title}` : seo?.title,
 })
@@ -152,7 +156,14 @@ useSeoMeta({
 
 useSchemaOrg([defineWebPage()])
 
-onMounted(() => prefetchThingImages(owned.value))
+// every cutout is fetched once the page is up, so the stage never waits for one
+onMounted(() => {
+  for (const item of owned.value) {
+    const img = new Image()
+    img.decoding = 'async'
+    img.src = item.image
+  }
+})
 
 watch(selected, (item) => {
   if (!import.meta.client) return
