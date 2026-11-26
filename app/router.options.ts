@@ -1,6 +1,6 @@
 import type { RouterConfig } from '@nuxt/schema'
 import { START_LOCATION } from 'vue-router'
-import { isThingsPath } from '~/utils/things'
+import { isThingsPath } from '#shared/utils/things'
 
 // Nuxt's own scrolling, with one change. On the page's first load it scrolled to the top whenever
 // the router had not saved a position itself, after the browser had already put the reader back

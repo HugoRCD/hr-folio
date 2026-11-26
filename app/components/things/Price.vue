@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AnimateNumber } from 'motion-plus-vue'
-import type { ThingPrice } from '~/utils/things'
+import type { ThingPrice } from '#shared/utils/things'
 
 const { price } = defineProps<{
   price: ThingPrice

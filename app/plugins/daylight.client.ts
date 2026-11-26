@@ -1,5 +1,5 @@
 import { LIGHT_VARS, lightFor, localInstant, redAt, sunAt } from '~/utils/daylight'
-import { isThingsPath } from '~/utils/things'
+import { isThingsPath } from '#shared/utils/things'
 
 const CACHE_KEY = 'folio-whereabouts'
 const MANUAL_KEY = 'folio-theme-manual'

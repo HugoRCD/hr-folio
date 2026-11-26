@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ThingItem } from '~/utils/things'
+import type { ThingItem } from '#shared/utils/things'
 
 const { item, items } = defineProps<{
   item: ThingItem
