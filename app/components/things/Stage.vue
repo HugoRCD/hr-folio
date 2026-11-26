@@ -11,7 +11,40 @@ const emit = defineEmits<{
   go: [target: ThingItem]
 }>()
 
+const { reduced } = useThingMotion()
 const nearby = computed(() => adjacent(items, item.slug))
+const dir = ref(1)
+
+watch(() => item.slug, (next, prev) => {
+  if (!prev) return
+  const ni = items.findIndex(row => row.slug === next)
+  const pi = items.findIndex(row => row.slug === prev)
+  if (ni < 0 || pi < 0) return
+  if (pi === items.length - 1 && ni === 0) dir.value = 1
+  else if (pi === 0 && ni === items.length - 1) dir.value = -1
+  else dir.value = ni > pi ? 1 : -1
+})
+
+const slide = computed(() => {
+  if (reduced.value) return ''
+  return dir.value > 0 ? 'slide-next' : 'slide-prev'
+})
+
+function preload(target?: ThingItem) {
+  if (!import.meta.client || !target) return
+  const img = new Image()
+  img.decoding = 'async'
+  img.src = target.image
+}
+
+watch(
+  () => [item, nearby.value.prev, nearby.value.next] as const,
+  () => {
+    preload(nearby.value.prev)
+    preload(nearby.value.next)
+  },
+  { immediate: true },
+)
 
 function onKey(e: KeyboardEvent) {
   if (e.metaKey || e.ctrlKey || e.altKey) return
@@ -53,8 +86,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     </button>
 
     <div class="hero">
-      <span class="frame">
-        <ThingsCutout :item priority :vt="thingImageVt(item.slug)" />
+      <span class="frame" data-thing-hero>
+        <Transition :name="slide">
+          <span :key="item.slug" class="shot">
+            <ThingsCutout :item priority />
+          </span>
+        </Transition>
       </span>
       <span class="contact" aria-hidden="true" />
     </div>
@@ -72,7 +109,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     </button>
 
     <div class="copy-slot">
-      <ThingsCopy :item vt />
+      <Transition :name="slide">
+        <ThingsCopy :key="item.slug" :item />
+      </Transition>
     </div>
   </article>
 </template>
@@ -111,8 +150,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   color: #111111;
 }
 .copy-slot {
+  position: relative;
   width: 100%;
   max-width: 28rem;
+  min-height: 26rem;
 }
 .peek {
   display: none;
@@ -120,17 +161,23 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 .hero {
   position: relative;
   display: grid;
-  min-height: min(58vh, 520px);
   place-items: center;
 }
 .frame {
+  position: relative;
   display: grid;
   width: 100%;
   max-width: 560px;
   aspect-ratio: 4 / 5;
-  padding: 6%;
   box-sizing: border-box;
   overflow: hidden;
+}
+.shot {
+  display: grid;
+  position: absolute;
+  inset: 0;
+  padding: 6%;
+  box-sizing: border-box;
 }
 .contact {
   position: absolute;
@@ -141,6 +188,44 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   background: radial-gradient(ellipse at center, rgb(32 24 16 / 0.18) 0%, rgb(32 24 16 / 0) 72%);
   filter: blur(12px);
   pointer-events: none;
+}
+
+.slide-next-enter-active,
+.slide-next-leave-active,
+.slide-prev-enter-active,
+.slide-prev-leave-active,
+:deep(.slide-next-enter-active),
+:deep(.slide-next-leave-active),
+:deep(.slide-prev-enter-active),
+:deep(.slide-prev-leave-active) {
+  transition: opacity 160ms cubic-bezier(0.22, 1, 0.36, 1), transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.slide-next-leave-active,
+.slide-prev-leave-active,
+:deep(.slide-next-leave-active),
+:deep(.slide-prev-leave-active) {
+  position: absolute;
+  inset: 0;
+}
+.slide-next-enter-from,
+:deep(.slide-next-enter-from) {
+  opacity: 0;
+  transform: translateX(10px);
+}
+.slide-next-leave-to,
+:deep(.slide-next-leave-to) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.slide-prev-enter-from,
+:deep(.slide-prev-enter-from) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.slide-prev-leave-to,
+:deep(.slide-prev-leave-to) {
+  opacity: 0;
+  transform: translateX(10px);
 }
 
 @media (min-width: 768px) {
@@ -179,6 +264,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     align-self: center;
     width: 100%;
     max-width: 28rem;
+    min-height: 26rem;
   }
 }
 
@@ -202,15 +288,17 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     background: #FAF9F7;
   }
   .hero {
-    min-height: 0;
+    width: 100%;
     max-height: 46vh;
   }
   .frame {
     max-width: min(75vw, 100%);
+    max-height: 46vh;
     margin-inline: auto;
   }
   .copy-slot {
     max-width: 100%;
+    min-height: 0;
   }
 }
 </style>

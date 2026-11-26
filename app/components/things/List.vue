@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { CATEGORY_LABEL, type ThingItem } from '~/utils/things'
 
-const { items, overlay = false } = defineProps<{
+const { items } = defineProps<{
   items: ThingItem[]
-  overlay?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -19,18 +18,14 @@ const emit = defineEmits<{
       type="button"
       class="row"
       role="listitem"
+      :data-thing="item.slug"
       @click="emit('open', item)"
     >
-      <span class="thumb">
-        <ThingsCutout :item :vt="overlay ? '' : thingImageVt(item.slug)" />
+      <span class="thumb" data-thing-media>
+        <ThingsCutout :item />
       </span>
       <span class="copy">
-        <span
-          class="name"
-          :style="overlay ? undefined : { viewTransitionName: thingTitleVt(item.slug) }"
-        >
-          {{ item.name }}
-        </span>
+        <span class="name">{{ item.name }}</span>
         <span class="sub">
           <span class="brand">{{ item.brand }}</span>
           <span class="dot" aria-hidden="true">·</span>
@@ -71,9 +66,10 @@ const emit = defineEmits<{
 .thumb {
   display: grid;
   width: 48px;
-  height: 56px;
+  height: 48px;
   padding: 2px;
   overflow: hidden;
+  flex: 0 0 auto;
 }
 .copy {
   display: flex;
@@ -135,7 +131,7 @@ const emit = defineEmits<{
   }
   .thumb {
     width: 56px;
-    height: 66px;
+    height: 56px;
   }
   .sub {
     display: none;

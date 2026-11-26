@@ -150,7 +150,7 @@ function pickSort(next: ThingSort) {
   padding: 18px 28px 16px;
   background: #FAF9F7;
   border-bottom: 1px solid #E8E6E1;
-  view-transition-name: things-chrome;
+  view-transition-name: things-header;
 }
 .left {
   display: flex;
@@ -269,7 +269,7 @@ function pickSort(next: ThingSort) {
   z-index: 20;
   display: flex;
   flex-direction: column;
-  min-width: 13.5rem;
+  min-width: 14.5rem;
   padding: 6px;
   background: #FAF9F7;
   border: 1px solid #E8E6E1;

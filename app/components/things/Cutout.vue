@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { ThingItem } from '~/utils/things'
 
-const { item, priority = false, vt = '' } = defineProps<{
+const { item, priority = false } = defineProps<{
   item: ThingItem
   priority?: boolean
-  vt?: string
 }>()
 </script>
 
@@ -14,11 +13,10 @@ const { item, priority = false, vt = '' } = defineProps<{
       :src="item.image"
       :alt="thingAlt(item)"
       class="object"
-      :style="vt ? { viewTransitionName: vt } : undefined"
       :fetchpriority="priority ? 'high' : 'auto'"
       :loading="priority ? 'eager' : 'lazy'"
+      decoding="async"
       draggable="false"
-      :decoding="priority ? 'sync' : 'async'"
     >
   </span>
 </template>

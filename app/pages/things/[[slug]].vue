@@ -9,7 +9,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const { seo } = useFolioConfig()
-const { withTransition } = useThingTransition()
+const { withGridTransition, withHeroTransition } = useThingTransition()
 
 const { data: allThings } = await useAsyncData('things', async () => {
   const rows = await queryCollection('things').all()
@@ -57,30 +57,35 @@ function studioQuery(partial: {
 
 function setCategory(next: ThingCategory | 'all') {
   const keep = selected.value && (next === 'all' || selected.value.category === next)
-  withTransition(() => router.replace({
+  withGridTransition(() => router.replace({
     path: keep ? route.path : '/things',
     query: studioQuery({ cat: next }),
   }))
 }
 
 function setView(next: ThingView) {
-  withTransition(() => router.replace({ path: route.path, query: studioQuery({ view: next }) }))
+  withGridTransition(() => router.replace({ path: route.path, query: studioQuery({ view: next }) }))
 }
 
 function setSort(next: ThingSort) {
-  withTransition(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
+  withGridTransition(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
 }
 
 function open(item: ThingItem) {
-  withTransition(() => router.push({ path: thingPath(item), query: studioQuery() }))
+  withHeroTransition(item.slug, () => router.push({ path: thingPath(item), query: studioQuery() }))
 }
 
 function close() {
-  withTransition(() => router.push({ path: '/things', query: studioQuery() }))
+  const slug = selected.value?.slug
+  if (!slug) {
+    router.push({ path: '/things', query: studioQuery() })
+    return
+  }
+  withHeroTransition(slug, () => router.push({ path: '/things', query: studioQuery() }))
 }
 
 function go(item: ThingItem) {
-  withTransition(() => router.replace({ path: thingPath(item), query: studioQuery() }))
+  router.replace({ path: thingPath(item), query: studioQuery() })
 }
 
 const owned = computed(() => (allThings.value ?? []).filter(item => item.owned !== false))
@@ -145,13 +150,11 @@ onBeforeUnmount(() => {
     <ThingsLookbook
       v-if="view === 'lookbook'"
       :items="filtered"
-      :overlay="Boolean(selected)"
       @open="open"
     />
     <ThingsList
       v-else
       :items="filtered"
-      :overlay="Boolean(selected)"
       @open="open"
     />
 

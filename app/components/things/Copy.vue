@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { ThingItem } from '~/utils/things'
 
-const { item, vt = false } = defineProps<{
+const { item } = defineProps<{
   item: ThingItem
-  vt?: boolean
 }>()
 
 const href = computed(() => thingHref(item))
@@ -16,10 +15,7 @@ const fields = computed(() => thingSpecs(item))
     <p class="brand">
       {{ item.brand }}
     </p>
-    <h1
-      class="title"
-      :style="vt ? { viewTransitionName: thingTitleVt(item.slug) } : undefined"
-    >
+    <h1 class="title">
       {{ item.name }}
     </h1>
     <p class="price">
@@ -56,6 +52,7 @@ const fields = computed(() => thingSpecs(item))
   align-items: stretch;
   width: 100%;
   max-width: 28rem;
+  min-height: 26rem;
   margin: 0;
   padding: 0;
   text-align: left;
@@ -81,6 +78,7 @@ const fields = computed(() => thingSpecs(item))
 }
 .title {
   margin: 10px 0 0;
+  min-height: 3.36em;
   font-family: var(--font-redaction);
   font-size: clamp(28px, 4vw, 42px);
   font-weight: 400;
@@ -102,6 +100,7 @@ const fields = computed(() => thingSpecs(item))
   align-items: center;
   gap: 10px 16px;
   margin: 18px 0 0;
+  min-height: 1.2em;
 }
 .shop {
   display: inline-flex;
@@ -137,6 +136,7 @@ const fields = computed(() => thingSpecs(item))
   display: flex;
   flex-direction: column;
   margin-top: 28px;
+  min-height: 11rem;
 }
 .row {
   display: grid;
@@ -163,5 +163,14 @@ const fields = computed(() => thingSpecs(item))
   color: var(--ui-text-muted);
   font-variant-numeric: tabular-nums;
   text-wrap: pretty;
+}
+
+@media (max-width: 767px) {
+  .copy {
+    min-height: 0;
+  }
+  .title {
+    min-height: 2.24em;
+  }
 }
 </style>

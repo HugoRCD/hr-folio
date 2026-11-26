@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { ThingItem } from '~/utils/things'
 
-const { items, overlay = false } = defineProps<{
+const { items } = defineProps<{
   items: ThingItem[]
-  overlay?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -18,20 +17,16 @@ const emit = defineEmits<{
       :key="item.slug"
       type="button"
       class="card"
+      :data-thing="item.slug"
       @click="emit('open', item)"
     >
-      <span class="frame">
-        <ThingsCutout :item :vt="overlay ? '' : thingImageVt(item.slug)" />
+      <span class="frame" data-thing-media>
+        <ThingsCutout :item />
       </span>
       <span class="contact" aria-hidden="true" />
       <span class="meta">
         <span class="brand">{{ item.brand }}</span>
-        <span
-          class="name"
-          :style="overlay ? undefined : { viewTransitionName: thingTitleVt(item.slug) }"
-        >
-          {{ item.name }}
-        </span>
+        <span class="name">{{ item.name }}</span>
         <span class="price">{{ formatPrice(item.price) }}</span>
       </span>
     </button>
@@ -60,7 +55,7 @@ const emit = defineEmits<{
   box-shadow: none;
   text-align: left;
   color: inherit;
-  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 @media (hover: hover) {
   .card:hover {
@@ -99,6 +94,7 @@ const emit = defineEmits<{
 .name {
   font-size: 14px;
   line-height: 1.3;
+  min-height: 1.3em;
   color: #111111;
 }
 .price {

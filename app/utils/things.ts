@@ -50,14 +50,14 @@ export const VIEW_LABEL: Record<ThingView, string> = {
 }
 
 export const SORT_LABEL: Record<ThingSort, string> = {
-  curated: 'Curated',
+  curated: 'By Category',
   'price-desc': 'Price: High to Low',
   'price-asc': 'Price: Low to High',
   brand: 'Brand A-Z',
 }
 
 export const SORT_SHORT: Record<ThingSort, string> = {
-  curated: 'Curated',
+  curated: 'By Category',
   'price-desc': 'High to Low',
   'price-asc': 'Low to High',
   brand: 'Brand A-Z',
@@ -112,17 +112,17 @@ export function thingSort(value: unknown): ThingSort {
     : 'curated'
 }
 
-export function thingImageVt(slug: string) {
-  return `thing-img-${slug}`
-}
-
-export function thingTitleVt(slug: string) {
-  return `thing-title-${slug}`
+const CATEGORY_RANK: Record<string, number> = {
+  wardrobe: 0,
+  tech: 1,
+  home: 2,
+  accessories: 3,
 }
 
 export function sortThings<T extends {
   name: string
   brand?: string
+  category?: string
   order?: number
   price?: { amount: number }
 }>(items: T[], sort: ThingSort = 'curated') {
@@ -137,6 +137,8 @@ export function sortThings<T extends {
     return rows.sort((a, b) => (a.brand ?? '').localeCompare(b.brand ?? '') || a.name.localeCompare(b.name))
   }
   return rows.sort((a, b) => {
+    const cr = (CATEGORY_RANK[a.category ?? ''] ?? 9) - (CATEGORY_RANK[b.category ?? ''] ?? 9)
+    if (cr) return cr
     const ao = a.order ?? 99
     const bo = b.order ?? 99
     if (ao !== bo) return ao - bo
