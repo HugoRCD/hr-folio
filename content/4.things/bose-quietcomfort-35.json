@@ -1,0 +1,17 @@
+{
+  "slug": "bose-quietcomfort-35",
+  "name": "QuietComfort 35 Wireless Headphones",
+  "brand": "Bose",
+  "category": "tech",
+  "price": {
+    "amount": 289.95,
+    "currency": "GBP"
+  },
+  "image": "/images/things/bose-quietcomfort-35.webp",
+  "owned": true,
+  "order": 11,
+  "color": "Black",
+  "material": "Glass-filled nylon, Alcantara headband, active noise cancellation, Bluetooth and NFC, up to 20 hours battery (first generation, 2016)",
+  "size": "18 x 17 x 8.1 cm (H x W x D)",
+  "url": "https://web.archive.org/web/20160907200632/https://www.bose.co.uk/en_gb/products/headphones/over_ear_headphones/quietcomfort-35-wireless.html"
+}
