@@ -1,0 +1,18 @@
+{
+  "slug": "suitsupply-mid-blue-straight-leg-jeans",
+  "name": "Mid Blue Straight Leg Jeans",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "price": {
+    "amount": 149,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-mid-blue-straight-leg-jeans.webp",
+  "owned": true,
+  "order": 31,
+  "color": "Mid blue",
+  "material": "Washed cotton",
+  "size": "33/32",
+  "acquired": "2026-09-13",
+  "url": "https://suitsupply.com/en-gb/men/trousers/mid-blue-straight-leg-jeans/TCD10004BM1.html"
+}

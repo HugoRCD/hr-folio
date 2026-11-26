@@ -1,0 +1,16 @@
+{
+  "slug": "boggi-striped-linen-shirt",
+  "name": "Striped Linen Closed Collar Shirt",
+  "brand": "Boggi Milano",
+  "category": "wardrobe",
+  "price": {
+    "amount": 159,
+    "currency": "GBP"
+  },
+  "image": "/images/things/boggi-striped-linen-shirt.webp",
+  "owned": true,
+  "order": 17,
+  "color": "Navy",
+  "acquired": "2026-03-22",
+  "url": "https://www.boggi.com/en_US/regular-fit-linen-shirt-BO26P0407.html"
+}

@@ -1,0 +1,18 @@
+{
+  "slug": "suitsupply-black-cotton-silk-polo",
+  "name": "Black Polo",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "price": {
+    "amount": 109,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-black-cotton-silk-polo.webp",
+  "owned": true,
+  "order": 15,
+  "color": "Black",
+  "material": "70% cotton, 30% silk",
+  "size": "M",
+  "acquired": "2026-05-02",
+  "url": "https://suitsupply.com/en-gb/men/knitwear/black-polo/SW1837.html"
+}

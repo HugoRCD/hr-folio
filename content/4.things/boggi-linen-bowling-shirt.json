@@ -1,0 +1,16 @@
+{
+  "slug": "boggi-linen-bowling-shirt",
+  "name": "Linen Bowling Collar Shirt",
+  "brand": "Boggi Milano",
+  "category": "wardrobe",
+  "price": {
+    "amount": 96,
+    "currency": "GBP"
+  },
+  "image": "/images/things/boggi-linen-bowling-shirt.webp",
+  "owned": true,
+  "order": 21,
+  "color": "White",
+  "acquired": "2024-05-02",
+  "url": "https://www.boggi.com/it_IT/camicia-bianca-in-lino-regular-fit-BO22C012201.html"
+}

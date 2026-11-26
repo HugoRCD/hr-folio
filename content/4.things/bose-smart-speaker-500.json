@@ -1,0 +1,17 @@
+{
+  "slug": "bose-smart-speaker-500",
+  "name": "Smart Speaker 500",
+  "brand": "Bose",
+  "category": "tech",
+  "price": {
+    "amount": 359.95,
+    "currency": "GBP"
+  },
+  "image": "/images/things/bose-smart-speaker-500.webp",
+  "owned": true,
+  "order": 13,
+  "color": "Triple Black",
+  "material": "Seamless anodised aluminium body and grille, colour LCD display, Wi-Fi, Bluetooth, Apple AirPlay 2, Alexa built-in",
+  "size": "20.3 × 17 × 10.9 cm (H × W × D), 2.15 kg",
+  "url": "https://www.bose.co.uk/p/all-products/bose-smart-speaker-500/HS500-SPEAKERWIRELESS-FR.html"
+}

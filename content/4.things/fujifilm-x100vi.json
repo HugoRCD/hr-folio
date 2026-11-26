@@ -1,0 +1,19 @@
+{
+  "slug": "fujifilm-x100vi",
+  "name": "Fujifilm X100VI",
+  "brand": "Fujifilm",
+  "category": "tech",
+  "price": {
+    "amount": 1749,
+    "currency": "GBP"
+  },
+  "image": "/images/things/fujifilm-x100vi.webp",
+  "owned": true,
+  "featured": true,
+  "order": 5,
+  "color": "Silver",
+  "material": "Aluminium top plate, 40.2MP APS-C X-Trans CMOS 5 HR sensor, 23mm F2 lens",
+  "size": "128 x 74.8 x 55.3 mm",
+  "acquired": "on or before 2026-05-21",
+  "url": "https://eshop.fujifilm-x.com/uk/fujifilm-x100vi.html"
+}

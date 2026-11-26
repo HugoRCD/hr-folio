@@ -21,8 +21,11 @@ const { profile } = useFolioConfig()
         height="112"
         class="size-16 rounded-[2px] object-cover sm:size-14 lg:size-28"
       />
+      <!-- plate 1 leads to the other plates: the things, each on its own -->
       <figcaption class="hidden font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50 lg:block">
-        Pl. 1
+        <NuxtLink to="/things" class="plates" aria-label="Things">
+          <span class="more">Things &rarr;&nbsp;</span>Pl. 1
+        </NuxtLink>
       </figcaption>
     </figure>
     <!-- the name leads, as at the head of a letter; what he does follows it, quieter -->
@@ -61,5 +64,24 @@ const { profile } = useFolioConfig()
   text-decoration: none;
   border: 0;
   box-shadow: none;
+}
+/* the way to the things is only shown to whoever points at the plate */
+.plates {
+  border: 0;
+  box-shadow: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+.plates .more {
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.plates:hover,
+.plates:focus-visible {
+  color: var(--ui-primary);
+}
+.plates:hover .more,
+.plates:focus-visible .more {
+  opacity: 1;
 }
 </style>

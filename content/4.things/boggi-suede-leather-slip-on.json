@@ -1,0 +1,16 @@
+{
+  "slug": "boggi-suede-leather-slip-on",
+  "name": "Suede Leather Slip-On",
+  "brand": "Boggi Milano",
+  "category": "wardrobe",
+  "price": {
+    "amount": 219,
+    "currency": "GBP"
+  },
+  "image": "/images/things/boggi-suede-leather-slip-on.webp",
+  "owned": true,
+  "order": 34,
+  "color": "Taupe",
+  "acquired": "2026-03-22",
+  "url": "https://www.boggi.com/en_GB/heirtage-slip-ons-in-suede-leather-BO26P0702.html"
+}

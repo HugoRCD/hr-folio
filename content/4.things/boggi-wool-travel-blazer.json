@@ -1,0 +1,16 @@
+{
+  "slug": "boggi-wool-travel-blazer",
+  "name": "Wool Travel Blazer",
+  "brand": "Boggi Milano",
+  "category": "wardrobe",
+  "price": {
+    "amount": 425,
+    "currency": "GBP"
+  },
+  "image": "/images/things/boggi-wool-travel-blazer.webp",
+  "owned": true,
+  "order": 10,
+  "color": "Navy",
+  "acquired": "2023-07-09",
+  "url": "https://uae.boggi.com/en/navy-wool-jacket-blue/39_BO17C002301_BLU.html"
+}

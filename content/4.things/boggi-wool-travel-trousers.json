@@ -1,0 +1,16 @@
+{
+  "slug": "boggi-wool-travel-trousers",
+  "name": "Wool Travel Trousers",
+  "brand": "Boggi Milano",
+  "category": "wardrobe",
+  "price": {
+    "amount": 135,
+    "currency": "GBP"
+  },
+  "image": "/images/things/boggi-wool-travel-trousers.webp",
+  "owned": true,
+  "order": 29,
+  "color": "Navy Blue",
+  "acquired": "2023-07-09",
+  "url": "https://eg.boggi.com/en/buy-boggi-milano-trousers-in-travel-wool-blue/39_BO22C010202_BLUE.html"
+}

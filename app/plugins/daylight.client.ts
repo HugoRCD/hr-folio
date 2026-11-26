@@ -1,4 +1,5 @@
 import { LIGHT_VARS, lightFor, localInstant, redAt, sunAt } from '~/utils/daylight'
+import { isThingsPath } from '~/utils/things'
 
 const CACHE_KEY = 'folio-whereabouts'
 const MANUAL_KEY = 'folio-theme-manual'
@@ -63,11 +64,33 @@ export default defineNuxtPlugin(() => {
   const skew = useState<number>('daylight-skew', () => 0)
   skew.value = start.getTime() - Date.now()
 
+  function stamp(at: Date, sun: ReturnType<typeof sunAt>, light: { phase: string, dark: boolean }) {
+    Object.assign(state.value, {
+      phase: light.phase,
+      time: new Intl.DateTimeFormat('en-GB', { timeZone: where.timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(at),
+      date: new Intl.DateTimeFormat('en-GB', { timeZone: where.timeZone, day: 'numeric', month: 'long', year: 'numeric' }).format(at),
+      elevation: sun.elevation,
+      dark: light.dark,
+      simulated,
+      place: { city: where.city, country: where.country, timeZone: where.timeZone, lat: where.lat, lon: where.lon },
+    })
+  }
+
   function apply(fade = 0) {
     const at = preview.value === null ? clockTime() : new Date(preview.value)
     const sun = sunAt(at, where)
     const light = lightFor(sun.elevation, sun.morning, redHeld.value)
     const root = document.documentElement
+    const things = isThingsPath(route.path)
+    if (things) {
+      root.classList.add('things-studio')
+      for (const k of LIGHT_VARS) root.style.removeProperty(k)
+      root.style.setProperty('--ui-primary', '#CD1919', 'important')
+      stamp(at, sun, light)
+      nextTick(() => requestAnimationFrame(syncChrome))
+      return
+    }
+    root.classList.remove('things-studio')
     // A theme picked by hand wins: daylight steps aside until the sun is followed again.
     if (manual.value && preview.value === null) {
       for (const k of LIGHT_VARS) root.style.removeProperty(k)
@@ -95,15 +118,7 @@ export default defineNuxtPlugin(() => {
       }
     }
     nextTick(() => requestAnimationFrame(syncChrome))
-    Object.assign(state.value, {
-      phase: light.phase,
-      time: new Intl.DateTimeFormat('en-GB', { timeZone: where.timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(at),
-      date: new Intl.DateTimeFormat('en-GB', { timeZone: where.timeZone, day: 'numeric', month: 'long', year: 'numeric' }).format(at),
-      elevation: sun.elevation,
-      dark: light.dark,
-      simulated,
-      place: { city: where.city, country: where.country, timeZone: where.timeZone, lat: where.lat, lon: where.lon },
-    })
+    stamp(at, sun, light)
   }
 
   // Wait for the colour-mode module to restore its stored preference, then take over.
@@ -111,6 +126,7 @@ export default defineNuxtPlugin(() => {
     manual.value = Boolean(sessionStorage.getItem(MANUAL_KEY))
     apply()
     ready = true
+    watch(() => route.path, () => apply())
     watch(preview, () => apply(CROSSFADE.preview))
     // a red held on its band is lifted on black: follow the mode too
     watch([redHeld, () => colorMode.value], () => apply())

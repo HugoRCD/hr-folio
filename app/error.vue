@@ -33,6 +33,7 @@ const PLACES = [
   { path: '/', title: 'Home' },
   { path: '/works', title: 'Works' },
   { path: '/writing', title: 'Writing' },
+  { path: '/things', title: 'Things' },
 ]
 
 // Only a missing page needs the articles, to find the one it was probably meant to be; and the page

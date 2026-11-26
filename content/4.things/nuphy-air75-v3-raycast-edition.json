@@ -1,0 +1,18 @@
+{
+  "slug": "nuphy-air75-v3-raycast-edition",
+  "name": "NuPhy Air75 V3 Raycast Edition",
+  "brand": "NuPhy",
+  "category": "tech",
+  "price": {
+    "amount": 114,
+    "currency": "GBP"
+  },
+  "image": "/images/things/nuphy-air75-v3-raycast-edition.webp",
+  "owned": true,
+  "order": 12,
+  "color": "Nebula Dark",
+  "material": "Aluminium top case, ABS bottom, dye-sublimation PBT keycaps, Blush nano switches",
+  "size": "ANSI 75% (84 keys), 318.9 x 128.9 x 13.2 mm",
+  "acquired": "2026-08-27",
+  "url": "https://nuphy.com/products/nuphy-air75-v3-raycast-edition"
+}

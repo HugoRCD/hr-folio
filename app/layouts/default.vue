@@ -37,6 +37,10 @@ const STORY = '/writing/how-i-redrew-my-portfolio'
                   How this site was drawn
                 </NuxtLink>
               </template>
+              <span aria-hidden="true">&middot;</span>
+              <NuxtLink to="/things" class="transition-colors hover:text-highlighted">
+                Things
+              </NuxtLink>
             </span>
             <div class="in-note flex items-center justify-end gap-4 lg:top-1/2 lg:-translate-y-1/2">
               <DetailControl />

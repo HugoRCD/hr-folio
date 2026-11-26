@@ -8,10 +8,11 @@ export default defineNitroPlugin((nitroApp) => {
     const abs = (path: string) =>
       path.startsWith('http') ? path : `${domain}${path.startsWith('/') ? path : `/${path}`}`
 
-    const [writing, clipboard, workRows] = await Promise.all([
+    const [writing, clipboard, workRows, thingRows] = await Promise.all([
       queryCollection(event, 'writing').where('path', 'LIKE', '/writing/%').order('date', 'DESC').all(),
       queryCollection(event, 'clipboard').where('path', 'LIKE', '/clipboard/%').order('date', 'DESC').all(),
       queryCollection(event, 'works').order('date', 'DESC').all(),
+      queryCollection(event, 'things').all(),
     ])
 
     const lines = [
@@ -37,6 +38,12 @@ export default defineNitroPlugin((nitroApp) => {
       '',
       ...workRows.map((w) =>
         `- **${w.name}** (${w.category}): ${w.description} — ${w.url}`,
+      ),
+      '',
+      '## Things',
+      '',
+      ...thingRows.map((t) =>
+        `- [${t.name}](${abs(`/things/${t.slug}`)}) (${t.brand}, ${t.category})`,
       ),
       '',
     ]

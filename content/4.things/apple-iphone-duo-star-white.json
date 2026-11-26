@@ -1,0 +1,18 @@
+{
+  "slug": "apple-iphone-duo-star-white",
+  "name": "iPhone Duo Star White",
+  "brand": "Apple",
+  "category": "tech",
+  "price": {
+    "amount": 1999,
+    "currency": "GBP"
+  },
+  "image": "/images/things/apple-iphone-duo-star-white.webp",
+  "owned": true,
+  "featured": true,
+  "order": 3,
+  "color": "Star White",
+  "material": "Folding iPhone, official Star White finish packshot",
+  "acquired": "2026-11-18",
+  "url": "https://www.apple.com/uk/shop/buy-iphone/iphone-duo/7.6-inch-display-256gb-star-white"
+}

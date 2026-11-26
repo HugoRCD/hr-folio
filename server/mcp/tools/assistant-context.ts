@@ -34,7 +34,7 @@ export default defineMcpTool({
     const { folio } = useRuntimeConfig(event)
     const siteUrl = folio.seo.url.replace(/\/$/, '')
 
-    const [writings, works, clipboards, home, about] = await Promise.all([
+    const [writings, works, clipboards, things, home, about] = await Promise.all([
       queryCollection(event, 'writing')
         .order('date', 'DESC')
         .limit(writingLimit)
@@ -49,6 +49,7 @@ export default defineMcpTool({
           .limit(clipboardLimit)
           .all()
         : Promise.resolve([]),
+      queryCollection(event, 'things').all(),
       queryCollection(event, 'content').path('/').first(),
       queryCollection(event, 'about').first(),
     ])
@@ -116,6 +117,14 @@ export default defineMcpTool({
         url: w.url.startsWith('http') ? w.url : absolute(w.url),
         tags: w.tags,
       })),
+      things: things.map(t => ({
+        stem: t.stem,
+        slug: t.slug,
+        name: t.name,
+        brand: t.brand,
+        category: t.category,
+        url: absolute(`/things/${t.slug}`),
+      })),
       clipboard: clipboards.map(c => ({
         path: c.path,
         title: c.title,
@@ -125,6 +134,7 @@ export default defineMcpTool({
       navigationHints: {
         writingIndex: absolute('/writing'),
         worksIndex: absolute('/works'),
+        thingsIndex: absolute('/things'),
         clipboardIndex: absolute('/clipboard'),
         deeperQueries: 'Use content-list and content-get for full text and search.',
       },

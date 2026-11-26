@@ -1,0 +1,16 @@
+{
+  "slug": "salomon-xt-4-og",
+  "name": "XT-4 OG",
+  "brand": "Salomon",
+  "category": "wardrobe",
+  "price": {
+    "amount": 175,
+    "currency": "GBP"
+  },
+  "image": "/images/things/salomon-xt-4-og.webp",
+  "owned": true,
+  "order": 36,
+  "color": "White / Ebony / Lunar Rock",
+  "material": "Agile Chassis, dual-density EVA, Contagrip, Quicklace; 10 mm drop, 358 g",
+  "url": "https://www.salomon.com/en-gb/product/xt-4-og-li3335/L47133000"
+}

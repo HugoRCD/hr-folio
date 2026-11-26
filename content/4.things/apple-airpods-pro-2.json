@@ -1,0 +1,18 @@
+{
+  "slug": "apple-airpods-pro-2",
+  "name": "AirPods Pro (2nd generation)",
+  "brand": "Apple",
+  "category": "tech",
+  "price": {
+    "amount": 229,
+    "currency": "GBP"
+  },
+  "image": "/images/things/apple-airpods-pro-2.webp",
+  "owned": true,
+  "featured": true,
+  "order": 4,
+  "color": "White",
+  "material": "H2 chip, Active Noise Cancellation, Adaptive Audio, Personalised Spatial Audio, MagSafe Charging Case (USB-C) with speaker and lanyard loop, IP54",
+  "size": "Earbud 30.9 x 21.8 x 24.0 mm (5.3 g), case 45.2 x 60.6 x 21.7 mm (50.8 g)",
+  "url": "https://www.apple.com/uk/newsroom/2023/09/apple-upgrades-airpods-pro-2nd-generation-with-usb-c-charging/"
+}

@@ -1,0 +1,18 @@
+{
+  "slug": "suitsupply-off-white-wide-leg-straight-trousers",
+  "name": "Off-White Wide Leg Straight Trousers",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "price": {
+    "amount": 169,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-off-white-wide-leg-straight-trousers.webp",
+  "owned": true,
+  "order": 25,
+  "color": "Off-White",
+  "material": "59% lyocell, 23% linen, 18% cotton, woven by Di Sondrio",
+  "size": "30",
+  "acquired": "2026-05-02",
+  "url": "https://suitsupply.com/en-gb/men/trousers/off-white-wide-leg-trousers/B3075.html"
+}

@@ -1,0 +1,18 @@
+{
+  "slug": "suitsupply-brown-silk-tie",
+  "name": "Brown Silk Tie",
+  "brand": "SuitSupply",
+  "category": "accessories",
+  "price": {
+    "amount": 59,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-brown-silk-tie.webp",
+  "owned": true,
+  "order": 18,
+  "color": "Brown",
+  "material": "Silk",
+  "size": "One size",
+  "acquired": "2026-01-20",
+  "url": "https://suitsupply.com/en-gb/men/accessories/ties/brown-tie/D221028.html"
+}

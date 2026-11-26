@@ -1,0 +1,18 @@
+{
+  "slug": "herman-miller-sayl-black-pitch",
+  "name": "Sayl Office Chair, Black/Pitch",
+  "brand": "Herman Miller",
+  "category": "tech",
+  "price": {
+    "amount": 590,
+    "currency": "GBP"
+  },
+  "image": "/images/things/herman-miller-sayl-black-pitch.webp",
+  "owned": true,
+  "order": 14,
+  "color": "Black/Pitch",
+  "material": "Unframed elastomer back, upholstered Pitch seat, black frame",
+  "size": "Standard (fixed arms), with lumbar support",
+  "acquired": "2025-04-25",
+  "url": "https://frstore.hermanmiller.com/products/sayl-office-chair"
+}

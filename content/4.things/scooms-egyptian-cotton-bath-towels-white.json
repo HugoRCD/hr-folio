@@ -1,0 +1,18 @@
+{
+  "slug": "scooms-egyptian-cotton-bath-towels-white",
+  "name": "Egyptian Cotton Bath Towels",
+  "brand": "Scooms",
+  "category": "home",
+  "price": {
+    "amount": 55,
+    "currency": "GBP"
+  },
+  "image": "/images/things/scooms-egyptian-cotton-bath-towels-white.webp",
+  "owned": true,
+  "order": 20,
+  "color": "White & Natural",
+  "material": "720gsm Egyptian cotton",
+  "size": "Pairs of bath towels",
+  "acquired": "2026-11-21",
+  "url": "https://scooms.com/products/egyptian-cotton-bath-towels"
+}

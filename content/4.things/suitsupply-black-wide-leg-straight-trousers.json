@@ -1,0 +1,18 @@
+{
+  "slug": "suitsupply-black-wide-leg-straight-trousers",
+  "name": "Black Wide Leg Straight Trousers",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "price": {
+    "amount": 181,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-black-wide-leg-straight-trousers.webp",
+  "owned": true,
+  "order": 26,
+  "color": "Black",
+  "material": "Lyocell, linen and cotton",
+  "size": "30, altered in store",
+  "acquired": "2026-07-05",
+  "url": "https://suitsupply.com/en-gb/men/trousers/black-wide-leg-trousers/B3076.html"
+}
