@@ -1,0 +1,21 @@
+{
+  "slug": "santos-dumont",
+  "name": "Santos-Dumont",
+  "brand": "Cartier",
+  "room": "everyday",
+  "category": "watch",
+  "color": "Silvered",
+  "size": "Small",
+  "material": "Steel and leather",
+  "acquired": "2025",
+  "price": {
+    "amount": 6800,
+    "currency": "GBP"
+  },
+  "image": "/images/things/santos-dumont.svg",
+  "note": "Bought the day I joined Vercel. The screws are left in view, as they were in 1904.",
+  "url": "https://www.cartier.com/en-gb/watches/santos-de-cartier",
+  "featured": true,
+  "owned": true,
+  "order": 7
+}

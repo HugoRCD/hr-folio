@@ -1,0 +1,21 @@
+{
+  "slug": "cora-lamp",
+  "name": "Cora table lamp",
+  "brand": "Daals",
+  "room": "desk",
+  "category": "lamp",
+  "color": "Brass",
+  "size": "H 48",
+  "material": "Brass and linen",
+  "acquired": "2025",
+  "price": {
+    "amount": 175,
+    "currency": "GBP"
+  },
+  "image": "/images/things/cora-lamp.svg",
+  "note": "A small lamp for the late hours. The shade throws a quiet circle on the desk.",
+  "url": "https://daals.co.uk",
+  "featured": false,
+  "owned": true,
+  "order": 6
+}

@@ -1,19 +1,19 @@
 import { z } from 'zod'
 
-const collectionId = z.enum(['content', 'writing', 'clipboard', 'works'])
+const collectionId = z.enum(['content', 'writing', 'clipboard', 'works', 'things'])
 
 export default defineMcpTool({
   name: 'content-list',
   title: 'List content',
   description:
-    'Compact index of site pages, writing, clipboard notes, and works. Use to discover paths and stems before calling content-get.',
+    'Compact index of site pages, writing, clipboard notes, works, and things. Use to discover paths and stems before calling content-get.',
   group: 'content',
   annotations: { readOnlyHint: true, openWorldHint: false },
   inputSchema: {
     collections: z
       .array(collectionId)
       .optional()
-      .describe('Collections to query. Omit to query all four.'),
+      .describe('Collections to query. Omit to query all five.'),
     search: z
       .string()
       .optional()
@@ -32,7 +32,7 @@ export default defineMcpTool({
   cache: '2m',
   handler: async ({ collections, search, limitPerCollection }) => {
     const event = useEvent()
-    const want = collections ?? (['content', 'writing', 'clipboard', 'works'] as const)
+    const want = collections ?? (['content', 'writing', 'clipboard', 'works', 'things'] as const)
     const q = search?.trim().toLowerCase() ?? ''
 
     const match = (text: string | null | undefined) => {
@@ -73,6 +73,36 @@ export default defineMcpTool({
           url: w.url,
           release: w.release,
           tags: w.tags,
+        }))
+        continue
+      }
+
+      if (col === 'things') {
+        let rows = await queryCollection(event, 'things')
+          .limit(limitPerCollection)
+          .all()
+        if (q) {
+          rows = rows.filter(
+            t =>
+              match(t.name)
+              || match(t.brand)
+              || match(t.category)
+              || match(t.room)
+              || match(t.note)
+              || match(t.url)
+              || match(t.affiliateUrl),
+          )
+        }
+        out.things = rows.map(t => ({
+          stem: t.stem,
+          slug: t.slug,
+          path: `/things/${t.slug}`,
+          name: t.name,
+          brand: t.brand,
+          room: t.room,
+          category: t.category,
+          acquired: t.acquired,
+          url: t.affiliateUrl ?? t.url,
         }))
         continue
       }

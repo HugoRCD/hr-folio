@@ -18,6 +18,10 @@ const { data: projects } = await useAsyncData('cmd-works', () =>
   queryCollection('works').order('date', 'DESC').all(),
 )
 
+const { data: things } = await useAsyncData('cmd-things', () =>
+  queryCollection('things').all(),
+)
+
 const socials = useSocialLinks()
 
 const mcpUrl = 'https://hugorcd.com/mcp'
@@ -29,7 +33,7 @@ function clampText(s: string, max: number) {
   return `${t.slice(0, max - 1)}\u2026`
 }
 
-/** UCommandPalette passes link props to ULink — external URLs open in a new tab. */
+/** UCommandPalette passes link props to ULink. External URLs open in a new tab. */
 function externalLinkProps(to: string | undefined) {
   if (!to || (!to.startsWith('http://') && !to.startsWith('https://'))) return {}
   return { target: '_blank' as const, rel: 'noopener noreferrer' }
@@ -45,6 +49,7 @@ const all = computed<CommandPaletteGroup[]>(() => [
       { label: 'Home', to: '/' },
       { label: 'Writing', to: '/writing' },
       { label: 'Works', to: '/works' },
+      { label: 'Things', to: '/things' },
     ],
   },
   {
@@ -60,6 +65,15 @@ const all = computed<CommandPaletteGroup[]>(() => [
       to: p.url,
       ...externalLinkProps(p.url),
       ...(p.description ? { suffix: clampText(String(p.description), 56), class: 'is-project' } : {}),
+    })),
+  },
+  {
+    id: 'things',
+    label: 'Things',
+    items: sortThings(things.value || []).map(t => ({
+      label: t.name,
+      to: thingPath(t),
+      suffix: t.brand,
     })),
   },
   {
@@ -93,7 +107,7 @@ const groups = computed<CommandPaletteGroup[]>(() => paletteQuery.value.trim()
     .filter(g => g.id in SHORT)
     .map(g => ({ ...g, items: g.id === 'mcp' ? g.items!.slice(2) : g.items!.slice(0, SHORT[g.id]) })))
 
-const placeholder = 'pages, writing, projects\u2026'
+const placeholder = 'pages, writing, projects, things\u2026'
 
 function onSelect(item: any) {
   if (!item) return

@@ -1,0 +1,21 @@
+{
+  "slug": "lamy-2000",
+  "name": "2000",
+  "brand": "LAMY",
+  "room": "desk",
+  "category": "pen",
+  "color": "Black",
+  "size": "Fine",
+  "material": "Makrolon and steel",
+  "acquired": "2023",
+  "price": {
+    "amount": 175,
+    "currency": "GBP"
+  },
+  "image": "/images/things/lamy-2000.svg",
+  "note": "Hooded nib, brushed barrel. It lives on the desk and writes a wet line.",
+  "url": "https://www.lamy.com/en/lamy-2000/",
+  "featured": false,
+  "owned": true,
+  "order": 8
+}
