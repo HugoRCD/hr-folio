@@ -64,8 +64,20 @@ h1, h2, h3, .font-serif, .font-redaction {
   --ui-primary: #CD1919 !important;
   --code-bg: #f6f6f6;
   --code-border: #e5e5e5;
+}
 
-  overscroll-behavior-y: none;
+/* The page stays still at its edges. Nothing pans sideways, and a sideways trackpad swipe still goes
+   back and forward (clip, not hidden, which would break position: sticky; and no overscroll on x,
+   which would turn that swipe off). Only a mouse or trackpad loses the vertical rubber band, so the
+   sticky header doesn't bounce on a Mac; anything with a touchscreen keeps it, and pull-to-refresh. */
+html,
+body {
+  overflow-x: clip;
+}
+@media (pointer: fine) and (not (any-pointer: coarse)) {
+  html {
+    overscroll-behavior-y: none;
+  }
 }
 
 .dark {
