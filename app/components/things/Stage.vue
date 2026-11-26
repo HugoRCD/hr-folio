@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AnimatePresence, motion } from 'motion-v'
 import type { ThingItem } from '~/utils/things'
 
 const { item, items } = defineProps<{
@@ -12,7 +11,6 @@ const emit = defineEmits<{
   go: [target: ThingItem]
 }>()
 
-const { spring, reduced } = useThingMotion()
 const nearby = computed(() => adjacent(items, item.slug))
 
 function onKey(e: KeyboardEvent) {
@@ -37,14 +35,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
-  <motion.article
-    class="stage"
-    :initial="false"
-    :animate="{ opacity: 1 }"
-    :exit="{ opacity: 0 }"
-    :transition="spring"
-    @click="onGround"
-  >
+  <article class="stage" @click="onGround">
     <button type="button" class="close" @click="emit('close')">
       Close
     </button>
@@ -61,21 +52,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       </span>
     </button>
 
-    <AnimatePresence mode="wait">
-      <motion.div
-        :key="item.slug"
-        class="hero"
-        :initial="reduced ? false : { opacity: 0, scale: 0.985 }"
-        :animate="{ opacity: 1, scale: 1 }"
-        :exit="{ opacity: 0, scale: 0.985 }"
-        :transition="spring"
-      >
-        <span class="frame">
-          <ThingsCutout :item priority />
-        </span>
-        <span class="contact" aria-hidden="true" />
-      </motion.div>
-    </AnimatePresence>
+    <div class="hero">
+      <span class="frame">
+        <ThingsCutout :item priority :vt="thingImageVt(item.slug)" />
+      </span>
+      <span class="contact" aria-hidden="true" />
+    </div>
 
     <button
       v-if="nearby.next"
@@ -89,19 +71,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       </span>
     </button>
 
-    <AnimatePresence mode="wait">
-      <motion.div
-        :key="`${item.slug}-copy`"
-        class="copy-slot"
-        :initial="reduced ? false : { opacity: 0, y: 8 }"
-        :animate="{ opacity: 1, y: 0 }"
-        :exit="{ opacity: 0, y: -8 }"
-        :transition="spring"
-      >
-        <ThingsCopy :item />
-      </motion.div>
-    </AnimatePresence>
-  </motion.article>
+    <div class="copy-slot">
+      <ThingsCopy :item vt />
+    </div>
+  </article>
 </template>
 
 <style scoped>
@@ -115,8 +88,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   gap: 28px;
   padding: 88px 24px 48px;
   overflow: auto;
+  overscroll-behavior: contain;
   background: #FAF9F7;
-  will-change: opacity;
 }
 .close {
   position: absolute;
@@ -176,7 +149,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     grid-template-areas: "prev hero copy next";
     gap: 8px 16px;
     padding: 72px 0 40px;
-    overflow: hidden;
+    overflow: auto;
   }
   .peek {
     display: grid;

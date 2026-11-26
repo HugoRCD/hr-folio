@@ -17,8 +17,6 @@ useHead({
           </main>
         </div>
       </div>
-
-      <PagePeel />
     </div>
   </UApp>
 </template>

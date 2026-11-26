@@ -2,9 +2,13 @@ export const THING_CATEGORIES = ['wardrobe', 'tech', 'home', 'accessories'] as c
 
 export type ThingCategory = typeof THING_CATEGORIES[number]
 
-export const THING_CONCEPTS = ['dock', 'lookbook', 'wall', 'index', 'runway'] as const
+export const THING_VIEWS = ['lookbook', 'list'] as const
 
-export type ThingConcept = typeof THING_CONCEPTS[number]
+export type ThingView = typeof THING_VIEWS[number]
+
+export const THING_SORTS = ['curated', 'price-desc', 'price-asc', 'brand'] as const
+
+export type ThingSort = typeof THING_SORTS[number]
 
 export type ThingPrice = {
   amount: number
@@ -40,20 +44,23 @@ export const CATEGORY_LABEL: Record<ThingCategory | 'all', string> = {
   accessories: 'Accessories',
 }
 
-export const CONCEPT_LABEL: Record<ThingConcept, string> = {
-  dock: 'Dock',
+export const VIEW_LABEL: Record<ThingView, string> = {
   lookbook: 'Lookbook',
-  wall: 'Wall',
-  index: 'Index',
-  runway: 'Runway',
+  list: 'List',
 }
 
-export const CONCEPT_INDEX: Record<ThingConcept, string> = {
-  dock: '01',
-  lookbook: '02',
-  wall: '03',
-  index: '04',
-  runway: '05',
+export const SORT_LABEL: Record<ThingSort, string> = {
+  curated: 'Curated',
+  'price-desc': 'Price: High to Low',
+  'price-asc': 'Price: Low to High',
+  brand: 'Brand A-Z',
+}
+
+export const SORT_SHORT: Record<ThingSort, string> = {
+  curated: 'Curated',
+  'price-desc': 'High to Low',
+  'price-asc': 'Low to High',
+  brand: 'Brand A-Z',
 }
 
 export function formatPrice(price: ThingPrice) {
@@ -95,14 +102,41 @@ export function thingSpecs(item: ThingItem) {
   return rows.filter(([, value]) => value)
 }
 
-export function thingConcept(value: unknown): ThingConcept {
-  return typeof value === 'string' && THING_CONCEPTS.includes(value as ThingConcept)
-    ? value as ThingConcept
-    : 'dock'
+export function thingView(value: unknown): ThingView {
+  return value === 'list' ? 'list' : 'lookbook'
 }
 
-export function sortThings<T extends { name: string, order?: number }>(items: T[]) {
-  return [...items].sort((a, b) => {
+export function thingSort(value: unknown): ThingSort {
+  return typeof value === 'string' && THING_SORTS.includes(value as ThingSort)
+    ? value as ThingSort
+    : 'curated'
+}
+
+export function thingImageVt(slug: string) {
+  return `thing-img-${slug}`
+}
+
+export function thingTitleVt(slug: string) {
+  return `thing-title-${slug}`
+}
+
+export function sortThings<T extends {
+  name: string
+  brand?: string
+  order?: number
+  price?: { amount: number }
+}>(items: T[], sort: ThingSort = 'curated') {
+  const rows = [...items]
+  if (sort === 'price-desc') {
+    return rows.sort((a, b) => (b.price?.amount ?? 0) - (a.price?.amount ?? 0) || a.name.localeCompare(b.name))
+  }
+  if (sort === 'price-asc') {
+    return rows.sort((a, b) => (a.price?.amount ?? 0) - (b.price?.amount ?? 0) || a.name.localeCompare(b.name))
+  }
+  if (sort === 'brand') {
+    return rows.sort((a, b) => (a.brand ?? '').localeCompare(b.brand ?? '') || a.name.localeCompare(b.name))
+  }
+  return rows.sort((a, b) => {
     const ao = a.order ?? 99
     const bo = b.order ?? 99
     if (ao !== bo) return ao - bo

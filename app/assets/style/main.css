@@ -106,9 +106,35 @@ html.things-studio .paper {
   background-color: #FAF9F7 !important;
   color: #111111;
 }
-html.things-studio,
-html.things-studio body {
-  overflow: auto;
+html.things-studio.things-overlay,
+html.things-studio.things-overlay body {
+  overflow: hidden;
+}
+
+html.things-studio::view-transition {
+  background-color: #FAF9F7;
+}
+html.things-studio::view-transition-old(root),
+html.things-studio::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.things-studio::view-transition-group(*) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.things-studio::view-transition-old(*),
+html.things-studio::view-transition-new(*) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.things-studio::view-transition-group(*),
+  html.things-studio::view-transition-old(*),
+  html.things-studio::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 .code-block {

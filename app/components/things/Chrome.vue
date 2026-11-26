@@ -1,21 +1,43 @@
 <script setup lang="ts">
 import { LayoutGroup, motion } from 'motion-v'
 import { monogramPath, monogramViewBox } from '~/utils/signature'
-import { THING_CATEGORIES, CATEGORY_LABEL, type ThingCategory } from '~/utils/things'
+import {
+  THING_CATEGORIES,
+  THING_SORTS,
+  CATEGORY_LABEL,
+  SORT_LABEL,
+  SORT_SHORT,
+  type ThingCategory,
+  type ThingSort,
+  type ThingView,
+} from '~/utils/things'
 
-const { category, counts, total, filtered } = defineProps<{
+const { category, counts, view, sort } = defineProps<{
   category: ThingCategory | 'all'
   counts: Record<ThingCategory | 'all', number>
-  total: number
-  filtered: number
+  view: ThingView
+  sort: ThingSort
 }>()
 
 const emit = defineEmits<{
   category: [next: ThingCategory | 'all']
+  view: [next: ThingView]
+  sort: [next: ThingSort]
 }>()
 
 const { arrive } = useThingMotion()
 const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
+const sortOpen = ref(false)
+const sortRoot = useTemplateRef<HTMLElement>('sortRoot')
+
+onClickOutside(sortRoot, () => {
+  sortOpen.value = false
+})
+
+function pickSort(next: ThingSort) {
+  sortOpen.value = false
+  emit('sort', next)
+}
 </script>
 
 <template>
@@ -55,14 +77,62 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
       </nav>
     </LayoutGroup>
 
-    <div class="right">
-      <p class="count">
-        {{ filtered }}
-        <span class="of">/ {{ total }}</span>
-      </p>
-      <p class="aff">
-        Some links are affiliate links.
-      </p>
+    <div class="tools">
+      <div ref="sortRoot" class="sort">
+        <button
+          type="button"
+          class="sort-btn"
+          :aria-expanded="sortOpen"
+          aria-haspopup="listbox"
+          aria-label="Sort"
+          @click="sortOpen = !sortOpen"
+        >
+          {{ SORT_SHORT[sort] }}
+          <UIcon name="i-lucide-chevron-down" class="chev" />
+        </button>
+        <div
+          v-if="sortOpen"
+          class="menu"
+          role="listbox"
+          aria-label="Sort"
+        >
+          <button
+            v-for="s in THING_SORTS"
+            :key="s"
+            type="button"
+            role="option"
+            class="opt"
+            :class="{ on: sort === s }"
+            :aria-selected="sort === s"
+            @click="pickSort(s)"
+          >
+            {{ SORT_LABEL[s] }}
+          </button>
+        </div>
+      </div>
+
+      <div class="views" role="group" aria-label="Layout">
+        <button
+          type="button"
+          class="view"
+          :class="{ on: view === 'lookbook' }"
+          :aria-pressed="view === 'lookbook'"
+          @click="emit('view', 'lookbook')"
+        >
+          <UIcon name="i-lucide-layout-grid" class="ico" />
+          Lookbook
+        </button>
+        <button
+          type="button"
+          class="view"
+          :class="{ on: view === 'list' }"
+          :aria-pressed="view === 'list'"
+          @click="emit('view', 'list')"
+        >
+          <UIcon name="i-lucide-list" class="ico" />
+          List
+        </button>
+      </div>
     </div>
   </header>
 </template>
@@ -80,6 +150,7 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
   padding: 18px 28px 16px;
   background: #FAF9F7;
   border-bottom: 1px solid #E8E6E1;
+  view-transition-name: things-chrome;
 }
 .left {
   display: flex;
@@ -149,45 +220,97 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
   height: 1px;
   background: #CD1919;
 }
-.right {
+.tools {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
   justify-self: end;
   min-width: 0;
 }
-.count {
-  margin: 0;
+.sort {
+  position: relative;
+}
+.sort-btn,
+.opt,
+.view {
   font-family: var(--font-mono);
-  font-size: 11px;
   letter-spacing: 0.08em;
-  color: #111111;
-  font-variant-numeric: tabular-nums;
-}
-.of {
+  text-transform: uppercase;
   color: var(--ui-text-dimmed);
+  cursor: pointer;
+  box-shadow: none;
+  background: transparent;
+  border: 0;
 }
-.aff {
-  margin: 0;
-  font-family: var(--font-mono);
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 2px;
   font-size: 10px;
-  line-height: 1.3;
-  letter-spacing: 0.02em;
-  color: #111111;
-  text-align: right;
   white-space: nowrap;
-  opacity: 0.35;
-  transition: opacity 0.25s ease;
 }
-.aff:hover {
-  opacity: 0.75;
+.sort-btn:hover,
+.opt:hover,
+.view:hover {
+  color: #111111;
+}
+.chev,
+.ico {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 13.5rem;
+  padding: 6px;
+  background: #FAF9F7;
+  border: 1px solid #E8E6E1;
+  box-shadow: 0 12px 32px rgb(17 17 17 / 0.08);
+}
+.opt {
+  padding: 8px 10px;
+  font-size: 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+.opt.on {
+  color: #111111;
+  background: #F7F6F3;
+}
+.views {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid #E8E6E1;
+  border-radius: 999px;
+  background: #F7F6F3;
+}
+.view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.view.on {
+  background: #111111;
+  color: #FAF9F7;
 }
 
 @media (max-width: 899px) {
   .chrome {
     grid-template-columns: 1fr auto;
-    gap: 8px 12px;
+    gap: 8px 10px;
     padding: 10px 14px 8px;
   }
   .sig {
@@ -218,17 +341,17 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
   .n {
     margin-left: 4px;
   }
-  .right {
+  .tools {
     order: 2;
-    gap: 2px;
+    gap: 8px;
   }
-  .count {
+  .sort-btn {
+    padding: 4px 0;
     font-size: 10px;
   }
-  .aff {
-    font-size: 9px;
-    max-width: 7.2rem;
-    white-space: normal;
+  .view {
+    gap: 4px;
+    padding: 5px 8px;
   }
 }
 </style>

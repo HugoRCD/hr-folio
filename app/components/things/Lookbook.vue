@@ -1,99 +1,53 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
-import { THING_CATEGORIES, CATEGORY_LABEL, type ThingItem } from '~/utils/things'
+import type { ThingItem } from '~/utils/things'
 
-const { items } = defineProps<{
+const { items, overlay = false } = defineProps<{
   items: ThingItem[]
+  overlay?: boolean
 }>()
 
 const emit = defineEmits<{
   open: [item: ThingItem]
 }>()
-
-const { spring, reduced } = useThingMotion()
-const hover = ref<string | null>(null)
-
-const chapters = computed(() => {
-  return THING_CATEGORIES
-    .map(cat => ({ cat, items: items.filter(item => item.category === cat) }))
-    .filter(ch => ch.items.length)
-})
 </script>
 
 <template>
   <div class="lookbook">
-    <section v-for="ch in chapters" :key="ch.cat" class="chapter">
-      <header class="head">
-        <p class="kicker">
-          {{ CATEGORY_LABEL[ch.cat] }}
-        </p>
-        <p class="count">
-          {{ ch.items.length }}
-        </p>
-      </header>
-      <div class="row">
-        <motion.button
-          v-for="item in ch.items"
-          :key="item.slug"
-          type="button"
-          class="card"
-          :class="{ dim: hover && hover !== item.slug }"
-          :while-hover="reduced ? false : { y: -8 }"
-          :transition="spring"
-          @mouseenter="hover = item.slug"
-          @mouseleave="hover = hover === item.slug ? null : hover"
-          @click="emit('open', item)"
+    <button
+      v-for="item in items"
+      :key="item.slug"
+      type="button"
+      class="card"
+      @click="emit('open', item)"
+    >
+      <span class="frame">
+        <ThingsCutout :item :vt="overlay ? '' : thingImageVt(item.slug)" />
+      </span>
+      <span class="contact" aria-hidden="true" />
+      <span class="meta">
+        <span class="brand">{{ item.brand }}</span>
+        <span
+          class="name"
+          :style="overlay ? undefined : { viewTransitionName: thingTitleVt(item.slug) }"
         >
-          <span class="frame">
-            <ThingsCutout :item />
-          </span>
-          <span class="contact" aria-hidden="true" />
-          <span class="whisper">
-            <span class="name">{{ item.name }}</span>
-            <span class="brand">{{ item.brand }}</span>
-            <span class="price">{{ formatPrice(item.price) }}</span>
-          </span>
-        </motion.button>
-      </div>
-    </section>
+          {{ item.name }}
+        </span>
+        <span class="price">{{ formatPrice(item.price) }}</span>
+      </span>
+    </button>
   </div>
 </template>
 
 <style scoped>
 .lookbook {
-  flex: 0 0 auto;
-  width: 100%;
-  padding: 36px 28px calc(108px + env(safe-area-inset-bottom, 0px));
-  max-width: 1280px;
-  margin-inline: auto;
-}
-.chapter + .chapter {
-  margin-top: 88px;
-}
-.head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 28px;
-}
-.kicker {
-  margin: 0;
-  font-family: var(--font-redaction);
-  font-size: 28px;
-  color: #111111;
-}
-.count {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--ui-text-dimmed);
-}
-.row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
-  gap: 48px 28px;
+  gap: 32px 14px;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 20px 16px 8px;
 }
 .card {
   display: flex;
@@ -106,10 +60,12 @@ const chapters = computed(() => {
   box-shadow: none;
   text-align: left;
   color: inherit;
-  transition: opacity 0.35s ease;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.card.dim {
-  opacity: 0.42;
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-6px);
+  }
 }
 .frame {
   display: grid;
@@ -127,15 +83,11 @@ const chapters = computed(() => {
   background: radial-gradient(ellipse at center, rgb(32 24 16 / 0.16) 0%, rgb(32 24 16 / 0) 72%);
   filter: blur(8px);
 }
-.whisper {
+.meta {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  margin-top: 16px;
-}
-.name {
-  font-size: 14px;
-  color: #111111;
+  gap: 4px;
+  margin-top: 14px;
 }
 .brand {
   font-family: var(--font-mono);
@@ -144,31 +96,28 @@ const chapters = computed(() => {
   text-transform: uppercase;
   color: var(--ui-text-dimmed);
 }
+.name {
+  font-size: 14px;
+  line-height: 1.3;
+  color: #111111;
+}
 .price {
   font-family: var(--font-redaction);
   font-size: 16px;
   color: #6B6B6B;
 }
 
-@media (max-width: 767px) {
-  .lookbook {
-    padding: 20px 16px calc(96px + env(safe-area-inset-bottom, 0px));
-  }
-  .chapter + .chapter {
-    margin-top: 56px;
-  }
-  .kicker {
-    font-size: 24px;
-  }
-  .row {
-    gap: 28px 14px;
-  }
-}
-
 @media (min-width: 768px) {
-  .row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lookbook {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px 28px;
+    padding: 36px 28px 12px;
+  }
 }
 @media (min-width: 1100px) {
-  .row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 64px 36px; }
+  .lookbook {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 64px 36px;
+  }
 }
 </style>

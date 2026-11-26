@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { AnimatePresence } from 'motion-v'
-import { THING_CATEGORIES, type ThingItem, type ThingCategory, type ThingConcept } from '~/utils/things'
+import { THING_CATEGORIES, type ThingItem, type ThingCategory, type ThingSort, type ThingView } from '~/utils/things'
 
 definePageMeta({
   key: 'things',
@@ -10,6 +9,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const { seo } = useFolioConfig()
+const { withTransition } = useThingTransition()
 
 const { data: allThings } = await useAsyncData('things', async () => {
   const rows = await queryCollection('things').all()
@@ -30,12 +30,8 @@ watchEffect(() => {
 })
 
 const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
-const concept = computed(() => thingConcept(route.query.concept))
-const overlay = computed(() => {
-  if (!selected.value) return false
-  if (concept.value !== 'dock') return true
-  return route.query.sheet === '1'
-})
+const view = computed(() => thingView(route.query.view))
+const sort = computed(() => thingSort(route.query.sort))
 
 const category = computed<ThingCategory | 'all'>(() => {
   const q = route.query.cat
@@ -44,49 +40,53 @@ const category = computed<ThingCategory | 'all'>(() => {
     : 'all'
 })
 
-function studioQuery(partial: Record<string, string | undefined> = {}) {
+function studioQuery(partial: {
+  cat?: ThingCategory | 'all'
+  view?: ThingView
+  sort?: ThingSort
+} = {}) {
   const query: Record<string, string> = {}
-  const nextConcept = (partial.concept ?? concept.value) as ThingConcept
-  const nextCat = (partial.cat ?? category.value) as ThingCategory | 'all'
-  if (nextConcept !== 'dock') query.concept = nextConcept
+  const nextView = partial.view ?? view.value
+  const nextCat = partial.cat ?? category.value
+  const nextSort = partial.sort ?? sort.value
+  if (nextView !== 'lookbook') query.view = nextView
   if (nextCat !== 'all') query.cat = nextCat
+  if (nextSort !== 'curated') query.sort = nextSort
   return query
 }
 
 function setCategory(next: ThingCategory | 'all') {
-  router.replace({ path: '/things', query: studioQuery({ cat: next }) })
+  const keep = selected.value && (next === 'all' || selected.value.category === next)
+  withTransition(() => router.replace({
+    path: keep ? route.path : '/things',
+    query: studioQuery({ cat: next }),
+  }))
 }
 
-function setConcept(next: ThingConcept) {
-  router.replace({ path: route.path, query: studioQuery({ concept: next }) })
+function setView(next: ThingView) {
+  withTransition(() => router.replace({ path: route.path, query: studioQuery({ view: next }) }))
+}
+
+function setSort(next: ThingSort) {
+  withTransition(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
 }
 
 function open(item: ThingItem) {
-  router.push({ path: thingPath(item), query: studioQuery() })
+  withTransition(() => router.push({ path: thingPath(item), query: studioQuery() }))
 }
 
 function close() {
-  const path = concept.value === 'dock' && selected.value
-    ? thingPath(selected.value)
-    : '/things'
-  router.push({ path, query: studioQuery() })
+  withTransition(() => router.push({ path: '/things', query: studioQuery() }))
 }
 
 function go(item: ThingItem) {
-  router.replace({ path: thingPath(item), query: studioQuery() })
-}
-
-function details(item: ThingItem) {
-  router.push({ path: thingPath(item), query: { ...studioQuery(), sheet: '1' } })
+  withTransition(() => router.replace({ path: thingPath(item), query: studioQuery() }))
 }
 
 const owned = computed(() => (allThings.value ?? []).filter(item => item.owned !== false))
 const counts = computed(() => categoryCounts(owned.value))
-const filtered = computed(() => inCategory(owned.value, category.value))
-const active = computed(() => {
-  if (selected.value && filtered.value.some(item => item.slug === selected.value!.slug)) return selected.value
-  return filtered.value[0]
-})
+const filtered = computed(() => sortThings(inCategory(owned.value, category.value), sort.value))
+const stageItems = computed(() => sortThings(owned.value, sort.value))
 
 const title = computed(() => selected.value?.name ?? 'Things')
 const description = computed(() => selected.value?.brand ?? 'Objects around the house, standing in a studio.')
@@ -118,59 +118,56 @@ useSeoMeta({
 useSchemaOrg([defineWebPage()])
 
 onMounted(() => prefetchThingImages(owned.value))
+
+watch(selected, (item) => {
+  if (!import.meta.client) return
+  document.documentElement.classList.toggle('things-overlay', Boolean(item))
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+  if (!import.meta.client) return
+  document.documentElement.classList.remove('things-overlay')
+})
 </script>
 
 <template>
-  <div class="page" :class="[`concept-${concept}`]">
+  <div class="page">
     <ThingsChrome
       :category
       :counts
-      :total="owned.length"
-      :filtered="filtered.length"
+      :view
+      :sort
       @category="setCategory"
+      @view="setView"
+      @sort="setSort"
     />
 
-    <ThingsDock
-      v-if="concept === 'dock'"
-      :items="filtered"
-      :active
-      @select="go"
-      @details="details"
-    />
     <ThingsLookbook
-      v-else-if="concept === 'lookbook'"
+      v-if="view === 'lookbook'"
       :items="filtered"
+      :overlay="Boolean(selected)"
       @open="open"
     />
-    <ThingsWall
-      v-else-if="concept === 'wall'"
-      :items="filtered"
-      @open="open"
-    />
-    <ThingsArchive
-      v-else-if="concept === 'index'"
-      :items="filtered"
-      @open="open"
-    />
-    <ThingsRunway
+    <ThingsList
       v-else
       :items="filtered"
+      :overlay="Boolean(selected)"
       @open="open"
     />
 
-    <Teleport to="body">
-      <AnimatePresence>
-        <ThingsStage
-          v-if="overlay && selected"
-          :item="selected"
-          :items="filtered.length ? filtered : owned"
-          @close="close"
-          @go="go"
-        />
-      </AnimatePresence>
-    </Teleport>
+    <p class="aff">
+      Some links are affiliate links.
+    </p>
 
-    <ThingsSwitcher :concept @concept="setConcept" />
+    <Teleport to="body">
+      <ThingsStage
+        v-if="selected"
+        :item="selected"
+        :items="stageItems"
+        @close="close"
+        @go="go"
+      />
+    </Teleport>
   </div>
 </template>
 
@@ -181,22 +178,21 @@ onMounted(() => prefetchThingImages(owned.value))
   min-height: 100dvh;
   background: #FAF9F7;
 }
-.page.concept-dock,
-.page.concept-wall,
-.page.concept-runway {
-  height: 100dvh;
-  overflow: hidden;
+.aff {
+  margin: auto 0 0;
+  padding: 28px 28px calc(20px + env(safe-area-inset-bottom, 0px));
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #111111;
+  text-align: center;
+  opacity: 0.35;
 }
-.page :deep(.dock),
-.page :deep(.wall),
-.page :deep(.runway) {
-  flex: 1;
-  min-height: 0;
-  height: auto;
-}
-.page :deep(.lookbook),
-.page :deep(.archive) {
-  flex: 0 0 auto;
-  width: 100%;
+
+@media (max-width: 767px) {
+  .aff {
+    padding: 20px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    font-size: 9px;
+  }
 }
 </style>
