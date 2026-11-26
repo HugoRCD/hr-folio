@@ -256,6 +256,8 @@ onMounted(() => {
   document.addEventListener('pointerout', onPointerOut, { passive: true })
   window.addEventListener('keydown', onKey)
   nextTick(measureTick)
+  // a reload put back halfway down the index: the stage takes the line it came back to
+  if (window.scrollY > 0) onScroll()
 })
 
 onBeforeUnmount(() => {
