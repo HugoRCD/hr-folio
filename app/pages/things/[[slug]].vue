@@ -4,6 +4,7 @@ import { THING_CATEGORIES, CATEGORY_LABEL, type ThingItem, type ThingCategory } 
 
 definePageMeta({
   key: 'things',
+  layout: 'things',
 })
 
 const route = useRoute()
@@ -33,12 +34,7 @@ watch([slug, allThings], ([s, list]) => {
   }
 })
 
-type View = 'carousel' | 'grid'
 const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
-const views: { key: View, label: string }[] = [
-  { key: 'carousel', label: 'Carousel' },
-  { key: 'grid', label: 'Grid' },
-]
 
 const category = computed<ThingCategory | 'all'>(() => {
   const q = route.query.cat
@@ -46,7 +42,6 @@ const category = computed<ThingCategory | 'all'>(() => {
     ? q as ThingCategory | 'all'
     : 'all'
 })
-const view = computed<View>(() => route.query.view === 'grid' ? 'grid' : 'carousel')
 
 function setCategory(next: ThingCategory | 'all') {
   const query = { ...route.query }
@@ -55,15 +50,9 @@ function setCategory(next: ThingCategory | 'all') {
   router.replace({ query })
 }
 
-function setView(next: View) {
-  const query = { ...route.query }
-  if (next === 'carousel') delete query.view
-  else query.view = next
-  router.replace({ query })
-}
-
-const items = computed(() => inCategory((allThings.value ?? []).filter(item => item.owned !== false), category.value))
-const noun = computed(() => items.value.length === 1 ? 'piece' : 'pieces')
+const owned = computed(() => (allThings.value ?? []).filter(item => item.owned !== false))
+const counts = computed(() => categoryCounts(owned.value))
+const items = computed(() => inCategory(owned.value, category.value))
 
 const title = computed(() => selected.value?.name ?? 'Things')
 const description = computed(() => {
@@ -105,69 +94,41 @@ useSchemaOrg([defineWebPage()])
         v-if="selected"
         :key="selected.slug"
         :item="selected"
-        :items="allThings ?? []"
+        :items="owned"
         :spring
       />
       <motion.section
         v-else
         key="index"
-        layout
-        class="relative flex flex-col"
-        :transition="spring"
+        class="studio-index"
         :initial="false"
       >
-        <SectionMark numeral="§" label="Things" as="h1" />
-
-        <div class="in-note filters z-10 top-2 mb-3 flex items-center gap-4 lg:mb-0 lg:flex-col lg:items-stretch lg:gap-0">
-          <div class="flex flex-wrap gap-x-4 lg:flex-col lg:gap-0" role="tablist" aria-label="Filter by use">
-            <button
-              v-for="c in categories"
-              :key="c"
-              type="button"
-              role="tab"
-              :aria-selected="category === c"
-              class="tab flex items-center gap-2 text-left font-mono text-[10px] uppercase leading-6 tracking-[0.08em]"
-              :class="{ active: category === c }"
-              @click="setCategory(c)"
-            >
-              <span class="tick" aria-hidden="true" />
-              {{ CATEGORY_LABEL[c] }}
-            </button>
-          </div>
-          <div class="flex flex-wrap gap-x-4 lg:mt-5 lg:flex-col lg:gap-0" role="tablist" aria-label="Choose a view">
-            <button
-              v-for="v in views"
-              :key="v.key"
-              type="button"
-              role="tab"
-              :aria-selected="view === v.key"
-              class="tab flex items-center gap-2 text-left font-mono text-[10px] uppercase leading-6 tracking-[0.08em]"
-              :class="{ active: view === v.key }"
-              @click="setView(v.key)"
-            >
-              <span class="tick" aria-hidden="true" />
-              {{ v.label }}
-            </button>
-          </div>
-          <p class="count font-mono text-[10px] uppercase tracking-[0.08em] text-muted/50 lg:mt-5">
-            {{ items.length }} {{ noun }}
+        <header class="mast">
+          <h1 class="title">
+            Things
+          </h1>
+          <p class="lede">
+            Clothes, cameras, furniture, and the rest of the objects around the house.
           </p>
+        </header>
+
+        <div class="cats" role="tablist" aria-label="Filter by use">
+          <button
+            v-for="c in categories"
+            :key="c"
+            type="button"
+            role="tab"
+            :aria-selected="category === c"
+            class="tab"
+            :class="{ active: category === c }"
+            @click="setCategory(c)"
+          >
+            {{ CATEGORY_LABEL[c] }}
+            <span class="n">({{ counts[c] }})</span>
+          </button>
         </div>
 
-        <AnimatePresence :initial="false">
-          <ThingsStage
-            v-if="view === 'carousel'"
-            key="carousel"
-            :items
-            :spring
-          />
-          <ThingsGrid
-            v-else
-            key="grid"
-            :items
-            :spring
-          />
-        </AnimatePresence>
+        <ThingsGrid :items :spring />
 
         <p class="affiliate">
           Some links are affiliate links.
@@ -178,41 +139,68 @@ useSchemaOrg([defineWebPage()])
 </template>
 
 <style scoped>
-.tab {
-  color: color-mix(in oklab, var(--ui-text-muted) 45%, transparent);
-  transition: color 0.35s ease;
+.mast {
+  margin-bottom: 28px;
 }
-.tab:hover {
+.title {
+  margin: 0;
+  font-family: var(--font-redaction);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+  color: #111111;
+}
+.lede {
+  max-width: 28rem;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 24px;
   color: var(--ui-text-muted);
-}
-.tab.active {
-  color: var(--ui-text-highlighted);
-}
-.tick {
-  position: relative;
-  width: 12px;
-  height: 1px;
-  background: color-mix(in oklab, currentColor 30%, transparent);
-}
-.tick::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--ui-primary);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
-}
-.tab.active .tick::after {
-  transform: scaleX(1);
+  text-wrap: pretty;
 }
 
-.filters {
-  z-index: 10;
+.cats {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 0 0 48px;
+  padding: 18px 0 18px;
+  background: #FAF9F7;
+  border-bottom: 1px solid var(--ui-border);
+}
+.tab {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 20px;
+  color: var(--ui-text-dimmed);
+  cursor: pointer;
+  box-shadow: none;
+}
+.tab:hover {
+  color: #111111;
+}
+.tab.active {
+  color: #111111;
+  box-shadow: 0 1px 0 0 var(--ui-primary);
+}
+.tab:focus-visible {
+  box-shadow: 0 1px 0 0 var(--ui-primary);
+}
+.n {
+  color: inherit;
+  opacity: 0.55;
 }
 
 .affiliate {
-  margin: 48px 0 0;
+  margin: 64px 0 0;
   font-family: var(--font-mono);
   font-size: 10px;
   line-height: 15px;
@@ -221,8 +209,7 @@ useSchemaOrg([defineWebPage()])
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tab,
-  .tick::after {
+  .tab {
     transition: none;
   }
 }

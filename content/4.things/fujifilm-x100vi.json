@@ -11,9 +11,9 @@
     "amount": 1749,
     "currency": "GBP"
   },
-  "image": "/images/things/fujifilm-x100vi.png",
-  "note": "Confirmed by Fujifilm UK registration/repair case 0042676. Live UK eShop price is £1,749, not the earlier £1,599 estimate. Purchase receipt and exact paid price not yet pulled. Packshot is the official silver finish.",
+  "image": "/images/things/fujifilm-x100vi.webp",
+  "note": "Confirmed by Fujifilm UK registration and repair case 0042676. Live UK eShop price is £1,749. Purchase receipt and exact paid price not yet pulled. Packshot is the official silver finish.",
   "url": "https://eshop.fujifilm-x.com/uk/fujifilm-x100vi.html",
   "owned": true,
-  "order": 4
+  "order": 13
 }

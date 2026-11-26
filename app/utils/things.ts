@@ -79,6 +79,22 @@ export function inCategory(items: ThingItem[], category: ThingCategory | 'all') 
   return items.filter(item => item.category === category)
 }
 
+export function categoryCounts(items: ThingItem[]) {
+  const counts: Record<ThingCategory | 'all', number> = {
+    all: items.length,
+    wardrobe: 0,
+    tech: 0,
+    home: 0,
+    accessories: 0,
+  }
+  for (const item of items) counts[item.category] += 1
+  return counts
+}
+
+export function isThingsPath(path: string) {
+  return path === '/things' || path.startsWith('/things/')
+}
+
 export function adjacent(items: ThingItem[], slug: string) {
   const i = items.findIndex(item => item.slug === slug)
   if (i < 0 || items.length === 0) return { prev: undefined, next: undefined }

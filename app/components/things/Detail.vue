@@ -11,10 +11,6 @@ const { item, items, spring } = defineProps<{
 const route = useRoute()
 const nearby = computed(() => adjacent(items, item.slug))
 const href = computed(() => thingHref(item))
-const number = computed(() => {
-  const i = items.findIndex(t => t.slug === item.slug)
-  return String((i >= 0 ? i : 0) + 1).padStart(2, '0')
-})
 const acquired = computed(() => formatAcquired(item.acquired))
 
 const fields = computed(() => {
@@ -53,69 +49,71 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   <motion.article
     :initial="false"
     :transition="spring"
-    class="relative"
+    class="detail"
   >
-    <div class="section-mark in-index flex items-baseline gap-3">
-      <span class="numeral" aria-hidden="true">{{ number }}</span>
-      <NuxtLink :to="{ path: '/things', query: route.query }" class="label">
+    <p class="crumb">
+      <NuxtLink :to="{ path: '/things', query: route.query }">
         Things
       </NuxtLink>
-      <span class="rule" aria-hidden="true" />
-    </div>
-
-    <div class="wide figure">
-      <ThingsCutout :item priority />
-    </div>
-
-    <h1 class="title">
+      <span aria-hidden="true">/</span>
       {{ item.name }}
-    </h1>
-    <p class="brand">
-      {{ item.brand }}
     </p>
-    <p class="price">
-      <ThingsPrice :price="item.price" />
-    </p>
-    <p class="links">
-      <a
-        v-if="href"
-        :href
-        target="_blank"
-        rel="noopener noreferrer"
-        class="shop"
-      >
-        {{ item.brand }}
-      </a>
-    </p>
-    <p v-if="item.note" class="note">
-      {{ item.note }}
-    </p>
-    <dl class="sheet">
-      <div v-for="[label, value] in fields" :key="label" class="row">
-        <dt>{{ label }}</dt>
-        <dd>{{ value }}</dd>
-      </div>
-    </dl>
 
-    <nav v-if="nearby.prev || nearby.next" class="pager" aria-label="Other pieces">
-      <NuxtLink
-        v-if="nearby.prev"
-        :to="thingTo(nearby.prev)"
-        class="step prev"
-      >
-        <span class="dir">← Previous</span>
-        <span class="who">{{ nearby.prev.name }}</span>
-      </NuxtLink>
-      <span v-else class="step" />
-      <NuxtLink
-        v-if="nearby.next"
-        :to="thingTo(nearby.next)"
-        class="step next"
-      >
-        <span class="dir">Next →</span>
-        <span class="who">{{ nearby.next.name }}</span>
-      </NuxtLink>
-    </nav>
+    <div class="split">
+      <div class="figure">
+        <ThingsCutout :item priority />
+      </div>
+
+      <div class="copy">
+        <p class="brand">
+          {{ item.brand }}
+        </p>
+        <h1 class="title">
+          {{ item.name }}
+        </h1>
+        <p class="price">
+          <ThingsPrice :price="item.price" />
+        </p>
+        <p v-if="href" class="links">
+          <a
+            :href
+            target="_blank"
+            rel="noopener noreferrer"
+            class="shop"
+          >
+            {{ item.brand }}
+          </a>
+        </p>
+        <p v-if="item.note" class="note">
+          {{ item.note }}
+        </p>
+        <dl class="sheet">
+          <div v-for="[label, value] in fields" :key="label" class="row">
+            <dt>{{ label }}</dt>
+            <dd>{{ value }}</dd>
+          </div>
+        </dl>
+        <nav v-if="nearby.prev || nearby.next" class="pager" aria-label="Other pieces">
+          <NuxtLink
+            v-if="nearby.prev"
+            :to="thingTo(nearby.prev)"
+            class="step prev"
+          >
+            <span class="dir">← Previous</span>
+            <span class="who">{{ nearby.prev.name }}</span>
+          </NuxtLink>
+          <span v-else class="step" />
+          <NuxtLink
+            v-if="nearby.next"
+            :to="thingTo(nearby.next)"
+            class="step next"
+          >
+            <span class="dir">Next →</span>
+            <span class="who">{{ nearby.next.name }}</span>
+          </NuxtLink>
+        </nav>
+      </div>
+    </div>
 
     <p class="affiliate">
       Some links are affiliate links.
@@ -124,55 +122,38 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </template>
 
 <style scoped>
-.section-mark {
-  margin-bottom: 12px;
-  line-height: 24px;
-}
-@media (min-width: 1024px) {
-  .section-mark {
-    top: 9px;
-    margin: 0;
-  }
-}
-.numeral {
-  width: 28px;
-  flex: none;
-  font-family: var(--font-redaction);
-  font-style: italic;
-  font-size: 15px;
-  color: var(--ui-primary);
-  user-select: none;
-}
-.label {
+.crumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 36px;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--ui-text-dimmed);
+}
+.crumb a {
   color: var(--ui-text-muted);
-  font-weight: 400;
   text-decoration: none;
   border: 0;
   box-shadow: none;
 }
-.label:hover {
+.crumb a:hover {
   color: var(--ui-text-highlighted);
 }
-.rule {
-  flex: 1;
-  height: 1px;
-  align-self: center;
-  background: color-mix(in oklab, var(--ui-text) 12%, transparent);
-}
 
-.wide {
-  width: calc(100% + 48px);
-  margin-inline: -24px;
+.split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
 }
-@media (min-width: 1024px) {
-  .wide {
-    width: var(--sheet-width);
-    margin-left: calc(-1 * (var(--sheet-index) + var(--sheet-gutter)));
-    margin-right: 0;
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 72px;
   }
 }
 
@@ -181,22 +162,19 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   min-height: min(58vh, 560px);
   align-items: center;
   justify-content: center;
-  margin-bottom: 36px;
-  padding: 24px 16px;
+  padding: 24px;
+}
+.figure :deep(.cutout) {
+  width: min(100%, 640px);
+  height: min(62vh, 580px);
 }
 .figure :deep(.object) {
-  max-width: min(90vw, 760px);
-  max-height: min(64vh, 580px);
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.title {
-  margin: 0 0 8px;
-  font-family: var(--font-redaction);
-  font-size: clamp(28px, 4vw, 40px);
-  font-weight: 400;
-  line-height: 1.15;
-  color: var(--ui-text-highlighted);
-  text-wrap: balance;
+.copy {
+  min-width: 0;
 }
 .brand {
   margin: 0;
@@ -206,20 +184,29 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   text-transform: uppercase;
   color: var(--ui-text-dimmed);
 }
+.title {
+  margin: 8px 0 0;
+  font-family: var(--font-redaction);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: #111111;
+  text-wrap: balance;
+}
 .price {
-  margin: 16px 0 0;
+  margin: 18px 0 0;
   font-family: var(--font-redaction);
   font-size: 28px;
   line-height: 1;
-  color: var(--ui-text-highlighted);
+  color: #111111;
   font-variant-numeric: tabular-nums;
 }
 .links {
-  margin: 18px 0 0;
+  margin: 20px 0 0;
 }
 .shop {
   font-size: 16px;
-  color: var(--ui-text-highlighted);
+  color: #111111;
   text-decoration: none;
   border: 0;
   box-shadow: none;
@@ -229,35 +216,23 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   color: var(--ui-primary);
 }
 .note {
-  max-width: 528px;
   margin: 28px 0 0;
   font-size: 16px;
   line-height: 28px;
   color: var(--ui-text-muted);
   text-wrap: pretty;
 }
-.affiliate {
-  margin: 48px 0 0;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 15px;
-  letter-spacing: 0.04em;
-  color: var(--ui-text-dimmed);
-}
-
 .sheet {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  max-width: 528px;
-  margin-top: 36px;
+  margin-top: 32px;
 }
 .row {
   display: grid;
   grid-template-columns: 7rem 1fr;
   gap: 16px;
-  padding: 8px 0;
-  border-top: 1px solid color-mix(in oklab, var(--ui-text) 12%, transparent);
+  padding: 10px 0;
+  border-top: 1px solid var(--ui-border);
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 18px;
@@ -278,9 +253,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  margin-top: 48px;
+  margin-top: 40px;
   padding-top: 20px;
-  border-top: 1px solid color-mix(in oklab, var(--ui-text) 12%, transparent);
+  border-top: 1px solid var(--ui-border);
 }
 .step {
   display: flex;
@@ -310,10 +285,18 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   text-wrap: pretty;
 }
 .step:hover .who {
-  color: var(--ui-text-highlighted);
+  color: #111111;
 }
 .step:hover .dir {
   color: var(--ui-primary);
 }
 
+.affiliate {
+  margin: 56px 0 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: var(--ui-text-dimmed);
+}
 </style>

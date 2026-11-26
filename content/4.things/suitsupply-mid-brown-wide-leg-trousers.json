@@ -1,0 +1,19 @@
+{
+  "slug": "suitsupply-mid-brown-wide-leg-trousers",
+  "name": "Mid Brown Wide Leg Trousers",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "color": "Mid brown",
+  "size": "32, altered in store",
+  "material": "Pure cotton",
+  "acquired": "2026-09-13",
+  "price": {
+    "amount": 171,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-mid-brown-wide-leg-trousers.webp",
+  "note": "SKU TFT10026LB1, receipt PSGB00492486. Paid £159 plus a £12 in-store alteration. The live UK path is light-brown-wide-leg-trousers, but the on-page title is Mid Brown Wide Leg Chinos in Pure Cotton. Owned colour is mid brown.",
+  "url": "https://suitsupply.com/en-gb/men/trousers/light-brown-wide-leg-trousers/TFT10026LB1.html",
+  "owned": true,
+  "order": 10
+}

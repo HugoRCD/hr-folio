@@ -1,0 +1,19 @@
+{
+  "slug": "suitsupply-black-ribbed-henley",
+  "name": "Black Ribbed Henley",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "color": "Black",
+  "size": "M",
+  "material": "Pure wool",
+  "acquired": "2026-09-13",
+  "price": {
+    "amount": 129,
+    "currency": "GBP"
+  },
+  "image": "/images/things/suitsupply-black-ribbed-henley.webp",
+  "note": "SKU KCV10032999, receipt PSGB00492486.",
+  "url": "https://suitsupply.com/en-gb/men/knitwear/black-henley/KCV10032999.html",
+  "owned": true,
+  "order": 3
+}

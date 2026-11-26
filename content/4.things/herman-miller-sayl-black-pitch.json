@@ -1,0 +1,19 @@
+{
+  "slug": "herman-miller-sayl-black-pitch",
+  "name": "Sayl Office Chair, Black/Pitch",
+  "brand": "Herman Miller",
+  "category": "tech",
+  "color": "Black/Pitch",
+  "size": "Standard (fixed arms), with lumbar support",
+  "material": "Unframed elastomer back, upholstered Pitch seat, black frame",
+  "acquired": "2025-04-25",
+  "price": {
+    "amount": 694.5,
+    "currency": "EUR"
+  },
+  "image": "/images/things/herman-miller-sayl-black-pitch.webp",
+  "note": "Herman Miller France order FRHM13985, paid EUR 694.50 (list EUR 926, Spring Sale discount EUR 231.50), PayPal, shipped to Nice. Receipt described it as Siege de bureau Sayl en Noir/Pitch, Oui / Standard. Pitch is no longer named in the live French configurator; this URL is the current live FR store Sayl page (HTTP 200). The collection page https://www.hermanmiller.com/en_eur/products/seating/office-chairs/sayl-chairs/ also returns 200. Packshot is the official Black/Pitch studio image from the Herman Miller European store CDN.",
+  "url": "https://frstore.hermanmiller.com/products/sayl-office-chair",
+  "owned": true,
+  "order": 16
+}

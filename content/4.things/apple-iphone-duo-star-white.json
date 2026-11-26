@@ -1,0 +1,19 @@
+{
+  "slug": "apple-iphone-duo-star-white",
+  "name": "iPhone Duo Star White",
+  "brand": "Apple",
+  "category": "tech",
+  "color": "Star White",
+  "size": "7.6-inch display; storage unconfirmed (256GB from-price used here)",
+  "material": "Folding iPhone, official Star White finish packshot",
+  "acquired": "2026-11-18",
+  "price": {
+    "amount": 1999,
+    "currency": "GBP"
+  },
+  "image": "/images/things/apple-iphone-duo-star-white.webp",
+  "note": "Picked up at Apple Opera, Paris, on 18 Nov 2026. Storage and exact paid price were not in the mailbox. Live UK from-price is £1,999 for 256GB, then £2,199 (512GB), £2,599 (1TB) and £3,199 (2TB). This URL is the live 256GB Star White buy page (HTTP 200).",
+  "url": "https://www.apple.com/uk/shop/buy-iphone/iphone-duo/7.6-inch-display-256gb-star-white",
+  "owned": true,
+  "order": 15
+}

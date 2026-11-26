@@ -11,6 +11,14 @@ export default defineNuxtModule({
   meta: { name: 'first-light' },
   setup(_, nuxt) {
     const script = `(function(){try{
+if(/^\\/things(\\/|$)/.test(location.pathname)){
+var el=document.documentElement,v={'--ui-bg':'#FAF9F7','--ui-bg-muted':'#F7F6F3','--ui-bg-elevated':'#F3F2EE','--ui-bg-inverted':'#111111','--ui-text-highlighted':'#111111','--ui-text':'#222222','--ui-text-toned':'#3A3A3A','--ui-text-muted':'#6B6B6B','--ui-text-dimmed':'#9A9A9A','--ui-border':'#E8E6E1','--ui-border-muted':'#F0EEE9','--code-bg':'#F7F6F3','--code-border':'#E8E6E1'};
+el.classList.add('things-studio','light');el.classList.remove('dark');
+for(var k in v)el.style.setProperty(k,v[k]);
+el.style.setProperty('--ui-primary','#CD1919','important');
+var m=document.createElement('meta');m.name='theme-color';m.content='#FAF9F7';document.head.appendChild(m);
+return;
+}
 if(sessionStorage.getItem('folio-theme-manual')||/[?&](hour|speed)=/.test(location.search))return;
 var rad=Math.PI/180,LONDON=${JSON.stringify(LONDON)},T=${JSON.stringify(firstLightTable())};
 var sunAt=${sunAt.toString()};

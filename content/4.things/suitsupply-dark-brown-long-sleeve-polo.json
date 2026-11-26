@@ -1,0 +1,19 @@
+{
+  "slug": "suitsupply-dark-brown-long-sleeve-polo",
+  "name": "Dark Brown Long Sleeve Polo",
+  "brand": "SuitSupply",
+  "category": "wardrobe",
+  "color": "Dark brown",
+  "size": "M",
+  "material": "Pure cashmere",
+  "acquired": "2026-11-02",
+  "price": {
+    "amount": 239,
+    "currency": "EUR"
+  },
+  "image": "/images/things/suitsupply-dark-brown-long-sleeve-polo.webp",
+  "note": "Bought in Paris for EUR 239, receipt PSFR00364769, SKU KPL10003B01.",
+  "url": "https://suitsupply.com/en-gb/men/knitwear/dark-brown-long-sleeve-polo/KPL10003B01.html",
+  "owned": true,
+  "order": 5
+}

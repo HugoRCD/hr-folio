@@ -9,56 +9,52 @@ const { item, index, spring } = defineProps<{
 }>()
 
 const { reduced } = useThingMotion()
-const href = computed(() => thingHref(item))
-const number = computed(() => String(index + 1).padStart(2, '0'))
+const route = useRoute()
+const lift = computed(() => reduced.value ? false : { y: -6, scale: 1.03 })
+
+function thingTo() {
+  return { path: thingPath(item), query: route.query }
+}
 </script>
 
 <template>
   <motion.article
-    layout
+    layout="position"
     class="piece"
     :transition="spring"
     :initial="false"
-    :exit="{ opacity: 0 }"
-    :while-hover="reduced ? undefined : { y: -10 }"
+    :exit="{ opacity: 0, transition: { duration: reduced ? 0 : 0.18 } }"
   >
-    <NuxtLink :to="thingPath(item)" class="hit">
-      <span class="numeral" aria-hidden="true">{{ number }}</span>
-      <ThingsCutout :item :priority="index < 2" class="photo" />
+    <NuxtLink :to="thingTo()" class="hit">
+      <motion.div
+        class="frame"
+        :while-hover="lift"
+        :transition="spring"
+      >
+        <div class="slot">
+          <ThingsCutout :item :priority="index < 8" />
+        </div>
+      </motion.div>
       <p class="caption">
         <span class="name">{{ item.name }}</span>
-        <span class="meta">
-          <ThingsPrice :price="item.price" />
-        </span>
+        <span class="brand">{{ item.brand }}</span>
+        <span class="price">{{ formatPrice(item.price) }}</span>
       </p>
     </NuxtLink>
-    <a
-      v-if="href"
-      :href
-      class="shop"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {{ item.brand }}
-    </a>
   </motion.article>
 </template>
 
 <style scoped>
 .piece {
-  position: relative;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 24px 12px 8px;
 }
 .hit {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 18px;
+  gap: 16px;
   width: 100%;
   text-decoration: none;
   color: inherit;
@@ -68,22 +64,30 @@ const number = computed(() => String(index + 1).padStart(2, '0'))
 .hit:focus-visible {
   box-shadow: none;
 }
-.numeral {
-  position: absolute;
-  top: 0;
-  left: 12px;
-  font-family: var(--font-redaction);
-  font-style: italic;
-  font-size: 13px;
-  color: var(--ui-primary);
-  user-select: none;
-}
-.photo {
+.frame {
+  position: relative;
+  flex: 0 0 auto;
   width: 100%;
+  height: 0;
+  padding-bottom: 125%;
+  transform-origin: center center;
 }
-.photo :deep(.object) {
-  max-height: min(52vh, 480px);
-  margin-inline: auto;
+.slot {
+  position: absolute;
+  inset: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+.frame :deep(.object) {
+  filter: drop-shadow(0 1px 0 rgb(17 17 17 / 0));
+  transition: filter 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.piece:hover .frame :deep(.object),
+.piece:focus-within .frame :deep(.object) {
+  filter: drop-shadow(0 18px 22px rgb(17 17 17 / 0.12));
 }
 .caption {
   display: flex;
@@ -91,33 +95,33 @@ const number = computed(() => String(index + 1).padStart(2, '0'))
   align-items: center;
   gap: 4px;
   margin: 0;
+  padding-inline: 8px;
   text-align: center;
 }
 .name {
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 20px;
   color: var(--ui-text-highlighted);
   text-wrap: balance;
 }
-.meta {
-  font-family: var(--font-redaction);
-  font-size: 16px;
-  line-height: 22px;
-  color: var(--ui-text-muted);
-  font-variant-numeric: tabular-nums;
-}
-.shop {
+.brand {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ui-text-muted);
-  text-decoration: none;
-  border: 0;
-  box-shadow: none;
-  border-bottom: 1px solid var(--ui-primary);
+  color: var(--ui-text-dimmed);
 }
-.shop:hover {
-  color: var(--ui-primary);
+.price {
+  margin-top: 4px;
+  font-family: var(--font-redaction);
+  font-size: 16px;
+  line-height: 22px;
+  color: #111111;
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .frame :deep(.object) {
+    transition: none;
+  }
 }
 </style>

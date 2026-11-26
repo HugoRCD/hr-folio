@@ -1,0 +1,19 @@
+{
+  "slug": "seki-kanetsugu-heptagone-santoku-170mm",
+  "name": "Heptagone 3 Layer Santoku 170mm",
+  "brand": "Seki Kanetsugu",
+  "category": "home",
+  "color": "VG2 blade, dark pakkawood handle",
+  "size": "170mm blade",
+  "material": "VG2 stainless core with stainless cladding, heptagonal pakkawood wa handle, made in Seki, Japan",
+  "acquired": "2026-09-07",
+  "price": {
+    "amount": 154,
+    "currency": "GBP"
+  },
+  "image": "/images/things/seki-kanetsugu-heptagone-santoku-170mm.webp",
+  "note": "Japanese Knife Company receipt #GS49252, SKU 108103, paid £154, collected or bought at the Harrow / Baker Street shops. The product page was confirmed live via a full page fetch (this box's curl gets HTTP 403, which is a bot block, not a 404). The JKC image CDN also blocked downloads, so the cutout uses an authorized-retailer packshot of the exact same Seki Kanetsugu Heptagon Wood VG2 Santoku 170mm.",
+  "url": "https://japaneseknifecompany.com/product/heptagone-3-layer-santoku-170mm/",
+  "owned": true,
+  "order": 29
+}

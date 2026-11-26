@@ -10,12 +10,11 @@ const { items, spring } = defineProps<{
 
 <template>
   <motion.div
-    layout
-    class="wide pieces"
+    class="gallery"
     :transition="spring"
     :initial="false"
   >
-    <AnimatePresence :initial="false" mode="popLayout">
+    <AnimatePresence :initial="false">
       <ThingsPiece
         v-for="(item, index) in items"
         :key="item.slug"
@@ -28,49 +27,39 @@ const { items, spring } = defineProps<{
 </template>
 
 <style scoped>
-.wide {
-  width: calc(100% + 48px);
-  margin-inline: -24px;
-}
-@media (min-width: 1024px) {
-  .wide {
-    width: var(--sheet-width);
-    margin-left: calc(-1 * (var(--sheet-index) + var(--sheet-gutter)));
-    margin-right: 0;
-  }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 20px;
+  align-items: stretch;
 }
 
-.pieces {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 88px 64px;
-  padding: 40px 8px 80px;
+.gallery:hover :deep(.piece),
+.gallery:has(:deep(.piece:focus-within)) :deep(.piece) {
+  opacity: 0.42;
 }
-.pieces :deep(.piece) {
-  flex: 1 1 300px;
-  max-width: 460px;
+.gallery:hover :deep(.piece:hover),
+.gallery:has(:deep(.piece:focus-within)) :deep(.piece:focus-within) {
+  opacity: 1;
+}
+.gallery :deep(.piece) {
   transition: opacity 0.45s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.pieces:hover :deep(.piece),
-.pieces:has(:deep(.piece:focus-within)) :deep(.piece) {
-  opacity: 0.28;
+@media (min-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 56px 28px;
+  }
 }
-.pieces:hover :deep(.piece:hover),
-.pieces:has(:deep(.piece:focus-within)) :deep(.piece:focus-within) {
-  opacity: 1;
-}
-
-@media (max-width: 639px) {
-  .pieces {
-    gap: 56px 24px;
-    padding-inline: 16px;
+@media (min-width: 1024px) {
+  .gallery {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 72px 36px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pieces :deep(.piece) {
+  .gallery :deep(.piece) {
     transition: none;
   }
 }
