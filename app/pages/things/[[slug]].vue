@@ -9,7 +9,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const { seo } = useFolioConfig()
-const { withGridTransition, withHeroTransition } = useThingTransition()
+const { withFilterTransition, withViewSwitch, withHeroTransition } = useThingTransition()
 
 const { data: allThings } = await useAsyncData('things', async () => {
   const rows = await queryCollection('things').all()
@@ -57,18 +57,18 @@ function studioQuery(partial: {
 
 function setCategory(next: ThingCategory | 'all') {
   const keep = selected.value && (next === 'all' || selected.value.category === next)
-  withGridTransition(() => router.replace({
+  withFilterTransition(() => router.replace({
     path: keep ? route.path : '/things',
     query: studioQuery({ cat: next }),
   }))
 }
 
 function setView(next: ThingView) {
-  withGridTransition(() => router.replace({ path: route.path, query: studioQuery({ view: next }) }))
+  withViewSwitch(() => router.replace({ path: route.path, query: studioQuery({ view: next }) }))
 }
 
 function setSort(next: ThingSort) {
-  withGridTransition(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
+  withFilterTransition(() => router.replace({ path: route.path, query: studioQuery({ sort: next }) }))
 }
 
 function open(item: ThingItem) {
@@ -147,16 +147,18 @@ onBeforeUnmount(() => {
       @sort="setSort"
     />
 
-    <ThingsLookbook
-      v-if="view === 'lookbook'"
-      :items="filtered"
-      @open="open"
-    />
-    <ThingsList
-      v-else
-      :items="filtered"
-      @open="open"
-    />
+    <div class="studio-body">
+      <ThingsLookbook
+        v-if="view === 'lookbook'"
+        :items="filtered"
+        @open="open"
+      />
+      <ThingsList
+        v-else
+        :items="filtered"
+        @open="open"
+      />
+    </div>
 
     <p class="aff">
       Some links are affiliate links.
@@ -180,6 +182,13 @@ onBeforeUnmount(() => {
   flex-direction: column;
   min-height: 100dvh;
   background: #FAF9F7;
+}
+.studio-body {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  flex: 1 0 auto;
+  min-width: 0;
 }
 .aff {
   margin: auto 0 0;

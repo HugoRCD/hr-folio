@@ -141,7 +141,8 @@ function pickSort(next: ThingSort) {
 .chrome {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 30;
+  isolation: isolate;
   flex-shrink: 0;
   display: grid;
   grid-template-columns: minmax(7rem, 1fr) auto minmax(7rem, 1fr);
@@ -352,6 +353,12 @@ function pickSort(next: ThingSort) {
   .view {
     gap: 4px;
     padding: 5px 8px;
+  }
+}
+
+@media (max-width: 767px) {
+  .chrome {
+    view-transition-name: none;
   }
 }
 </style>

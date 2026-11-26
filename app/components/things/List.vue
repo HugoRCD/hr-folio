@@ -41,10 +41,15 @@ const emit = defineEmits<{
 
 <style scoped>
 .list {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
   width: 100%;
   padding: 4px 0 8px;
 }
 .row {
+  position: relative;
+  z-index: 0;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) auto;
   align-items: center;

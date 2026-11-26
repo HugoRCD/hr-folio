@@ -35,6 +35,9 @@ const emit = defineEmits<{
 
 <style scoped>
 .lookbook {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
@@ -45,6 +48,8 @@ const emit = defineEmits<{
   padding: 20px 16px 8px;
 }
 .card {
+  position: relative;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;

@@ -131,6 +131,7 @@ html.things-studio::view-transition-new(root) {
   mix-blend-mode: normal;
 }
 html.things-studio::view-transition-group(*) {
+  z-index: 1;
   animation-duration: 320ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -139,12 +140,25 @@ html.things-studio::view-transition-new(*) {
   animation-duration: 320ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
+html.things-studio::view-transition-group(thing-hero) {
+  z-index: 2;
+}
 html.things-studio::view-transition-old(things-header),
 html.things-studio::view-transition-new(things-header) {
   animation: none !important;
 }
 html.things-studio::view-transition-group(things-header) {
+  z-index: 50;
   animation: none !important;
+}
+
+@media (max-width: 767px) {
+  html.things-studio::view-transition-old(root) {
+    z-index: 1;
+  }
+  html.things-studio::view-transition-new(root) {
+    z-index: 2;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

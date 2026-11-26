@@ -5,6 +5,11 @@ function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+function isCoarseViewport() {
+  return window.matchMedia('(max-width: 767px)').matches
+    || window.matchMedia('(hover: none)').matches
+}
+
 function canTransition() {
   return typeof document.startViewTransition === 'function' && !reducedMotion()
 }
@@ -48,11 +53,19 @@ export function useThingTransition() {
     await nextTick()
   }
 
-  async function withGridTransition(update: () => void | Promise<void>) {
-    if (!import.meta.client || !canTransition()) {
-      await run(update)
-      return
+  async function startRoot(update: () => void | Promise<void>) {
+    const transition = document.startViewTransition(async () => {
+      await update()
+      await nextTick()
+    })
+    try {
+      await transition.finished
+    } catch {
+      // aborted or skipped
     }
+  }
+
+  async function withNamedGrid(update: () => void | Promise<void>) {
     const oldEls = paintVisible()
     const newEls: HTMLElement[] = []
     const transition = document.startViewTransition(async () => {
@@ -67,6 +80,26 @@ export function useThingTransition() {
     } finally {
       clearPainted([...oldEls, ...newEls])
     }
+  }
+
+  async function withFilterTransition(update: () => void | Promise<void>) {
+    if (!import.meta.client || !canTransition() || isCoarseViewport()) {
+      await run(update)
+      return
+    }
+    await withNamedGrid(update)
+  }
+
+  async function withViewSwitch(update: () => void | Promise<void>) {
+    if (!import.meta.client || !canTransition()) {
+      await run(update)
+      return
+    }
+    if (isCoarseViewport()) {
+      await startRoot(update)
+      return
+    }
+    await withNamedGrid(update)
   }
 
   async function withHeroTransition(slug: string, update: () => void | Promise<void>) {
@@ -116,5 +149,5 @@ export function useThingTransition() {
     }
   }
 
-  return { withGridTransition, withHeroTransition }
+  return { withFilterTransition, withViewSwitch, withHeroTransition }
 }

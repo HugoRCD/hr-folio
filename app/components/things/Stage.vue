@@ -120,7 +120,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 .stage {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 50;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
