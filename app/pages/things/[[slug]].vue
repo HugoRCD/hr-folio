@@ -63,12 +63,17 @@ function refine(update: () => Promise<unknown>) {
   })
 }
 
-function setCategory(next: ThingCategory | 'all') {
+async function setCategory(next: ThingCategory | 'all') {
   const keep = selected.value && (next === 'all' || selected.value.category === next)
-  refine(() => router.replace({
+  await refine(() => router.replace({
     path: keep ? route.path : '/things',
     query: studioQuery({ cat: next }),
   }))
+  // another use is another list: the index starts again at its head, with its first piece on the stage
+  if (view.value === 'list' && !selected.value) {
+    active.value = filtered.value[0]?.slug ?? active.value
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
 }
 
 function setView(next: ThingView) {

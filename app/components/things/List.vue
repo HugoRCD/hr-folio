@@ -91,6 +91,26 @@ function measureTick() {
 watch([active, entries], () => nextTick(measureTick))
 useResizeObserver(listEl, measureTick)
 
+// a line on its way out is taken out of the flow to fade. Where every line stood is noted before
+// the list changes (Vue takes each one out before it reaches the next), and each is held there:
+// otherwise all the leaving lines fall onto the same spot.
+const stood = new WeakMap<Element, { top: number, left: number, width: number }>()
+watch(entries, () => {
+  for (const line of listEl.value?.children ?? []) {
+    const el = line as HTMLElement
+    stood.set(el, { top: el.offsetTop, left: el.offsetLeft, width: el.offsetWidth })
+  }
+}, { flush: 'pre' })
+
+function hold(el: Element) {
+  const at = stood.get(el)
+  if (!at) return
+  const line = el as HTMLElement
+  line.style.top = `${at.top}px`
+  line.style.left = `${at.left}px`
+  line.style.width = `${at.width}px`
+}
+
 // --- following the reader ----------------------------------------------------------------------
 let pointer: { x: number, y: number } | null = null
 let quietUntil = 0
@@ -307,7 +327,7 @@ onBeforeUnmount(() => {
         aria-hidden="true"
         :style="{ transform: `translateY(${tickY}px)` }"
       />
-      <TransitionGroup name="rows">
+      <TransitionGroup name="rows" @before-leave="hold">
         <template v-for="(entry, i) in entries" :key="entry.key">
           <h2 v-if="entry.head" class="head" :style="{ '--i': i }">
             <span class="numeral" aria-hidden="true">{{ entry.head.numeral }}</span>
@@ -694,9 +714,9 @@ onBeforeUnmount(() => {
 }
 .rows-leave-active {
   position: absolute;
-  left: 16px;
-  right: 48px;
+  margin: 0;
   transition: opacity 180ms var(--ease);
+  pointer-events: none;
 }
 .rows-leave-to {
   opacity: 0;
@@ -859,10 +879,6 @@ onBeforeUnmount(() => {
   }
   .lead {
     visibility: hidden;
-  }
-  .rows-leave-active {
-    left: 16px;
-    right: 16px;
   }
 }
 </style>
