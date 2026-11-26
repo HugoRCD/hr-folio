@@ -19,6 +19,7 @@ const hover = ref<string | null>(null)
 const grab = { x: 0, pan: 0 }
 const viewW = ref(1200)
 const SLOT = 240
+const narrow = useMediaQuery('(max-width: 767px)')
 
 const width = computed(() => 80 + props.items.length * SLOT + 80)
 const maxPan = computed(() => Math.max(0, width.value - viewW.value))
@@ -28,11 +29,13 @@ function clamp(v: number) {
 }
 
 function onWheel(e: WheelEvent) {
+  if (narrow.value) return
   e.preventDefault()
   pan.value = clamp(pan.value + e.deltaY + e.deltaX)
 }
 
 function onDown(e: PointerEvent) {
+  if (narrow.value) return
   if (e.button !== 0) return
   dragging.value = true
   moved.value = false
@@ -206,18 +209,26 @@ onBeforeUnmount(() => {
   color: #6B6B6B;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 767px) {
   .runway {
-    height: auto;
     overflow-x: auto;
+    overflow-y: hidden;
     cursor: auto;
     scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .runway::-webkit-scrollbar {
+    display: none;
   }
   .strip {
     transform: none !important;
-    padding: 24px 18px 100px;
+    align-items: center;
+    min-height: 100%;
+    padding: 12px 18px calc(80px + env(safe-area-inset-bottom, 0px));
   }
   .slot {
+    flex-basis: min(72vw, 260px);
     scroll-snap-align: center;
   }
 }

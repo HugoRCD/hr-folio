@@ -32,6 +32,9 @@ const preview = computed(() => {
         @focus="hover = item.slug"
         @click="emit('open', item)"
       >
+        <span class="thumb">
+          <ThingsCutout :item />
+        </span>
         <span class="name">{{ item.name }}</span>
         <span class="brand">{{ item.brand }}</span>
         <span class="cat">{{ CATEGORY_LABEL[item.category] }}</span>
@@ -70,7 +73,10 @@ const preview = computed(() => {
   min-height: calc(100dvh - 72px);
 }
 .list {
-  padding: 8px 0 120px;
+  padding: 8px 0 calc(108px + env(safe-area-inset-bottom, 0px));
+}
+.thumb {
+  display: none;
 }
 .row {
   display: grid;
@@ -166,11 +172,23 @@ const preview = computed(() => {
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 767px) {
   .row {
-    grid-template-columns: 1fr auto;
-    padding: 12px 18px;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
   }
-  .brand, .cat { display: none; }
+  .thumb {
+    display: grid;
+    width: 44px;
+    height: 52px;
+    padding: 2px;
+    overflow: hidden;
+  }
+  .brand,
+  .cat {
+    display: none;
+  }
 }
 </style>

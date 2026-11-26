@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import type { ThingItem } from '~/utils/things'
 
-const { item } = defineProps<{
+const { item, docked = false } = defineProps<{
   item: ThingItem
+  docked?: boolean
+}>()
+
+const emit = defineEmits<{
+  details: []
 }>()
 
 const href = computed(() => thingHref(item))
@@ -11,7 +16,7 @@ const fields = computed(() => thingSpecs(item))
 </script>
 
 <template>
-  <div class="copy">
+  <div class="copy" :class="{ docked }">
     <p class="brand">
       {{ item.brand }}
     </p>
@@ -21,15 +26,25 @@ const fields = computed(() => thingSpecs(item))
     <p class="price">
       <ThingsPrice :price="item.price" />
     </p>
-    <p v-if="href" class="links">
+    <p class="links">
       <a
+        v-if="href"
         :href
         target="_blank"
         rel="noopener noreferrer"
         class="shop"
       >
-        View at {{ item.brand }} ↗
+        View at {{ item.brand }}
+        <UIcon name="i-lucide-arrow-up-right" class="go" />
       </a>
+      <button
+        v-if="docked"
+        type="button"
+        class="more"
+        @click="emit('details')"
+      >
+        Details
+      </button>
     </p>
     <p v-if="note" class="note">
       {{ note }}
@@ -91,18 +106,47 @@ const fields = computed(() => thingSpecs(item))
   font-variant-numeric: tabular-nums;
 }
 .links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
   margin: 18px 0 0;
 }
-.shop {
+.shop,
+.more {
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   font-size: 14px;
+  line-height: 1.2;
   color: #111111;
   text-decoration: none;
-  border: 0;
   box-shadow: none;
+  cursor: pointer;
+}
+.shop {
+  display: inline-flex;
   border-bottom: 1px solid var(--ui-primary);
 }
-.shop:hover {
+.shop:hover,
+.more:hover {
   color: var(--ui-primary);
+}
+.go {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+.more {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ui-text-dimmed);
+  border-bottom: 1px solid #E8E6E1;
 }
 .note {
   margin: 22px 0 0;
@@ -141,5 +185,30 @@ const fields = computed(() => thingSpecs(item))
   color: var(--ui-text-muted);
   font-variant-numeric: tabular-nums;
   text-wrap: pretty;
+}
+
+@media (max-width: 767px) {
+  .copy.docked .title {
+    margin-top: 6px;
+    font-size: clamp(22px, 6vw, 30px);
+  }
+  .copy.docked .price {
+    margin-top: 10px;
+    font-size: 22px;
+  }
+  .copy.docked .links {
+    margin-top: 12px;
+  }
+  .copy.docked .shop,
+  .copy.docked .more {
+    font-size: 13px;
+  }
+  .copy.docked .more {
+    display: inline-flex;
+  }
+  .copy.docked .note,
+  .copy.docked .sheet {
+    display: none;
+  }
 }
 </style>

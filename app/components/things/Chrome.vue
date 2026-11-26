@@ -55,10 +55,15 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
       </nav>
     </LayoutGroup>
 
-    <p class="right">
-      {{ filtered }}
-      <span class="of">/ {{ total }}</span>
-    </p>
+    <div class="right">
+      <p class="count">
+        {{ filtered }}
+        <span class="of">/ {{ total }}</span>
+      </p>
+      <p class="aff">
+        Some links are affiliate links.
+      </p>
+    </div>
   </header>
 </template>
 
@@ -106,12 +111,13 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
 }
 .cats {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   gap: 4px 22px;
 }
 .tab {
   position: relative;
+  flex: 0 0 auto;
   padding: 4px 0 8px;
   border: 0;
   background: transparent;
@@ -123,6 +129,7 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
   color: var(--ui-text-dimmed);
   cursor: pointer;
   box-shadow: none;
+  white-space: nowrap;
 }
 .tab:hover {
   color: #111111;
@@ -143,8 +150,15 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
   background: #CD1919;
 }
 .right {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   justify-self: end;
+  min-width: 0;
+}
+.count {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -154,19 +168,67 @@ const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
 .of {
   color: var(--ui-text-dimmed);
 }
+.aff {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: #111111;
+  text-align: right;
+  white-space: nowrap;
+  opacity: 0.35;
+  transition: opacity 0.25s ease;
+}
+.aff:hover {
+  opacity: 0.75;
+}
 
 @media (max-width: 899px) {
   .chrome {
-    grid-template-columns: 1fr 1fr;
-    padding: 14px 18px 12px;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+    padding: 10px 14px 8px;
+  }
+  .sig {
+    height: 28px;
+  }
+  .left {
+    gap: 10px;
   }
   .cats {
     grid-column: 1 / -1;
-    justify-content: flex-start;
     order: 3;
+    justify-content: flex-start;
+    gap: 0 14px;
+    padding-right: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cats::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 2px 0 6px;
+  }
+  .n {
+    margin-left: 4px;
   }
   .right {
     order: 2;
+    gap: 2px;
+  }
+  .count {
+    font-size: 10px;
+  }
+  .aff {
+    font-size: 9px;
+    max-width: 7.2rem;
+    white-space: normal;
   }
 }
 </style>

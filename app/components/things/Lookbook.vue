@@ -61,7 +61,9 @@ const chapters = computed(() => {
 
 <style scoped>
 .lookbook {
-  padding: 36px 28px 120px;
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 36px 28px calc(108px + env(safe-area-inset-bottom, 0px));
   max-width: 1280px;
   margin-inline: auto;
 }
@@ -90,6 +92,7 @@ const chapters = computed(() => {
 .row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 48px 28px;
 }
 .card {
@@ -145,6 +148,21 @@ const chapters = computed(() => {
   font-family: var(--font-redaction);
   font-size: 16px;
   color: #6B6B6B;
+}
+
+@media (max-width: 767px) {
+  .lookbook {
+    padding: 20px 16px calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+  .chapter + .chapter {
+    margin-top: 56px;
+  }
+  .kicker {
+    font-size: 24px;
+  }
+  .row {
+    gap: 28px 14px;
+  }
 }
 
 @media (min-width: 768px) {

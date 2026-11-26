@@ -30,19 +30,29 @@ const emit = defineEmits<{
 .switcher {
   position: fixed;
   left: 50%;
-  bottom: 18px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   z-index: 90;
   display: flex;
   gap: 2px;
+  width: max-content;
+  max-width: calc(100vw - 24px);
   padding: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
   transform: translateX(-50%);
   background: rgb(250 249 247 / 0.92);
   border: 1px solid #E8E6E1;
   border-radius: 999px;
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 24px rgb(17 17 17 / 0.04);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.switcher::-webkit-scrollbar {
+  display: none;
 }
 .opt {
+  flex: 0 0 auto;
   padding: 7px 12px;
   border: 0;
   border-radius: 999px;
@@ -68,17 +78,24 @@ const emit = defineEmits<{
   opacity: 0.55;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 767px) {
   .switcher {
     left: 12px;
     right: 12px;
-    bottom: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-width: none;
     transform: none;
-    overflow-x: auto;
+    padding: 3px;
     justify-content: flex-start;
   }
   .opt {
-    padding: 7px 10px;
+    padding: 6px 7px;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+  }
+  .num {
+    margin-right: 3px;
   }
 }
 </style>

@@ -9,17 +9,20 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   select: [item: ThingItem]
+  details: [item: ThingItem]
 }>()
 
 const { spring, reduced } = useThingMotion()
 const hover = ref<number | null>(null)
 const rail = useTemplateRef<HTMLElement>('rail')
 const root = useTemplateRef<HTMLElement>('root')
+const compact = useMediaQuery('(max-width: 767px)')
 const current = computed(() => props.active ?? props.items[0])
 const index = computed(() => Math.max(0, props.items.findIndex(item => item.slug === current.value?.slug)))
 const scrub = { on: false, x: 0, sl: 0, moved: false }
 
 function mag(i: number) {
+  if (compact.value) return i === index.value ? 1.08 : 1
   const focus = hover.value ?? index.value
   const d = Math.abs(i - focus)
   if (d === 0) return 1.38
@@ -125,7 +128,11 @@ onBeforeUnmount(() => {
             </span>
             <span class="contact" aria-hidden="true" />
           </div>
-          <ThingsCopy :item="current" />
+          <ThingsCopy
+            :item="current"
+            docked
+            @details="emit('details', current)"
+          />
         </motion.div>
       </AnimatePresence>
     </div>
@@ -163,12 +170,14 @@ onBeforeUnmount(() => {
 .dock {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-height: 0;
 }
 .stage {
   flex: 1;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   min-height: 0;
   padding: 12px 28px 8px;
 }
@@ -185,6 +194,7 @@ onBeforeUnmount(() => {
   position: relative;
   display: flex;
   justify-content: center;
+  min-height: 0;
 }
 .frame {
   display: grid;
@@ -209,6 +219,7 @@ onBeforeUnmount(() => {
   align-items: flex-end;
   justify-content: flex-start;
   gap: 10px;
+  flex-shrink: 0;
   height: 148px;
   padding: 12px 48px 72px;
   overflow-x: auto;
@@ -242,16 +253,54 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
+  .stage {
+    justify-content: center;
+  }
   .hero {
     grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.85fr);
     gap: 56px;
   }
 }
-@media (max-width: 899px) {
+
+@media (max-width: 767px) {
+  .stage {
+    align-items: stretch;
+    overflow: hidden;
+    padding: 4px 18px 0;
+  }
+  .hero {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+  .cut {
+    flex: 1;
+    min-height: 0;
+    align-items: center;
+  }
+  .frame {
+    width: min(75vw, 100%);
+    height: 100%;
+    max-height: 100%;
+    aspect-ratio: auto;
+    padding: 2%;
+  }
+  .contact {
+    bottom: 2%;
+  }
   .rail {
-    justify-content: flex-start;
-    padding-bottom: 72px;
+    height: auto;
+    gap: 8px;
+    padding: 10px 16px calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+  .bead {
+    width: 48px;
+    height: 58px;
   }
 }
 </style>

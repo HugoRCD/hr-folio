@@ -170,7 +170,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   pointer-events: none;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
   .stage {
     grid-template-columns: 10vw minmax(0, 1.1fr) minmax(20rem, 0.85fr) 10vw;
     grid-template-areas: "prev hero copy next";
@@ -206,6 +206,38 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     align-self: center;
     width: 100%;
     max-width: 28rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 0 18px calc(28px + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .close {
+    position: sticky;
+    top: 0;
+    right: auto;
+    align-self: flex-end;
+    padding: 16px 0 8px;
+    background: #FAF9F7;
+  }
+  .hero {
+    min-height: 0;
+    max-height: 46vh;
+  }
+  .frame {
+    max-width: min(75vw, 100%);
+    margin-inline: auto;
+  }
+  .copy-slot {
+    max-width: 100%;
   }
 }
 </style>

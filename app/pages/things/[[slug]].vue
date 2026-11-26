@@ -31,7 +31,11 @@ watchEffect(() => {
 
 const categories: Array<ThingCategory | 'all'> = ['all', ...THING_CATEGORIES]
 const concept = computed(() => thingConcept(route.query.concept))
-const overlay = computed(() => Boolean(selected.value) && concept.value !== 'dock')
+const overlay = computed(() => {
+  if (!selected.value) return false
+  if (concept.value !== 'dock') return true
+  return route.query.sheet === '1'
+})
 
 const category = computed<ThingCategory | 'all'>(() => {
   const q = route.query.cat
@@ -62,11 +66,18 @@ function open(item: ThingItem) {
 }
 
 function close() {
-  router.push({ path: '/things', query: studioQuery() })
+  const path = concept.value === 'dock' && selected.value
+    ? thingPath(selected.value)
+    : '/things'
+  router.push({ path, query: studioQuery() })
 }
 
 function go(item: ThingItem) {
   router.replace({ path: thingPath(item), query: studioQuery() })
+}
+
+function details(item: ThingItem) {
+  router.push({ path: thingPath(item), query: { ...studioQuery(), sheet: '1' } })
 }
 
 const owned = computed(() => (allThings.value ?? []).filter(item => item.owned !== false))
@@ -124,6 +135,7 @@ onMounted(() => prefetchThingImages(owned.value))
       :items="filtered"
       :active
       @select="go"
+      @details="details"
     />
     <ThingsLookbook
       v-else-if="concept === 'lookbook'"
@@ -158,7 +170,6 @@ onMounted(() => prefetchThingImages(owned.value))
       </AnimatePresence>
     </Teleport>
 
-    <ThingsAffiliate />
     <ThingsSwitcher :concept @concept="setConcept" />
   </div>
 </template>
@@ -176,17 +187,16 @@ onMounted(() => prefetchThingImages(owned.value))
   height: 100dvh;
   overflow: hidden;
 }
-@media (max-width: 899px) {
-  .page.concept-wall {
-    height: auto;
-    overflow: auto;
-  }
-}
 .page :deep(.dock),
 .page :deep(.wall),
 .page :deep(.runway) {
   flex: 1;
   min-height: 0;
   height: auto;
+}
+.page :deep(.lookbook),
+.page :deep(.archive) {
+  flex: 0 0 auto;
+  width: 100%;
 }
 </style>
