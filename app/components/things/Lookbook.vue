@@ -27,7 +27,6 @@ const emit = defineEmits<{
       <span class="meta">
         <span class="brand">{{ item.brand }}</span>
         <span class="name">{{ item.name }}</span>
-        <span class="price">{{ formatPrice(item.price) }}</span>
       </span>
     </button>
   </div>
@@ -107,11 +106,6 @@ const emit = defineEmits<{
   line-height: 1.3;
   min-height: 1.3em;
   color: #111111;
-}
-.price {
-  font-family: var(--font-redaction);
-  font-size: 16px;
-  color: #6B6B6B;
 }
 
 @media (min-width: 768px) {

@@ -32,7 +32,7 @@ export function thingsMarkdown({ site, items }: Awaited<ReturnType<typeof things
   const lines = [
     '# Things',
     '',
-    `The objects Hugo Richard owns and uses, ${items.length} of them, as listed at ${site}/things. The pieces he wears or carries every day come first, then each use. Prices are retail prices in GBP. Some shop links are affiliate links.`,
+    `The objects Hugo Richard owns and uses, ${items.length} of them, as listed at ${site}/things. The pieces he wears or carries every day come first, then each use. Prices are retail prices in GBP.`,
     '',
   ]
   let section = ''

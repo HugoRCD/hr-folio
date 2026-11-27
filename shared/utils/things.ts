@@ -104,6 +104,8 @@ export function thingSpecs(item: ThingItem) {
     ['Material', item.material ?? ''],
     ['Colour', item.color ?? ''],
     ['Size', item.size ?? ''],
+    // the price is one fact among the others, read when it is wanted
+    ['Retail', formatPrice(item.price)],
   ]
   return rows.filter(([, value]) => value)
 }
