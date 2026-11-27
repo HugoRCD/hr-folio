@@ -1,6 +1,18 @@
+import { readdirSync, readFileSync } from 'node:fs'
 import { folioPublic } from './server/utils/folio-public'
 
 export default defineNuxtConfig({
+  hooks: {
+    // the share cards of /things are drawn at build time, one for the collection and one per piece
+    'prerender:routes'({ routes }) {
+      routes.add('/og/things.jpg')
+      for (const file of readdirSync('content/4.things')) {
+        const thing = JSON.parse(readFileSync(`content/4.things/${file}`, 'utf8'))
+        if (thing.owned !== false) routes.add(`/og/things/${thing.slug}.jpg`)
+      }
+    },
+  },
+
   runtimeConfig: {
     folio: {
       profile: { ...folioPublic.profile },
