@@ -18,9 +18,6 @@ const fields = computed(() => thingSpecs(item))
     <h1 class="title">
       {{ item.name }}
     </h1>
-    <p class="price">
-      <ThingsPrice :price="item.price" />
-    </p>
     <p class="links">
       <a
         v-if="href"
@@ -59,7 +56,6 @@ const fields = computed(() => thingSpecs(item))
 }
 .brand,
 .title,
-.price,
 .links,
 .note,
 .sheet {
@@ -78,21 +74,13 @@ const fields = computed(() => thingSpecs(item))
 }
 .title {
   margin: 10px 0 0;
-  min-height: 3.36em;
+  min-height: 2.24em;
   font-family: var(--font-redaction);
   font-size: clamp(28px, 4vw, 42px);
   font-weight: 400;
   line-height: 1.12;
   color: #111111;
   text-wrap: balance;
-}
-.price {
-  margin: 16px 0 0;
-  font-family: var(--font-redaction);
-  font-size: 26px;
-  line-height: 1;
-  color: #111111;
-  font-variant-numeric: tabular-nums;
 }
 .links {
   display: flex;
@@ -168,9 +156,6 @@ const fields = computed(() => thingSpecs(item))
 @media (max-width: 767px) {
   .copy {
     min-height: 0;
-  }
-  .title {
-    min-height: 2.24em;
   }
   .shop {
     min-height: 44px;

@@ -213,10 +213,6 @@ onBeforeUnmount(() => {
       />
     </div>
 
-    <p class="aff">
-      Some links are affiliate links.
-    </p>
-
     <Teleport to="body">
       <ThingsStage
         v-if="selected"
@@ -242,22 +238,5 @@ onBeforeUnmount(() => {
   isolation: isolate;
   flex: 1 0 auto;
   min-width: 0;
-}
-.aff {
-  margin: auto 0 0;
-  padding: 28px 28px calc(20px + env(safe-area-inset-bottom, 0px));
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  color: #111111;
-  text-align: center;
-  opacity: 0.35;
-}
-
-@media (max-width: 767px) {
-  .aff {
-    padding: 20px 16px calc(16px + env(safe-area-inset-bottom, 0px));
-    font-size: 9px;
-  }
 }
 </style>

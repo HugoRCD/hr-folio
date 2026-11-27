@@ -355,7 +355,7 @@ onBeforeUnmount(() => {
               <span class="brand">{{ entry.item.brand }}</span>
             </span>
             <span class="lead" aria-hidden="true" />
-            <span class="price">{{ formatPrice(entry.item.price) }}</span>
+            <span class="price">{{ entry.item.slug === current?.slug ? formatPrice(entry.item.price) : '' }}</span>
           </button>
         </template>
       </TransitionGroup>
@@ -675,7 +675,7 @@ onBeforeUnmount(() => {
   background-repeat: repeat-x;
   opacity: 0.9;
 }
-/* the price is there to be read, not announced: it stays quiet beside the name */
+/* the price shows only on the piece being looked at, so the index never reads as a price list */
 .price {
   flex: none;
   font-family: var(--font-redaction);
