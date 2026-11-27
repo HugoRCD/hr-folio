@@ -128,6 +128,12 @@ const description = computed(() => selected.value
   ? `${selected.value.name} by ${selected.value.brand}, one of the things Hugo Richard owns and uses.`
   : 'The things Hugo Richard owns and uses: what he wears and carries every day, the clothes, tech and objects at home.')
 
+// each piece is shared on its own card, the index on the collection's
+const ogImage = computed(() => selected.value ? `/og/things/${selected.value.slug}.jpg` : '/og/things.jpg')
+const ogImageAlt = computed(() => selected.value
+  ? `${selected.value.name} by ${selected.value.brand}, in black and white`
+  : 'Things: a black overcoat, a Cartier Santos-Dumont and a bottle of Oud Satin Mood, in black and white')
+
 useHead({
   // the same inventory, as Markdown, for agents
   link: [{ rel: 'alternate', type: 'text/markdown', href: '/things.md', title: 'Things (Markdown)' }],
@@ -147,11 +153,12 @@ useSeoMeta({
   twitterSite: '@hugorcd',
   twitterCreator: '@hugorcd',
   ogLocale: 'en_GB',
-  ogImage: '/og/home.jpg',
+  ogImage: ogImage,
   ogImageWidth: 1200,
   ogImageHeight: 630,
-  ogImageAlt: 'Hugo Richard, Software Engineer & Designer at Vercel',
-  twitterImage: '/og/home.jpg',
+  ogImageAlt: ogImageAlt,
+  twitterImage: ogImage,
+  twitterImageAlt: ogImageAlt,
 })
 
 useSchemaOrg([defineWebPage()])
